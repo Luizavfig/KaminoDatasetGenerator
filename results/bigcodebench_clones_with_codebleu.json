@@ -15,12 +15,18 @@
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- rename locals & args; reorder independent statements; introduce small helper vars; keep library calls and side-effects identical.",
-        "code": "import itertools\nfrom random import shuffle\n\n\ndef task_func(numbers=list(range(1, 11))):\n    permutations = list(itertools.permutations(numbers))\n    total_permutations = len(permutations)\n    total_diffs_sum = 0\n    for perm in permutations:\n        shuffled_perm = list(perm)\n        shuffle(shuffled_perm)\n        diffs = [abs(shuffled_perm[i] - shuffled_perm[i + 1]) for i in\n            range(len(shuffled_perm) - 1)]\n        total_diffs_sum += sum(diffs)\n    average_diffs_sum = total_diffs_sum / total_permutations\n    return average_diffs_sum\n"
+        "code": "import itertools\nfrom random import shuffle\n\n\ndef task_func(numbers=list(range(1, 11))):\n    permutations = list(itertools.permutations(numbers))\n    total_permutations = len(permutations)\n    total_diffs_sum = 0\n    for perm in permutations:\n        shuffled_perm = list(perm)\n        shuffle(shuffled_perm)\n        diffs = [abs(shuffled_perm[i] - shuffled_perm[i + 1]) for i in\n            range(len(shuffled_perm) - 1)]\n        total_diffs_sum += sum(diffs)\n    average_diffs_sum = total_diffs_sum / total_permutations\n    return average_diffs_sum\n",
+        "metrics": {
+          "codebleu": null
+        }
       },
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- replace simple loops with list/dict comprehensions where safe; adjust arithmetic with equivalent identities; keep signature & imports.",
-        "code": "import itertools\nfrom random import shuffle\n\n\ndef task_func(numbers=list(range(1, 11))):\n    permutations = [tuple(perm) for perm in itertools.permutations(numbers)]\n    sum_diffs = sum(sum(abs(a - b) for i, (a, b) in enumerate(zip(p, p[1:]),\n        start=1)) for p in permutations)\n    return sum_diffs / len(permutations)\n"
+        "code": "import itertools\nfrom random import shuffle\n\n\ndef task_func(numbers=list(range(1, 11))):\n    permutations = [tuple(perm) for perm in itertools.permutations(numbers)]\n    sum_diffs = sum(sum(abs(a - b) for i, (a, b) in enumerate(zip(p, p[1:]),\n        start=1)) for p in permutations)\n    return sum_diffs / len(permutations)\n",
+        "metrics": {
+          "codebleu": null
+        }
       }
     ]
   },
@@ -40,12 +46,18 @@
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- rename locals & args; reorder independent statements; introduce small helper vars; keep library calls and side-effects identical.",
-        "code": "import collections\nimport random\nimport string\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError('Negative length is not allowed')\n    random_string = ''.join(random.choices(string.ascii_uppercase + string.\n        ascii_lowercase, k=length))\n    char_counts = collections.Counter(random_string)\n    return dict(char_counts)\n"
+        "code": "import collections\nimport random\nimport string\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError('Negative length is not allowed')\n    random_string = ''.join(random.choices(string.ascii_uppercase + string.\n        ascii_lowercase, k=length))\n    char_counts = collections.Counter(random_string)\n    return dict(char_counts)\n",
+        "metrics": {
+          "codebleu": null
+        }
       },
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- replace simple loops with list/dict comprehensions where safe; adjust arithmetic with equivalent identities; keep signature & imports.",
-        "code": "import collections\nimport random\nimport string\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError('Length must be non-negative')\n    random_string = ''.join(random.choices(string.ascii_uppercase + string.\n        ascii_lowercase, k=length))\n    char_counts = {char: random_string.count(char) for char in set(\n        random_string)}\n    return dict(sorted(char_counts.items(), key=lambda x: x[1], reverse=True))\n"
+        "code": "import collections\nimport random\nimport string\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError('Length must be non-negative')\n    random_string = ''.join(random.choices(string.ascii_uppercase + string.\n        ascii_lowercase, k=length))\n    char_counts = {char: random_string.count(char) for char in set(\n        random_string)}\n    return dict(sorted(char_counts.items(), key=lambda x: x[1], reverse=True))\n",
+        "metrics": {
+          "codebleu": null
+        }
       }
     ]
   },
@@ -65,7 +77,10 @@
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- replace simple loops with list/dict comprehensions where safe; adjust arithmetic with equivalent identities; keep signature & imports.",
-        "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    random_dict = {k: [random.randint(0, 100) for _ in range(random.randint\n        (1, 10))] for k in LETTERS}\n    sorted_dict = dict(sorted(random_dict.items(), key=lambda item:\n        statistics.mean(item[1]), reverse=True))\n    return sorted_dict\n"
+        "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    random_dict = {k: [random.randint(0, 100) for _ in range(random.randint\n        (1, 10))] for k in LETTERS}\n    sorted_dict = dict(sorted(random_dict.items(), key=lambda item:\n        statistics.mean(item[1]), reverse=True))\n    return sorted_dict\n",
+        "metrics": {
+          "codebleu": null
+        }
       }
     ]
   },
@@ -85,12 +100,18 @@
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- rename locals & args; reorder independent statements; introduce small helper vars; keep library calls and side-effects identical.",
-        "code": "import random\nimport numpy as np\n\n\ndef task_func(letters):\n    random_data = {letter: [random.randint(0, 100) for _ in range(random.\n        randint(1, 10))] for letter in letters}\n    means = {letter: np.mean(values) for letter, values in random_data.items()}\n    return means\n"
+        "code": "import random\nimport numpy as np\n\n\ndef task_func(letters):\n    random_data = {letter: [random.randint(0, 100) for _ in range(random.\n        randint(1, 10))] for letter in letters}\n    means = {letter: np.mean(values) for letter, values in random_data.items()}\n    return means\n",
+        "metrics": {
+          "codebleu": null
+        }
       },
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- replace simple loops with list/dict comprehensions where safe; adjust arithmetic with equivalent identities; keep signature & imports.",
-        "code": "import random\nimport numpy as np\n\n\ndef task_func(LETTERS):\n    random_dict = {k: [random.randint(0, 100) for _ in range(random.randint\n        (1, 10))] for k in LETTERS}\n    mean_dict = {k: np.mean(v) for k, v in random_dict.items()}\n    return mean_dict\n"
+        "code": "import random\nimport numpy as np\n\n\ndef task_func(LETTERS):\n    random_dict = {k: [random.randint(0, 100) for _ in range(random.randint\n        (1, 10))] for k in LETTERS}\n    mean_dict = {k: np.mean(v) for k, v in random_dict.items()}\n    return mean_dict\n",
+        "metrics": {
+          "codebleu": null
+        }
       }
     ]
   }
