@@ -258,7 +258,13 @@
     "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
     "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
   },
-  "BigCodeBench/34": {},
+  "BigCodeBench/34": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
   "BigCodeBench/35": {
     "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
     "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",

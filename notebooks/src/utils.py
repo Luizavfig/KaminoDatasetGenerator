@@ -1,4 +1,4 @@
-import json, unittest, tempfile, textwrap, importlib.util, sys, os
+import json, unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast
 
 def normalize(dataset_split):
     normalized = []
@@ -90,8 +90,8 @@ def validate_with_unittest(code: str, tests: list) -> dict:
 
 def run_original_tests(normalized_data, output_file):
     results = {} 
-    for i, entry in enumerate(normalized_data):
-        if i>50:
+    for i,entry in enumerate(normalized_data): 
+        if(i>50):
             break
         tests_list = entry["test"]
         code = entry["original_code"]
@@ -100,8 +100,30 @@ def run_original_tests(normalized_data, output_file):
 
    
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
-    # Saves test results to JSON
+    # Save test results to JSON
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
 
     print(f"Saved {len(results)} test results to {output_file}")
+
+
+def install_package(package):
+    """Install a Python package using pip."""
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+def extract_required_packages(dataset):
+    """
+    Extract a set of unique Python package names from dataset entries. 
+    """
+    packages = set()
+    for entry in dataset:
+        libs_val = entry.get("metadata", {}).get("libs", [])
+        # Convert string representation of a list to an actual list
+        if isinstance(libs_val, str):
+            try:
+                libs_val = ast.literal_eval(libs_val)
+            except Exception:
+                libs_val = []
+        if isinstance(libs_val, list):
+            packages.update(libs_val)
+    return packages
