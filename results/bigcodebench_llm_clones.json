@@ -1,11 +1,11 @@
 [
   {
-    "id": "b7dd7eea-403d-4e91-af7a-f4ccce80f14e",
+    "id": "BigCodeBench/0",
     "language": "python",
     "description": "Calculates the average of the sums of absolute differences between each pair of consecutive numbers for all permutations of a given list. Each permutation is shuffled before calculating the differences. Args: - numbers (list): A list of numbers. Default is numbers from 1 to 10.",
     "metadata": {
-      "task_id": "BigCodeBench/0",
-      "libs": "['random', 'itertools']"
+      "libs": "['random', 'itertools']",
+      "complete_prompt": "import itertools\nfrom random import shuffle\n\ndef task_func(numbers=list(range(1, 3))):\n    \"\"\"\n    Calculates the average of the sums of absolute differences between each pair of consecutive numbers \n    for all permutations of a given list. Each permutation is shuffled before calculating the differences.\n\n    Args:\n    - numbers (list): A list of numbers. Default is numbers from 1 to 10.\n    \n    Returns:\n    float: The average of the sums of absolute differences for each shuffled permutation of the list.\n\n    Requirements:\n    - itertools\n    - random.shuffle\n\n    Example:\n    >>> result = task_func([1, 2, 3])\n    >>> isinstance(result, float)\n    True\n    \"\"\"\n"
     },
     "original_code": "import itertools\nfrom random import shuffle\n\ndef task_func(numbers=list(range(1, 3))):\n    permutations = list(itertools.permutations(numbers))\n    sum_diffs = 0\n\n    for perm in permutations:\n        perm = list(perm)\n        shuffle(perm)\n        diffs = [abs(perm[i] - perm[i+1]) for i in range(len(perm)-1)]\n        sum_diffs += sum(diffs)\n\n    avg_sum_diffs = sum_diffs / len(permutations)\n    \n    return avg_sum_diffs",
     "test": [
@@ -15,7 +15,7 @@
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- rename locals & args; reorder independent statements; introduce small helper vars; keep library calls and side-effects identical.",
-        "code": "import itertools\nfrom random import shuffle\n\n\ndef task_func(numbers=list(range(1, 11))):\n    perms = list(itertools.permutations(numbers))\n    total_diff_sum = 0\n    perms_count = len(perms)\n    for perm in perms:\n        shuffled_perm = list(perm)\n        shuffle(shuffled_perm)\n        diffs = [abs(shuffled_perm[i] - shuffled_perm[i + 1]) for i in\n            range(len(shuffled_perm) - 1)]\n        total_diff_sum += sum(diffs)\n    avg_sum_diffs = total_diff_sum / perms_count\n    return avg_sum_diffs\n",
+        "code": "import itertools\nfrom random import shuffle\n\n\ndef task_func(numbers=list(range(1, 11))):\n    permutations = list(itertools.permutations(numbers))\n    total_sum_diffs = 0\n    for perm in permutations:\n        shuffled_perm = list(perm)\n        shuffle(shuffled_perm)\n        differences = [abs(shuffled_perm[i] - shuffled_perm[i + 1]) for i in\n            range(len(shuffled_perm) - 1)]\n        total_sum_diffs += sum(differences)\n    avg_sum_diffs = total_sum_diffs / len(permutations)\n    return avg_sum_diffs\n",
         "test_results": {
           "test_custom_list (tmp_module.TestCases.test_custom_list)": "PASS",
           "test_default_numbers (tmp_module.TestCases.test_default_numbers)": "PASS",
@@ -29,7 +29,7 @@
           "test_specific_value_with_seed (tmp_module.TestCases.test_specific_value_with_seed)": "PASS"
         },
         "metrics": {
-          "codebleu": 0.5231311099628552
+          "codebleu": 0.6426736523376952
         }
       },
       {
@@ -55,12 +55,12 @@
     ]
   },
   {
-    "id": "241257cf-7dd4-4621-b4f7-c68e81426484",
+    "id": "BigCodeBench/1",
     "language": "python",
     "description": "Generate a random string of the specified length composed of uppercase and lowercase letters, and then count the occurrence of each character in this string.",
     "metadata": {
-      "task_id": "BigCodeBench/1",
-      "libs": "['collections', 'random', 'string']"
+      "libs": "['collections', 'random', 'string']",
+      "complete_prompt": "import collections\nimport random\nimport string\n\ndef task_func(length=100):\n    \"\"\"\n    Generate a random string of the specified length composed of uppercase and lowercase letters, \n    and then count the occurrence of each character in this string.\n\n    Parameters:\n    length (int, optional): The number of characters in the generated string. Default is 100.\n\n    Returns:\n    dict: A dictionary where each key is a character from the generated string and the value \n            is the count of how many times that character appears in the string.\n\n    Requirements:\n    - collections\n    - random\n    - string\n\n    Raises:\n    ValueError if the length is a negative number\n\n    Example:\n    >>> import random\n    >>> random.seed(42)  # Ensures reproducibility for demonstration\n    >>> task_func(10)\n    {'h': 1, 'B': 2, 'O': 1, 'L': 1, 'm': 1, 'j': 1, 'u': 1, 'E': 1, 'V': 1}\n    \"\"\"\n"
     },
     "original_code": "import collections\nimport random\nimport string\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError\n    random_string = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase, k=length))\n    char_counts = collections.Counter(random_string)\n    return dict(char_counts)",
     "test": [
@@ -70,38 +70,38 @@
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- rename locals & args; reorder independent statements; introduce small helper vars; keep library calls and side-effects identical.",
-        "code": "import collections\nimport random\nimport string\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError('Length must be non-negative')\n    chars = string.ascii_uppercase + string.ascii_lowercase\n    random_string = ''.join(random.choices(chars, k=length))\n    char_counts = collections.Counter(random_string)\n    return dict(char_counts)\n",
+        "code": "import collections\nimport random\nimport string\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError('Length cannot be negative')\n    valid_chars = string.ascii_uppercase + string.ascii_lowercase\n    random.seed(42)\n    random_string = ''.join(random.choices(valid_chars, k=length))\n    char_counts = collections.Counter(random_string)\n    return dict(char_counts)\n",
         "test_results": {
           "test_generated_string_properties (tmp_module.TestCases.test_generated_string_properties)": "PASS",
           "test_negative_length (tmp_module.TestCases.test_negative_length)": "PASS",
           "test_zero_length (tmp_module.TestCases.test_zero_length)": "PASS"
         },
         "metrics": {
-          "codebleu": 0.6705115810084461
+          "codebleu": 0.6658700925697016
         }
       },
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- replace simple loops with list/dict comprehensions where safe; adjust arithmetic with equivalent identities; keep signature & imports.",
-        "code": "import collections\nimport random\nimport string\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError\n    random_string = ''.join(random.choices(string.ascii_uppercase + string.\n        ascii_lowercase, k=length))\n    char_counts = {char: random_string.count(char) for char in set(\n        random_string)}\n    return char_counts\n",
+        "code": "import collections\nimport random\nimport string\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError\n    random_string = ''.join(random.choices(string.ascii_uppercase + string.\n        ascii_lowercase, k=length))\n    char_counts = collections.Counter(char for char in random_string)\n    return dict(char_counts)\n",
         "test_results": {
           "test_generated_string_properties (tmp_module.TestCases.test_generated_string_properties)": "PASS",
           "test_negative_length (tmp_module.TestCases.test_negative_length)": "PASS",
           "test_zero_length (tmp_module.TestCases.test_zero_length)": "PASS"
         },
         "metrics": {
-          "codebleu": 0.6887167370685932
+          "codebleu": 0.8087594128205857
         }
       }
     ]
   },
   {
-    "id": "a8f7aee6-c252-412b-9614-4b18e43682eb",
+    "id": "BigCodeBench/2",
     "language": "python",
     "description": "Create a dictionary in which keys are random letters and values are lists of random integers. The dictionary is then sorted by the mean of the values in descending order, demonstrating the use of the statistics library.",
     "metadata": {
-      "task_id": "BigCodeBench/2",
-      "libs": "['statistics', 'random']"
+      "libs": "['statistics', 'random']",
+      "complete_prompt": "import random\nimport statistics\n\ndef task_func(LETTERS):\n    \"\"\"\n    Create a dictionary in which keys are random letters and values are lists of random integers.\n    The dictionary is then sorted by the mean of the values in descending order, demonstrating the use of the statistics library.\n    \n    Parameters:\n        LETTERS (list of str): A list of characters used as keys for the dictionary.\n    \n    Returns:\n    dict: The sorted dictionary with letters as keys and lists of integers as values, sorted by their mean values.\n    \n    Requirements:\n    - random\n    - statistics\n    \n    Example:\n    >>> import random\n    >>> random.seed(42)\n    >>> sorted_dict = task_func(['a', 'b', 'c'])\n    >>> list(sorted_dict.keys())\n    ['a', 'b', 'c']\n    >>> isinstance(sorted_dict['a'], list)\n    True\n    >>> type(sorted_dict['a'])  # Check type of values\n    <class 'list'>\n    \"\"\"\n"
     },
     "original_code": "import random\nimport statistics\n\ndef task_func(LETTERS):\n    random_dict = {k: [random.randint(0, 100) for _ in range(random.randint(1, 10))] for k in LETTERS}\n    sorted_dict = dict(sorted(random_dict.items(), key=lambda item: statistics.mean(item[1]), reverse=True))\n    return sorted_dict",
     "test": [
@@ -111,16 +111,16 @@
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- rename locals & args; reorder independent statements; introduce small helper vars; keep library calls and side-effects identical.",
-        "code": "import random\nimport statistics\n\n\ndef task_func(letters):\n    generated_values = {letter: [random.randint(0, 100) for _ in range(\n        random.randint(1, 10))] for letter in letters}\n    sorted_by_mean = dict(sorted(generated_values.items(), key=lambda item:\n        statistics.mean(item[1]), reverse=True))\n    return sorted_by_mean\n",
+        "code": "import random\nimport statistics\n\n\ndef task_func(letters):\n    random_dict = {letter: [random.randint(0, 100) for _ in range(random.\n        randint(1, 10))] for letter in letters}\n    means = {key: statistics.mean(value) for key, value in random_dict.items()}\n    sorted_dict = dict(sorted(means.items(), key=lambda item: item[1],\n        reverse=True))\n    return sorted_dict\n",
         "test_results": {
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "FAIL",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "FAIL",
           "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
           "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
-          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
-          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
           "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
         },
         "metrics": {
-          "codebleu": 0.6999874450676666
+          "codebleu": 0.5358105980736633
         }
       },
       {
@@ -141,12 +141,12 @@
     ]
   },
   {
-    "id": "2ead070e-1468-4956-983d-9c9f7a79831c",
+    "id": "BigCodeBench/3",
     "language": "python",
     "description": "Create a dictionary where keys are specified letters and values are lists of random integers. Then calculate the mean of these integers for each key and return a dictionary of these means.",
     "metadata": {
-      "task_id": "BigCodeBench/3",
-      "libs": "['numpy', 'random']"
+      "libs": "['numpy', 'random']",
+      "complete_prompt": "import random\nimport numpy as np\n\ndef task_func(LETTERS):\n    \"\"\"\n    Create a dictionary where keys are specified letters and values are lists of random integers.\n    Then calculate the mean of these integers for each key and return a dictionary of these means.\n\n    Parameters:\n        LETTERS (list of str): List of single-character strings to be used as keys in the output dictionary.\n    \n    Returns:\n        dict: A dictionary where each key is a letter from the input list and the value is the mean of \n              a randomly generated list of integers (with each list having 1 to 10 integers ranging from 0 to 100).\n    \n    Requirements:\n    - random\n    - np (numpy)\n    \n    Example:\n    >>> LETTERS = ['a', 'b', 'c']\n    >>> mean_dict = task_func(LETTERS)\n    >>> isinstance(mean_dict, dict)\n    True\n    >>> 'a' in mean_dict.keys() and 'b' in mean_dict.keys() and 'c' in mean_dict.keys()\n    True\n    >>> all(isinstance(v, float) for v in mean_dict.values())  # Check if all values are floats\n    True\n    \"\"\"\n"
     },
     "original_code": "import random\nimport numpy as np\n\ndef task_func(LETTERS):\n    random_dict = {k: [random.randint(0, 100) for _ in range(random.randint(1, 10))] for k in LETTERS}\n    mean_dict = {k: np.mean(v) for k, v in random_dict.items()}\n    return mean_dict",
     "test": [
@@ -156,7 +156,7 @@
       {
         "transformation": "LLM/llama3.1:latest",
         "strategy_hint": "- rename locals & args; reorder independent statements; introduce small helper vars; keep library calls and side-effects identical.",
-        "code": "import random\nimport numpy as np\n\n\ndef task_func(letters):\n    random_data = {letter: [random.randint(0, 100) for _ in range(random.\n        randint(1, 10))] for letter in letters}\n    means = {letter: np.mean(numbers) for letter, numbers in random_data.\n        items()}\n    return means\n",
+        "code": "import random\nimport numpy as np\n\n\ndef task_func(letters):\n    alphabet = 'abcdefghijklmnopqrstuvwxyz'\n    num_values = random.randint(1, 10)\n    random_dict = {k: [random.randint(0, 100) for _ in range(num_values)] for\n        k in letters}\n    means = {k: np.mean(v) for k, v in random_dict.items()}\n    return means\n",
         "test_results": {
           "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
           "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
@@ -165,7 +165,7 @@
           "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
         },
         "metrics": {
-          "codebleu": 0.6628115104241413
+          "codebleu": 0.5728971848499355
         }
       },
       {

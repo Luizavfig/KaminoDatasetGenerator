@@ -1,0 +1,380 @@
+{
+  "BigCodeBench/0": {
+    "test_custom_list (tmp_module.TestCases.test_custom_list)": "PASS",
+    "test_default_numbers (tmp_module.TestCases.test_default_numbers)": "PASS",
+    "test_empty_list (tmp_module.TestCases.test_empty_list)": "PASS",
+    "test_identical_elements (tmp_module.TestCases.test_identical_elements)": "PASS",
+    "test_large_list_with_seed (tmp_module.TestCases.test_large_list_with_seed)": "PASS",
+    "test_mixed_numbers (tmp_module.TestCases.test_mixed_numbers)": "PASS",
+    "test_negative_numbers (tmp_module.TestCases.test_negative_numbers)": "PASS",
+    "test_random_behavior (tmp_module.TestCases.test_random_behavior)": "PASS",
+    "test_single_element (tmp_module.TestCases.test_single_element)": "PASS",
+    "test_specific_value_with_seed (tmp_module.TestCases.test_specific_value_with_seed)": "PASS"
+  },
+  "BigCodeBench/1": {
+    "test_generated_string_properties (tmp_module.TestCases.test_generated_string_properties)": "PASS",
+    "test_negative_length (tmp_module.TestCases.test_negative_length)": "PASS",
+    "test_zero_length (tmp_module.TestCases.test_zero_length)": "PASS"
+  },
+  "BigCodeBench/2": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/3": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/4": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+    "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+    "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+  },
+  "BigCodeBench/5": {
+    "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+    "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+    "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+    "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+    "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+  },
+  "BigCodeBench/6": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/7": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+    "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS"
+  },
+  "BigCodeBench/8": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_empty_input (tmp_module.TestCases.test_empty_input)": "PASS",
+    "test_range_limit (tmp_module.TestCases.test_range_limit)": "PASS"
+  },
+  "BigCodeBench/9": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+    "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+    "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+  },
+  "BigCodeBench/10": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_empty_input (tmp_module.TestCases.test_empty_input)": "PASS"
+  },
+  "BigCodeBench/11": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/12": {
+    "test_custom_values_successful_script (tmp_module.TestCases.test_custom_values_successful_script)": "PASS",
+    "test_default_values_successful_script (tmp_module.TestCases.test_default_values_successful_script)": "PASS",
+    "test_log_data_format (tmp_module.TestCases.test_log_data_format)": "PASS",
+    "test_non_zero_exit_status (tmp_module.TestCases.test_non_zero_exit_status)": "PASS",
+    "test_script_does_not_exist (tmp_module.TestCases.test_script_does_not_exist)": "PASS",
+    "test_script_execution_failure (tmp_module.TestCases.test_script_execution_failure)": "PASS"
+  },
+  "BigCodeBench/13": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/14": {
+    "test_archive_content (tmp_module.TestCases.test_archive_content)": "FAIL",
+    "test_archive_creation (tmp_module.TestCases.test_archive_creation)": "PASS",
+    "test_invalid_project_directory (tmp_module.TestCases.test_invalid_project_directory)": "PASS",
+    "test_valid_project_directory (tmp_module.TestCases.test_valid_project_directory)": "PASS"
+  },
+  "BigCodeBench/15": {
+    "test_invalid_command (tmp_module.TestCases.test_invalid_command)": "FAIL",
+    "test_mixed_commands (tmp_module.TestCases.test_mixed_commands)": "FAIL",
+    "test_command_failure_with_specific_exit_code (tmp_module.TestCases.test_command_failure_with_specific_exit_code)": "PASS",
+    "test_empty_csv_file (tmp_module.TestCases.test_empty_csv_file)": "PASS",
+    "test_file_not_found (tmp_module.TestCases.test_file_not_found)": "PASS",
+    "test_successful_command_execution (tmp_module.TestCases.test_successful_command_execution)": "PASS"
+  },
+  "BigCodeBench/16": {
+    "test_backup_creation_and_log_file_deletion (tmp_module.TestCases.test_backup_creation_and_log_file_deletion)": "PASS",
+    "test_handle_non_existing_directory (tmp_module.TestCases.test_handle_non_existing_directory)": "PASS",
+    "test_no_log_files_to_backup (tmp_module.TestCases.test_no_log_files_to_backup)": "PASS",
+    "test_non_log_files_remain (tmp_module.TestCases.test_non_log_files_remain)": "PASS"
+  },
+  "BigCodeBench/17": {
+    "test_process_found_restarts_process (tmp_module.TestCases.test_process_found_restarts_process)": "PASS",
+    "test_process_not_found_starts_process (tmp_module.TestCases.test_process_not_found_starts_process)": "PASS",
+    "test_process_terminates_and_restarts_multiple_instances (tmp_module.TestCases.test_process_terminates_and_restarts_multiple_instances)": "PASS"
+  },
+  "BigCodeBench/18": {
+    "test_large_csv (tmp_module.TestCases.test_large_csv)": "FAIL",
+    "test_medium_csv (tmp_module.TestCases.test_medium_csv)": "FAIL",
+    "test_small_csv (tmp_module.TestCases.test_small_csv)": "FAIL",
+    "test_invalid_file (tmp_module.TestCases.test_invalid_file)": "PASS",
+    "test_non_csv_file (tmp_module.TestCases.test_non_csv_file)": "PASS"
+  },
+  "BigCodeBench/19": {
+    "test_empty_directory (tmp_module.TestCases.test_empty_directory)": "PASS",
+    "test_exclusion_of_subdirectories (tmp_module.TestCases.test_exclusion_of_subdirectories)": "PASS",
+    "test_file_integrity_in_zip (tmp_module.TestCases.test_file_integrity_in_zip)": "PASS",
+    "test_multiple_files_zip (tmp_module.TestCases.test_multiple_files_zip)": "PASS",
+    "test_non_existent_directory (tmp_module.TestCases.test_non_existent_directory)": "PASS",
+    "test_single_file_zip (tmp_module.TestCases.test_single_file_zip)": "PASS"
+  },
+  "BigCodeBench/20": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/21": {
+    "test_memory_usage_format (tmp_module.TestCases.test_memory_usage_format)": "PASS",
+    "test_non_empty_values (tmp_module.TestCases.test_non_empty_values)": "PASS",
+    "test_presence_OS (tmp_module.TestCases.test_presence_OS)": "PASS",
+    "test_presence_architecture (tmp_module.TestCases.test_presence_architecture)": "PASS",
+    "test_presence_memory_usage (tmp_module.TestCases.test_presence_memory_usage)": "PASS",
+    "test_return_type (tmp_module.TestCases.test_return_type)": "PASS"
+  },
+  "BigCodeBench/22": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_with_non_integers (tmp_module.TestCases.test_case_with_non_integers)": "PASS",
+    "test_empty_first_list (tmp_module.TestCases.test_empty_first_list)": "PASS",
+    "test_imbalanced_lists (tmp_module.TestCases.test_imbalanced_lists)": "PASS"
+  },
+  "BigCodeBench/23": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_empty_lists (tmp_module.TestCases.test_empty_lists)": "PASS"
+  },
+  "BigCodeBench/24": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_invalid_input (tmp_module.TestCases.test_invalid_input)": "PASS"
+  },
+  "BigCodeBench/25": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/26": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS"
+  },
+  "BigCodeBench/27": {
+    "test_task_func_basic (tmp_module.TestCases.test_task_func_basic)": "PASS",
+    "test_task_func_empty (tmp_module.TestCases.test_task_func_empty)": "PASS",
+    "test_task_func_mixed (tmp_module.TestCases.test_task_func_mixed)": "PASS",
+    "test_task_func_nested (tmp_module.TestCases.test_task_func_nested)": "PASS",
+    "test_task_func_numeric (tmp_module.TestCases.test_task_func_numeric)": "PASS"
+  },
+  "BigCodeBench/28": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS"
+  },
+  "BigCodeBench/29": {
+    "test_output_is_string_and_valid_base64 (tmp_module.TestCases.test_output_is_string_and_valid_base64)": "PASS",
+    "test_varied_data_sets (tmp_module.TestCases.test_varied_data_sets)": "PASS",
+    "test_with_mocked_scaler (tmp_module.TestCases.test_with_mocked_scaler)": "PASS"
+  },
+  "BigCodeBench/30": {
+    "test_case_invalid_email_format (tmp_module.TestCases.test_case_invalid_email_format)": "PASS",
+    "test_case_missing_attribute (tmp_module.TestCases.test_case_missing_attribute)": "PASS",
+    "test_case_non_existent_file (tmp_module.TestCases.test_case_non_existent_file)": "PASS",
+    "test_case_retrieve_age (tmp_module.TestCases.test_case_retrieve_age)": "PASS",
+    "test_case_valid_json (tmp_module.TestCases.test_case_valid_json)": "PASS"
+  },
+  "BigCodeBench/31": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/32": {
+    "test_empty_tag (tmp_module.TestCases.test_empty_tag)": "PASS",
+    "test_h1_tag_found (tmp_module.TestCases.test_h1_tag_found)": "PASS",
+    "test_invalid_url_handling (tmp_module.TestCases.test_invalid_url_handling)": "PASS",
+    "test_malformed_html (tmp_module.TestCases.test_malformed_html)": "PASS",
+    "test_multiple_matching_tags (tmp_module.TestCases.test_multiple_matching_tags)": "PASS",
+    "test_nonexistent_tag (tmp_module.TestCases.test_nonexistent_tag)": "PASS",
+    "test_title_tag_found (tmp_module.TestCases.test_title_tag_found)": "PASS"
+  },
+  "BigCodeBench/33": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/34": {},
+  "BigCodeBench/35": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS"
+  },
+  "BigCodeBench/36": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS"
+  },
+  "BigCodeBench/37": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/38": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/39": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "FAIL",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "FAIL",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "FAIL",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "FAIL",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "FAIL"
+  },
+  "BigCodeBench/40": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/41": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/42": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/43": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS"
+  },
+  "BigCodeBench/44": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/45": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/46": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+    "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS"
+  },
+  "BigCodeBench/47": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/48": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+  },
+  "BigCodeBench/49": {
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "FAIL",
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS"
+  },
+  "BigCodeBench/50": {
+    "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+    "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+    "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+    "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+    "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+    "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS"
+  }
+}
