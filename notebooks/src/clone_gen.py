@@ -73,7 +73,7 @@ STRATEGY_HINTS = [
 ]
 
 # System prompt for the LLM
-SYSTEM_PROMPT = """You are a careful Python refactoring engine.
+SYSTEM_PROMPT_COMPLETE = """You are a careful Python refactoring engine.
 You produce a semantically equivalent variant (Type-4 clone) of the given function.
 Rules:
 - Output ONLY Python code in a single fenced block.
@@ -83,7 +83,7 @@ Rules:
 - Keep I/O contract identical (same return types, shapes, and exceptions).
 """
 
-def build_user_prompt(
+def build_user_prompt_complete(
     original_body: str,
     description: str,
     libs: list,
@@ -91,7 +91,7 @@ def build_user_prompt(
     strategy_hint: str
 ) -> str:
     """
-    Build a user prompt for the refactoring LLM.
+    Build a user prompt to generate type 4 clones.
 
     Args:
         original_body: The body of the original function (without 'def' line).
@@ -128,3 +128,29 @@ Your task:
 
 Return ONLY the code in a single ```python fenced block.
 """
+
+SYSTEM_PROMPT_MINIMAL = """You are a Python generation engine.
+You produce a Python code to a given function based on a textual description and function declaration.
+Rules:
+- Output ONLY Python code in a single fenced block.
+- Define exactly one function named `task_func` with the correct signature for the tests.
+"""
+
+def build_user_prompt_minimal(description: str, params: str, return_text: str)-> str:
+    """
+    Build a user prompt for the refactoring LLM without any .
+    Args:
+        the description of the task
+    Returns:
+        A formatted string prompt for the LLM.
+    """
+    return f"""
+
+    Your task:
+    - Generate a python implementation named `task_func` with the following arguments: {params}. 
+    - The implementation must have a single function to address this description: {description}.
+    - The implementation must return something based on this text: {return_text}.
+    - Do not add print statements
+
+    Generate ONLY the code in a single ```python fenced block.    
+    """

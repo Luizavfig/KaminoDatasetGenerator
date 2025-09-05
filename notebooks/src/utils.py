@@ -13,6 +13,15 @@ def normalize(dataset_split):
         description_list = doc_struct.get("description", [])
         description_text = " ".join(description_list)
 
+        # Extract return
+        returns_list = doc_struct.get("returns", [])
+        return_text = " ".join(returns_list)
+
+        
+        # Extract params
+        params_list = doc_struct.get("params", [])
+        params = " ".join(params_list)
+
         # Original code
         original_code = entry.get("canonical_solution", "")
 
@@ -33,6 +42,8 @@ def normalize(dataset_split):
             "description": description_text,
             "metadata": {
                 "libs": entry.get("libs", []),
+                "params": params,
+                "return_text": return_text,
                 "complete_prompt": complete_prompt
             }
         })
