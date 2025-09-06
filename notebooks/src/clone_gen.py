@@ -77,15 +77,14 @@ def load_existing_results(path):
 def merge_results(existing, new_entry):
     """
     Merge clones into existing results:
-    - If entry.id exists, update clones by strategy_hint.
+    - If entry.id exists, update clones by transformation.
     - If not, append new entry.
     """
     for entry in existing:
         if entry["id"] == new_entry["id"]:
-            # Map strategy_hint -> clone for fast replacement or addition
-            clone_map = {c["strategy_hint"]: c for c in entry.get("clones", [])}
+            clone_map = {c["transformation"]: c for c in entry.get("clones", [])}
             for clone in new_entry["clones"]:
-                clone_map[clone["strategy_hint"]] = clone
+                clone_map[clone["transformation"]] = clone
             entry["clones"] = list(clone_map.values())
             return existing
     # Entry not found, add it
@@ -95,13 +94,6 @@ def merge_results(existing, new_entry):
 
 
 
-# Strategy hints for the refactoring engine
-STRATEGY_HINTS = [
-    # Keep behavior identical; do shallow refactors
-    "- rename locals & args; reorder independent statements; introduce small helper vars; keep library calls and side-effects identical.",
-    "- replace simple loops with list/dict comprehensions where safe; adjust arithmetic with equivalent identities; keep signature & imports.",
-    "- wrap small expressions into temporary variables; change exception handling style without changing raised exceptions.",
-]
 
 # System prompt for the LLM
 SYSTEM_PROMPT_COMPLETE = """You are a careful Python refactoring engine.
@@ -119,7 +111,7 @@ def build_user_prompt_complete(
     description: str,
     libs: list,
     tests_snippet: str,
-    strategy_hint: str
+    nfrs: str
 ) -> str:
     """
     Build a user prompt to generate type 4 clones.
@@ -129,7 +121,6 @@ def build_user_prompt_complete(
         description: Short textual description of the function's behavior.
         libs: List of allowed/expected libraries.
         tests_snippet: Excerpt of unit tests for the function.
-        strategy_hint: One of the STRATEGY_HINTS to guide refactoring.
 
     Returns:
         A formatted string prompt for the LLM.
@@ -155,9 +146,11 @@ Unit test excerpt (do not hardcode values; just infer signature/contract):
 Your task:
 - Emit a semantically equivalent implementation named `task_func`.
 - Keep side effects and external calls intact where visible (e.g., urllib/os/json/pandas usage).
-- {strategy_hint}
+
+
+{NFRS[nfrs]}
+
 {MANDATORY_HINTS}
-Return ONLY the code in a single ```python fenced block.
 """
 
 SYSTEM_PROMPT_MINIMAL = """You are a Python generation engine.
@@ -169,10 +162,27 @@ Rules:
 
 MANDATORY_HINTS = """
 - Do not add print statements
-- Do to call the function inside the generated code.
+- Do to call the function you generated inside a print statement
+
+ Generate ONLY the code in a single ```python fenced block.   
 """
 
-def build_user_prompt_minimal(description: str, params: str, return_text: str)-> str:
+NFRS = {
+      "nfr0": """
+""",
+    "nfr1": """
+- generate code that is easier for a human to understand
+- the generated code should use as few libraries as possible
+""",
+    "nfr2": """
+- generate code that performs very well and is optimized
+- the generated code should use as many libraries as possible
+"""
+}
+
+
+
+def build_user_prompt_minimal(description: str, params: str, return_text: str, nfrs: str)-> str:
     """
     Build a user prompt for the refactoring LLM without any .
     Args:
@@ -186,8 +196,99 @@ def build_user_prompt_minimal(description: str, params: str, return_text: str)->
     - Generate a python implementation named `task_func` with the following arguments: {params}. 
     - The implementation must have a single function to address this description: {description}.
     - The implementation must return something based on this text: {return_text}.
-    {MANDATORY_HINTS}
-    
+    {NFRS[nfrs]}
 
-    Generate ONLY the code in a single ```python fenced block.    
+    {MANDATORY_HINTS}
     """
+
+# clone_runner.py
+import os, json
+from src.clone_gen import (
+    SYSTEM_PROMPT_COMPLETE,
+    build_user_prompt_minimal,
+    build_user_prompt_complete,
+    generate_clones,
+    load_existing_results,
+    merge_results,
+)
+
+def run_clone_generation(
+    dataset_path,
+    out_path,
+    n_entries,
+    clones_per_entry,
+    ollama_model,
+    llm_opts,
+    mode,  
+    nfrs
+):
+    """
+    Run clone generation for dataset entries.
+
+    Args:
+        dataset_path: Path to dataset JSON.
+        out_path: Where to save results.
+        n_entries: Number of entries to process.
+        clones_per_entry: Number of clones per entry.
+        ollama_model: Model name.
+        llm_opts: Dict of LLM options.
+        mode: "minimal" or "complete" (changes prompt strategy).
+        nfrs: non-functional requirements used in the prompt
+    """
+    with open(dataset_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    sample = data[:n_entries]
+    results = load_existing_results(out_path)
+
+    for i, entry in enumerate(sample, 1):
+        print(f"\nGenerating clones {i}/{len(sample)} for {entry['id']}")
+        clones = []
+
+        original_body = entry["original_code"]
+        tests_list    = entry["test"]
+        description   = entry.get("description", "")
+        tests_snippet = tests_list[0] if tests_list else ""
+
+        if mode == "minimal":
+            params      = entry.get("metadata", {}).get("params", [])
+            return_text = entry.get("metadata", {}).get("return_text", [])
+
+        elif mode == "complete":
+            libs = entry.get("metadata", {}).get("libs", [])
+
+        for k in range(clones_per_entry):
+            if mode == "minimal":
+                user_prompt = build_user_prompt_minimal(description, params, return_text,nfrs)
+
+            elif mode == "complete":
+                user_prompt = build_user_prompt_complete(original_body, description, libs, tests_snippet, nfrs)
+                
+
+            messages = [
+                {"role": "system", "content": SYSTEM_PROMPT_COMPLETE},
+                {"role": "user",   "content": user_prompt},
+            ]
+            try:
+                code = generate_clones(
+                    messages,
+                    model=ollama_model,
+                    options=llm_opts,
+                    expected_func_name="task_func",
+                )
+                clones.append({
+                    "model": ollama_model,
+                    "mode": mode,
+                    "code": code,
+                    "nfrs": nfrs,
+                    "transformation": f"{ollama_model}-{mode} {k+1} {nfrs}",
+                })
+            except Exception as e:
+                print(f" Error generating clone {k+1}: {e}")
+
+        new_entry = {"id": entry["id"], "clones": clones}
+        results = merge_results(results, new_entry)
+
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=2)
