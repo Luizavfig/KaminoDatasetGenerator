@@ -63,6 +63,37 @@ def generate_clones(messages, model, options, expected_func_name):
     code = force_function_name(code, expected_func_name)
     return code
 
+import os, json
+
+import os, json
+
+def load_existing_results(path):
+    """Load existing JSON results if the file exists, else return empty list."""
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def merge_results(existing, new_entry):
+    """
+    Merge clones into existing results:
+    - If entry.id exists, update clones by strategy_hint.
+    - If not, append new entry.
+    """
+    for entry in existing:
+        if entry["id"] == new_entry["id"]:
+            # Map strategy_hint -> clone for fast replacement or addition
+            clone_map = {c["strategy_hint"]: c for c in entry.get("clones", [])}
+            for clone in new_entry["clones"]:
+                clone_map[clone["strategy_hint"]] = clone
+            entry["clones"] = list(clone_map.values())
+            return existing
+    # Entry not found, add it
+    existing.append(new_entry)
+    return existing
+
+
+
 
 # Strategy hints for the refactoring engine
 STRATEGY_HINTS = [
@@ -125,7 +156,7 @@ Your task:
 - Emit a semantically equivalent implementation named `task_func`.
 - Keep side effects and external calls intact where visible (e.g., urllib/os/json/pandas usage).
 - {strategy_hint}
-
+{MANDATORY_HINTS}
 Return ONLY the code in a single ```python fenced block.
 """
 
@@ -134,6 +165,11 @@ You produce a Python code to a given function based on a textual description and
 Rules:
 - Output ONLY Python code in a single fenced block.
 - Define exactly one function named `task_func` with the correct signature for the tests.
+"""
+
+MANDATORY_HINTS = """
+- Do not add print statements
+- Do to call the function inside the generated code.
 """
 
 def build_user_prompt_minimal(description: str, params: str, return_text: str)-> str:
@@ -150,7 +186,8 @@ def build_user_prompt_minimal(description: str, params: str, return_text: str)->
     - Generate a python implementation named `task_func` with the following arguments: {params}. 
     - The implementation must have a single function to address this description: {description}.
     - The implementation must return something based on this text: {return_text}.
-    - Do not add print statements
+    {MANDATORY_HINTS}
+    
 
     Generate ONLY the code in a single ```python fenced block.    
     """
