@@ -99,23 +99,24 @@ def validate_with_unittest(code: str, tests: list) -> dict:
         os.remove(tmp_path)
 
 
-def run_original_tests(normalized_data, output_file):
-    results = {} 
-    for i,entry in enumerate(normalized_data): 
-        if(i>50):
-            break
+def run_original_tests(normalized_data, output_file): 
+    if os.path.exists(output_file):
+        with open(output_file, "r", encoding="utf-8") as f:
+            try:
+                results = json.load(f)
+            except json.JSONDecodeError:
+                results = {}
+    else:
+        results = {}
+        
+    for entry in normalized_data:
         tests_list = entry["test"]
         code = entry["original_code"]
-        test_results = validate_with_unittest(code,tests_list)
-        results[entry["id"]] = test_results
+        test_results = validate_with_unittest(code, tests_list) 
+        results[entry["id"]] = test_results 
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(results, f, indent=2, ensure_ascii=False) 
 
-   
-    os.makedirs(os.path.dirname(output_file), exist_ok=True)
-    # Save test results to JSON
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2, ensure_ascii=False)
-
-    print(f"Saved {len(results)} test results to {output_file}")
 
 
 def install_package(package):
@@ -138,3 +139,62 @@ def extract_required_packages(dataset):
         if isinstance(libs_val, list):
             packages.update(libs_val)
     return packages
+
+def analyze_test_results(data):
+    total_pass = 0
+    total_fail = 0
+    entries_with_failures = []
+    entries_all_fail = []
+
+    for entry_id, tests in data.items():
+        test_results = list(tests.values())
+        pass_count = test_results.count("PASS")
+        fail_count = test_results.count("FAIL")
+
+        total_pass += pass_count
+        total_fail += fail_count
+
+        # At least one FAIL
+        if fail_count > 0:
+            entries_with_failures.append(entry_id)
+
+        # All FAIL
+        if fail_count == len(test_results):
+            entries_all_fail.append(entry_id)
+
+    summary = {
+        "total_pass": total_pass,
+        "total_fail": total_fail,
+        "num_entries_with_failures": len(entries_with_failures),
+        "num_entries_all_fail": len(entries_all_fail),
+        "entries_with_failures": entries_with_failures,
+        "entries_all_fail": entries_all_fail,
+    }
+    return summary
+ 
+
+def filter_dataset(original_dataset_file, test_results_file, output_file):
+    # Load dataset (list of dicts with "id", "original_code", etc.)
+    with open(original_dataset_file, "r", encoding="utf-8") as f:
+        dataset = json.load(f) 
+
+    with open(test_results_file, "r", encoding="utf-8") as f:
+        test_results = json.load(f)
+
+    filtered_dataset = []
+
+    for entry in dataset:
+        entry_id = entry["id"] 
+
+        results = test_results[entry_id].values()
+
+        # Keep only if ALL tests pass
+        if all(r == "PASS" for r in results):
+            filtered_dataset.append(entry)
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(filtered_dataset, f, indent=2, ensure_ascii=False)
+
+    print(f"Filtered dataset saved to {output_file}")
+    print(f"Original entries: {len(dataset)}")
+    print(f"Filtered entries (all tests pass): {len(filtered_dataset)}")
