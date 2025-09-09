@@ -60,7 +60,8 @@ class TrackingTestResult(unittest.TextTestResult):
 
 def validate_with_unittest(code: str, tests: list) -> dict:
     """
-    Run code + tests and return per-test results as {test_name: "PASS"/"FAIL"}.
+    Run code + tests and return per-test results as {test_name: "PASS"/"FAIL"/"ERROR"}.
+    If any test fails to run due to an exception, mark it as "ERROR".
     """
     code_d = textwrap.dedent(code)
     tests_d = "\n\n".join(textwrap.dedent(t) for t in tests)
@@ -69,6 +70,7 @@ def validate_with_unittest(code: str, tests: list) -> dict:
         f.write(code_d + "\n\n" + tests_d)
         tmp_path = f.name
 
+    test_results = {}
     try:
         # Load module dynamically
         spec = importlib.util.spec_from_file_location("tmp_module", tmp_path)
@@ -79,24 +81,35 @@ def validate_with_unittest(code: str, tests: list) -> dict:
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromModule(tmp_module)
 
-        # Run with our tracking TestResult
-        stream = open(os.devnull, 'w')  # suppress default TextTestRunner output
+        # Run tests with tracking
+        stream = open(os.devnull, 'w')  # suppress default output
         runner = unittest.TextTestRunner(stream=stream, resultclass=TrackingTestResult)
         result = runner.run(suite)
 
-        test_results = {}
-        for test_case, _ in result.failures + result.errors:
-            test_results[str(test_case)] = "FAIL"
+        # Mark successes
         for test_case in result.successes:
             test_results[str(test_case)] = "PASS"
+        # Mark failures and errors
+        for test_case, _ in result.failures + result.errors:
+            test_results[str(test_case)] = "FAIL"
 
-        return test_results
+        # If some tests in `tests` list were not executed due to validation issues, mark them as ERROR
+        executed_names = set(test_results.keys())
+        for t_code in tests:
+            # Use first line as test name approximation
+            first_line = t_code.strip().splitlines()[0]
+            if first_line not in executed_names:
+                test_results[first_line] = "ERROR"
 
     except Exception as e:
-        print("Validation error:", e)
-        return {}
+        # If code itself fails to load, mark all tests as ERROR
+        for t_code in tests:
+            first_line = t_code.strip().splitlines()[0]
+            test_results[first_line] = "ERROR"
     finally:
         os.remove(tmp_path)
+
+    return test_results
 
 
 def run_original_tests(normalized_data, output_file): 

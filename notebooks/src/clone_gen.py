@@ -1,4 +1,5 @@
 import re, textwrap, requests, ast, astor
+FUNCTION_NAME = "task_func"  
 def call_ollama_chat(messages, model, options):
     """
     Call Ollama's /api/chat with role-based messages.
@@ -29,7 +30,7 @@ def extract_python_code(text: str) -> str:
     m = re.search(r"```\s*(.*?)```", text, flags=re.S) 
     return (m.group(1).strip() if m else text.strip())
 
-def force_function_name(code: str, expected="task_func"):
+def force_function_name(code: str, expected=FUNCTION_NAME):
     """
     Ensure the function is named `expected`.
     If the model wrote a different name, rename the top-level function.
@@ -96,12 +97,12 @@ def merge_results(existing, new_entry):
 
 
 # System prompt for the LLM
-SYSTEM_PROMPT_COMPLETE = """You are a careful Python refactoring engine.
+SYSTEM_PROMPT_COMPLETE = f"""You are a careful Python refactoring engine.
 You produce a semantically equivalent variant (Type-4 clone) of the given function.
 Rules:
 - Output ONLY Python code in a single fenced block.
-- Define exactly one function named `task_func` with the correct signature for the tests.
-- Keep the same external behavior, side-effects, and library usage (imports allowed).
+- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
+- Keep the same external behavior, side-effects.
 - Do NOT hardcode any test data or specific URLs or values from tests.
 - Keep I/O contract identical (same return types, shapes, and exceptions).
 """
@@ -144,7 +145,7 @@ Unit test excerpt (do not hardcode values; just infer signature/contract):
 
 
 Your task:
-- Emit a semantically equivalent implementation named `task_func`.
+- Emit a semantically equivalent implementation named `{FUNCTION_NAME}`.
 - Keep side effects and external calls intact where visible (e.g., urllib/os/json/pandas usage).
 
 
@@ -153,12 +154,32 @@ Your task:
 {MANDATORY_HINTS}
 """
 
-SYSTEM_PROMPT_MINIMAL = """You are a Python generation engine.
+SYSTEM_PROMPT_MINIMAL = f"""You are a Python generation engine.
 You produce a Python code to a given function based on a textual description and function declaration.
 Rules:
 - Output ONLY Python code in a single fenced block.
-- Define exactly one function named `task_func` with the correct signature for the tests.
+- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
 """
+
+SYSTEM_PROMPT_TO_NL = """You are a code summarizer.
+Your task is to read a Python function and explain, in natural language, what the function does.
+Be concise but precise, focusing on:
+- the purpose of the function
+- its parameters and return values
+- side effects (file I/O, network, database, etc.)
+- important edge cases handled
+Do NOT output code, only natural language explanation.
+"""
+
+SYSTEM_PROMPT_TO_REQ = """You are a requirements engineer.
+Your task is to read a Python function and elict requirements that represent it.
+Be concise but precise, focusing on:
+- The function signature (including params)
+- return values
+- important edge cases handled
+Do NOT output code, only requirements defintion.
+"""
+
 
 MANDATORY_HINTS = """
 - Do not add print statements
@@ -193,7 +214,7 @@ def build_user_prompt_minimal(description: str, params: str, return_text: str, n
     return f"""
 
     Your task:
-    - Generate a python implementation named `task_func` with the following arguments: {params}. 
+    - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
     - The implementation must have a single function to address this description: {description}.
     - The implementation must return something based on this text: {return_text}.
     {NFRS[nfrs]}
@@ -201,10 +222,85 @@ def build_user_prompt_minimal(description: str, params: str, return_text: str, n
     {MANDATORY_HINTS}
     """
 
-# clone_runner.py
+def code_to_nl_description(code, nl_model, llm_opts):
+    """
+    Ask the LLM to summarize code into natural language.
+    """
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT_TO_NL},
+        {"role": "user", "content": f"Summarize the following function:\n\n```python\n{code}\n```"}
+    ]
+    return call_ollama_chat(messages, nl_model, llm_opts)
+
+def code_to_req(code, nl_model, llm_opts):
+    """
+    Ask the LLM to elict requirements from code.
+    """
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT_TO_REQ},
+        {"role": "user", "content": f"Elict requirements from the following function:\n\n```python\n{code}\n```"}
+    ]
+    return call_ollama_chat(messages, nl_model, llm_opts)
+
+
+def build_user_prompt_from_translation(description: str, params: list, return_text: str, nfrs: str) -> str:
+    return f"""
+You are given a natural language description of a function:
+
+{description}
+
+Your task:
+- Implement the function as `{FUNCTION_NAME}` with arguments: {params}.
+- The implementation must return something based on this text: {return_text}.
+{NFRS[nfrs]}
+
+{MANDATORY_HINTS}
+"""
+
+# code_to_nl.py
 import os, json
-from src.clone_gen import (
-    SYSTEM_PROMPT_COMPLETE,
+from src.clone_gen import call_ollama_chat
+
+SYSTEM_PROMPT_TO_NL = """You are a code summarizer.
+Your task is to read a Python function and explain, in natural language, what the function does.
+Be concise but precise, focusing on:
+- the purpose of the function
+- its parameters and return values
+- side effects (file I/O, network, database, etc.)
+- important edge cases handled
+Do NOT output code, only natural language explanation.
+"""
+
+
+
+
+def add_generated_descriptions(dataset_path, nl_model, llm_opts, n_entries):
+    """
+    Loads dataset, adds a "gen_description" field to each entry, 
+    and saves it back to the same file.
+    """
+    with open(dataset_path, "r", encoding="utf-8") as f:
+        data = json.load(f) 
+    for i, entry in enumerate(data[:n_entries], 1):
+        print(f"[{i}/{n_entries}] Generating description for {entry['id']}")
+        code = entry["original_code"]
+        try:
+            description_nl = code_to_nl_description(code, nl_model, llm_opts)
+            requirement = code_to_req(code, nl_model, llm_opts)
+            entry["gen_description"] = description_nl.strip()
+            entry["gen_requirement"] = requirement.strip()
+        except Exception as e:
+            print(f"  Error generating description for {entry['id']}: {e}")
+            entry["gen_description"] = ""
+            entry["gen_requirement"] = ""
+
+    with open(dataset_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+    print(f"Updated dataset with 'gen_description' and 'gen_requirement' in {dataset_path}")
+
+
+from src.clone_gen import ( 
     build_user_prompt_minimal,
     build_user_prompt_complete,
     generate_clones,
@@ -219,7 +315,7 @@ def run_clone_generation(
     clones_per_entry,
     ollama_model,
     llm_opts,
-    mode,  
+    context,  
     nfrs
 ):
     """
@@ -232,7 +328,7 @@ def run_clone_generation(
         clones_per_entry: Number of clones per entry.
         ollama_model: Model name.
         llm_opts: Dict of LLM options.
-        mode: "minimal" or "complete" (changes prompt strategy).
+        context: "minimal", "translation" or "complete" (changes prompt strategy).
         nfrs: non-functional requirements used in the prompt
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
@@ -248,25 +344,27 @@ def run_clone_generation(
         original_body = entry["original_code"]
         tests_list    = entry["test"]
         description   = entry.get("description", "")
+        gen_description   = entry.get("gen_description", "")
         tests_snippet = tests_list[0] if tests_list else ""
-
-        if mode == "minimal":
-            params      = entry.get("metadata", {}).get("params", [])
-            return_text = entry.get("metadata", {}).get("return_text", [])
-
-        elif mode == "complete":
-            libs = entry.get("metadata", {}).get("libs", [])
+        params      = entry.get("metadata", {}).get("params", [])
+        return_text = entry.get("metadata", {}).get("return_text", [])
+        libs = entry.get("metadata", {}).get("libs", [])
 
         for k in range(clones_per_entry):
-            if mode == "minimal":
+            system_prompt = SYSTEM_PROMPT_MINIMAL
+            if context == "minimal":
                 user_prompt = build_user_prompt_minimal(description, params, return_text,nfrs)
+            
+            elif context == "translation":
+               user_prompt = build_user_prompt_minimal(gen_description, params, return_text,nfrs)
 
-            elif mode == "complete":
+            elif context == "complete":
                 user_prompt = build_user_prompt_complete(original_body, description, libs, tests_snippet, nfrs)
+                system_prompt = SYSTEM_PROMPT_COMPLETE
                 
 
             messages = [
-                {"role": "system", "content": SYSTEM_PROMPT_COMPLETE},
+                {"role": "system", "content": system_prompt},
                 {"role": "user",   "content": user_prompt},
             ]
             try:
@@ -274,14 +372,14 @@ def run_clone_generation(
                     messages,
                     model=ollama_model,
                     options=llm_opts,
-                    expected_func_name="task_func",
+                    expected_func_name=FUNCTION_NAME,
                 )
                 clones.append({
                     "model": ollama_model,
-                    "mode": mode,
+                    "context": context,
                     "code": code,
                     "nfrs": nfrs,
-                    "transformation": f"{ollama_model}-{mode} {k+1} {nfrs}",
+                    "transformation": f"{ollama_model}-{context} {k+1} {nfrs}",
                 })
             except Exception as e:
                 print(f" Error generating clone {k+1}: {e}")
