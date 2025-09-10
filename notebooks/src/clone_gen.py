@@ -93,20 +93,6 @@ def merge_results(existing, new_entry):
     return existing
 
 
-
-
-
-# System prompt for the LLM
-SYSTEM_PROMPT_COMPLETE = f"""You are a careful Python refactoring engine.
-You produce a semantically equivalent variant (Type-4 clone) of the given function.
-Rules:
-- Output ONLY Python code in a single fenced block.
-- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
-- Keep the same external behavior, side-effects.
-- Do NOT hardcode any test data or specific URLs or values from tests.
-- Keep I/O contract identical (same return types, shapes, and exceptions).
-"""
-
 def build_user_prompt_complete(
     original_body: str,
     description: str,
@@ -181,6 +167,17 @@ Do NOT output code, only requirements defintion.
 """
 
 
+
+SYSTEM_PROMPT_COMPLETE = f"""You are a careful Python refactoring engine.
+You produce a semantically equivalent variant (Type-4 clone) of the given function.
+Rules:
+- Output ONLY Python code in a single fenced block.
+- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
+- Keep the same external behavior, side-effects.
+- Do NOT hardcode any test data or specific URLs or values from tests.
+- Keep I/O contract identical (same return types, shapes, and exceptions).
+"""
+
 MANDATORY_HINTS = """
 - Do not add print statements
 - Do to call the function you generated inside a print statement
@@ -242,21 +239,6 @@ def code_to_req(code, nl_model, llm_opts):
     ]
     return call_ollama_chat(messages, nl_model, llm_opts)
 
-
-def build_user_prompt_from_translation(description: str, params: list, return_text: str, nfrs: str) -> str:
-    return f"""
-You are given a natural language description of a function:
-
-{description}
-
-Your task:
-- Implement the function as `{FUNCTION_NAME}` with arguments: {params}.
-- The implementation must return something based on this text: {return_text}.
-{NFRS[nfrs]}
-
-{MANDATORY_HINTS}
-"""
-
 # code_to_nl.py
 import os, json
 from src.clone_gen import call_ollama_chat
@@ -271,18 +253,15 @@ Be concise but precise, focusing on:
 Do NOT output code, only natural language explanation.
 """
 
-
-
-
 def add_generated_descriptions(dataset_path, nl_model, llm_opts, n_entries):
     """
-    Loads dataset, adds a "gen_description" field to each entry, 
+    Loads dataset, adds a "gen_description" and "gen_requirements" field to each entry, 
     and saves it back to the same file.
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f) 
     for i, entry in enumerate(data[:n_entries], 1):
-        print(f"[{i}/{n_entries}] Generating description for {entry['id']}")
+        print(f"[{i}/{n_entries}] Generating description and requirements for {entry['id']}")
         code = entry["original_code"]
         try:
             description_nl = code_to_nl_description(code, nl_model, llm_opts)
@@ -290,7 +269,7 @@ def add_generated_descriptions(dataset_path, nl_model, llm_opts, n_entries):
             entry["gen_description"] = description_nl.strip()
             entry["gen_requirement"] = requirement.strip()
         except Exception as e:
-            print(f"  Error generating description for {entry['id']}: {e}")
+            print(f"  Error generating for {entry['id']}: {e}")
             entry["gen_description"] = ""
             entry["gen_requirement"] = ""
 
@@ -299,6 +278,65 @@ def add_generated_descriptions(dataset_path, nl_model, llm_opts, n_entries):
 
     print(f"Updated dataset with 'gen_description' and 'gen_requirement' in {dataset_path}")
 
+SYSTEM_PROMPT_TRANSLATION = """You are a software developer.
+Your task is to translate a Python function to a different programming language: {language}.
+Be concise but precise, focusing on:
+- the same behavior of the function
+- its parameters and return values
+- side effects (file I/O, network, database, etc.)
+- important edge cases handled
+- Do not add print statements
+- Do to call the function you generated inside a print statement
+
+ Generate ONLY the code in a single {language} fenced block.   
+"""
+
+def build_user_prompt_from_translation(translation: str, language: str, params: list, return_text: str, nfrs: str) -> str:
+    return f"""
+You are given a function code in {language}.
+
+{translation}
+
+Your task:
+- Translate this function to Python
+- Implement the function as `{FUNCTION_NAME}` with arguments: {params}.
+- The implementation must return something based on this text: {return_text}.
+{NFRS[nfrs]}
+
+{MANDATORY_HINTS}
+"""
+
+def code_to_code(code, language, nl_model, llm_opts):
+    """
+    Ask the LLM to translate the code into given language.
+    """
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT_TRANSLATION.format(language=language)},
+        {"role": "user", "content": f"Translate the following function to {language}:\n\n```python\n{code}\n```"}
+    ]
+    return call_ollama_chat(messages, nl_model, llm_opts)
+
+def add_generated_translation(dataset_path, code_model, llm_opts, n_entries, language):
+    """
+    Loads dataset, adds a "gen_translation" field to each entry, 
+    and saves it back to the same file.
+    """
+    with open(dataset_path, "r", encoding="utf-8") as f:
+        data = json.load(f) 
+    for i, entry in enumerate(data[:n_entries], 1):
+        print(f"[{i}/{n_entries}] Generating code translation to {language} for {entry['id']}")
+        code = entry["original_code"]
+        try:
+            java_translation = code_to_code(code, language ,code_model, llm_opts)
+            entry["gen_translation"] = java_translation.strip()
+        except Exception as e:
+            print(f"  Error generating for {entry['id']}: {e}")
+            entry["gen_translation"] = "" 
+
+    with open(dataset_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+    print(f"Updated dataset with 'gen_translation' in {dataset_path}")
 
 from src.clone_gen import ( 
     build_user_prompt_minimal,
@@ -328,7 +366,7 @@ def run_clone_generation(
         clones_per_entry: Number of clones per entry.
         ollama_model: Model name.
         llm_opts: Dict of LLM options.
-        context: "minimal", "translation" or "complete" (changes prompt strategy).
+        context: changes prompt strategy.
         nfrs: non-functional requirements used in the prompt
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
@@ -345,6 +383,8 @@ def run_clone_generation(
         tests_list    = entry["test"]
         description   = entry.get("description", "")
         gen_description   = entry.get("gen_description", "")
+        gen_requirement = entry.get("gen_requirement", "")
+        gen_translation = entry.get("gen_translation", "")
         tests_snippet = tests_list[0] if tests_list else ""
         params      = entry.get("metadata", {}).get("params", [])
         return_text = entry.get("metadata", {}).get("return_text", [])
@@ -353,13 +393,20 @@ def run_clone_generation(
         for k in range(clones_per_entry):
             system_prompt = SYSTEM_PROMPT_MINIMAL
             if context == "minimal":
-                user_prompt = build_user_prompt_minimal(description, params, return_text,nfrs)
+                user_prompt = build_user_prompt_minimal(description, params, return_text, nfrs)
             
-            elif context == "translation":
-               user_prompt = build_user_prompt_minimal(gen_description, params, return_text,nfrs)
+            elif context == "description":
+               user_prompt = build_user_prompt_minimal(gen_description, params, return_text, nfrs)
+
+            elif context == "requirements":
+               user_prompt = build_user_prompt_minimal(gen_requirement, params, return_text, nfrs)
 
             elif context == "complete":
                 user_prompt = build_user_prompt_complete(original_body, description, libs, tests_snippet, nfrs)
+                system_prompt = SYSTEM_PROMPT_COMPLETE
+
+            elif context == "translation":
+                user_prompt = build_user_prompt_from_translation(gen_translation, "Java", params, return_text, nfrs) # this will be an iteration with multi languages
                 system_prompt = SYSTEM_PROMPT_COMPLETE
                 
 

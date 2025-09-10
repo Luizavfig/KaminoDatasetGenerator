@@ -96,8 +96,12 @@ def validate_with_unittest(code: str, tests: list) -> dict:
         # If some tests in `tests` list were not executed due to validation issues, mark them as ERROR
         executed_names = set(test_results.keys())
         for t_code in tests:
-            # Use first line as test name approximation
             first_line = t_code.strip().splitlines()[0]
+
+            # Skip if it's not a test function/class definition
+            if not (first_line.startswith("def test") or first_line.startswith("class ")):
+                continue
+
             if first_line not in executed_names:
                 test_results[first_line] = "ERROR"
 
