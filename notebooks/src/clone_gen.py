@@ -11,6 +11,7 @@ def call_ollama_chat(messages, model, options):
             "model": model,
             "messages": messages,
             "stream": False,
+            "think": False,
             "options": options
         },
         timeout=600
@@ -18,17 +19,27 @@ def call_ollama_chat(messages, model, options):
     resp.raise_for_status()
     data = resp.json()
     return data["message"]["content"]
+import re
 
 def extract_python_code(text: str) -> str:
     """
     Extract the first ```python ... ``` fenced block;
-    if none found, return the whole text.
+    if none found, return the whole text up to the first ```...```.
+    If extra text follows after the code block, it will be ignored.
     """
+    # Case 1: explicit python fence
     m = re.search(r"```python\s*(.*?)```", text, flags=re.S)
     if m:
         return m.group(1).strip()
-    m = re.search(r"```\s*(.*?)```", text, flags=re.S) 
-    return (m.group(1).strip() if m else text.strip())
+
+    # Case 2: any fenced block (not explicitly python)
+    m = re.search(r"```\s*(.*?)```", text, flags=re.S)
+    if m:
+        return m.group(1).strip()
+
+    # Case 3: no fenced block → just return the whole thing
+    return text.strip()
+
 
 def force_function_name(code: str, expected=FUNCTION_NAME):
     """
@@ -140,12 +151,6 @@ Your task:
 {MANDATORY_HINTS}
 """
 
-SYSTEM_PROMPT_MINIMAL = f"""You are a Python generation engine.
-You produce a Python code to a given function based on a textual description and function declaration.
-Rules:
-- Output ONLY Python code in a single fenced block.
-- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
-"""
 
 SYSTEM_PROMPT_TO_NL = """You are a code summarizer.
 Your task is to read a Python function and explain, in natural language, what the function does.
@@ -166,6 +171,13 @@ Be concise but precise, focusing on:
 Do NOT output code, only requirements defintion.
 """
 
+SYSTEM_PROMPT_MINIMAL = f"""You are a Python generation engine.
+You produce a Python code to a given function based on a textual description and function declaration.
+Rules:
+- Output ONLY Python code in a single fenced block.
+- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
+"""
+
 
 
 SYSTEM_PROMPT_COMPLETE = f"""You are a careful Python refactoring engine.
@@ -179,6 +191,7 @@ Rules:
 """
 
 MANDATORY_HINTS = """
+- Do NOT output explanations, comments, reasoning, or any text, **only valid Python code**.
 - Do not add print statements
 - Do to call the function you generated inside a print statement
 
