@@ -1,25 +1,32 @@
-import re, textwrap, requests, ast, astor
+import re, textwrap, requests, ast, astor, re, os, json 
+
 FUNCTION_NAME = "task_func"  
-def call_ollama_chat(messages, model, options):
+def call_ollama_chat(messages, model, options, remote=False):
     """
     Call Ollama's /api/chat with role-based messages.
     Returns raw string content from the assistant.
     """
-    resp = requests.post(
-        "http://localhost:11434/api/chat",
-        json={
-            "model": model,
-            "messages": messages,
-            "stream": False,
-            "think": False,
-            "options": options
-        },
-        timeout=600
-    )
+    
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))    
+    if(remote):
+        config_file = os.path.join(root_dir, "ollama_config_remote.json")
+    else:
+        config_file = os.path.join(root_dir, "ollama_config_local.json")
+        
+    with open(config_file, "r", encoding="utf-8") as f:
+        config = json.load(f)
+
+    url = config["url"]
+    timeout = config.get("timeout", 600)
+    payload = config["json"]
+    payload["model"] = model
+    payload["messages"] = messages
+    payload["options"] = options
+
+    resp = requests.post(url, json=payload, timeout=timeout)
     resp.raise_for_status()
     data = resp.json()
     return data["message"]["content"]
-import re
 
 def extract_python_code(text: str) -> str:
     """
@@ -171,6 +178,25 @@ Be concise but precise, focusing on:
 Do NOT output code, only requirements defintion.
 """
 
+SYSTEM_PROMPT_TO_UML = """You are a UML engineer.
+Your task is to read a Python function and create a state-machine diagram in PlanUML that represent it.
+Be concise but precise, focusing on:
+- The behavior of the function
+- Type of Input
+- Type of output
+- Important edge cases handled
+- Avoid using library or function specific names
+- Try to make the diagram in a generic way
+Do NOT output code or text, only the PlantUML state-machine.
+"""
+
+SYSTEM_PROMPT_FROM_UML = f"""You are a Python developer.
+You produce a Python code to a given function based on a state-machine representation in PlantUML and function declaration.
+Rules:
+- Output ONLY Python code in a single fenced block.
+- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
+"""
+
 SYSTEM_PROMPT_MINIMAL = f"""You are a Python generation engine.
 You produce a Python code to a given function based on a textual description and function declaration.
 Rules:
@@ -211,6 +237,24 @@ NFRS = {
 """
 }
 
+def build_user_prompt_uml(uml: str, params: str, return_text: str, nfrs: str)-> str:
+    """
+    Build a user prompt for the refactoring LLM without any .
+    Args:
+        the description of the task
+    Returns:
+        A formatted string prompt for the LLM.
+    """
+    return f"""
+
+    Your task:
+    - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
+    - The implementation must return something based on this text: {return_text}.
+    - The implementation must have a single function and should replicate the behavior described in this PlantUML state-machine diagram: {uml}.
+    {NFRS[nfrs]}
+
+    {MANDATORY_HINTS}
+    """
 
 
 def build_user_prompt_minimal(description: str, params: str, return_text: str, nfrs: str)-> str:
@@ -252,9 +296,17 @@ def code_to_req(code, nl_model, llm_opts):
     ]
     return call_ollama_chat(messages, nl_model, llm_opts)
 
-# code_to_nl.py
-import os, json
-from src.clone_gen import call_ollama_chat
+def code_to_uml(code, uml_model, llm_opts):
+    """
+    Ask the LLM to create state-machine from code.
+    """
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT_TO_UML},
+        {"role": "user", "content": f"Create a PlantUML state-machine diagram from the following function:\n\n```python\n{code}\n```"}
+    ]
+    return call_ollama_chat(messages, uml_model, llm_opts)
+
+
 
 SYSTEM_PROMPT_TO_NL = """You are a code summarizer.
 Your task is to read a Python function and explain, in natural language, what the function does.
@@ -268,7 +320,7 @@ Do NOT output code, only natural language explanation.
 
 def add_generated_descriptions(dataset_path, nl_model, llm_opts, n_entries):
     """
-    Loads dataset, adds a "gen_description" and "gen_requirements" field to each entry, 
+    Loads dataset, adds a "gen_description", "gen_requirements", and "gen_uml" field to each entry, 
     and saves it back to the same file.
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
@@ -279,12 +331,15 @@ def add_generated_descriptions(dataset_path, nl_model, llm_opts, n_entries):
         try:
             description_nl = code_to_nl_description(code, nl_model, llm_opts)
             requirement = code_to_req(code, nl_model, llm_opts)
+            uml = code_to_uml(code, nl_model, llm_opts)
             entry["gen_description"] = description_nl.strip()
             entry["gen_requirement"] = requirement.strip()
+            entry["gen_uml"] = uml.strip()
         except Exception as e:
             print(f"  Error generating for {entry['id']}: {e}")
             entry["gen_description"] = ""
             entry["gen_requirement"] = ""
+            entry["gen_uml"] = ""
 
     with open(dataset_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
@@ -398,6 +453,7 @@ def run_clone_generation(
         gen_description   = entry.get("gen_description", "")
         gen_requirement = entry.get("gen_requirement", "")
         gen_translation = entry.get("gen_translation", "")
+        gen_uml = entry.get("gen_uml", "")
         tests_snippet = tests_list[0] if tests_list else ""
         params      = entry.get("metadata", {}).get("params", [])
         return_text = entry.get("metadata", {}).get("return_text", [])
@@ -405,6 +461,7 @@ def run_clone_generation(
 
         for k in range(clones_per_entry):
             system_prompt = SYSTEM_PROMPT_MINIMAL
+            user_prompt = ""
             if context == "minimal":
                 user_prompt = build_user_prompt_minimal(description, params, return_text, nfrs)
             
@@ -413,6 +470,9 @@ def run_clone_generation(
 
             elif context == "requirements":
                user_prompt = build_user_prompt_minimal(gen_requirement, params, return_text, nfrs)
+               
+            elif context == "uml":
+               user_prompt = build_user_prompt_uml(gen_uml, params, return_text, nfrs)
 
             elif context == "complete":
                 user_prompt = build_user_prompt_complete(original_body, description, libs, tests_snippet, nfrs)
