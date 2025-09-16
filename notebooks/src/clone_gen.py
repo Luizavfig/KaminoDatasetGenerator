@@ -228,13 +228,30 @@ NFRS = {
       "nfr0": """
 """,
     "nfr1": """
-- generate code that is easier for a human to understand
 - the generated code should use as few libraries as possible
 """,
-    "nfr2": """
-- generate code that performs very well and is optimized
+  "nfr2": """
 - the generated code should use as many libraries as possible
 """
+,
+"nfr3":""" 
+Runtime & Reliability Quality
+- generate code that focuses on Performance Efficiency, by using system resources effectively and delivering fast, responsive performance.
+- generate code that focuses on Reliability, by consistent performance, fault tolerance, and the ability to recover from failures.
+- generate code that focuses on Safety, by protecting people, assets, and the environment from potential harm, and ensuring fail-safe behavior.""", 
+
+ "nfr4":"""
+User Experience & Security
+- generate code that focuses on Usability, by ease of use, learnability, user satisfaction, and accessibility for all users.
+- generate code that focuses on Security, by protecting data, preventing unauthorized access, and ensuring authenticity and accountability.
+- generate code that focuses on Compatibility, by operating smoothly with other products and exchanging information correctly.
+
+""",
+ "nfr5":"""
+ Maintainability & Adaptability
+- generate code that focuses on Maintainability, by ease of modification, testing, analysis, and reuse of software components.
+- generate code that focuses on Portability, by adapting software to different environments and ensuring smooth installation and replacement
+""",
 }
 
 def build_user_prompt_uml(uml: str, params: str, return_text: str, nfrs: str)-> str:
@@ -251,6 +268,27 @@ def build_user_prompt_uml(uml: str, params: str, return_text: str, nfrs: str)-> 
     - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
     - The implementation must return something based on this text: {return_text}.
     - The implementation must have a single function and should replicate the behavior described in this PlantUML state-machine diagram: {uml}.
+    {NFRS[nfrs]}
+
+    {MANDATORY_HINTS}
+    """
+
+
+def build_user_prompt_ast(gen_ast: str, description: str, params: str, return_text: str, nfrs: str)-> str:
+    """
+    Build a user prompt for the refactoring LLM with AST .
+    Args:
+        the description of the task
+    Returns:
+        A formatted string prompt for the LLM.
+    """
+    return f"""
+
+    Your task:
+    - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
+    - The implementation must return something based on this text: {return_text}.
+    - The implmentation must implement the following behavior: {description}
+    - The implementation abstract syntax tree (AST) should be a different as possible from this one: {gen_ast}
     {NFRS[nfrs]}
 
     {MANDATORY_HINTS}
@@ -306,6 +344,14 @@ def code_to_uml(code, uml_model, llm_opts):
     ]
     return call_ollama_chat(messages, uml_model, llm_opts)
 
+def code_to_ast(code):
+    try:
+        code_str = code.encode().decode("unicode_escape")
+        tree = ast.parse(code_str)
+        return ast.dump(tree, indent=2, annotate_fields=True, include_attributes=False)
+    
+    except SyntaxError as e:
+        return f"Invalid Python code: {e}"
 
 
 SYSTEM_PROMPT_TO_NL = """You are a code summarizer.
@@ -318,33 +364,36 @@ Be concise but precise, focusing on:
 Do NOT output code, only natural language explanation.
 """
 
-def add_generated_descriptions(dataset_path, nl_model, llm_opts, n_entries):
+def add_generated_fields(dataset_path, nl_model, llm_opts, n_entries):
     """
-    Loads dataset, adds a "gen_description", "gen_requirements", and "gen_uml" field to each entry, 
+    Loads dataset, adds "gen_" fields to each entry, 
     and saves it back to the same file.
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f) 
     for i, entry in enumerate(data[:n_entries], 1):
-        print(f"[{i}/{n_entries}] Generating description and requirements for {entry['id']}")
+        print(f"[{i}/{n_entries}] Generating gen_ columns for {entry['id']}")
         code = entry["original_code"]
         try:
-            description_nl = code_to_nl_description(code, nl_model, llm_opts)
-            requirement = code_to_req(code, nl_model, llm_opts)
-            uml = code_to_uml(code, nl_model, llm_opts)
-            entry["gen_description"] = description_nl.strip()
-            entry["gen_requirement"] = requirement.strip()
-            entry["gen_uml"] = uml.strip()
+            # description_nl = code_to_nl_description(code, nl_model, llm_opts)
+            #requirement = code_to_req(code, nl_model, llm_opts)
+            #uml = code_to_uml(code, nl_model, llm_opts)
+            ast = code_to_ast(code)
+           # entry["gen_description"] = description_nl.strip()
+            #entry["gen_requirement"] = requirement.strip()
+            #entry["gen_uml"] = uml.strip()
+            entry["gen_ast"] = ast.strip()
         except Exception as e:
             print(f"  Error generating for {entry['id']}: {e}")
-            entry["gen_description"] = ""
+           # entry["gen_description"] = ""
             entry["gen_requirement"] = ""
             entry["gen_uml"] = ""
+            entry["gen_ast"] = ""
 
     with open(dataset_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 
-    print(f"Updated dataset with 'gen_description' and 'gen_requirement' in {dataset_path}")
+    print(f"Updated dataset with gen_ columns in {dataset_path}")
 
 SYSTEM_PROMPT_TRANSLATION = """You are a software developer.
 Your task is to translate a Python function to a different programming language: {language}.
@@ -450,10 +499,12 @@ def run_clone_generation(
         original_body = entry["original_code"]
         tests_list    = entry["test"]
         description   = entry.get("description", "")
-        gen_description   = entry.get("gen_description", "")
+        #gen_description   = entry.get("gen_description", "")
         gen_requirement = entry.get("gen_requirement", "")
         gen_translation = entry.get("gen_translation", "")
         gen_uml = entry.get("gen_uml", "")
+        gen_ast = entry.get("gen_ast", "")
+        
         tests_snippet = tests_list[0] if tests_list else ""
         params      = entry.get("metadata", {}).get("params", [])
         return_text = entry.get("metadata", {}).get("return_text", [])
@@ -465,14 +516,17 @@ def run_clone_generation(
             if context == "minimal":
                 user_prompt = build_user_prompt_minimal(description, params, return_text, nfrs)
             
-            elif context == "description":
-               user_prompt = build_user_prompt_minimal(gen_description, params, return_text, nfrs)
+         #   elif context == "description":
+          #     user_prompt = build_user_prompt_minimal(gen_description, params, return_text, nfrs)
 
             elif context == "requirements":
                user_prompt = build_user_prompt_minimal(gen_requirement, params, return_text, nfrs)
                
             elif context == "uml":
                user_prompt = build_user_prompt_uml(gen_uml, params, return_text, nfrs)
+            
+            elif context == "ast":
+               user_prompt = build_user_prompt_ast(gen_ast, description, params, return_text, nfrs)
 
             elif context == "complete":
                 user_prompt = build_user_prompt_complete(original_body, description, libs, tests_snippet, nfrs)
