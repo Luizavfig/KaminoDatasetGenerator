@@ -1,5 +1,5 @@
 {
-  "url": "http://localhost:11434/api/chat",
+  "url": "http://localhost:3333/api/chat",
   "timeout": 600,
   "json": {
     "model": "",

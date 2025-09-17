@@ -1,14 +1,15 @@
 import re, textwrap, requests, ast, astor, re, os, json 
 
 FUNCTION_NAME = "task_func"  
-def call_ollama_chat(messages, model, options, remote=False):
+REMOTE_OLLAMA = False
+def call_ollama_chat(messages, model, options):
     """
     Call Ollama's /api/chat with role-based messages.
     Returns raw string content from the assistant.
     """
     
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))    
-    if(remote):
+    if(REMOTE_OLLAMA):
         config_file = os.path.join(root_dir, "ollama_config_remote.json")
     else:
         config_file = os.path.join(root_dir, "ollama_config_local.json")
@@ -372,16 +373,16 @@ def add_generated_fields(dataset_path, nl_model, llm_opts, n_entries):
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f) 
     for i, entry in enumerate(data[:n_entries], 1):
-        print(f"[{i}/{n_entries}] Generating gen_ columns for {entry['id']}")
+        print(f"[{i}/{n_entries}] Generating gen_ fields for {entry['id']}")
         code = entry["original_code"]
         try:
-            # description_nl = code_to_nl_description(code, nl_model, llm_opts)
-            #requirement = code_to_req(code, nl_model, llm_opts)
-            #uml = code_to_uml(code, nl_model, llm_opts)
+            #description_nl = code_to_nl_description(code, nl_model, llm_opts)
+            requirement = code_to_req(code, nl_model, llm_opts)
+            uml = code_to_uml(code, nl_model, llm_opts)
             ast = code_to_ast(code)
            # entry["gen_description"] = description_nl.strip()
-            #entry["gen_requirement"] = requirement.strip()
-            #entry["gen_uml"] = uml.strip()
+            entry["gen_requirement"] = requirement.strip()
+            entry["gen_uml"] = uml.strip()
             entry["gen_ast"] = ast.strip()
         except Exception as e:
             print(f"  Error generating for {entry['id']}: {e}")
@@ -393,7 +394,7 @@ def add_generated_fields(dataset_path, nl_model, llm_opts, n_entries):
     with open(dataset_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 
-    print(f"Updated dataset with gen_ columns in {dataset_path}")
+    print(f"Updated dataset with gen_ fields in {dataset_path}")
 
 SYSTEM_PROMPT_TRANSLATION = """You are a software developer.
 Your task is to translate a Python function to a different programming language: {language}.
