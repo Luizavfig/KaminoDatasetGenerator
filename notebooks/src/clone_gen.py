@@ -1,4 +1,5 @@
 import re, textwrap, requests, ast, astor, re, os, json 
+from .prompts import (SYSTEM_PROMPT_COMPLETE, SYSTEM_PROMPT_FROM_UML, SYSTEM_PROMPT_MINIMAL, SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_TO_UML, build_user_prompt_ast, build_user_prompt_complete, build_user_prompt_minimal, build_user_prompt_uml, build_user_prompt_from_translation)
 
 FUNCTION_NAME = "task_func"  
 REMOTE_OLLAMA = False
@@ -83,10 +84,6 @@ def generate_clones(messages, model, options, expected_func_name):
     code = force_function_name(code, expected_func_name)
     return code
 
-import os, json
-
-import os, json
-
 def load_existing_results(path):
     """Load existing JSON results if the file exists, else return empty list."""
     if os.path.exists(path):
@@ -110,210 +107,6 @@ def merge_results(existing, new_entry):
     # Entry not found, add it
     existing.append(new_entry)
     return existing
-
-
-def build_user_prompt_complete(
-    original_body: str,
-    description: str,
-    libs: list,
-    tests_snippet: str,
-    nfrs: str
-) -> str:
-    """
-    Build a user prompt to generate type 4 clones.
-
-    Args:
-        original_body: The body of the original function (without 'def' line).
-        description: Short textual description of the function's behavior.
-        libs: List of allowed/expected libraries.
-        tests_snippet: Excerpt of unit tests for the function.
-
-    Returns:
-        A formatted string prompt for the LLM.
-    """
-    return f"""
-You will be shown:
-1) A short description and allowed libraries.
-2) The original function BODY (not including the def line).
-3) An excerpt of the unit tests (for signature and behavior cues). Do not overfit.
-
-Description:
-{description}
-
-Allowed/expected libraries (may import as needed): {libs}
-
-Original function BODY (indentation represents inside the function):
-{textwrap.dedent(original_body).strip()}
-
-Unit test excerpt (do not hardcode values; just infer signature/contract):
-{textwrap.shorten(textwrap.dedent(tests_snippet), width=2000, placeholder=" ... ")}
-
-
-Your task:
-- Emit a semantically equivalent implementation named `{FUNCTION_NAME}`.
-- Keep side effects and external calls intact where visible (e.g., urllib/os/json/pandas usage).
-
-
-{NFRS[nfrs]}
-
-{MANDATORY_HINTS}
-"""
-
-
-SYSTEM_PROMPT_TO_NL = """You are a code summarizer.
-Your task is to read a Python function and explain, in natural language, what the function does.
-Be concise but precise, focusing on:
-- the purpose of the function
-- its parameters and return values
-- side effects (file I/O, network, database, etc.)
-- important edge cases handled
-Do NOT output code, only natural language explanation.
-"""
-
-SYSTEM_PROMPT_TO_REQ = """You are a requirements engineer.
-Your task is to read a Python function and elict requirements that represent it.
-Be concise but precise, focusing on:
-- The function signature (including params)
-- return values
-- important edge cases handled
-Do NOT output code, only requirements defintion.
-"""
-
-SYSTEM_PROMPT_TO_UML = """You are a UML engineer.
-Your task is to read a Python function and create a state-machine diagram in PlanUML that represent it.
-Be concise but precise, focusing on:
-- The behavior of the function
-- Type of Input
-- Type of output
-- Important edge cases handled
-- Avoid using library or function specific names
-- Try to make the diagram in a generic way
-Do NOT output code or text, only the PlantUML state-machine.
-"""
-
-SYSTEM_PROMPT_FROM_UML = f"""You are a Python developer.
-You produce a Python code to a given function based on a state-machine representation in PlantUML and function declaration.
-Rules:
-- Output ONLY Python code in a single fenced block.
-- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
-"""
-
-SYSTEM_PROMPT_MINIMAL = f"""You are a Python generation engine.
-You produce a Python code to a given function based on a textual description and function declaration.
-Rules:
-- Output ONLY Python code in a single fenced block.
-- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
-"""
-
-
-
-SYSTEM_PROMPT_COMPLETE = f"""You are a careful Python refactoring engine.
-You produce a semantically equivalent variant (Type-4 clone) of the given function.
-Rules:
-- Output ONLY Python code in a single fenced block.
-- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
-- Keep the same external behavior, side-effects.
-- Do NOT hardcode any test data or specific URLs or values from tests.
-- Keep I/O contract identical (same return types, shapes, and exceptions).
-"""
-
-MANDATORY_HINTS = """
-- Do NOT output explanations, comments, reasoning, or any text, **only valid Python code**.
-- Do not add print statements
-- Do to call the function you generated inside a print statement
-
- Generate ONLY the code in a single ```python fenced block.   
-"""
-
-NFRS = {
-      "nfr0": """
-""",
-    "nfr1": """
-- the generated code should use as few libraries as possible
-""",
-  "nfr2": """
-- the generated code should use as many libraries as possible
-"""
-,
-"nfr3":""" 
-Runtime & Reliability Quality
-- generate code that focuses on Performance Efficiency, by using system resources effectively and delivering fast, responsive performance.
-- generate code that focuses on Reliability, by consistent performance, fault tolerance, and the ability to recover from failures.
-- generate code that focuses on Safety, by protecting people, assets, and the environment from potential harm, and ensuring fail-safe behavior.""", 
-
- "nfr4":"""
-User Experience & Security
-- generate code that focuses on Usability, by ease of use, learnability, user satisfaction, and accessibility for all users.
-- generate code that focuses on Security, by protecting data, preventing unauthorized access, and ensuring authenticity and accountability.
-- generate code that focuses on Compatibility, by operating smoothly with other products and exchanging information correctly.
-
-""",
- "nfr5":"""
- Maintainability & Adaptability
-- generate code that focuses on Maintainability, by ease of modification, testing, analysis, and reuse of software components.
-- generate code that focuses on Portability, by adapting software to different environments and ensuring smooth installation and replacement
-""",
-}
-
-def build_user_prompt_uml(uml: str, params: str, return_text: str, nfrs: str)-> str:
-    """
-    Build a user prompt for the refactoring LLM without any .
-    Args:
-        the description of the task
-    Returns:
-        A formatted string prompt for the LLM.
-    """
-    return f"""
-
-    Your task:
-    - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
-    - The implementation must return something based on this text: {return_text}.
-    - The implementation must have a single function and should replicate the behavior described in this PlantUML state-machine diagram: {uml}.
-    {NFRS[nfrs]}
-
-    {MANDATORY_HINTS}
-    """
-
-
-def build_user_prompt_ast(gen_ast: str, description: str, params: str, return_text: str, nfrs: str)-> str:
-    """
-    Build a user prompt for the refactoring LLM with AST .
-    Args:
-        the description of the task
-    Returns:
-        A formatted string prompt for the LLM.
-    """
-    return f"""
-
-    Your task:
-    - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
-    - The implementation must return something based on this text: {return_text}.
-    - The implmentation must implement the following behavior: {description}
-    - The implementation abstract syntax tree (AST) should be a different as possible from this one: {gen_ast}
-    {NFRS[nfrs]}
-
-    {MANDATORY_HINTS}
-    """
-
-
-def build_user_prompt_minimal(description: str, params: str, return_text: str, nfrs: str)-> str:
-    """
-    Build a user prompt for the refactoring LLM without any .
-    Args:
-        the description of the task
-    Returns:
-        A formatted string prompt for the LLM.
-    """
-    return f"""
-
-    Your task:
-    - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
-    - The implementation must have a single function to address this description: {description}.
-    - The implementation must return something based on this text: {return_text}.
-    {NFRS[nfrs]}
-
-    {MANDATORY_HINTS}
-    """
 
 def code_to_nl_description(code, nl_model, llm_opts):
     """
@@ -355,15 +148,7 @@ def code_to_ast(code):
         return f"Invalid Python code: {e}"
 
 
-SYSTEM_PROMPT_TO_NL = """You are a code summarizer.
-Your task is to read a Python function and explain, in natural language, what the function does.
-Be concise but precise, focusing on:
-- the purpose of the function
-- its parameters and return values
-- side effects (file I/O, network, database, etc.)
-- important edge cases handled
-Do NOT output code, only natural language explanation.
-"""
+
 
 def add_generated_fields(dataset_path, nl_model, llm_opts, n_entries):
     """
@@ -409,20 +194,7 @@ Be concise but precise, focusing on:
  Generate ONLY the code in a single {language} fenced block.   
 """
 
-def build_user_prompt_from_translation(translation: str, language: str, params: list, return_text: str, nfrs: str) -> str:
-    return f"""
-You are given a function code in {language}.
 
-{translation}
-
-Your task:
-- Translate this function to Python
-- Implement the function as `{FUNCTION_NAME}` with arguments: {params}.
-- The implementation must return something based on this text: {return_text}.
-{NFRS[nfrs]}
-
-{MANDATORY_HINTS}
-"""
 
 def code_to_code(code, language, nl_model, llm_opts):
     """
@@ -456,13 +228,7 @@ def add_generated_translation(dataset_path, code_model, llm_opts, n_entries, lan
 
     print(f"Updated dataset with 'gen_translation' in {dataset_path}")
 
-from src.clone_gen import ( 
-    build_user_prompt_minimal,
-    build_user_prompt_complete,
-    generate_clones,
-    load_existing_results,
-    merge_results,
-)
+
 
 def run_clone_generation(
     dataset_path,
@@ -472,7 +238,8 @@ def run_clone_generation(
     ollama_model,
     llm_opts,
     context,  
-    nfrs
+    nfrs,
+    strategy="zero-shot"
 ):
     """
     Run clone generation for dataset entries.
@@ -515,26 +282,26 @@ def run_clone_generation(
             system_prompt = SYSTEM_PROMPT_MINIMAL
             user_prompt = ""
             if context == "minimal":
-                user_prompt = build_user_prompt_minimal(description, params, return_text, nfrs)
+                user_prompt = build_user_prompt_minimal(strategy,description, params, return_text, nfrs)
             
          #   elif context == "description":
           #     user_prompt = build_user_prompt_minimal(gen_description, params, return_text, nfrs)
 
             elif context == "requirements":
-               user_prompt = build_user_prompt_minimal(gen_requirement, params, return_text, nfrs)
+               user_prompt = build_user_prompt_minimal(strategy, gen_requirement, params, return_text, nfrs)
                
             elif context == "uml":
-               user_prompt = build_user_prompt_uml(gen_uml, params, return_text, nfrs)
+               user_prompt = build_user_prompt_uml(strategy, gen_uml, params, return_text, nfrs)
             
             elif context == "ast":
-               user_prompt = build_user_prompt_ast(gen_ast, description, params, return_text, nfrs)
+               user_prompt = build_user_prompt_ast(strategy, gen_ast, description, params, return_text, nfrs)
 
             elif context == "complete":
-                user_prompt = build_user_prompt_complete(original_body, description, libs, tests_snippet, nfrs)
+                user_prompt = build_user_prompt_complete(strategy, original_body, description, libs, tests_snippet, nfrs)
                 system_prompt = SYSTEM_PROMPT_COMPLETE
 
             elif context == "translation":
-                user_prompt = build_user_prompt_from_translation(gen_translation, "Java", params, return_text, nfrs) # this will be an iteration with multi languages
+                user_prompt = build_user_prompt_from_translation(strategy, gen_translation, "Java", params, return_text, nfrs) # this will be an iteration with multi languages
                 system_prompt = SYSTEM_PROMPT_COMPLETE
                 
 
@@ -551,10 +318,11 @@ def run_clone_generation(
                 )
                 clones.append({
                     "model": ollama_model,
-                    "context": context,
+                    "context": context,                    
+                    "strategy": strategy,
                     "code": code,
                     "nfrs": nfrs,
-                    "transformation": f"{ollama_model}-{context} {k+1} {nfrs}",
+                    "transformation": f"{strategy} {ollama_model}-{context} {k+1} {nfrs}",
                 })
             except Exception as e:
                 print(f" Error generating clone {k+1}: {e}")
