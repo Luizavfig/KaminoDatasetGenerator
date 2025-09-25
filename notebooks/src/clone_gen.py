@@ -1,5 +1,5 @@
 import re, textwrap, requests, ast, astor, re, os, json 
-from .prompts import (SYSTEM_PROMPT_COMPLETE, SYSTEM_PROMPT_FROM_UML, SYSTEM_PROMPT_MINIMAL, SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_TO_UML, build_user_prompt_ast, build_user_prompt_complete, build_user_prompt_minimal, build_user_prompt_uml, build_user_prompt_from_translation)
+from .prompts import (SYSTEM_PROMPT_COMPLETE, SYSTEM_PROMPT_MINIMAL, SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_TO_UML, build_user_prompt_ast, build_user_prompt_complete, build_user_prompt_minimal, build_user_prompt_uml, build_user_prompt_from_translation)
 
 FUNCTION_NAME = "task_func"  
 REMOTE_OLLAMA = False
