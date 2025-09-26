@@ -1,5 +1,5 @@
 import re, textwrap, requests, ast, astor, re, os, json 
-from .prompts import (SYSTEM_PROMPT_COMPLETE, SYSTEM_PROMPT_MINIMAL, SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_TO_UML, build_user_prompt_ast, build_user_prompt_complete, build_user_prompt_minimal, build_user_prompt_uml, build_user_prompt_from_translation)
+from .prompts import (SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_TO_UML, context_builders)
 
 FUNCTION_NAME = "task_func"  
 REMOTE_OLLAMA = False
@@ -94,14 +94,14 @@ def load_existing_results(path):
 def merge_results(existing, new_entry):
     """
     Merge clones into existing results:
-    - If entry.id exists, update clones by transformation.
+    - If entry.id exists, update clones by clone_id.
     - If not, append new entry.
     """
     for entry in existing:
         if entry["id"] == new_entry["id"]:
-            clone_map = {c["transformation"]: c for c in entry.get("clones", [])}
+            clone_map = {c["clone_id"]: c for c in entry.get("clones", [])}
             for clone in new_entry["clones"]:
-                clone_map[clone["transformation"]] = clone
+                clone_map[clone["clone_id"]] = clone
             entry["clones"] = list(clone_map.values())
             return existing
     # Entry not found, add it
@@ -239,7 +239,8 @@ def run_clone_generation(
     llm_opts,
     context,  
     nfrs,
-    strategy="zero-shot"
+    strategy="zero-shot",
+    context_builders=context_builders # pass as parameter to change them
 ):
     """
     Run clone generation for dataset entries.
@@ -253,6 +254,8 @@ def run_clone_generation(
         llm_opts: Dict of LLM options.
         context: changes prompt strategy.
         nfrs: non-functional requirements used in the prompt
+        strategy: prompt strategy (default: "zero-shot")
+        context_builders: dict mapping context -> callable returning (system_prompt, user_prompt)
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -264,46 +267,39 @@ def run_clone_generation(
         print(f"\nGenerating clones {i}/{len(sample)} for {entry['id']}")
         clones = []
 
-        original_body = entry["original_code"]
-        tests_list    = entry["test"]
-        description   = entry.get("description", "")
-        #gen_description   = entry.get("gen_description", "")
+        # Extract fields from entry 
+        original_body   = entry["original_code"]
+        tests_list      = entry["test"]
+        description     = entry.get("description", "")
         gen_requirement = entry.get("gen_requirement", "")
         gen_translation = entry.get("gen_translation", "")
-        gen_uml = entry.get("gen_uml", "")
-        gen_ast = entry.get("gen_ast", "")
-        
-        tests_snippet = tests_list[0] if tests_list else ""
-        params      = entry.get("metadata", {}).get("params", [])
-        return_text = entry.get("metadata", {}).get("return_text", [])
-        libs = entry.get("metadata", {}).get("libs", [])
+        gen_uml         = entry.get("gen_uml", "")
+        gen_ast         = entry.get("gen_ast", "")
+
+        tests_snippet   = tests_list[0] if tests_list else ""
+        params          = entry.get("metadata", {}).get("params", [])
+        return_text     = entry.get("metadata", {}).get("return_text", [])
+        libs            = entry.get("metadata", {}).get("libs", [])
 
         for k in range(clones_per_entry):
-            system_prompt = SYSTEM_PROMPT_MINIMAL
-            user_prompt = ""
-            if context == "minimal":
-                user_prompt = build_user_prompt_minimal(strategy,description, params, return_text, nfrs)
+            if context not in context_builders:
+                raise ValueError(f"Unknown context: {context}")
+
             
-         #   elif context == "description":
-          #     user_prompt = build_user_prompt_minimal(gen_description, params, return_text, nfrs)
-
-            elif context == "requirements":
-               user_prompt = build_user_prompt_minimal(strategy, gen_requirement, params, return_text, nfrs)
-               
-            elif context == "uml":
-               user_prompt = build_user_prompt_uml(strategy, gen_uml, params, return_text, nfrs)
-            
-            elif context == "ast":
-               user_prompt = build_user_prompt_ast(strategy, gen_ast, description, params, return_text, nfrs)
-
-            elif context == "complete":
-                user_prompt = build_user_prompt_complete(strategy, original_body, description, libs, tests_snippet, nfrs)
-                system_prompt = SYSTEM_PROMPT_COMPLETE
-
-            elif context == "translation":
-                user_prompt = build_user_prompt_from_translation(strategy, gen_translation, "Java", params, return_text, nfrs) # this will be an iteration with multi languages
-                system_prompt = SYSTEM_PROMPT_COMPLETE
-                
+            system_prompt, user_prompt = context_builders[context](
+                strategy=strategy,
+                description=description,
+                gen_requirement=gen_requirement,
+                gen_translation=gen_translation,
+                gen_uml=gen_uml,
+                gen_ast=gen_ast,
+                original_body=original_body,
+                libs=libs,
+                tests_snippet=tests_snippet,
+                params=params,
+                return_text=return_text,
+                nfrs=nfrs,
+            )
 
             messages = [
                 {"role": "system", "content": system_prompt},
@@ -322,7 +318,7 @@ def run_clone_generation(
                     "strategy": strategy,
                     "code": code,
                     "nfrs": nfrs,
-                    "transformation": f"{strategy} {ollama_model}-{context} {k+1} {nfrs}",
+                    "clone_id": f"{strategy} {ollama_model}-{context} {k+1} {nfrs}",
                 })
             except Exception as e:
                 print(f" Error generating clone {k+1}: {e}")
@@ -333,3 +329,4 @@ def run_clone_generation(
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
+

@@ -316,3 +316,30 @@ You may reason step-by-step internally to produce a correct implementation.
 DO NOT output your internal reasoning. Output ONLY the final code snippet (see instructions below).
 """
 }
+
+context_builders = { # add more builders to extend the supported contexts
+    "minimal": lambda **kwargs: (
+        SYSTEM_PROMPT_MINIMAL,
+        build_user_prompt_minimal(kwargs["strategy"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
+    ),
+    "requirements": lambda **kwargs: (
+        SYSTEM_PROMPT_MINIMAL,
+        build_user_prompt_minimal(kwargs["strategy"], kwargs["gen_requirement"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
+    ),
+    "uml": lambda **kwargs: (
+        SYSTEM_PROMPT_MINIMAL,
+        build_user_prompt_uml(kwargs["strategy"], kwargs["gen_uml"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
+    ),
+    "ast": lambda **kwargs: (
+        SYSTEM_PROMPT_MINIMAL,
+        build_user_prompt_ast(kwargs["strategy"], kwargs["gen_ast"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
+    ),
+    "complete": lambda **kwargs: (
+        SYSTEM_PROMPT_COMPLETE,
+        build_user_prompt_complete(kwargs["strategy"], kwargs["original_body"], kwargs["description"], kwargs["libs"], kwargs["tests_snippet"], kwargs["nfrs"])
+    ),
+    "translation": lambda **kwargs: (
+        SYSTEM_PROMPT_COMPLETE,
+        build_user_prompt_from_translation(kwargs["strategy"], kwargs["gen_translation"], "Java", kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
+    ),
+}
