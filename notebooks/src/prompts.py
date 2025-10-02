@@ -108,6 +108,7 @@ def build_user_prompt_complete(
     nfrs: str
 ) -> str:
     """
+    
     Build a user prompt to generate type 4 clones.
 
     Args:
@@ -120,6 +121,9 @@ def build_user_prompt_complete(
         A formatted string prompt for the LLM.
     """
     return f"""
+
+{STRATEGIES[strategy]}
+
 You will be shown:
 1) A short description and allowed libraries.
 2) The original function BODY (not including the def line).
@@ -140,13 +144,12 @@ Unit test excerpt (do not hardcode values; just infer signature/contract):
 Your task:
 - Emit a semantically equivalent implementation named `{FUNCTION_NAME}`.
 - Keep side effects and external calls intact where visible (e.g., urllib/os/json/pandas usage).
+- Make sure the function follows the following non-functional requirements:
+    {NFRS[nfrs]}
 
+In addtion, make sure that:
+    {MANDATORY_HINTS}
 
-{NFRS[nfrs]}
-
-{MANDATORY_HINTS}
-
-{STRATEGIES[strategy]}
 """
 
 
@@ -159,16 +162,17 @@ def build_user_prompt_uml(strategy: str, uml: str, params: str, return_text: str
         A formatted string prompt for the LLM.
     """
     return f"""
+    {STRATEGIES[strategy]}
 
     Your task:
     - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
     - The implementation must return something based on this text: {return_text}.
     - The implementation must have a single function and should replicate the behavior described in this PlantUML state-machine diagram: {uml}.
+    Make sure the function follows the following non-functional requirements:
     {NFRS[nfrs]}
 
+    In addtion, make sure that:
     {MANDATORY_HINTS}
-
-    {STRATEGIES[strategy]}
     """
 
 
@@ -181,17 +185,18 @@ def build_user_prompt_ast(strategy: str, gen_ast: str, description: str, params:
         A formatted string prompt for the LLM.
     """
     return f"""
+    {STRATEGIES[strategy]}
 
     Your task:
     - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
     - The implementation must return something based on this text: {return_text}.
     - The implmentation must implement the following behavior: {description}
     - The implementation abstract syntax tree (AST) should be a different as possible from this one: {gen_ast}
+    Make sure the function follows the following non-functional requirements:
     {NFRS[nfrs]}
 
+    In addtion, make sure that:
     {MANDATORY_HINTS}
-
-    {STRATEGIES[strategy]}
     """
 
 
@@ -204,19 +209,23 @@ def build_user_prompt_minimal(strategy: str, description: str, params: str, retu
         A formatted string prompt for the LLM.
     """
     return f"""
+    {STRATEGIES[strategy]}
+
     Your task:
     - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
     - The implementation must have a single function to address this description: {description}.
     - The implementation must return something based on this text: {return_text}.
+    - Make sure the function follows the following non-functional requirements:
     {NFRS[nfrs]}
 
+    In addtion, make sure that:
     {MANDATORY_HINTS}
-
-    {STRATEGIES[strategy]}
     """
 
 def build_user_prompt_from_translation(strategy: str, translation: str, language: str, params: list, return_text: str, nfrs: str) -> str:
     return f"""
+{STRATEGIES[strategy]}
+
 You are given a function code in {language}.
 
 {translation}
@@ -225,17 +234,18 @@ Your task:
 - Translate this function to Python
 - Implement the function as `{FUNCTION_NAME}` with arguments: {params}.
 - The implementation must return something based on this text: {return_text}.
+
+Make sure the function follows the following non-functional requirements
 {NFRS[nfrs]}
 
+In addtion, make sure that:
 {MANDATORY_HINTS}
-
-{STRATEGIES[strategy]}
 """
 
 STRATEGIES = {
     "zero-shot": """""",
     "few-shot": """
-Here are some examples of what Type-4 clones look like.  
+Here are some examples of what Type-4 (semantic) clones look like.  
 Each example shows a description and two different semantically equivalent implementations.
 ---
 
@@ -282,36 +292,45 @@ def task_func(lst):
     return maximum
 """,
 "cot": """
-Here is an example of a Type-4 clone transformation.
+Here is an example of a Type-4 (semantic) clone transformation.
 The goal is to generate semantically equivalent code (same I/O contract) but with a different implementation style.
 
-Example: Compute factorial of a number
-
-Original Implementation (recursive):
-```python
+Example:
+Original code:
 def task_func(n):
     if n == 0 or n == 1:
         return 1
     return n * task_func(n - 1)
-Clone Implementation (iterative with loop):
 
-python
-Copy code
+Now we generated a clone by changing the implementation style. We have to make sure that:
+
+- We compute factorial correctly for all non-negative integers.
+- The I/O contract (input: integer n, output: factorial of n) is identical.
+- The change is structural (different AST, control flow) but not semantic.
+- Since the original used recursion, we can use an iterative approach (with a for loop).
+
+Clone Implementation:
 def task_func(n):
     result = 1
     for i in range(2, n + 1):
         result *= i
     return result
-Explanation of transformation:
 
-- Both versions compute factorial correctly for all non-negative integers.
-- The first uses recursion (function calls itself until base case).
-- The second uses an iterative loop (multiplying step by step).
-- The I/O contract (input: integer n, output: factorial of n) is identical.
-- The change is structural (different AST, control flow) but not semantic.
+Here is another example.
+Original code:
+def task_func(s):
+    return s == s[::-1]
 
-This demonstrates how a Type-4 clone can be generated by changing the style
-(recursion → iteration) while preserving functionality.
+- The original task_func checks whether a string s is equal to its reverse (s[::-1]). This is a palindrome check.
+- Instead of slicing with [::-1], Python also provides the reversed() built-in function.
+- reversed(s) returns an iterator of the string in reverse order.
+- Joining it back into a string with "".join(...) gives the reversed string.
+
+Clone Implementation:
+def task_func(s):
+    return s == ''.join(reversed(s))
+
+This demonstrates how a Type-4 clone can be generated by changing the syntax and structure of the implementation while preserving its semantics.
 You may reason step-by-step internally to produce a correct implementation.
 DO NOT output your internal reasoning. Output ONLY the final code snippet (see instructions below).
 """

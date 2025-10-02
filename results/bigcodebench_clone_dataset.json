@@ -1,0 +1,1756 @@
+[
+  {
+    "id": "BigCodeBench/0",
+    "clones": [
+      {
+        "model": "deepseek-r1",
+        "context": "ast",
+        "strategy": "cot",
+        "code": "import random\nfrom itertools import permutations\n\n\ndef task_func(numbers=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]):\n    total = 0.0\n    n = len(numbers)\n    for perm in permutations(numbers):\n        shuffled_perm = list(perm)\n        random.shuffle(shuffled_perm)\n        diffs = [abs(shuffled_perm[i] - shuffled_perm[i + 1]) for i in\n            range(n - 1)]\n        total += sum(diffs)\n    return total / len(list(permutations(numbers)))\n",
+        "nfrs": "nfr0",
+        "clone_id": "cot deepseek-r1-ast 1 nfr0",
+        "test_results": {
+          "test_custom_list (tmp_module.TestCases.test_custom_list)": "PASS",
+          "test_default_numbers (tmp_module.TestCases.test_default_numbers)": "PASS",
+          "test_empty_list (tmp_module.TestCases.test_empty_list)": "PASS",
+          "test_identical_elements (tmp_module.TestCases.test_identical_elements)": "PASS",
+          "test_large_list_with_seed (tmp_module.TestCases.test_large_list_with_seed)": "PASS",
+          "test_mixed_numbers (tmp_module.TestCases.test_mixed_numbers)": "PASS",
+          "test_negative_numbers (tmp_module.TestCases.test_negative_numbers)": "PASS",
+          "test_random_behavior (tmp_module.TestCases.test_random_behavior)": "PASS",
+          "test_single_element (tmp_module.TestCases.test_single_element)": "PASS",
+          "test_specific_value_with_seed (tmp_module.TestCases.test_specific_value_with_seed)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2363499248254045,
+            "cot llama3.1:latest-minimal 1 nfr0": 0.25525132375393617,
+            "cot gemma3:latest-minimal 1 nfr3": 0.18948193236555066,
+            "zero-shot deepseek-r1-minimal 1 nfr0": 0.20619560879555118,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.26946672035645947,
+            "zero-shot gemma3:latest-minimal 1 nfr2": 0.22948272416591475
+          }
+        }
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "minimal",
+        "strategy": "cot",
+        "code": "import itertools\nimport numpy as np\n\n\ndef task_func(numbers=None):\n    if numbers is None:\n        numbers = list(range(1, 11))\n    result = []\n    for p in itertools.permutations(numbers):\n        shuffled_p = np.random.permutation(p)\n        diff_sum = sum(abs(shuffled_p[i] - shuffled_p[i - 1]) for i in\n            range(1, len(shuffled_p)))\n        result.append(diff_sum)\n    return np.mean(result)\n",
+        "nfrs": "nfr0",
+        "clone_id": "cot llama3.1:latest-minimal 1 nfr0",
+        "test_results": {
+          "test_custom_list (tmp_module.TestCases.test_custom_list)": "PASS",
+          "test_default_numbers (tmp_module.TestCases.test_default_numbers)": "PASS",
+          "test_empty_list (tmp_module.TestCases.test_empty_list)": "PASS",
+          "test_identical_elements (tmp_module.TestCases.test_identical_elements)": "PASS",
+          "test_large_list_with_seed (tmp_module.TestCases.test_large_list_with_seed)": "PASS",
+          "test_mixed_numbers (tmp_module.TestCases.test_mixed_numbers)": "PASS",
+          "test_negative_numbers (tmp_module.TestCases.test_negative_numbers)": "PASS",
+          "test_random_behavior (tmp_module.TestCases.test_random_behavior)": "PASS",
+          "test_single_element (tmp_module.TestCases.test_single_element)": "PASS",
+          "test_specific_value_with_seed (tmp_module.TestCases.test_specific_value_with_seed)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2474273164717059,
+            "cot deepseek-r1-ast 1 nfr0": 0.25525132375393617,
+            "cot gemma3:latest-minimal 1 nfr3": 0.3957854318607379,
+            "zero-shot deepseek-r1-minimal 1 nfr0": 0.3695245640498305,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.36675610466041864,
+            "zero-shot gemma3:latest-minimal 1 nfr2": 0.36203570224544435
+          }
+        }
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "minimal",
+        "strategy": "cot",
+        "code": "import itertools\nimport random\n\n\ndef task_func(numbers=None):\n    if numbers is None:\n        numbers = list(range(1, 11))\n    if not numbers:\n        return 0.0\n    total_sum = 0\n    num_permutations = 0\n    for permutation in itertools.permutations(numbers):\n        permutation_sum = 0\n        for i in range(len(permutation) - 1):\n            permutation_sum += abs(permutation[i] - permutation[i + 1])\n        total_sum += permutation_sum\n        num_permutations += 1\n    return float(total_sum) / num_permutations\n",
+        "nfrs": "nfr3",
+        "clone_id": "cot gemma3:latest-minimal 1 nfr3",
+        "test_results": {
+          "test_custom_list (tmp_module.TestCases.test_custom_list)": "PASS",
+          "test_default_numbers (tmp_module.TestCases.test_default_numbers)": "PASS",
+          "test_empty_list (tmp_module.TestCases.test_empty_list)": "PASS",
+          "test_identical_elements (tmp_module.TestCases.test_identical_elements)": "PASS",
+          "test_large_list_with_seed (tmp_module.TestCases.test_large_list_with_seed)": "PASS",
+          "test_mixed_numbers (tmp_module.TestCases.test_mixed_numbers)": "PASS",
+          "test_negative_numbers (tmp_module.TestCases.test_negative_numbers)": "PASS",
+          "test_random_behavior (tmp_module.TestCases.test_random_behavior)": "PASS",
+          "test_single_element (tmp_module.TestCases.test_single_element)": "PASS",
+          "test_specific_value_with_seed (tmp_module.TestCases.test_specific_value_with_seed)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2618062187632878,
+            "cot deepseek-r1-ast 1 nfr0": 0.18948193236555066,
+            "cot llama3.1:latest-minimal 1 nfr0": 0.3957854318607379,
+            "zero-shot deepseek-r1-minimal 1 nfr0": 0.3696916993811803,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.3051783333227797,
+            "zero-shot gemma3:latest-minimal 1 nfr2": 0.30358595698430335
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "minimal",
+        "code": "import itertools\nimport math\n\n\ndef task_func(numbers=None):\n    if numbers is None:\n        numbers = list(range(1, 11))\n    n = len(numbers)\n    total_permutations = math.factorial(n)\n    if n == 1:\n        return 0.0\n    all_permutations = itertools.permutations(numbers)\n    sum_of_abs_diffs = 0\n    for perm in all_permutations:\n        s = 0\n        for i in range(1, n):\n            s += abs(perm[i] - perm[i - 1])\n        sum_of_abs_diffs += s\n    average = sum_of_abs_diffs / total_permutations\n    return average\n",
+        "nfrs": "nfr0",
+        "clone_id": "zero-shot deepseek-r1-minimal 1 nfr0",
+        "test_results": {
+          "test_custom_list (tmp_module.TestCases.test_custom_list)": "PASS",
+          "test_default_numbers (tmp_module.TestCases.test_default_numbers)": "PASS",
+          "test_empty_list (tmp_module.TestCases.test_empty_list)": "PASS",
+          "test_identical_elements (tmp_module.TestCases.test_identical_elements)": "PASS",
+          "test_large_list_with_seed (tmp_module.TestCases.test_large_list_with_seed)": "PASS",
+          "test_mixed_numbers (tmp_module.TestCases.test_mixed_numbers)": "PASS",
+          "test_negative_numbers (tmp_module.TestCases.test_negative_numbers)": "PASS",
+          "test_random_behavior (tmp_module.TestCases.test_random_behavior)": "PASS",
+          "test_single_element (tmp_module.TestCases.test_single_element)": "PASS",
+          "test_specific_value_with_seed (tmp_module.TestCases.test_specific_value_with_seed)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.29498396559968665,
+            "cot deepseek-r1-ast 1 nfr0": 0.20619560879555118,
+            "cot llama3.1:latest-minimal 1 nfr0": 0.3695245640498305,
+            "cot gemma3:latest-minimal 1 nfr3": 0.3696916993811803,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.2788448473287051,
+            "zero-shot gemma3:latest-minimal 1 nfr2": 0.24808009174447138
+          }
+        }
+      },
+      {
+        "model": "llama4:latest",
+        "strategy": "zero-shot",
+        "context": "minimal",
+        "code": "import numpy as np\nimport itertools\nimport random\nfrom typing import List\n\n\ndef task_func(numbers: List[float]=list(range(1, 11))) ->float:\n    total_sum = 0\n    permutations = list(itertools.permutations(numbers))\n    for permutation in permutations:\n        shuffled_permutation = list(permutation)\n        random.shuffle(shuffled_permutation)\n        differences = [abs(shuffled_permutation[i] - shuffled_permutation[i -\n            1]) for i in range(1, len(shuffled_permutation))]\n        total_sum += sum(differences)\n    return total_sum / len(permutations)\n",
+        "nfrs": "nfr2",
+        "clone_id": "zero-shot llama4:latest-minimal 1 nfr2",
+        "test_results": {
+          "test_custom_list (tmp_module.TestCases.test_custom_list)": "PASS",
+          "test_default_numbers (tmp_module.TestCases.test_default_numbers)": "PASS",
+          "test_empty_list (tmp_module.TestCases.test_empty_list)": "PASS",
+          "test_identical_elements (tmp_module.TestCases.test_identical_elements)": "PASS",
+          "test_large_list_with_seed (tmp_module.TestCases.test_large_list_with_seed)": "PASS",
+          "test_mixed_numbers (tmp_module.TestCases.test_mixed_numbers)": "PASS",
+          "test_negative_numbers (tmp_module.TestCases.test_negative_numbers)": "PASS",
+          "test_random_behavior (tmp_module.TestCases.test_random_behavior)": "PASS",
+          "test_single_element (tmp_module.TestCases.test_single_element)": "PASS",
+          "test_specific_value_with_seed (tmp_module.TestCases.test_specific_value_with_seed)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.33459196067550656,
+            "cot deepseek-r1-ast 1 nfr0": 0.26946672035645947,
+            "cot llama3.1:latest-minimal 1 nfr0": 0.36675610466041864,
+            "cot gemma3:latest-minimal 1 nfr3": 0.3051783333227797,
+            "zero-shot deepseek-r1-minimal 1 nfr0": 0.2788448473287051,
+            "zero-shot gemma3:latest-minimal 1 nfr2": 0.32994352842013286
+          }
+        }
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "minimal",
+        "strategy": "zero-shot",
+        "code": "import itertools\nimport numpy as np\n\n\ndef task_func(numbers=list(range(1, 11))):\n    \"\"\"\n    Calculates the average of the sums of absolute differences between each pair of consecutive numbers for all permutations of a given list.\n    Each permutation is shuffled before calculating the differences.\n\n    Args:\n        numbers (list): A list of numbers. Default is numbers from 1 to 10.\n\n    Returns:\n        float: The average of the sums of absolute differences for each shuffled permutation of the list.\n    \"\"\"\n    permutations = list(itertools.permutations(numbers))\n    sums = []\n    for perm in permutations:\n        perm_list = list(perm)\n        sum_diff = 0\n        for i in range(len(perm_list) - 1):\n            sum_diff += abs(perm_list[i] - perm_list[i + 1])\n        sums.append(sum_diff)\n    return np.mean(sums)\n",
+        "nfrs": "nfr2",
+        "clone_id": "zero-shot gemma3:latest-minimal 1 nfr2",
+        "test_results": {
+          "test_custom_list (tmp_module.TestCases.test_custom_list)": "PASS",
+          "test_default_numbers (tmp_module.TestCases.test_default_numbers)": "PASS",
+          "test_empty_list (tmp_module.TestCases.test_empty_list)": "PASS",
+          "test_identical_elements (tmp_module.TestCases.test_identical_elements)": "PASS",
+          "test_large_list_with_seed (tmp_module.TestCases.test_large_list_with_seed)": "PASS",
+          "test_mixed_numbers (tmp_module.TestCases.test_mixed_numbers)": "PASS",
+          "test_negative_numbers (tmp_module.TestCases.test_negative_numbers)": "PASS",
+          "test_random_behavior (tmp_module.TestCases.test_random_behavior)": "PASS",
+          "test_single_element (tmp_module.TestCases.test_single_element)": "PASS",
+          "test_specific_value_with_seed (tmp_module.TestCases.test_specific_value_with_seed)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.39607298370791166,
+            "cot deepseek-r1-ast 1 nfr0": 0.22948272416591475,
+            "cot llama3.1:latest-minimal 1 nfr0": 0.36203570224544435,
+            "cot gemma3:latest-minimal 1 nfr3": 0.30358595698430335,
+            "zero-shot deepseek-r1-minimal 1 nfr0": 0.24808009174447138,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.32994352842013286
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/1",
+    "clones": [
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "translation",
+        "code": "import random\nfrom collections import defaultdict\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError('Length must be non-negative')\n    char_counts = defaultdict(int)\n    for _ in range(length):\n        rand_val = random.random()\n        if rand_val < 0.5:\n            char = chr(random.randint(65, 90))\n        else:\n            char = chr(random.randint(97, 122))\n        char_counts[char] += 1\n    return dict(char_counts)\n",
+        "nfrs": "nfr3",
+        "clone_id": "zero-shot deepseek-r1-translation 1 nfr3",
+        "test_results": {
+          "test_generated_string_properties (tmp_module.TestCases.test_generated_string_properties)": "PASS",
+          "test_negative_length (tmp_module.TestCases.test_negative_length)": "PASS",
+          "test_zero_length (tmp_module.TestCases.test_zero_length)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3129513439133593,
+            "zero-shot deepseek-r1-translation 1 nfr0": 0.353508616010356,
+            "few-shot llama4:latest-translation 1 nfr5": 0.34142193866483506,
+            "cot deepseek-r1-complete 1 nfr2": 0.21953282005619057
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "translation",
+        "code": "import random\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError('Length must be non-negative')\n    random_string = []\n    for _ in range(length):\n        choice = random.randint(0, 1)\n        if choice == 0:\n            random_string.append(chr(random.randint(65, 90)))\n        else:\n            random_string.append(chr(random.randint(97, 122)))\n    char_counts = {}\n    for c in random_string:\n        char_counts[c] = char_counts.get(c, 0) + 1\n    return char_counts\n",
+        "nfrs": "nfr0",
+        "clone_id": "zero-shot deepseek-r1-translation 1 nfr0",
+        "test_results": {
+          "test_generated_string_properties (tmp_module.TestCases.test_generated_string_properties)": "PASS",
+          "test_negative_length (tmp_module.TestCases.test_negative_length)": "PASS",
+          "test_zero_length (tmp_module.TestCases.test_zero_length)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.34214867911498853,
+            "zero-shot deepseek-r1-translation 1 nfr3": 0.353508616010356,
+            "few-shot llama4:latest-translation 1 nfr5": 0.33341784277936265,
+            "cot deepseek-r1-complete 1 nfr2": 0.17036444967617567
+          }
+        }
+      },
+      {
+        "model": "llama4:latest",
+        "context": "translation",
+        "strategy": "few-shot",
+        "code": "import random\nfrom typing import Dict\n\n\ndef task_func(length: int=100) ->Dict[str, int]:\n    if length < 0:\n        raise ValueError('Length must be a non-negative integer')\n    random_string = ''.join(random.choice(\n        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') for _ in\n        range(length))\n    char_counts = {}\n    for char in random_string:\n        if char in char_counts:\n            char_counts[char] += 1\n        else:\n            char_counts[char] = 1\n    return char_counts\n\n\nprint(task_func())\n",
+        "nfrs": "nfr5",
+        "clone_id": "few-shot llama4:latest-translation 1 nfr5",
+        "test_results": {
+          "test_generated_string_properties (tmp_module.TestCases.test_generated_string_properties)": "PASS",
+          "test_negative_length (tmp_module.TestCases.test_negative_length)": "PASS",
+          "test_zero_length (tmp_module.TestCases.test_zero_length)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3622299430923086,
+            "zero-shot deepseek-r1-translation 1 nfr3": 0.34142193866483506,
+            "zero-shot deepseek-r1-translation 1 nfr0": 0.33341784277936265,
+            "cot deepseek-r1-complete 1 nfr2": 0.3505953834989629
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import random\nfrom collections import Counter as char_counts\n\n\ndef task_func(length=100):\n    if length < 0:\n        raise ValueError\n    valid_chars = string.ascii_uppercase + string.ascii_lowercase\n    return dict(char_counts(random.choices(valid_chars, k=length)))\n",
+        "nfrs": "nfr2",
+        "clone_id": "cot deepseek-r1-complete 1 nfr2",
+        "test_results": {
+          "test_generated_string_properties (tmp_module.TestCases.test_generated_string_properties)": "PASS",
+          "test_negative_length (tmp_module.TestCases.test_negative_length)": "PASS",
+          "test_zero_length (tmp_module.TestCases.test_zero_length)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3923978836663924,
+            "zero-shot deepseek-r1-translation 1 nfr3": 0.21953282005619057,
+            "zero-shot deepseek-r1-translation 1 nfr0": 0.17036444967617567,
+            "few-shot llama4:latest-translation 1 nfr5": 0.3505953834989629
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/2",
+    "clones": [
+      {
+        "model": "deepseek-r1",
+        "context": "requirements",
+        "strategy": "cot",
+        "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    if not hasattr(random, 'random'):\n        raise ImportError('random module is required')\n    if not hasattr(statistics, 'mean'):\n        raise ImportError('statistics module is required')\n    result_dict = {}\n    for letter in LETTERS:\n        if letter in result_dict:\n            raise ValueError('Duplicate keys are not allowed')\n        length = random.randint(1, 10)\n        num_list = [random.randint(-100, 100) for _ in range(length)]\n        result_dict[letter] = num_list\n    sorted_dict = {}\n    while result_dict:\n        key_with_max_mean = None\n        max_mean = -float('inf')\n        for key, value in result_dict.items():\n            current_mean = statistics.mean(value)\n            if current_mean > max_mean:\n                max_mean = current_mean\n                key_with_max_mean = key\n        if key_with_max_mean is not None:\n            sorted_dict[key_with_max_mean] = result_dict.pop(key_with_max_mean)\n    return sorted_dict\n",
+        "nfrs": "nfr1",
+        "clone_id": "cot deepseek-r1-requirements 1 nfr1",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.32663900666084844,
+            "few-shot llama3.1:latest-requirements 1 nfr0": 0.3399743747033246,
+            "zero-shot deepseek-r1-requirements 1 nfr2": 0.31688650103221755,
+            "few-shot deepseek-r1-minimal 1 nfr2": 0.2621120913974554,
+            "cot gemma3:latest-translation 1 nfr2": 0.1943671047802299,
+            "few-shot llama4:latest-minimal 1 nfr4": 0.18506021449312
+          }
+        }
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "requirements",
+        "strategy": "few-shot",
+        "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    result = {}\n    for letter in LETTERS:\n        if letter not in result:\n            result[letter] = []\n        while len(result[letter]) < 1 or len(result[letter]) > 10:\n            result[letter].append(random.randint(0, 100))\n    return dict(sorted(result.items(), key=lambda item: statistics.mean(\n        item[1]), reverse=True))\n",
+        "nfrs": "nfr0",
+        "clone_id": "few-shot llama3.1:latest-requirements 1 nfr0",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3328532034934873,
+            "cot deepseek-r1-requirements 1 nfr1": 0.3399743747033246,
+            "zero-shot deepseek-r1-requirements 1 nfr2": 0.15723012588583513,
+            "few-shot deepseek-r1-minimal 1 nfr2": 0.22623803977021023,
+            "cot gemma3:latest-translation 1 nfr2": 0.2968181808071375,
+            "few-shot llama4:latest-minimal 1 nfr4": 0.3239160587598868
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "requirements",
+        "code": "import random\nimport statistics\nfrom typing import List, Dict, Union\n\n\ndef task_func(LETTERS: List[str]) ->Dict[str, List[int]]:\n    \"\"\"\n    Generates a dictionary with keys from LETTERS and each key has a list of random integers.\n    The lists have lengths between 1 and 10 (inclusive). The dictionary is sorted by the mean\n    of the list for each key in descending order.\n\n    Args:\n        LETTERS: A list of strings representing the keys.\n\n    Returns:\n        A dictionary with letters as keys and lists of integers as values, sorted by mean in descending order.\n\n    Raises:\n        Exception: If 'random' or 'statistics' modules are not available.\n    \"\"\"\n    if not hasattr(random, 'choices'):\n        raise Exception(\"The 'random' module is required but not available.\")\n    if not hasattr(statistics, 'mean'):\n        raise Exception(\n            \"The 'statistics' module is required but not available.\")\n    result_dict = {}\n    for letter in LETTERS:\n        length = random.randint(1, 10)\n        num_list = random.choices(range(0, 101), k=length)\n        result_dict[letter] = num_list\n    sorted_dict = {k: v for k, v in sorted(result_dict.items(), key=lambda\n        item: statistics.mean(item[1]), reverse=True)}\n    return sorted_dict\n",
+        "nfrs": "nfr2",
+        "clone_id": "zero-shot deepseek-r1-requirements 1 nfr2",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3513631676203117,
+            "cot deepseek-r1-requirements 1 nfr1": 0.31688650103221755,
+            "few-shot llama3.1:latest-requirements 1 nfr0": 0.15723012588583513,
+            "few-shot deepseek-r1-minimal 1 nfr2": 0.26598708004504157,
+            "cot gemma3:latest-translation 1 nfr2": 0.21982191168899856,
+            "few-shot llama4:latest-minimal 1 nfr4": 0.19207755102108465
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "minimal",
+        "strategy": "few-shot",
+        "code": "import random\nimport statistics\nfrom typing import List, Dict\n\n\ndef task_func(letters: List[str]) ->Dict[str, List[int]]:\n    my_dict = {letter: [random.randint(1, 100) for _ in range(5)] for\n        letter in letters}\n    means = {k: statistics.mean(v) for k, v in my_dict.items()}\n    sorted_dict = dict(sorted(my_dict.items(), key=lambda item: means[item[\n        0]], reverse=True))\n    return sorted_dict\n",
+        "nfrs": "nfr2",
+        "clone_id": "few-shot deepseek-r1-minimal 1 nfr2",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35714084070527513,
+            "cot deepseek-r1-requirements 1 nfr1": 0.2621120913974554,
+            "few-shot llama3.1:latest-requirements 1 nfr0": 0.22623803977021023,
+            "zero-shot deepseek-r1-requirements 1 nfr2": 0.26598708004504157,
+            "cot gemma3:latest-translation 1 nfr2": 0.25574956389233006,
+            "few-shot llama4:latest-minimal 1 nfr4": 0.24627379612817696
+          }
+        }
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "translation",
+        "strategy": "cot",
+        "code": "import random\nimport statistics\nfrom collections import OrderedDict\n\n\ndef task_func(letters):\n    randomDict = {}\n    for letter in letters:\n        count = random.randint(1, 10)\n        randomNumbers = [random.randint(1, 101) for _ in range(count)]\n        randomDict[letter] = randomNumbers\n    sortedList = sorted(randomDict.items(), key=lambda item: statistics.\n        mean(item[1]), reverse=True)\n    sortedDict = OrderedDict()\n    for letter, numbers in sortedList:\n        sortedDict[letter] = numbers\n    return sortedDict\n",
+        "nfrs": "nfr2",
+        "clone_id": "cot gemma3:latest-translation 1 nfr2",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35802781693665975,
+            "cot deepseek-r1-requirements 1 nfr1": 0.1943671047802299,
+            "few-shot llama3.1:latest-requirements 1 nfr0": 0.2968181808071375,
+            "zero-shot deepseek-r1-requirements 1 nfr2": 0.21982191168899856,
+            "few-shot deepseek-r1-minimal 1 nfr2": 0.25574956389233006,
+            "few-shot llama4:latest-minimal 1 nfr4": 0.3535139252502405
+          }
+        }
+      },
+      {
+        "model": "llama4:latest",
+        "context": "minimal",
+        "strategy": "few-shot",
+        "code": "import statistics\nimport random\n\n\ndef task_func(LETTERS):\n    data = {}\n    for letter in LETTERS:\n        data[letter] = [random.randint(1, 100) for _ in range(random.\n            randint(1, 10))]\n    sorted_data = dict(sorted(data.items(), key=lambda item: statistics.\n        mean(item[1]), reverse=True))\n    return sorted_data\n\n\nprint(task_func(['a', 'b', 'c']))\n",
+        "nfrs": "nfr4",
+        "clone_id": "few-shot llama4:latest-minimal 1 nfr4",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.39284016632726226,
+            "cot deepseek-r1-requirements 1 nfr1": 0.18506021449312,
+            "few-shot llama3.1:latest-requirements 1 nfr0": 0.3239160587598868,
+            "zero-shot deepseek-r1-requirements 1 nfr2": 0.19207755102108465,
+            "few-shot deepseek-r1-minimal 1 nfr2": 0.24627379612817696,
+            "cot gemma3:latest-translation 1 nfr2": 0.3535139252502405
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/3",
+    "clones": [
+      {
+        "model": "deepseek-r1",
+        "context": "requirements",
+        "strategy": "cot",
+        "code": "import random\n\n\ndef task_func(LETTERS):\n    return {letter: round(random.uniform(0, 100), 2) for letter in LETTERS}\n",
+        "nfrs": "nfr3",
+        "clone_id": "cot deepseek-r1-requirements 1 nfr3",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.14356820556334565,
+            "cot deepseek-r1-requirements 1 nfr1": 0.10986846118430249,
+            "cot deepseek-r1-minimal 1 nfr0": 0.12769201866632168,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.12251505983126877,
+            "cot gemma3:latest-minimal 1 nfr0": 0.3999138780803285,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.06572420876089782,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.07205744669417775,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.2234589977016041,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.11651528972203674,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.0736656544858929,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.3450961684622553,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.11809538882806389
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "requirements",
+        "strategy": "cot",
+        "code": "import random\n\n\ndef task_func(LETTERS):\n    if not LETTERS:\n        return {}\n    result = {}\n    for letter in LETTERS:\n        n = random.randint(1, 10)\n        total = 0.0\n        count = 0\n        while count < n:\n            num = random.randint(0, 100)\n            total += num\n            count += 1\n        mean_val = total / n\n        result[letter] = round(mean_val, 2)\n    return result\n",
+        "nfrs": "nfr1",
+        "clone_id": "cot deepseek-r1-requirements 1 nfr1",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1709454363754185,
+            "cot deepseek-r1-requirements 1 nfr3": 0.10986846118430249,
+            "cot deepseek-r1-minimal 1 nfr0": 0.3586839260347472,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.3371114453720608,
+            "cot gemma3:latest-minimal 1 nfr0": 0.2503097398159037,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.21011780172498987,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.1843802236617306,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.2584724412620761,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.3117617816441388,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.17067147322563533,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.2405986937216983,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.2189857321468274
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "minimal",
+        "strategy": "cot",
+        "code": "import random\n\n\ndef task_func(letters):\n    means = {}\n    for letter in letters:\n        num_list = []\n        count = random.randint(1, 10)\n        for _ in range(count):\n            num_list.append(random.randint(0, 100))\n        mean_val = sum(num_list) / count\n        means[letter] = round(mean_val, 2)\n    return means\n",
+        "nfrs": "nfr0",
+        "clone_id": "cot deepseek-r1-minimal 1 nfr0",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.24366941544062137,
+            "cot deepseek-r1-requirements 1 nfr3": 0.12769201866632168,
+            "cot deepseek-r1-requirements 1 nfr1": 0.3586839260347472,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.3525427732940613,
+            "cot gemma3:latest-minimal 1 nfr0": 0.30054824683253467,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.26899226705906787,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.19956164075287292,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.32260485532571304,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.3012176708429307,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.2188287785611478,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.23886115167039484,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.2939170471771174
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "uml",
+        "strategy": "few-shot",
+        "code": "import random\n\n\ndef task_func(letters):\n    \"\"\"\n    Generate a dictionary with keys from the input list and values as the mean of a randomly generated list of integers.\n    Each letter's value is computed by generating a list of 1 to 10 random integers between 0 and 100, then calculating the mean.\n    \"\"\"\n    mean_dict = {}\n    for letter in letters:\n        num_elements = random.randint(1, 10)\n        random_list = [random.randint(0, 100) for _ in range(num_elements)]\n        mean_value = sum(random_list) / num_elements\n        mean_dict[letter] = mean_value\n    return mean_dict\n",
+        "nfrs": "nfr5",
+        "clone_id": "few-shot deepseek-r1-uml 1 nfr5",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2466687668645066,
+            "cot deepseek-r1-requirements 1 nfr3": 0.12251505983126877,
+            "cot deepseek-r1-requirements 1 nfr1": 0.3371114453720608,
+            "cot deepseek-r1-minimal 1 nfr0": 0.3525427732940613,
+            "cot gemma3:latest-minimal 1 nfr0": 0.38167052452786143,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.3566582285691947,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.274838281413066,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.36837808986035514,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.3306326131531776,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.3683561108182821,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.36325160334808915,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.3430875098467096
+          }
+        }
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "minimal",
+        "strategy": "cot",
+        "code": "import random\n\n\ndef task_func(LETTERS):\n    \"\"\"\n    Create a dictionary where keys are specified letters and values are lists of random integers.\n    Then calculate the mean of these integers for each key and return a dictionary of these means.\n    \"\"\"\n    result = {}\n    for letter in LETTERS:\n        random_list = [random.randint(0, 100) for _ in range(1, 11)]\n        mean = sum(random_list) / len(random_list)\n        result[letter] = mean\n    return result\n",
+        "nfrs": "nfr0",
+        "clone_id": "cot gemma3:latest-minimal 1 nfr0",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.24768317896975264,
+            "cot deepseek-r1-requirements 1 nfr3": 0.3999138780803285,
+            "cot deepseek-r1-requirements 1 nfr1": 0.2503097398159037,
+            "cot deepseek-r1-minimal 1 nfr0": 0.30054824683253467,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.38167052452786143,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.2374662507206013,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.29362166016481545,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.3239670820068588,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.32712661397449805,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.21808374137653258,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.36969171507067755,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.3083851076621176
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "translation",
+        "strategy": "few-shot",
+        "code": "import random\n\n\ndef task_func(letters: list[str]) ->dict[str, float]:\n    random_dict = {}\n    for letter in letters:\n        size = random.randint(1, 10)\n        values = [random.uniform(0.0, 100.0) for _ in range(size)]\n        random_dict[letter] = values\n    mean_dict = {}\n    for key, value_list in random_dict.items():\n        if len(value_list) == 0:\n            mean = 0.0\n        else:\n            mean = sum(value_list) / len(value_list)\n        mean_dict[key] = round(mean, 10)\n    return mean_dict\n",
+        "nfrs": "nfr5",
+        "clone_id": "few-shot deepseek-r1-translation 1 nfr5",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2610000091855182,
+            "cot deepseek-r1-requirements 1 nfr3": 0.06572420876089782,
+            "cot deepseek-r1-requirements 1 nfr1": 0.21011780172498987,
+            "cot deepseek-r1-minimal 1 nfr0": 0.26899226705906787,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.3566582285691947,
+            "cot gemma3:latest-minimal 1 nfr0": 0.2374662507206013,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.252435890412786,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.31133999424997555,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.3558958978680683,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.2914458652590787,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.18458177781903895,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.31659910227491095
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "minimal",
+        "strategy": "few-shot",
+        "code": "import random\n\n\ndef task_func(letters):\n    \"\"\"\n    Create a dictionary where keys are specified letters and values are lists of random integers.\n    Then calculate the mean of these integers for each key and return a dictionary of these means.\n\n    Args:\n        letters (list of str): List of single-character strings to be used as keys.\n\n    Returns:\n        dict: A dictionary with keys from `letters` and values being the mean of a randomly generated list of integers.\n    \"\"\"\n    if not isinstance(letters, list):\n        raise TypeError('Input must be a list of single-character strings.')\n    for letter in letters:\n        if not isinstance(letter, str) or len(letter) != 1:\n            raise ValueError(\n                f'Invalid key: {letter}. Each element must be a single-character string.'\n                )\n    means_dict = {}\n    for letter in letters:\n        num_integers = random.randint(1, 10)\n        integer_list = [random.randint(0, 100) for _ in range(num_integers)]\n        mean_value = sum(integer_list) / len(integer_list)\n        means_dict[letter] = round(mean_value, 2)\n    return means_dict\n",
+        "nfrs": "nfr4",
+        "clone_id": "few-shot deepseek-r1-minimal 1 nfr4",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.26455150744373795,
+            "cot deepseek-r1-requirements 1 nfr3": 0.07205744669417775,
+            "cot deepseek-r1-requirements 1 nfr1": 0.1843802236617306,
+            "cot deepseek-r1-minimal 1 nfr0": 0.19956164075287292,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.274838281413066,
+            "cot gemma3:latest-minimal 1 nfr0": 0.29362166016481545,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.252435890412786,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.2213444563811448,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.3903754188827772,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.35904887073952,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.20053344973218118,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.19657187374781776
+          }
+        }
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "translation",
+        "strategy": "few-shot",
+        "code": "def task_func(LETTERS):\n    randomDict = {}\n    for letter in LETTERS:\n        size = random.randint(1, 10)\n        values = [random.uniform(0, 100) for _ in range(size)]\n        randomDict[letter] = values\n    meanDict = {}\n    for letter, values in randomDict.items():\n        meanDict[letter] = sum(values) / len(values)\n    return meanDict\n\n\nimport random\n",
+        "nfrs": "nfr1",
+        "clone_id": "few-shot gemma3:latest-translation 1 nfr1",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2694104500149936,
+            "cot deepseek-r1-requirements 1 nfr3": 0.2234589977016041,
+            "cot deepseek-r1-requirements 1 nfr1": 0.2584724412620761,
+            "cot deepseek-r1-minimal 1 nfr0": 0.32260485532571304,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.36837808986035514,
+            "cot gemma3:latest-minimal 1 nfr0": 0.3239670820068588,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.31133999424997555,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.2213444563811448,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.33894821158197774,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.23968123472402558,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.29350424520938034,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.34941118134989113
+          }
+        }
+      },
+      {
+        "model": "llama3.1:latest",
+        "strategy": "zero-shot",
+        "context": "requirements",
+        "code": "import random\nfrom typing import List, Dict\n\n\ndef task_func(LETTERS: List[str]) ->Dict[str, float]:\n    result = {}\n    for letter in LETTERS:\n        num_integers = random.randint(1, 10)\n        integers = [random.randint(0, 100) for _ in range(num_integers)]\n        result[letter] = sum(integers) / num_integers\n    return result\n",
+        "nfrs": "nfr2",
+        "clone_id": "zero-shot llama3.1:latest-requirements 1 nfr2",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.28765227109572333,
+            "cot deepseek-r1-requirements 1 nfr3": 0.11651528972203674,
+            "cot deepseek-r1-requirements 1 nfr1": 0.3117617816441388,
+            "cot deepseek-r1-minimal 1 nfr0": 0.3012176708429307,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.3306326131531776,
+            "cot gemma3:latest-minimal 1 nfr0": 0.32712661397449805,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.3558958978680683,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.3903754188827772,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.33894821158197774,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.3333404169793258,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.2854093217050134,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.30647209832145195
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "uml",
+        "code": "import random\n\n\ndef task_func(letters):\n    \"\"\"\n    Generates a dictionary with keys from the input list and values as the mean of randomly generated lists.\n    Each letter key has a value which is the mean of a list containing 1 to 10 random integers between 0 and 100.\n    \"\"\"\n    num_elements = random.randint(1, 10)\n    random_dict = {letter: [random.randint(0, 100) for _ in range(\n        num_elements)] for letter in letters}\n    mean_dict = {}\n    for letter, numbers in random_dict.items():\n        if len(numbers) == 0:\n            continue\n        mean_value = sum(numbers) / len(numbers)\n        mean_dict[letter] = round(mean_value, 2)\n    return mean_dict\n\n\nif __name__ == '__main__':\n    example_letters = ['a', 'b', 'c']\n    result = task_func(example_letters)\n    print(result)\n",
+        "nfrs": "nfr5",
+        "clone_id": "zero-shot deepseek-r1-uml 1 nfr5",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3117962699732687,
+            "cot deepseek-r1-requirements 1 nfr3": 0.0736656544858929,
+            "cot deepseek-r1-requirements 1 nfr1": 0.17067147322563533,
+            "cot deepseek-r1-minimal 1 nfr0": 0.2188287785611478,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.3683561108182821,
+            "cot gemma3:latest-minimal 1 nfr0": 0.21808374137653258,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.2914458652590787,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.35904887073952,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.23968123472402558,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.3333404169793258,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.2158362076772066,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.3153829010682954
+          }
+        }
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "uml",
+        "strategy": "zero-shot",
+        "code": "import random\nimport numpy as np\n\n\ndef task_func(LETTERS):\n    \"\"\"\n    Generates a dictionary where each key is a letter from the input list\n    and the value is the mean of a randomly generated list of integers\n    (with each list having 1 to 10 integers ranging from 0 to 100).\n    \"\"\"\n    result = {}\n    for letter in LETTERS:\n        random_list = random.sample(range(0, 101), k=random.randint(1, 10))\n        result[letter] = np.mean(random_list)\n    return result\n",
+        "nfrs": "nfr2",
+        "clone_id": "zero-shot gemma3:latest-uml 1 nfr2",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.33398334677482405,
+            "cot deepseek-r1-requirements 1 nfr3": 0.3450961684622553,
+            "cot deepseek-r1-requirements 1 nfr1": 0.2405986937216983,
+            "cot deepseek-r1-minimal 1 nfr0": 0.23886115167039484,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.36325160334808915,
+            "cot gemma3:latest-minimal 1 nfr0": 0.36969171507067755,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.18458177781903895,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.20053344973218118,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.29350424520938034,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.2854093217050134,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.2158362076772066,
+            "few-shot deepseek-r1-ast 1 nfr5": 0.22584367973666128
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "ast",
+        "strategy": "few-shot",
+        "code": "import random\n\n\ndef task_func(letters):\n    random_dict = {letter: [random.randint(0, 100) for _ in range(random.\n        randint(1, 10))] for letter in letters}\n    mean_dict = {}\n    for letter, numbers in random_dict.items():\n        if len(numbers) > 0:\n            mean_dict[letter] = sum(numbers) / len(numbers)\n        else:\n            mean_dict[letter] = 0\n    return mean_dict\n",
+        "nfrs": "nfr5",
+        "clone_id": "few-shot deepseek-r1-ast 1 nfr5",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3876894431439579,
+            "cot deepseek-r1-requirements 1 nfr3": 0.11809538882806389,
+            "cot deepseek-r1-requirements 1 nfr1": 0.2189857321468274,
+            "cot deepseek-r1-minimal 1 nfr0": 0.2939170471771174,
+            "few-shot deepseek-r1-uml 1 nfr5": 0.3430875098467096,
+            "cot gemma3:latest-minimal 1 nfr0": 0.3083851076621176,
+            "few-shot deepseek-r1-translation 1 nfr5": 0.31659910227491095,
+            "few-shot deepseek-r1-minimal 1 nfr4": 0.19657187374781776,
+            "few-shot gemma3:latest-translation 1 nfr1": 0.34941118134989113,
+            "zero-shot llama3.1:latest-requirements 1 nfr2": 0.30647209832145195,
+            "zero-shot deepseek-r1-uml 1 nfr5": 0.3153829010682954,
+            "zero-shot gemma3:latest-uml 1 nfr2": 0.22584367973666128
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/4",
+    "clones": [
+      {
+        "model": "gemma3:latest",
+        "context": "minimal",
+        "strategy": "zero-shot",
+        "code": "def task_func(d):\n    \"\"\"\n    Count the occurrence of each integer in the values of the input dictionary,\n    where each value is a list of integers, and return a dictionary with these counts.\n    The resulting dictionary's keys are the integers, and the values are their\n    respective counts across all lists in the input dictionary.\n    \"\"\"\n    counts = {}\n    for key in d:\n        for num in d[key]:\n            if num in counts:\n                counts[num] += 1\n            else:\n                counts[num] = 1\n    return counts\n",
+        "nfrs": "nfr0",
+        "clone_id": "zero-shot gemma3:latest-minimal 1 nfr0",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1361719853644557,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.39299576942685943,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.24032662491019083,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.11323159209170783,
+            "cot llama4:latest-complete 1 nfr1": 0.17252790376723476,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.3190147801432765,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.18483051853922416,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.23968795198565512,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.12245036024901478,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.2849518221516759,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.32822102253817315,
+            "cot llama4:latest-translation 1 nfr1": 0.22709275465825057,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.30480362836261715,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.10021187190596696,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.13511070808453635,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.24778560254470755
+          }
+        }
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "requirements",
+        "strategy": "zero-shot",
+        "code": "def task_func(d):\n    \"\"\"\n    Generates a dictionary where the keys are unique elements from the input dictionary's values\n    and the values are their respective counts.\n    \"\"\"\n    counts = {}\n    for key, value in d.items():\n        for item in value:\n            if item in counts:\n                counts[item] += 1\n            else:\n                counts[item] = 1\n    return counts\n",
+        "nfrs": "nfr0",
+        "clone_id": "zero-shot gemma3:latest-requirements 1 nfr0",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.15880673733751455,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.39299576942685943,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.37667529778605713,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.2055811057384932,
+            "cot llama4:latest-complete 1 nfr1": 0.2197730597509462,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.33951350930929014,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.2049863049867144,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.18048169524751473,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.12021624557097368,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.1893807242651649,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.35894106327011804,
+            "cot llama4:latest-translation 1 nfr1": 0.32737184473111675,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.18562989776524697,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.1284826586780853,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.2010125202077428,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.19914046349184272
+          }
+        }
+      },
+      {
+        "model": "llama4:latest",
+        "strategy": "zero-shot",
+        "context": "minimal",
+        "code": "def task_func(d: dict) ->dict:\n    result = {}\n    for value in d.values():\n        for integer in value:\n            if integer in result:\n                result[integer] += 1\n            else:\n                result[integer] = 1\n    return result\n",
+        "nfrs": "nfr5",
+        "clone_id": "zero-shot llama4:latest-minimal 1 nfr5",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1649287014631159,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.24032662491019083,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.37667529778605713,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.3741229870987095,
+            "cot llama4:latest-complete 1 nfr1": 0.2567903578295618,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.2669540631950075,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.14965476092028418,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.2952791436312965,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.3719767381669608,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.16730513296300364,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.3604863361378181,
+            "cot llama4:latest-translation 1 nfr1": 0.2915159588911648,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.20419491482205487,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.16498125175848014,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.30575859637453623,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.1507369236125794
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "translation",
+        "strategy": "few-shot",
+        "code": "def task_func(d: dict) ->dict:\n    count_dict = {}\n    for sublist in d.values():\n        for num in sublist:\n            count_dict[num] = count_dict.get(num, 0) + 1\n    return {k: v for k, v in count_dict.items()}\n",
+        "nfrs": "nfr0",
+        "clone_id": "few-shot deepseek-r1-translation 1 nfr0",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.17136862297107092,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.11323159209170783,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.2055811057384932,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.3741229870987095,
+            "cot llama4:latest-complete 1 nfr1": 0.26748836321378017,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.26505683339235714,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.19283092769770763,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.20412817694298596,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.2264093691219602,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.1797790646487962,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.21360670281149163,
+            "cot llama4:latest-translation 1 nfr1": 0.331285589679247,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.18512352511793526,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.3798154005707417,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.36196497752165313,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.225187147219785
+          }
+        }
+      },
+      {
+        "model": "llama4:latest",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "def task_func(d):\n    result = {}\n    for v in d.values():\n        for i in v:\n            if isinstance(i, int):\n                result[i] = result.get(i, 0) + 1\n            else:\n                raise TypeError('Non-integer value encountered')\n    return result\n",
+        "nfrs": "nfr1",
+        "clone_id": "cot llama4:latest-complete 1 nfr1",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1822381881884622,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.17252790376723476,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.2197730597509462,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.2567903578295618,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.26748836321378017,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.24610369884078873,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.2350952959043305,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.16699786048682574,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.20742844345350164,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.13575557224074208,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.14917715732951534,
+            "cot llama4:latest-translation 1 nfr1": 0.32640755331245186,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.18244087535313577,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.16383796563176312,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.22806560079591787,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.22063166306167686
+          }
+        }
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "few-shot",
+        "code": "def task_func(d):\n    counts = {}\n    for key in d.values():\n        for num in key:\n            if num not in counts:\n                counts[num] = 0\n            counts[num] += 1\n    return counts\n",
+        "nfrs": "nfr1",
+        "clone_id": "few-shot gemma3:latest-ast 1 nfr1",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.18273741032889806,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.3190147801432765,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.33951350930929014,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.2669540631950075,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.26505683339235714,
+            "cot llama4:latest-complete 1 nfr1": 0.24610369884078873,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.1882172517394277,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.22072465289533952,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.11434107190659126,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.2156194976656164,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.24510797763932185,
+            "cot llama4:latest-translation 1 nfr1": 0.34407902339534835,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.18171867531151234,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.17433019367873143,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.2060211553259574,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.3004227420190405
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "requirements",
+        "code": "def task_func(d):\n    \"\"\"\n    Returns a dictionary with keys as unique integers from the input lists and values as their counts.\n\n    Args:\n        d (dict): A dictionary where each key is a string and the value is a list of integers.\n\n    Returns:\n        dict: A dictionary mapping each integer to its count across all lists.\n    \"\"\"\n    flattened_list = []\n    for sublist in d.values():\n        if isinstance(sublist, list):\n            flattened_list.extend(sublist)\n    return {item: flattened_list.count(item) for item in set(flattened_list)}\n",
+        "nfrs": "nfr5",
+        "clone_id": "zero-shot deepseek-r1-requirements 1 nfr5",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.20253620838372832,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.18483051853922416,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.2049863049867144,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.14965476092028418,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.19283092769770763,
+            "cot llama4:latest-complete 1 nfr1": 0.2350952959043305,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.1882172517394277,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.1346466946352707,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.33999473075925335,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.11979694948720815,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.19240384973126703,
+            "cot llama4:latest-translation 1 nfr1": 0.20647355549608265,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.2730277184260853,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.24496936044139808,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.2734160643326933,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.18306843798624445
+          }
+        }
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "translation",
+        "strategy": "few-shot",
+        "code": "from typing import Dict, List\n\n\ndef task_func(d: Dict[str, List[int]]) ->Dict[int, int]:\n    count_dict = {}\n    for key in d:\n        for value in d[key]:\n            if value not in count_dict:\n                count_dict[value] = 1\n            else:\n                count_dict[value] += 1\n    return count_dict\n",
+        "nfrs": "nfr0",
+        "clone_id": "few-shot llama3.1:latest-translation 1 nfr0",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22986667345980796,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.23968795198565512,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.18048169524751473,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.2952791436312965,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.20412817694298596,
+            "cot llama4:latest-complete 1 nfr1": 0.16699786048682574,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.22072465289533952,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.1346466946352707,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.16316292169924274,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.21685897313496905,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.3467094106180011,
+            "cot llama4:latest-translation 1 nfr1": 0.18614840978836195,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.24755870582126374,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.39395362777632575,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.2332465602500071,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.2887745480497397
+          }
+        }
+      },
+      {
+        "model": "llama4:latest",
+        "strategy": "zero-shot",
+        "context": "translation",
+        "code": "def task_func(d: dict) ->dict:\n    \"\"\"\n    This function takes a dictionary where each key is a string and the value is a list of integers.\n    It returns a dictionary where each key is an integer from any of the input lists, \n    and the value is the count of how often that integer appears in all the lists combined.\n    \"\"\"\n    count_dict = {}\n    for value in d.values():\n        for integer in value:\n            count_dict[integer] = count_dict.get(integer, 0) + 1\n    return count_dict\n\n\nd = {'a': [1, 2, 3], 'b': [2, 3, 4], 'c': [3, 4, 5]}\nprint(task_func(d))\n",
+        "nfrs": "nfr4",
+        "clone_id": "zero-shot llama4:latest-translation 1 nfr4",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23672636698795527,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.12245036024901478,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.12021624557097368,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.3719767381669608,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.2264093691219602,
+            "cot llama4:latest-complete 1 nfr1": 0.20742844345350164,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.11434107190659126,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.33999473075925335,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.16316292169924274,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.07353996889806708,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.16457571509132146,
+            "cot llama4:latest-translation 1 nfr1": 0.21847654869845715,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.3424277857725403,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.20139875875899027,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.2869026589202098,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.09735798989736551
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "minimal",
+        "strategy": "few-shot",
+        "code": "def task_func(d):\n    from collections import defaultdict\n    count_dict = defaultdict(int)\n    for key in d:\n        for num in d[key]:\n            count_dict[num] += 1\n    return dict(count_dict)\n",
+        "nfrs": "nfr1",
+        "clone_id": "few-shot deepseek-r1-minimal 1 nfr1",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25091963086839986,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.2849518221516759,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.1893807242651649,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.16730513296300364,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.1797790646487962,
+            "cot llama4:latest-complete 1 nfr1": 0.13575557224074208,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.2156194976656164,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.11979694948720815,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.21685897313496905,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.07353996889806708,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.1550635253610469,
+            "cot llama4:latest-translation 1 nfr1": 0.14224453247575872,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.35629557091161324,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.23621495178016216,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.329058767354515,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.3463159530840388
+          }
+        }
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "minimal",
+        "strategy": "few-shot",
+        "code": "from typing import Dict\n\n\ndef task_func(d: Dict[str, list[int]]) ->Dict[int, int]:\n    counts = {}\n    for key, value in d.items():\n        for num in value:\n            if num in counts:\n                counts[num] += 1\n            else:\n                counts[num] = 1\n    return counts\n",
+        "nfrs": "nfr5",
+        "clone_id": "few-shot llama3.1:latest-minimal 1 nfr5",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2546205100060377,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.32822102253817315,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.35894106327011804,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.3604863361378181,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.21360670281149163,
+            "cot llama4:latest-complete 1 nfr1": 0.14917715732951534,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.24510797763932185,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.19240384973126703,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.3467094106180011,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.16457571509132146,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.1550635253610469,
+            "cot llama4:latest-translation 1 nfr1": 0.1502539247961064,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.23604149563037652,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.29821822939744036,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.2626652903481951,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.2675614467601176
+          }
+        }
+      },
+      {
+        "model": "llama4:latest",
+        "context": "translation",
+        "strategy": "cot",
+        "code": "def task_func(d):\n    count_dict = {}\n    for value in d.values():\n        for item in value:\n            count_dict[item] = count_dict.get(item, 0) + 1\n    return count_dict\n",
+        "nfrs": "nfr1",
+        "clone_id": "cot llama4:latest-translation 1 nfr1",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2721924658194256,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.22709275465825057,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.32737184473111675,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.2915159588911648,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.331285589679247,
+            "cot llama4:latest-complete 1 nfr1": 0.32640755331245186,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.34407902339534835,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.20647355549608265,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.18614840978836195,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.21847654869845715,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.14224453247575872,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.1502539247961064,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.16452929050627732,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.12666598772745263,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.20762802420283977,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.22248427157131012
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "minimal",
+        "code": "def task_func(d):\n    \"\"\"\n    Count the occurrence of each integer in the values of the input dictionary,\n    where each value is a list of integers, and return a dictionary with these counts.\n\n    Args:\n        d (dict): A dictionary with string keys and list of integers as values.\n\n    Returns:\n        dict: A dictionary with integer keys and their respective counts.\n\n    Example:\n        Input: {'a': [1, 2, 3], 'b': [2, 3, 4]}\n        Output: {1: 1, 2: 2, 3: 2, 4: 1}\n    \"\"\"\n    from collections import defaultdict\n    count_dict = defaultdict(int)\n    for numbers in d.values():\n        for num in numbers:\n            count_dict[num] += 1\n    return dict(count_dict)\n",
+        "nfrs": "nfr4",
+        "clone_id": "zero-shot deepseek-r1-minimal 1 nfr4",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.28046287658557334,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.30480362836261715,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.18562989776524697,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.20419491482205487,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.18512352511793526,
+            "cot llama4:latest-complete 1 nfr1": 0.18244087535313577,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.18171867531151234,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.2730277184260853,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.24755870582126374,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.3424277857725403,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.35629557091161324,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.23604149563037652,
+            "cot llama4:latest-translation 1 nfr1": 0.16452929050627732,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.39042421189355114,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.24416548652359732,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.23637247881670892
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "translation",
+        "code": "from collections import defaultdict, Counter\nfrom typing import Dict, List, Mapping, Any\n\n\ndef task_func(d: Dict[str, List[int]]) ->Dict[int, int]:\n    count_dict = defaultdict(int)\n    for sublist in d.values():\n        for num in sublist:\n            count_dict[num] += 1\n    return {k: v for k, v in count_dict.items()}\n",
+        "nfrs": "nfr2",
+        "clone_id": "zero-shot deepseek-r1-translation 1 nfr2",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.34041876221362033,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.10021187190596696,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.1284826586780853,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.16498125175848014,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.3798154005707417,
+            "cot llama4:latest-complete 1 nfr1": 0.16383796563176312,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.17433019367873143,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.24496936044139808,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.39395362777632575,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.20139875875899027,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.23621495178016216,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.29821822939744036,
+            "cot llama4:latest-translation 1 nfr1": 0.12666598772745263,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.39042421189355114,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.36468093955787195,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.16209298021530788
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "ast",
+        "code": "def task_func(d):\n    from collections import Counter\n    flat_list = []\n    for sublist in d.values():\n        flat_list.extend(sublist)\n    return dict(Counter(flat_list))\n",
+        "nfrs": "nfr3",
+        "clone_id": "zero-shot deepseek-r1-ast 1 nfr3",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3465293996820432,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.13511070808453635,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.2010125202077428,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.30575859637453623,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.36196497752165313,
+            "cot llama4:latest-complete 1 nfr1": 0.22806560079591787,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.2060211553259574,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.2734160643326933,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.2332465602500071,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.2869026589202098,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.329058767354515,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.2626652903481951,
+            "cot llama4:latest-translation 1 nfr1": 0.20762802420283977,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.24416548652359732,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.36468093955787195,
+            "few-shot llama3.1:latest-minimal 1 nfr3": 0.3935533004461808
+          }
+        }
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "minimal",
+        "strategy": "few-shot",
+        "code": "from collections import Counter\n\n\ndef task_func(d):\n    counts = Counter()\n    for key in d:\n        counts.update(d[key])\n    return dict(counts)\n",
+        "nfrs": "nfr3",
+        "clone_id": "few-shot llama3.1:latest-minimal 1 nfr3",
+        "test_results": {
+          "test_case_1 (tmp_module.TestCases.test_case_1)": "PASS",
+          "test_case_2 (tmp_module.TestCases.test_case_2)": "PASS",
+          "test_case_3 (tmp_module.TestCases.test_case_3)": "PASS",
+          "test_case_4 (tmp_module.TestCases.test_case_4)": "PASS",
+          "test_case_5 (tmp_module.TestCases.test_case_5)": "PASS",
+          "test_case_6 (tmp_module.TestCases.test_case_6)": "PASS",
+          "test_case_7 (tmp_module.TestCases.test_case_7)": "PASS",
+          "test_case_8 (tmp_module.TestCases.test_case_8)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3465293996820432,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.24778560254470755,
+            "zero-shot gemma3:latest-requirements 1 nfr0": 0.19914046349184272,
+            "zero-shot llama4:latest-minimal 1 nfr5": 0.1507369236125794,
+            "few-shot deepseek-r1-translation 1 nfr0": 0.225187147219785,
+            "cot llama4:latest-complete 1 nfr1": 0.22063166306167686,
+            "few-shot gemma3:latest-ast 1 nfr1": 0.3004227420190405,
+            "zero-shot deepseek-r1-requirements 1 nfr5": 0.18306843798624445,
+            "few-shot llama3.1:latest-translation 1 nfr0": 0.2887745480497397,
+            "zero-shot llama4:latest-translation 1 nfr4": 0.09735798989736551,
+            "few-shot deepseek-r1-minimal 1 nfr1": 0.3463159530840388,
+            "few-shot llama3.1:latest-minimal 1 nfr5": 0.2675614467601176,
+            "cot llama4:latest-translation 1 nfr1": 0.22248427157131012,
+            "zero-shot deepseek-r1-minimal 1 nfr4": 0.23637247881670892,
+            "zero-shot deepseek-r1-translation 1 nfr2": 0.16209298021530788,
+            "zero-shot deepseek-r1-ast 1 nfr3": 0.3935533004461808
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/5",
+    "clones": [
+      {
+        "model": "deepseek-r1",
+        "context": "minimal",
+        "strategy": "cot",
+        "code": "import random\nimport statistics\n\n\ndef task_func(letters=None):\n    if letters is None:\n        letters = [chr(i + ord('a')) for i in range(26)]\n    return {letter: round(statistics.pstdev([random.randint(0, 100) for _ in\n        range(random.randint(1, 10))]), 1) for letter in letters}\n",
+        "nfrs": "nfr2",
+        "clone_id": "cot deepseek-r1-minimal 1 nfr2",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.21062281083780154,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.2633813057482308,
+            "cot llama3.1:latest-minimal 1 nfr2": 0.32679831312085006,
+            "cot deepseek-r1-translation 1 nfr5": 0.37044672998520706,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.352601538983368,
+            "cot llama3.1:latest-requirements 1 nfr2": 0.16010532651028692,
+            "zero-shot deepseek-r1-requirements 1 nfr0": 0.13904589066275946,
+            "zero-shot deepseek-r1-minimal 1 nfr2": 0.3484231013547087,
+            "cot llama4:latest-translation 1 nfr0": 0.27759519690258794,
+            "zero-shot deepseek-r1-minimal 1 nfr5": 0.15955290342850592,
+            "zero-shot llama4:latest-ast 1 nfr5": 0.14866020606928027
+          }
+        }
+      },
+      {
+        "model": "llama4:latest",
+        "strategy": "zero-shot",
+        "context": "minimal",
+        "code": "import numpy as np\nimport random\n\n\ndef task_func(LETTERS=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',\n    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',\n    'y', 'z']):\n    result = {}\n    for letter in LETTERS:\n        random_list = [random.randint(0, 100) for _ in range(random.randint\n            (1, 10))]\n        result[letter] = np.std(random_list, ddof=0)\n    return result\n",
+        "nfrs": "nfr2",
+        "clone_id": "zero-shot llama4:latest-minimal 1 nfr2",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2309143187033873,
+            "cot deepseek-r1-minimal 1 nfr2": 0.2633813057482308,
+            "cot llama3.1:latest-minimal 1 nfr2": 0.3598114246308199,
+            "cot deepseek-r1-translation 1 nfr5": 0.2867052193453249,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.3228229534030383,
+            "cot llama3.1:latest-requirements 1 nfr2": 0.18754564449819006,
+            "zero-shot deepseek-r1-requirements 1 nfr0": 0.16444783964868806,
+            "zero-shot deepseek-r1-minimal 1 nfr2": 0.2636662428674979,
+            "cot llama4:latest-translation 1 nfr0": 0.23609820609584364,
+            "zero-shot deepseek-r1-minimal 1 nfr5": 0.3906528928369671,
+            "zero-shot llama4:latest-ast 1 nfr5": 0.3943566169373217
+          }
+        }
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "minimal",
+        "strategy": "cot",
+        "code": "import random\nimport numpy as np\nfrom typing import List, Dict\n\n\ndef task_func(LETTERS: List[str]=list('abcdefghijklmnopqrstuvwxyz')):\n    result_dict = {}\n    for letter in LETTERS:\n        num_list = [random.randint(0, 100) for _ in range(random.randint(1,\n            10))]\n        result_dict[letter] = np.std(num_list)\n    return result_dict\n",
+        "nfrs": "nfr2",
+        "clone_id": "cot llama3.1:latest-minimal 1 nfr2",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23271029532167894,
+            "cot deepseek-r1-minimal 1 nfr2": 0.32679831312085006,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.3598114246308199,
+            "cot deepseek-r1-translation 1 nfr5": 0.3741720375966982,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.3936252252778055,
+            "cot llama3.1:latest-requirements 1 nfr2": 0.35005256108598726,
+            "zero-shot deepseek-r1-requirements 1 nfr0": 0.16654015692459917,
+            "zero-shot deepseek-r1-minimal 1 nfr2": 0.30547075764901893,
+            "cot llama4:latest-translation 1 nfr0": 0.39883737740294256,
+            "zero-shot deepseek-r1-minimal 1 nfr5": 0.21383314765036981,
+            "zero-shot llama4:latest-ast 1 nfr5": 0.23694619129452849
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "context": "translation",
+        "strategy": "cot",
+        "code": "import random\nfrom typing import List, Dict, Optional, Tuple\n\n\ndef task_func(letters: Optional[List[str]]=None) ->Dict[str, float]:\n    \"\"\"\n    Returns a dictionary with keys from the given list of single-character strings and values as population standard deviations.\n    If no list is provided, uses lowercase English alphabets 'a' to 'z'.\n    \"\"\"\n    if letters is None:\n        letters = [chr(ord('a') + i) for i in range(26)]\n    random_dict: Dict[str, List[int]] = {letter: [] for letter in letters}\n    for letter in letters:\n        size = random.randint(1, 10)\n        num_list = random_dict[letter]\n        for _ in range(size):\n            num_list.append(random.randint(0, 100))\n    sd_dict: Dict[str, float] = {}\n    for letter in letters:\n        numbers = random_dict[letter]\n        if not numbers:\n            continue\n        mean = sum(numbers) / len(numbers)\n        variance = sum((x - mean) ** 2 for x in numbers) / len(numbers)\n        sd = variance ** 0.5\n        sd_dict[letter] = sd\n    return sd_dict\n",
+        "nfrs": "nfr5",
+        "clone_id": "cot deepseek-r1-translation 1 nfr5",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23424246300837498,
+            "cot deepseek-r1-minimal 1 nfr2": 0.37044672998520706,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.2867052193453249,
+            "cot llama3.1:latest-minimal 1 nfr2": 0.3741720375966982,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.1728925058136895,
+            "cot llama3.1:latest-requirements 1 nfr2": 0.344447860260249,
+            "zero-shot deepseek-r1-requirements 1 nfr0": 0.3379906555154824,
+            "zero-shot deepseek-r1-minimal 1 nfr2": 0.2861298350679886,
+            "cot llama4:latest-translation 1 nfr0": 0.3111187917339609,
+            "zero-shot deepseek-r1-minimal 1 nfr5": 0.3593220221020408,
+            "zero-shot llama4:latest-ast 1 nfr5": 0.3833941530688575
+          }
+        }
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "minimal",
+        "strategy": "zero-shot",
+        "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS=None):\n    \"\"\"\n    Creates a dictionary where keys are letters from a predefined list LETTERS and values are lists of random integers.\n    Then, calculates the population standard deviation for each list of integers and returns a dictionary of these values.\n    The random integers for each key are generated within the range 0 to 100, and each list contains between 1 to 10 integers.\n    \"\"\"\n    if LETTERS is None:\n        LETTERS = [chr(i) for i in range(ord('a'), ord('z') + 1)]\n    result = {}\n    for letter in LETTERS:\n        num_integers = random.randint(1, 10)\n        random_integers = [random.randint(0, 100) for _ in range(num_integers)]\n        result[letter] = statistics.pstdev(random_integers)\n    return result\n",
+        "nfrs": "nfr0",
+        "clone_id": "zero-shot gemma3:latest-minimal 1 nfr0",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23520035823570634,
+            "cot deepseek-r1-minimal 1 nfr2": 0.352601538983368,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.3228229534030383,
+            "cot llama3.1:latest-minimal 1 nfr2": 0.3936252252778055,
+            "cot deepseek-r1-translation 1 nfr5": 0.1728925058136895,
+            "cot llama3.1:latest-requirements 1 nfr2": 0.3008298143943159,
+            "zero-shot deepseek-r1-requirements 1 nfr0": 0.24733615184990568,
+            "zero-shot deepseek-r1-minimal 1 nfr2": 0.34691162456506863,
+            "cot llama4:latest-translation 1 nfr0": 0.3032399945817655,
+            "zero-shot deepseek-r1-minimal 1 nfr5": 0.28608285933607,
+            "zero-shot llama4:latest-ast 1 nfr5": 0.35574478317059083
+          }
+        }
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "requirements",
+        "strategy": "cot",
+        "code": "import random\nimport math\nfrom string import ascii_lowercase\n\n\ndef task_func(LETTERS=ascii_lowercase):\n    result = {}\n    for letter in LETTERS:\n        length = random.randint(1, 10)\n        numbers = [random.randint(-1000, 1000) for _ in range(length)]\n        std_dev = math.sqrt(sum((x - sum(numbers) / length) ** 2 for x in\n            numbers) / length)\n        result[letter] = std_dev\n    return result\n",
+        "nfrs": "nfr2",
+        "clone_id": "cot llama3.1:latest-requirements 1 nfr2",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25073558136921753,
+            "cot deepseek-r1-minimal 1 nfr2": 0.16010532651028692,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.18754564449819006,
+            "cot llama3.1:latest-minimal 1 nfr2": 0.35005256108598726,
+            "cot deepseek-r1-translation 1 nfr5": 0.344447860260249,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.3008298143943159,
+            "zero-shot deepseek-r1-requirements 1 nfr0": 0.2749231131205503,
+            "zero-shot deepseek-r1-minimal 1 nfr2": 0.2229318649008697,
+            "cot llama4:latest-translation 1 nfr0": 0.36121716689224875,
+            "zero-shot deepseek-r1-minimal 1 nfr5": 0.2043026942181809,
+            "zero-shot llama4:latest-ast 1 nfr5": 0.18945326687050668
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "requirements",
+        "code": "import random\nimport math\n\n\ndef task_func(LETTERS=['abcdefghijklmnopqrstuvwxyz']):\n    if len(LETTERS) == 1 and isinstance(LETTERS[0], str):\n        LETTERS = list(LETTERS[0])\n    else:\n        LETTERS = [letter for letter in LETTERS]\n    alphabet_dict = {}\n    for letter in LETTERS:\n        n = random.randint(1, 10)\n        numbers = [random.randint(1, 100) for _ in range(n)]\n        if n == 1:\n            sd = 0.0\n        else:\n            mean = sum(numbers) / n\n            variance = sum((x - mean) ** 2 for x in numbers) / n\n            sd = math.sqrt(variance)\n        alphabet_dict[letter] = sd\n    return alphabet_dict\n",
+        "nfrs": "nfr0",
+        "clone_id": "zero-shot deepseek-r1-requirements 1 nfr0",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.250968827729745,
+            "cot deepseek-r1-minimal 1 nfr2": 0.13904589066275946,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.16444783964868806,
+            "cot llama3.1:latest-minimal 1 nfr2": 0.16654015692459917,
+            "cot deepseek-r1-translation 1 nfr5": 0.3379906555154824,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.24733615184990568,
+            "cot llama3.1:latest-requirements 1 nfr2": 0.2749231131205503,
+            "zero-shot deepseek-r1-minimal 1 nfr2": 0.2890593810150687,
+            "cot llama4:latest-translation 1 nfr0": 0.3612902493834099,
+            "zero-shot deepseek-r1-minimal 1 nfr5": 0.37390173392183773,
+            "zero-shot llama4:latest-ast 1 nfr5": 0.30434186489817205
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "minimal",
+        "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS=None):\n    if LETTERS is None:\n        LETTERS = [chr(i + ord('a')) for i in range(26)]\n    else:\n        for letter in LETTERS:\n            if len(letter) != 1 or not isinstance(letter, str):\n                raise ValueError(\n                    'LETTERS must be a list of single-character strings')\n    result = {}\n    for letter in LETTERS:\n        num_list = [random.randint(0, 100) for _ in range(random.randint(1,\n            10))]\n        std_dev = statistics.pstdev(num_list)\n        result[letter] = round(std_dev, 2)\n    return result\n",
+        "nfrs": "nfr2",
+        "clone_id": "zero-shot deepseek-r1-minimal 1 nfr2",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2792350336704419,
+            "cot deepseek-r1-minimal 1 nfr2": 0.3484231013547087,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.2636662428674979,
+            "cot llama3.1:latest-minimal 1 nfr2": 0.30547075764901893,
+            "cot deepseek-r1-translation 1 nfr5": 0.2861298350679886,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.34691162456506863,
+            "cot llama3.1:latest-requirements 1 nfr2": 0.2229318649008697,
+            "zero-shot deepseek-r1-requirements 1 nfr0": 0.2890593810150687,
+            "cot llama4:latest-translation 1 nfr0": 0.3388025400962424,
+            "zero-shot deepseek-r1-minimal 1 nfr5": 0.24674975746637662,
+            "zero-shot llama4:latest-ast 1 nfr5": 0.34918267288164767
+          }
+        }
+      },
+      {
+        "model": "llama4:latest",
+        "context": "translation",
+        "strategy": "cot",
+        "code": "import random\nimport string\nimport math\n\n\ndef task_func(LETTERS=None):\n    if LETTERS is None:\n        LETTERS = list(string.ascii_lowercase)\n    random_dict = {}\n    for letter in LETTERS:\n        size = random.randint(1, 10)\n        random_list = [random.randint(0, 100) for _ in range(size)]\n        random_dict[letter] = random_list\n    sd_dict = {}\n    for key, value in random_dict.items():\n        mean = sum(value) / len(value)\n        variance = sum((x - mean) ** 2 for x in value) / len(value)\n        sd = math.sqrt(variance)\n        sd_dict[key] = sd\n    return sd_dict\n\n\nprint(task_func())\n",
+        "nfrs": "nfr0",
+        "clone_id": "cot llama4:latest-translation 1 nfr0",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2888416371349336,
+            "cot deepseek-r1-minimal 1 nfr2": 0.27759519690258794,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.23609820609584364,
+            "cot llama3.1:latest-minimal 1 nfr2": 0.39883737740294256,
+            "cot deepseek-r1-translation 1 nfr5": 0.3111187917339609,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.3032399945817655,
+            "cot llama3.1:latest-requirements 1 nfr2": 0.36121716689224875,
+            "zero-shot deepseek-r1-requirements 1 nfr0": 0.3612902493834099,
+            "zero-shot deepseek-r1-minimal 1 nfr2": 0.3388025400962424,
+            "zero-shot deepseek-r1-minimal 1 nfr5": 0.3247260289475754,
+            "zero-shot llama4:latest-ast 1 nfr5": 0.36398796892475305
+          }
+        }
+      },
+      {
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "minimal",
+        "code": "import random\nimport math\nLETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',\n    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']\n\n\ndef task_func(letters=LETTERS):\n    data_dict = {}\n    for letter in letters:\n        num_integers = random.randint(1, 10)\n        integer_list = [random.randint(0, 100) for _ in range(num_integers)]\n        data_dict[letter] = integer_list\n    std_dev_dict = {}\n    for letter, numbers in data_dict.items():\n        if len(numbers) < 2:\n            std_dev_dict[letter] = 0.0\n        else:\n            mean = sum(numbers) / len(numbers)\n            variance = sum((x - mean) ** 2 for x in numbers) / len(numbers)\n            std_dev_dict[letter] = math.sqrt(variance)\n    return std_dev_dict\n",
+        "nfrs": "nfr5",
+        "clone_id": "zero-shot deepseek-r1-minimal 1 nfr5",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.298793127439288,
+            "cot deepseek-r1-minimal 1 nfr2": 0.15955290342850592,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.3906528928369671,
+            "cot llama3.1:latest-minimal 1 nfr2": 0.21383314765036981,
+            "cot deepseek-r1-translation 1 nfr5": 0.3593220221020408,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.28608285933607,
+            "cot llama3.1:latest-requirements 1 nfr2": 0.2043026942181809,
+            "zero-shot deepseek-r1-requirements 1 nfr0": 0.37390173392183773,
+            "zero-shot deepseek-r1-minimal 1 nfr2": 0.24674975746637662,
+            "cot llama4:latest-translation 1 nfr0": 0.3247260289475754,
+            "zero-shot llama4:latest-ast 1 nfr5": 0.3737360584035351
+          }
+        }
+      },
+      {
+        "model": "llama4:latest",
+        "strategy": "zero-shot",
+        "context": "ast",
+        "code": "import random\nimport math\nfrom typing import List, Dict\n\n\ndef task_func(LETTERS: List[str]=None) ->Dict[str, float]:\n    \"\"\"\n    This function generates a dictionary where keys are letters from the input list \n    and values are the population standard deviations of lists of random integers \n    associated with each key.\n\n    Args:\n    LETTERS (List[str]): A list of single-character strings. Defaults to lowercase English alphabets.\n\n    Returns:\n    Dict[str, float]: A dictionary where keys are letters and values are population standard deviations.\n    \"\"\"\n    if LETTERS is None:\n        LETTERS = [chr(i) for i in range(ord('a'), ord('z') + 1)]\n    random_dict = {}\n    for letter in LETTERS:\n        random_list = [random.randint(0, 100) for _ in range(random.randint\n            (1, 10))]\n        random_dict[letter] = random_list\n    sd_dict = {}\n    for letter, random_list in random_dict.items():\n        mean = sum(random_list) / len(random_list)\n        variance = sum((x - mean) ** 2 for x in random_list) / len(random_list)\n        sd_dict[letter] = math.sqrt(variance)\n    return sd_dict\n",
+        "nfrs": "nfr5",
+        "clone_id": "zero-shot llama4:latest-ast 1 nfr5",
+        "test_results": {
+          "test_custom_letters (tmp_module.TestCases.test_custom_letters)": "PASS",
+          "test_default_letters (tmp_module.TestCases.test_default_letters)": "PASS",
+          "test_empty_letters (tmp_module.TestCases.test_empty_letters)": "PASS",
+          "test_known_values (tmp_module.TestCases.test_known_values)": "PASS",
+          "test_uniform_values (tmp_module.TestCases.test_uniform_values)": "PASS"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3285633097690612,
+            "cot deepseek-r1-minimal 1 nfr2": 0.14866020606928027,
+            "zero-shot llama4:latest-minimal 1 nfr2": 0.3943566169373217,
+            "cot llama3.1:latest-minimal 1 nfr2": 0.23694619129452849,
+            "cot deepseek-r1-translation 1 nfr5": 0.3833941530688575,
+            "zero-shot gemma3:latest-minimal 1 nfr0": 0.35574478317059083,
+            "cot llama3.1:latest-requirements 1 nfr2": 0.18945326687050668,
+            "zero-shot deepseek-r1-requirements 1 nfr0": 0.30434186489817205,
+            "zero-shot deepseek-r1-minimal 1 nfr2": 0.34918267288164767,
+            "cot llama4:latest-translation 1 nfr0": 0.36398796892475305,
+            "zero-shot deepseek-r1-minimal 1 nfr5": 0.3737360584035351
+          }
+        }
+      }
+    ]
+  }
+]
