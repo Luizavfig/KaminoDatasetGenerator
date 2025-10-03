@@ -3,32 +3,59 @@ from .prompts import (SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_T
 
 FUNCTION_NAME = "task_func"  
 REMOTE_OLLAMA = False
+import os
+import json
+import requests
+
+import os
+import json
+import requests
+
+import os
+import json
+import requests
+
 def call_ollama_chat(messages, model, options):
     """
-    Call Ollama's /api/chat with role-based messages.
-    Returns raw string content from the assistant.
+    Call Ollama-native models using the URL from the correct config file.
+       
+    Returns:
+    - str: assistant content
     """
-    
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))    
-    if(REMOTE_OLLAMA):
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+
+    # Pick the right config file
+    if REMOTE_OLLAMA:
         config_file = os.path.join(root_dir, "ollama_config_remote.json")
-    else:
+    else:  # default to local
         config_file = os.path.join(root_dir, "ollama_config_local.json")
-        
+
     with open(config_file, "r", encoding="utf-8") as f:
         config = json.load(f)
 
-    url = config["url"]
+    url = config["url"]        
     timeout = config.get("timeout", 600)
+
+    # Prepare payload
     payload = config["json"]
     payload["model"] = model
     payload["messages"] = messages
     payload["options"] = options
 
+    # Send request
     resp = requests.post(url, json=payload, timeout=timeout)
     resp.raise_for_status()
     data = resp.json()
-    return data["message"]["content"]
+
+    # Parse Ollama-native response
+    if "message" in data and "content" in data["message"]:
+        return data["message"]["content"]
+
+    raise ValueError(f"Unexpected response format: {data}")
+
+
+
+
 
 def extract_python_code(text: str) -> str:
     """
