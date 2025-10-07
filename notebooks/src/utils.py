@@ -1,4 +1,4 @@
-import json, unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast
+import json, unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing
 
 def normalize(dataset_split):
     normalized = []
@@ -49,30 +49,19 @@ def normalize(dataset_split):
         })
     return normalized
 
+
 class TrackingTestResult(unittest.TextTestResult):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.successes = []
 
-    def addSuccess(self, test): # keeps track of successful tests in a separate list
+    def addSuccess(self, test):
         super().addSuccess(test)
         self.successes.append(test)
 
-def validate_with_unittest(code: str, tests: list) -> dict:
-    """
-    Run code + tests and return per-test results as {test_name: "PASS"/"FAIL"/"ERROR"}.
-    If any test fails to run due to an exception, mark it as "ERROR".
-    """
-    code_d = textwrap.dedent(code)
-    tests_d = "\n\n".join(textwrap.dedent(t) for t in tests)
-
-    with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
-        f.write(code_d + "\n\n" + tests_d)
-        tmp_path = f.name
-
-    test_results = {}
+def run_test_module(tmp_path, return_dict):
+    """Run tests in a module and store results keyed by TestCase.method name"""
     try:
-        # Load module dynamically
         spec = importlib.util.spec_from_file_location("tmp_module", tmp_path)
         tmp_module = importlib.util.module_from_spec(spec)
         sys.modules["tmp_module"] = tmp_module
@@ -81,39 +70,70 @@ def validate_with_unittest(code: str, tests: list) -> dict:
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromModule(tmp_module)
 
-        # Run tests with tracking
-        stream = open(os.devnull, 'w')  # suppress default output
+        stream = open(os.devnull, 'w')  # suppress output
         runner = unittest.TextTestRunner(stream=stream, resultclass=TrackingTestResult)
         result = runner.run(suite)
 
-        # Mark successes
         for test_case in result.successes:
-            test_results[str(test_case)] = "PASS"
-        # Mark failures and errors
+            # test_case.id() => "tmp_module.TestCases.test_case_1"
+            key = ".".join(test_case.id().split(".")[1:])  # "TestCases.test_case_1"
+            return_dict[key] = "PASS"
+
         for test_case, _ in result.failures + result.errors:
-            test_results[str(test_case)] = "FAIL"
+            key = ".".join(test_case.id().split(".")[1:])
+            return_dict[key] = "FAIL"
+    except Exception:
+        # If the module fails to load, mark nothing here; main code will assign ERROR
+        pass
 
-        # If some tests in `tests` list were not executed due to validation issues, mark them as ERROR
-        executed_names = set(test_results.keys())
+def validate_with_unittest(code: str, tests: list) -> dict:
+    TIMEOUT_SECONDS = 60
+    code_d = textwrap.dedent(code)
+    tests_d = "\n\n".join(textwrap.dedent(t) for t in tests)
+
+    with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
+        f.write(code_d + "\n\n" + tests_d)
+        tmp_path = f.name
+
+    manager = multiprocessing.Manager()
+    return_dict = manager.dict()
+
+    p = multiprocessing.Process(target=run_test_module, args=(tmp_path, return_dict))
+    p.start()
+    p.join(timeout=TIMEOUT_SECONDS)
+
+    if p.is_alive():
+        print("⚠️ Test execution exceeded timeout, terminating process.")
+        p.terminate()
+        p.join()
+        # If timeout, mark all test methods as ERROR
         for t_code in tests:
-            first_line = t_code.strip().splitlines()[0]
-
-            # Skip if it's not a test function/class definition
-            if not (first_line.startswith("def test") or first_line.startswith("class ")):
-                continue
-
-            if first_line not in executed_names:
-                test_results[first_line] = "ERROR"
-
-    except Exception as e:
-        # If code itself fails to load, mark all tests as ERROR
+            for line in t_code.splitlines():
+                line = line.strip()
+                if line.startswith("def test"):
+                    test_name = line.split("(")[0]  # def test_case_1
+                    # Combine with class name if available
+                    class_name = next((l.split()[1].split("(")[0]
+                                       for l in t_code.splitlines() if l.strip().startswith("class ")), "TestCases")
+                    return_dict[f"{class_name}.{test_name.replace('def ', '')}"] = "ERROR (timeout)"
+    else:
+        # Mark unexecuted test methods as ERROR
+        executed_names = set(return_dict.keys())
         for t_code in tests:
-            first_line = t_code.strip().splitlines()[0]
-            test_results[first_line] = "ERROR"
-    finally:
-        os.remove(tmp_path)
+            class_name = next((l.split()[1].split("(")[0]
+                               for l in t_code.splitlines() if l.strip().startswith("class ")), "TestCases")
+            for line in t_code.splitlines():
+                line = line.strip()
+                if line.startswith("def test"):
+                    test_name = line.split("(")[0].replace("def ", "")
+                    full_name = f"{class_name}.{test_name}"
+                    if full_name not in executed_names:
+                        return_dict[full_name] = "ERROR"
 
-    return test_results
+    os.remove(tmp_path)
+    return dict(return_dict)
+
+
 
 
 def run_original_tests(normalized_data, output_file): 
@@ -156,6 +176,38 @@ def extract_required_packages(dataset):
         if isinstance(libs_val, list):
             packages.update(libs_val)
     return packages
+
+import re
+import subprocess
+import sys
+import json
+
+import re
+import ast
+
+def extract_required_packages_clones(dataset):
+    """
+    Extract a set of unique Python package names from dataset entries.
+    Scans the 'code' field of each clone to detect imports.
+    """
+    packages = set()
+    for entry in dataset:
+        clones = entry.get("clones", [])
+        for clone in clones:
+            code = clone.get("code", "")
+            # regex: matches 'import X' or 'from X import ...'
+            imports = re.findall(r'^\s*(?:import|from)\s+([\w\d_\.]+)', code, flags=re.MULTILINE)
+            for imp in imports:
+                top = imp.split('.')[0]
+                # skip standard library
+                if top not in (
+                    "sys", "os", "re", "math", "itertools", "random",
+                    "unittest", "json", "time", "subprocess", "typing"
+                ):
+                    packages.add(top)
+    return packages
+
+
 
 def analyze_test_results(data):
     total_pass = 0

@@ -55,6 +55,7 @@ SYSTEM_PROMPT_COMPLETE = f"""You are a careful Python refactoring engine.
 You produce a semantically equivalent variant (Type-4 clone) of the given function.
 Rules:
 - Output ONLY Python code in a single fenced block.
+- Add any library imports if needed before the function definition.
 - Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
 - Keep the same external behavior, side-effects.
 - Do NOT hardcode any test data or specific URLs or values from tests.
@@ -63,10 +64,10 @@ Rules:
 
 MANDATORY_HINTS = """
 - Do NOT output explanations, comments, reasoning, or any text, **only valid Python code**.
-- Do not add print statements
-- Do to call the function you generated inside a print statement
+- Do not add print() statements to your code
 
- Generate ONLY the code in a single ```python fenced block.   
+- Generate ONLY the code in a single ```python fenced block.   
+- If you cannot generate code, output an empty function stub instead.
 """
 
 NFRS = {

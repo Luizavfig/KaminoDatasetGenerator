@@ -1,19 +1,11 @@
-import re, textwrap, requests, ast, astor, re, os, json 
+import re, textwrap, requests, ast, astor, re, os, json, time
 from .prompts import (SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_TO_UML, context_builders)
 
 FUNCTION_NAME = "task_func"  
 REMOTE_OLLAMA = False
-import os
-import json
-import requests
+max_retries=3
+delay=1
 
-import os
-import json
-import requests
-
-import os
-import json
-import requests
 
 def call_ollama_chat(messages, model, options):
     """
@@ -106,7 +98,16 @@ def generate_clones(messages, model, options, expected_func_name):
     Returns:
         The extracted and renamed Python code as a string.
     """
-    raw = call_ollama_chat(messages, model, options)
+    for attempt in range(max_retries): # GPT models sometimes return nothing
+        raw = call_ollama_chat(messages, model, options)
+
+        # Check if there's a ```python fenced block
+        if re.search(r"```python[\s\S]*?```", raw):
+            break  # valid Python code found
+
+        # If no code block, retry
+        if attempt < max_retries - 1:
+            time.sleep(delay) 
     code = extract_python_code(raw)
     code = force_function_name(code, expected_func_name)
     return code
@@ -327,7 +328,7 @@ def run_clone_generation(
                 return_text=return_text,
                 nfrs=nfrs,
             )
-
+            
             messages = [
                 {"role": "system", "content": system_prompt},
                 {"role": "user",   "content": user_prompt},
