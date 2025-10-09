@@ -1,4 +1,5 @@
-import json, unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing
+import json, unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re
+import numpy as np 
 
 def normalize(dataset_split):
     normalized = []
@@ -175,15 +176,7 @@ def extract_required_packages(dataset):
                 libs_val = []
         if isinstance(libs_val, list):
             packages.update(libs_val)
-    return packages
-
-import re
-import subprocess
-import sys
-import json
-
-import re
-import ast
+    return packages 
 
 def extract_required_packages_clones(dataset):
     """
@@ -267,3 +260,25 @@ def filter_dataset(original_dataset_file, test_results_file, output_file):
     print(f"Filtered dataset saved to {output_file}")
     print(f"Original entries: {len(dataset)}")
     print(f"Filtered entries (all tests pass): {len(filtered_dataset)}")
+
+
+def extract_generated_fields(entry):
+    """Move all keys starting with 'gen_' into a nested 'generated_data' dict."""
+    generated_data = {}
+    other_fields = {}
+    for k, v in entry.items():
+        if k.startswith("gen_"):
+            generated_data[k] = v
+        else:
+            other_fields[k] = v
+    return other_fields, generated_data
+
+def np_converter(obj):
+    if isinstance(obj, (np.integer, np.intc, np.int32, np.int64)):
+        return int(obj)
+    elif isinstance(obj, (np.floating, np.float32, np.float64)):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    else:
+        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
