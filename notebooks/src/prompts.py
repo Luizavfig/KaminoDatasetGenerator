@@ -35,18 +35,9 @@ Be concise but precise, focusing on:
 Do NOT output code or text, only the PlantUML state-machine.
 """
 
-SYSTEM_PROMPT_FROM_UML = f"""You are a Python developer.
-You produce a Python code to a given function based on a state-machine representation in PlantUML and function declaration.
-Rules:
-- Output ONLY Python code in a single fenced block.
-- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
-"""
-
-SYSTEM_PROMPT_MINIMAL = f"""You are a Python generation engine.
-You produce a Python code to a given function based on a textual description and function declaration.
-Rules:
-- Output ONLY Python code in a single fenced block.
-- Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
+SYSTEM_PROMPT_MINIMAL = f"""
+You are a Python generation engine.
+You produce Python code based on the information given. 
 """
 
 
@@ -55,7 +46,6 @@ SYSTEM_PROMPT_COMPLETE = f"""You are a careful Python refactoring engine.
 You produce a semantically equivalent variant (Type-4 clone) of the given function.
 Rules:
 - Output ONLY Python code in a single fenced block.
-- Add any library imports if needed before the function definition.
 - Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
 - Keep the same external behavior, side-effects.
 - Do NOT hardcode any test data or specific URLs or values from tests.
@@ -65,7 +55,7 @@ Rules:
 MANDATORY_HINTS = """
 - Do NOT output explanations, comments, reasoning, or any text, **only valid Python code**.
 - Do not add print() statements to your code
-
+- If needed, library imports should be added before the function definition.
 - Generate ONLY the code in a single ```python fenced block.   
 - If you cannot generate code, output an empty function stub instead.
 """
@@ -74,10 +64,10 @@ NFRS = {
       "nfr0": """
 """,
     "nfr1": """
-- the generated code should use as few libraries as possible
+- the generated code must not use any external libraries
 """,
   "nfr2": """
-- the generated code should use as many libraries as possible
+- the generated code should use as many external libraries as possible
 """
 ,
 "nfr3":""" 
@@ -153,6 +143,44 @@ In addtion, make sure that:
 
 """
 
+def build_user_prompt_code(
+    strategy: str,
+    original_body: str,
+    description: str,
+    params: str,
+    return_text: str,
+    nfrs: str
+) -> str:
+    """
+    Build a user prompt to generate type 4 clones.
+    Returns:
+        A formatted string prompt for the LLM.
+    """
+    return f"""
+
+{STRATEGIES[strategy]}
+
+You will be shown:
+1) A short description.
+2) The original function BODY (not including the def line).
+
+Description:
+{description}
+
+Original function BODY (indentation represents inside the function):
+{textwrap.dedent(original_body).strip()}
+
+Your task:
+- Generate a semantically equivalent implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
+- Make sure the syntax and structure of the implementation is as different as possible from the original function BODY.
+- The implementation must return something based on this text: {return_text}.
+- Make sure the function follows the following non-functional requirements:
+    {NFRS[nfrs]}
+
+In addtion, make sure that:
+    {MANDATORY_HINTS}
+
+"""
 
 def build_user_prompt_uml(strategy: str, uml: str, params: str, return_text: str, nfrs: str)-> str:
     """
@@ -242,6 +270,61 @@ Make sure the function follows the following non-functional requirements
 In addtion, make sure that:
 {MANDATORY_HINTS}
 """
+
+
+import textwrap
+
+def build_clone_variation_prompt(
+    original_body: str,  
+    description: str,
+    example_clones: list,
+    params: str,  
+    return_text: str,      
+    nfrs: str,  
+) -> str:
+    """
+    Build a prompt that shows a few existing clones and asks the LLM to generate a new one.
+    Returns:
+        A formatted string prompt for the LLM.
+    """
+
+    examples_text = ""
+    for i, clone in enumerate(example_clones, 1):
+        examples_text += f"\n### Example {i}\n"
+        examples_text += "```python\n" + clone.get("code", "").strip() + "\n```\n"
+
+    return f"""
+You are tasked with generating **a new semantically equivalent clone** of the given function.
+
+You will be shown:
+1) A short description of the function.
+2) The original function BODY.
+3) Several existing clones as examples.
+
+Description:
+{description} 
+
+Original function BODY (indentation represents inside the function):
+{textwrap.dedent(original_body).strip()} 
+
+---
+
+### Existing Example Clones
+{examples_text}
+
+---
+
+### Your Task
+- Implement a new variation of the function named as `{FUNCTION_NAME}` with arguments: {params}.
+- The implementation must return something based on this text: {return_text}.
+- It must be semantically equivalent to the original and clones.
+- It must be sytactically and structurally different from the original and all clones.
+- Make sure the function follows the following non-functional requirements:
+    {NFRS[nfrs]}
+In addtion, make sure that:
+    {MANDATORY_HINTS}
+"""
+
 
 STRATEGIES = {
     "zero-shot": """""",
@@ -354,6 +437,10 @@ context_builders = { # add more builders to extend the supported contexts
         SYSTEM_PROMPT_MINIMAL,
         build_user_prompt_ast(kwargs["strategy"], kwargs["gen_ast"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
     ),
+    "code": lambda **kwargs: (
+        SYSTEM_PROMPT_MINIMAL,
+        build_user_prompt_code(kwargs["strategy"], kwargs["original_body"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
+    ),
     "complete": lambda **kwargs: (
         SYSTEM_PROMPT_COMPLETE,
         build_user_prompt_complete(kwargs["strategy"], kwargs["original_body"], kwargs["description"], kwargs["libs"], kwargs["tests_snippet"], kwargs["nfrs"])
@@ -361,5 +448,6 @@ context_builders = { # add more builders to extend the supported contexts
     "translation": lambda **kwargs: (
         SYSTEM_PROMPT_COMPLETE,
         build_user_prompt_from_translation(kwargs["strategy"], kwargs["gen_translation"], "Java", kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
-    ),
+    )   
+    
 }

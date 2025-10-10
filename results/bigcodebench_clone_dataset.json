@@ -95,22 +95,13 @@
         "code": "import itertools\nfrom typing import List, Optional\n\n\ndef task_func(numbers: Optional[List[float]]=None) ->float:\n    if numbers is None:\n        numbers = list(range(1, 11))\n    n = len(numbers)\n    if n <= 1:\n        return 0.0\n    total_diff = 0.0\n    for i in range(n):\n        for j in range(i + 1, n):\n            total_diff += abs(numbers[i] - numbers[j])\n    average = 2.0 / n * total_diff\n    return average\n\n\nprint(task_func())\n"
       },
       {
-        "clone_id": "zero-shot gpt-oss:20b-minimal 1 nfr4",
-        "model": "gpt-oss:20b",
-        "strategy": "zero-shot",
-        "context": "minimal",
-        "nfrs": "nfr4",
-        "cluster": 8,
-        "code": "def task_func(numbers=None):\n    if numbers is None:\n        numbers = list(range(1, 11))\n    n = len(numbers)\n    if n <= 1:\n        return 0.0\n    from itertools import permutations\n    total = 0.0\n    count = 0\n    for perm in permutations(numbers):\n        s = 0.0\n        prev = perm[0]\n        for x in perm[1:]:\n            s += abs(x - prev)\n            prev = x\n        total += s\n        count += 1\n    return total / count\n"
-      },
-      {
-        "clone_id": "few-shot gpt-oss:20b-minimal 1 nfr0",
-        "model": "gpt-oss:20b",
+        "clone_id": "few-shot gpt-oss:latest-ast 1 nfr3",
+        "model": "gpt-oss:latest",
         "strategy": "few-shot",
-        "context": "minimal",
-        "nfrs": "nfr0",
-        "cluster": 9,
-        "code": "def task_func(numbers=None):\n    if numbers is None:\n        numbers = list(range(1, 11))\n    n = len(numbers)\n    if n <= 1:\n        return 0.0\n    total_diff = 0\n    for i in range(n):\n        ai = numbers[i]\n        for j in range(i + 1, n):\n            total_diff += abs(ai - numbers[j])\n    return 2.0 / n * total_diff\n"
+        "context": "ast",
+        "nfrs": "nfr3",
+        "cluster": 8,
+        "code": "def task_func(numbers=None):\n    if numbers is None:\n        numbers = list(range(1, 11))\n    n = len(numbers)\n    if n <= 1:\n        return 0.0\n    total = 0\n    for i in range(n):\n        ai = numbers[i]\n        for j in range(i + 1, n):\n            total += abs(ai - numbers[j])\n    return 2.0 / n * total\n\n\nprint(task_func())\n"
       },
       {
         "clone_id": "few-shot gpt-oss:20b-complete 1 nfr4",
@@ -118,7 +109,7 @@
         "strategy": "few-shot",
         "context": "complete",
         "nfrs": "nfr4",
-        "cluster": 10,
+        "cluster": 9,
         "code": "import itertools\nimport random\n\n\ndef task_func(numbers=list(range(1, 11))):\n    if len(numbers) <= 1:\n        return 0.0\n    perms = list(itertools.permutations(numbers))\n    total_diff_sum = 0.0\n    for perm in perms:\n        perm_list = list(perm)\n        random.shuffle(perm_list)\n        diff_sum = sum(abs(perm_list[i] - perm_list[i + 1]) for i in range(\n            len(perm_list) - 1))\n        total_diff_sum += diff_sum\n    return total_diff_sum / len(perms)\n"
       }
     ]
@@ -235,13 +226,13 @@
     },
     "clones": [
       {
-        "clone_id": "few-shot llama3.1:latest-requirements 1 nfr0",
-        "model": "llama3.1:latest",
-        "strategy": "few-shot",
+        "clone_id": "zero-shot deepseek-r1-requirements 1 nfr5",
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
         "context": "requirements",
-        "nfrs": "nfr0",
+        "nfrs": "nfr5",
         "cluster": 0,
-        "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    result = {}\n    for letter in LETTERS:\n        if letter not in result:\n            result[letter] = []\n        while len(result[letter]) < 1 or len(result[letter]) > 10:\n            result[letter].append(random.randint(0, 100))\n    return dict(sorted(result.items(), key=lambda item: statistics.mean(\n        item[1]), reverse=True))\n"
+        "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    \"\"\"\n    Generates a dictionary with keys from LETTERS and each key has a list of random integers.\n    The lists have lengths between 1 and 10, inclusive. The dictionary is sorted by the mean \n    of the values (the list) in descending order.\n\n    Args:\n        LETTERS: A collection of strings (list, tuple, set) representing keys.\n\n    Returns:\n        dict: A dictionary with letters as keys and lists of integers as values, sorted by mean.\n\n    Raises:\n        Exception: If 'random' or 'statistics' modules are not available.\n    \"\"\"\n    if not LETTERS:\n        return {}\n    unique_letters = set(LETTERS)\n    if len(unique_letters) < len(LETTERS):\n        raise ValueError(\n            'Input contains duplicate keys. Only unique keys will be used.')\n    result_dict = {}\n    for letter in LETTERS:\n        length = random.randint(1, 10)\n        num_list = [random.randint(-100, 100) for _ in range(length)]\n        result_dict[letter] = num_list\n    sorted_dict = {k: v for k, v in sorted(result_dict.items(), key=lambda\n        item: statistics.mean(item[1]), reverse=True)}\n    return sorted_dict\n"
       },
       {
         "clone_id": "cot deepseek-r1-requirements 1 nfr1",
@@ -253,13 +244,13 @@
         "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    if not hasattr(random, 'random'):\n        raise ImportError('random module is required')\n    if not hasattr(statistics, 'mean'):\n        raise ImportError('statistics module is required')\n    result_dict = {}\n    for letter in LETTERS:\n        if letter in result_dict:\n            raise ValueError('Duplicate keys are not allowed')\n        length = random.randint(1, 10)\n        num_list = [random.randint(-100, 100) for _ in range(length)]\n        result_dict[letter] = num_list\n    sorted_dict = {}\n    while result_dict:\n        key_with_max_mean = None\n        max_mean = -float('inf')\n        for key, value in result_dict.items():\n            current_mean = statistics.mean(value)\n            if current_mean > max_mean:\n                max_mean = current_mean\n                key_with_max_mean = key\n        if key_with_max_mean is not None:\n            sorted_dict[key_with_max_mean] = result_dict.pop(key_with_max_mean)\n    return sorted_dict\n"
       },
       {
-        "clone_id": "zero-shot deepseek-r1-minimal 1 nfr5",
-        "model": "deepseek-r1",
-        "strategy": "zero-shot",
-        "context": "minimal",
-        "nfrs": "nfr5",
+        "clone_id": "few-shot llama3.1:latest-requirements 1 nfr0",
+        "model": "llama3.1:latest",
+        "strategy": "few-shot",
+        "context": "requirements",
+        "nfrs": "nfr0",
         "cluster": 2,
-        "code": "import random\nimport statistics\n\n\ndef task_func(letters):\n    \"\"\"\n    Create a dictionary with keys from LETTERS and values as lists of random integers.\n    Then sort the dictionary by the mean of the values in descending order.\n\n    Args:\n        letters (list of str): List of characters to use as keys.\n\n    Returns:\n        dict: Sorted dictionary by mean of values in descending order.\n    \"\"\"\n    my_dict = {}\n    for letter in letters:\n        values = [random.randint(1, 100) for _ in range(5)]\n        my_dict[letter] = values\n    sorted_dict = {k: v for k, v in sorted(my_dict.items(), key=lambda item:\n        statistics.mean(item[1]), reverse=True)}\n    return sorted_dict\n"
+        "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    result = {}\n    for letter in LETTERS:\n        if letter not in result:\n            result[letter] = []\n        while len(result[letter]) < 1 or len(result[letter]) > 10:\n            result[letter].append(random.randint(0, 100))\n    return dict(sorted(result.items(), key=lambda item: statistics.mean(\n        item[1]), reverse=True))\n"
       },
       {
         "clone_id": "few-shot gpt-oss:latest-ast 1 nfr1",
@@ -316,12 +307,21 @@
         "code": "import secrets\nimport statistics\n\n\ndef task_func(LETTERS):\n    data = {letter: [(secrets.randbelow(100) + 1) for _ in range(5)] for\n        letter in LETTERS}\n    sorted_items = sorted(data.items(), key=lambda item: statistics.mean(\n        item[1]), reverse=True)\n    return dict(sorted_items)\n\n\nprint(task_func(['a', 'b', 'c']))\n"
       },
       {
+        "clone_id": "few-shot deepseek-r1-minimal 1 nfr5",
+        "model": "deepseek-r1",
+        "strategy": "few-shot",
+        "context": "minimal",
+        "nfrs": "nfr5",
+        "cluster": 9,
+        "code": "import statistics\nimport random\n\n\ndef task_func(letters):\n    result_dict = {}\n    for letter in letters:\n        value_list = [random.randint(1, 100) for _ in range(5)]\n        result_dict[letter] = value_list\n    sorted_dict = {k: v for k, v in sorted(result_dict.items(), key=lambda\n        item: statistics.mean(item[1]), reverse=True)}\n    return sorted_dict\n"
+      },
+      {
         "clone_id": "cot gemma3:latest-translation 1 nfr2",
         "model": "gemma3:latest",
         "strategy": "cot",
         "context": "translation",
         "nfrs": "nfr2",
-        "cluster": 9,
+        "cluster": 10,
         "code": "import random\nimport statistics\nfrom collections import OrderedDict\n\n\ndef task_func(letters):\n    randomDict = {}\n    for letter in letters:\n        count = random.randint(1, 10)\n        randomNumbers = [random.randint(1, 101) for _ in range(count)]\n        randomDict[letter] = randomNumbers\n    sortedList = sorted(randomDict.items(), key=lambda item: statistics.\n        mean(item[1]), reverse=True)\n    sortedDict = OrderedDict()\n    for letter, numbers in sortedList:\n        sortedDict[letter] = numbers\n    return sortedDict\n"
       },
       {
@@ -330,7 +330,7 @@
         "strategy": "few-shot",
         "context": "minimal",
         "nfrs": "nfr0",
-        "cluster": 10,
+        "cluster": 11,
         "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    data = {}\n    for letter in LETTERS:\n        length = random.randint(1, 10)\n        values = [random.randint(1, 100) for _ in range(length)]\n        data[letter] = values\n    sorted_items = sorted(data.items(), key=lambda kv: statistics.mean(kv[1\n        ]), reverse=True)\n    return dict(sorted_items)\n\n\nprint(task_func(['a', 'b', 'c']))\n"
       },
       {
@@ -339,7 +339,7 @@
         "strategy": "few-shot",
         "context": "ast",
         "nfrs": "nfr3",
-        "cluster": 11,
+        "cluster": 12,
         "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    if not LETTERS:\n        return {}\n    data = {}\n    for letter in LETTERS:\n        length = random.randint(1, 10)\n        numbers = []\n        for _ in range(length):\n            numbers.append(random.randint(0, 100))\n        data[letter] = numbers\n\n    def mean_of_pair(pair):\n        return statistics.mean(pair[1])\n    sorted_items = sorted(data.items(), key=mean_of_pair, reverse=True)\n    sorted_dict = {}\n    for k, v in sorted_items:\n        sorted_dict[k] = v\n    return sorted_dict\n"
       },
       {
@@ -348,7 +348,7 @@
         "strategy": "zero-shot",
         "context": "ast",
         "nfrs": "nfr2",
-        "cluster": 12,
+        "cluster": 13,
         "code": "import random\nimport statistics\nimport numpy as np\nimport pandas as pd\nfrom collections import defaultdict\nfrom itertools import repeat\nfrom functools import reduce\nfrom operator import itemgetter\nimport math\n\n\ndef task_func(LETTERS):\n    random_dict = {}\n    for letter in LETTERS:\n        size = random.randint(5, 15)\n        values = np.random.randint(0, 101, size=size).tolist()\n        random_dict[letter] = values\n    means = {k: statistics.mean(v) for k, v in random_dict.items()}\n    sorted_items = sorted(random_dict.items(), key=lambda kv: means[kv[0]],\n        reverse=True)\n    sorted_dict = {k: v for k, v in sorted_items}\n    return sorted_dict\n"
       },
       {
@@ -357,7 +357,7 @@
         "strategy": "zero-shot",
         "context": "uml",
         "nfrs": "nfr5",
-        "cluster": 13,
+        "cluster": 14,
         "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    \"\"\"\n    Generate random integer lists for each letter, compute their means,\n    and return a dictionary sorted by mean values in descending order.\n    \"\"\"\n    data = {letter: [random.randint(1, 100) for _ in range(10)] for letter in\n        LETTERS}\n    means = {letter: statistics.mean(values) for letter, values in data.items()\n        }\n    sorted_letters = sorted(means, key=means.get, reverse=True)\n    sorted_dict = {letter: data[letter] for letter in sorted_letters}\n    return sorted_dict\n\n\nif __name__ == '__main__':\n    print(task_func(['a', 'b', 'c']))\n"
       },
       {
@@ -366,7 +366,7 @@
         "strategy": "cot",
         "context": "complete",
         "nfrs": "nfr0",
-        "cluster": 14,
+        "cluster": 15,
         "code": "import random\nimport statistics\n\n\ndef task_func(LETTERS):\n    rand_dict = {k: random.choices(range(101), k=random.randint(1, 10)) for\n        k in LETTERS}\n    sorted_keys = sorted(rand_dict, key=lambda k: statistics.mean(rand_dict\n        [k]), reverse=True)\n    return {k: rand_dict[k] for k in sorted_keys}\n"
       }
     ]
@@ -431,31 +431,13 @@
         "code": "import random\n\n\ndef task_func(letters):\n    random_dict = {letter: [random.randint(0, 100) for _ in range(random.\n        randint(1, 10))] for letter in letters}\n    mean_dict = {}\n    for letter, numbers in random_dict.items():\n        if len(numbers) > 0:\n            mean_dict[letter] = sum(numbers) / len(numbers)\n        else:\n            mean_dict[letter] = 0\n    return mean_dict\n"
       },
       {
-        "clone_id": "cot deepseek-r1-minimal 1 nfr0",
-        "model": "deepseek-r1",
+        "clone_id": "cot llama3.1:latest-translation 1 nfr3",
+        "model": "llama3.1:latest",
         "strategy": "cot",
-        "context": "minimal",
-        "nfrs": "nfr0",
-        "cluster": 4,
-        "code": "import random\n\n\ndef task_func(letters):\n    means = {}\n    for letter in letters:\n        num_list = []\n        count = random.randint(1, 10)\n        for _ in range(count):\n            num_list.append(random.randint(0, 100))\n        mean_val = sum(num_list) / count\n        means[letter] = round(mean_val, 2)\n    return means\n"
-      },
-      {
-        "clone_id": "zero-shot gemma3:latest-translation 1 nfr0",
-        "model": "gemma3:latest",
-        "strategy": "zero-shot",
         "context": "translation",
-        "nfrs": "nfr0",
-        "cluster": 5,
-        "code": "import random\n\n\ndef task_func(LETTERS):\n    random_dict = {}\n    for letter in LETTERS:\n        size = random.randint(1, 10)\n        values = [random.uniform(0, 100) for _ in range(size)]\n        random_dict[letter] = values\n    mean_dict = {}\n    for letter, values in random_dict.items():\n        mean_dict[letter] = sum(values) / len(values)\n    return mean_dict\n"
-      },
-      {
-        "clone_id": "few-shot gemma3:latest-uml 1 nfr0",
-        "model": "gemma3:latest",
-        "strategy": "few-shot",
-        "context": "uml",
-        "nfrs": "nfr0",
-        "cluster": 6,
-        "code": "import random\n\n\ndef task_func(LETTERS):\n    \"\"\"\n    Generates a dictionary where each key is a letter from the input list\n    and the value is the mean of a randomly generated list of integers.\n    \"\"\"\n    result = {}\n    for letter in LETTERS:\n        random_list = [random.randint(0, 100) for _ in range(1, 11)]\n        mean = sum(random_list) / len(random_list)\n        result[letter] = mean\n    return result\n"
+        "nfrs": "nfr3",
+        "cluster": 4,
+        "code": "import random\nfrom typing import List, Dict\n\n\ndef task_func(letters: List[str]) ->Dict[str, float]:\n    random_dict = {}\n    for letter in letters:\n        size = random.randint(1, 10)\n        values = [random.uniform(0, 100) for _ in range(size)]\n        random_dict[letter] = values\n    mean_dict = {}\n    for key, values in random_dict.items():\n        mean_dict[key] = sum(values) / len(values)\n    return mean_dict\n"
       },
       {
         "clone_id": "few-shot gpt-oss:latest-minimal 1 nfr5",
@@ -463,26 +445,44 @@
         "strategy": "few-shot",
         "context": "minimal",
         "nfrs": "nfr5",
-        "cluster": 7,
+        "cluster": 5,
         "code": "import random\nfrom typing import List, Dict\n\n\ndef task_func(LETTERS: List[str]) ->Dict[str, float]:\n    result = {}\n    for letter in LETTERS:\n        count = random.randint(1, 10)\n        numbers = [random.randint(0, 100) for _ in range(count)]\n        mean_value = sum(numbers) / count\n        result[letter] = mean_value\n    return result\n"
       },
       {
-        "clone_id": "zero-shot llama3.1:latest-requirements 1 nfr0",
-        "model": "llama3.1:latest",
+        "clone_id": "zero-shot gpt-oss:20b-requirements 1 nfr3",
+        "model": "gpt-oss:20b",
         "strategy": "zero-shot",
         "context": "requirements",
-        "nfrs": "nfr0",
-        "cluster": 8,
-        "code": "import random\n\n\ndef task_func(LETTERS):\n    result = {}\n    for letter in LETTERS:\n        num_values = random.randint(1, 10)\n        values = [random.randint(0, 100) for _ in range(num_values)]\n        result[letter] = sum(values) / num_values\n    return result\n"
+        "nfrs": "nfr3",
+        "cluster": 6,
+        "code": "import random\n\n\ndef task_func(LETTERS):\n    if not LETTERS:\n        return {}\n    rng = random.SystemRandom()\n    result = {}\n    for key in LETTERS:\n        length = rng.randint(1, 10)\n        values = [rng.randint(0, 100) for _ in range(length)]\n        mean_val = sum(values) / length\n        result[key] = mean_val\n    return result\n"
       },
       {
-        "clone_id": "few-shot gpt-oss:20b-requirements 1 nfr2",
+        "clone_id": "few-shot gemma3:latest-uml 1 nfr0",
+        "model": "gemma3:latest",
+        "strategy": "few-shot",
+        "context": "uml",
+        "nfrs": "nfr0",
+        "cluster": 7,
+        "code": "import random\n\n\ndef task_func(LETTERS):\n    \"\"\"\n    Generates a dictionary where each key is a letter from the input list\n    and the value is the mean of a randomly generated list of integers.\n    \"\"\"\n    result = {}\n    for letter in LETTERS:\n        random_list = [random.randint(0, 100) for _ in range(1, 11)]\n        mean = sum(random_list) / len(random_list)\n        result[letter] = mean\n    return result\n"
+      },
+      {
+        "clone_id": "few-shot gpt-oss:20b-translation 1 nfr2",
         "model": "gpt-oss:20b",
         "strategy": "few-shot",
-        "context": "requirements",
+        "context": "translation",
         "nfrs": "nfr2",
+        "cluster": 8,
+        "code": "import random\nimport numpy as np\nimport statistics\n\n\ndef task_func(LETTERS):\n    result = {}\n    for letter in LETTERS:\n        size = random.randint(1, 10)\n        values = np.random.randint(0, 101, size=size)\n        mean_val = float(np.mean(values))\n        result[letter] = mean_val\n    return result\n"
+      },
+      {
+        "clone_id": "few-shot llama3.1:latest-requirements 1 nfr1",
+        "model": "llama3.1:latest",
+        "strategy": "few-shot",
+        "context": "requirements",
+        "nfrs": "nfr1",
         "cluster": 9,
-        "code": "def task_func(LETTERS):\n    import random\n    import numpy as np\n    import pandas as pd\n    import statistics\n    result = {}\n    for key in LETTERS:\n        length = random.randint(1, 10)\n        values = [random.randint(0, 100) for _ in range(length)]\n        mean_val = (statistics.mean(values) + np.mean(values) + pd.Series(\n            values).mean()) / 3\n        result[key] = float(mean_val)\n    return result\n"
+        "code": "import random\n\n\ndef task_func(LETTERS):\n    result = {}\n    for letter in LETTERS:\n        size = random.randint(1, 10)\n        numbers = [random.randint(0, 100) for _ in range(size)]\n        result[letter] = sum(numbers) / size\n    return result\n"
       }
     ]
   },
@@ -510,66 +510,12 @@
     },
     "clones": [
       {
-        "clone_id": "cot llama3.1:latest-minimal 1 nfr0",
-        "model": "llama3.1:latest",
-        "strategy": "cot",
-        "context": "minimal",
-        "nfrs": "nfr0",
-        "cluster": 0,
-        "code": "def task_func(d):\n    counts = {}\n    for key in d:\n        for num in d[key]:\n            if num in counts:\n                counts[num] += 1\n            else:\n                counts[num] = 1\n    return counts\n"
-      },
-      {
-        "clone_id": "cot llama4:latest-minimal 1 nfr3",
-        "model": "llama4:latest",
-        "strategy": "cot",
-        "context": "minimal",
-        "nfrs": "nfr3",
-        "cluster": 1,
-        "code": "def task_func(d):\n    count_dict = {}\n    for value in d.values():\n        for num in value:\n            if num in count_dict:\n                count_dict[num] += 1\n            else:\n                count_dict[num] = 1\n    return count_dict\n"
-      },
-      {
-        "clone_id": "few-shot gemma3:latest-uml 1 nfr3",
-        "model": "gemma3:latest",
-        "strategy": "few-shot",
-        "context": "uml",
-        "nfrs": "nfr3",
-        "cluster": 2,
-        "code": "def task_func(d):\n    \"\"\"\n    Generates a dictionary where each key is an integer from any of the input lists,\n    and the value is the count of how often that integer appears in all the lists combined.\n    \"\"\"\n    import itertools\n    count_dict = {}\n    for value_list in d.values():\n        for item in value_list:\n            if item not in count_dict:\n                count_dict[item] = 0\n            count_dict[item] += 1\n    return dict(count_dict)\n"
-      },
-      {
-        "clone_id": "cot gpt-oss:latest-complete 1 nfr4",
-        "model": "gpt-oss:latest",
-        "strategy": "cot",
-        "context": "complete",
-        "nfrs": "nfr4",
-        "cluster": 3,
-        "code": "def task_func(d):\n    if not isinstance(d, dict):\n        raise TypeError('Input must be a dictionary')\n    counts = {}\n    for lst in d.values():\n        if not isinstance(lst, list):\n            raise TypeError('All values must be lists')\n        for item in lst:\n            if not isinstance(item, int):\n                raise TypeError('All list elements must be integers')\n            counts[item] = counts.get(item, 0) + 1\n    return counts\n"
-      },
-      {
-        "clone_id": "few-shot gpt-oss:20b-complete 1 nfr0",
-        "model": "gpt-oss:20b",
-        "strategy": "few-shot",
-        "context": "complete",
-        "nfrs": "nfr0",
-        "cluster": 4,
-        "code": "from collections import Counter\n\n\ndef task_func(d):\n    \"\"\"\n    Count occurrences of integer values in the lists that are the values of the input dictionary.\n\n    Parameters\n    ----------\n    d : dict\n        Dictionary where each value is expected to be an iterable of integers.\n\n    Returns\n    -------\n    dict\n        Mapping from each integer found to its total count across all lists.\n\n    Raises\n    ------\n    TypeError\n        If any element in any of the lists is not an integer.\n    \"\"\"\n    all_values = []\n    for value_list in d.values():\n        for item in value_list:\n            if not isinstance(item, int):\n                raise TypeError(f'Non-integer value encountered: {item!r}')\n            all_values.append(item)\n    return dict(Counter(all_values))\n"
-      },
-      {
-        "clone_id": "cot gpt-oss:20b-complete 1 nfr5",
-        "model": "gpt-oss:20b",
-        "strategy": "cot",
-        "context": "complete",
-        "nfrs": "nfr5",
-        "cluster": 5,
-        "code": "import collections\n\n\ndef task_func(d):\n    all_vals = []\n    for lst in d.values():\n        for val in lst:\n            if not isinstance(val, int):\n                raise TypeError(f'Non-integer value encountered: {val!r}')\n            all_vals.append(val)\n    return dict(collections.Counter(all_vals))\n"
-      },
-      {
         "clone_id": "cot deepseek-r1-complete 1 nfr1",
         "model": "deepseek-r1",
         "strategy": "cot",
         "context": "complete",
         "nfrs": "nfr1",
-        "cluster": 6,
+        "cluster": 0,
         "code": "from collections import Counter\nimport itertools\n\n\ndef task_func(d):\n    all_values = []\n    for key in d:\n        all_values.extend(d[key])\n    count_dict = {}\n    for num in all_values:\n        count_dict[num] = count_dict.get(num, 0) + 1\n    return count_dict\n"
       },
       {
@@ -578,7 +524,7 @@
         "strategy": "zero-shot",
         "context": "minimal",
         "nfrs": "nfr0",
-        "cluster": 7,
+        "cluster": 1,
         "code": "def task_func(d):\n    counts = {}\n    for lst in d.values():\n        for num in lst:\n            counts[num] = counts.get(num, 0) + 1\n    return counts\n"
       },
       {
@@ -587,35 +533,62 @@
         "strategy": "cot",
         "context": "complete",
         "nfrs": "nfr1",
-        "cluster": 8,
+        "cluster": 2,
         "code": "def task_func(d):\n    result = {}\n    for v in d.values():\n        for i in v:\n            if isinstance(i, int):\n                result[i] = result.get(i, 0) + 1\n            else:\n                raise TypeError('Non-integer value encountered')\n    return result\n"
       },
       {
-        "clone_id": "zero-shot llama4:latest-ast 1 nfr3",
+        "clone_id": "cot llama3.1:latest-minimal 1 nfr0",
+        "model": "llama3.1:latest",
+        "strategy": "cot",
+        "context": "minimal",
+        "nfrs": "nfr0",
+        "cluster": 3,
+        "code": "def task_func(d):\n    counts = {}\n    for key in d:\n        for num in d[key]:\n            if num in counts:\n                counts[num] += 1\n            else:\n                counts[num] = 1\n    return counts\n"
+      },
+      {
+        "clone_id": "cot llama4:latest-ast 1 nfr4",
         "model": "llama4:latest",
-        "strategy": "zero-shot",
+        "strategy": "cot",
         "context": "ast",
+        "nfrs": "nfr4",
+        "cluster": 4,
+        "code": "def task_func(d):\n    count_dict = {}\n    for value in d.values():\n        for num in value:\n            if num in count_dict:\n                count_dict[num] += 1\n            else:\n                count_dict[num] = 1\n    return count_dict\n"
+      },
+      {
+        "clone_id": "few-shot gemma3:latest-uml 1 nfr3",
+        "model": "gemma3:latest",
+        "strategy": "few-shot",
+        "context": "uml",
         "nfrs": "nfr3",
-        "cluster": 9,
-        "code": "from collections import Counter\nfrom itertools import chain\n\n\ndef task_func(d: dict) ->dict:\n    \"\"\"\n    This function takes a dictionary where each key is a string and the value is a list of integers.\n    It returns a dictionary where each key is an integer from any of the input lists, \n    and the value is the count of how often that integer appears in all the lists combined.\n\n    Args:\n        d (dict): A dictionary where each key is a string and the value is a list of integers.\n\n    Returns:\n        dict: A dictionary where each key is an integer and the value is the count of how often that integer appears.\n    \"\"\"\n    count_dict = Counter(chain(*d.values()))\n    return dict(count_dict)\n"
+        "cluster": 5,
+        "code": "def task_func(d):\n    \"\"\"\n    Generates a dictionary where each key is an integer from any of the input lists,\n    and the value is the count of how often that integer appears in all the lists combined.\n    \"\"\"\n    import itertools\n    count_dict = {}\n    for value_list in d.values():\n        for item in value_list:\n            if item not in count_dict:\n                count_dict[item] = 0\n            count_dict[item] += 1\n    return dict(count_dict)\n"
       },
       {
-        "clone_id": "zero-shot deepseek-r1-requirements 1 nfr5",
-        "model": "deepseek-r1",
-        "strategy": "zero-shot",
-        "context": "requirements",
-        "nfrs": "nfr5",
-        "cluster": 10,
-        "code": "def task_func(d):\n    \"\"\"\n    Returns a dictionary with keys as unique integers from the input lists and values as their counts.\n\n    Args:\n        d (dict): A dictionary where each key is a string and the value is a list of integers.\n\n    Returns:\n        dict: A dictionary mapping each integer to its count across all lists.\n    \"\"\"\n    flattened_list = []\n    for sublist in d.values():\n        if isinstance(sublist, list):\n            flattened_list.extend(sublist)\n    return {item: flattened_list.count(item) for item in set(flattened_list)}\n"
+        "clone_id": "cot gpt-oss:latest-complete 1 nfr4",
+        "model": "gpt-oss:latest",
+        "strategy": "cot",
+        "context": "complete",
+        "nfrs": "nfr4",
+        "cluster": 6,
+        "code": "def task_func(d):\n    if not isinstance(d, dict):\n        raise TypeError('Input must be a dictionary')\n    counts = {}\n    for lst in d.values():\n        if not isinstance(lst, list):\n            raise TypeError('All values must be lists')\n        for item in lst:\n            if not isinstance(item, int):\n                raise TypeError('All list elements must be integers')\n            counts[item] = counts.get(item, 0) + 1\n    return counts\n"
       },
       {
-        "clone_id": "few-shot gpt-oss:20b-requirements 1 nfr2",
+        "clone_id": "few-shot gpt-oss:20b-complete 1 nfr0",
         "model": "gpt-oss:20b",
         "strategy": "few-shot",
-        "context": "requirements",
-        "nfrs": "nfr2",
-        "cluster": 11,
-        "code": "import collections\nimport itertools\nimport numpy as np\nimport pandas as pd\nimport functools\nimport operator\nimport statistics\nimport math\nimport re\nimport json\nimport os\nimport sys\nimport typing\nimport time\nimport datetime\nimport random\nimport fractions\nimport decimal\nimport copy\nimport string\nimport textwrap\n\n\ndef task_func(d: dict) ->dict:\n    if not d:\n        return {}\n    all_items = itertools.chain.from_iterable(d.values())\n    counter = collections.Counter(all_items)\n    return dict(counter)\n"
+        "context": "complete",
+        "nfrs": "nfr0",
+        "cluster": 7,
+        "code": "from collections import Counter\n\n\ndef task_func(d):\n    \"\"\"\n    Count occurrences of integer values in the lists that are the values of the input dictionary.\n\n    Parameters\n    ----------\n    d : dict\n        Dictionary where each value is expected to be an iterable of integers.\n\n    Returns\n    -------\n    dict\n        Mapping from each integer found to its total count across all lists.\n\n    Raises\n    ------\n    TypeError\n        If any element in any of the lists is not an integer.\n    \"\"\"\n    all_values = []\n    for value_list in d.values():\n        for item in value_list:\n            if not isinstance(item, int):\n                raise TypeError(f'Non-integer value encountered: {item!r}')\n            all_values.append(item)\n    return dict(Counter(all_values))\n"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 nfr5",
+        "model": "gpt-oss:20b",
+        "strategy": "cot",
+        "context": "complete",
+        "nfrs": "nfr5",
+        "cluster": 8,
+        "code": "import collections\n\n\ndef task_func(d):\n    all_vals = []\n    for lst in d.values():\n        for val in lst:\n            if not isinstance(val, int):\n                raise TypeError(f'Non-integer value encountered: {val!r}')\n            all_vals.append(val)\n    return dict(collections.Counter(all_vals))\n"
       },
       {
         "clone_id": "few-shot llama3.1:latest-requirements 1 nfr0",
@@ -623,7 +596,7 @@
         "strategy": "few-shot",
         "context": "requirements",
         "nfrs": "nfr0",
-        "cluster": 12,
+        "cluster": 9,
         "code": "from collections import Counter\n\n\ndef task_func(d):\n    flat_list = [item for sublist in d.values() for item in sublist]\n    return dict(Counter(flat_list))\n"
       },
       {
@@ -632,7 +605,7 @@
         "strategy": "cot",
         "context": "minimal",
         "nfrs": "nfr2",
-        "cluster": 13,
+        "cluster": 10,
         "code": "def task_func(d):\n    from collections import Counter\n    from itertools import chain\n    return dict(Counter(chain.from_iterable(d.values())))\n"
       },
       {
@@ -641,7 +614,7 @@
         "strategy": "few-shot",
         "context": "minimal",
         "nfrs": "nfr3",
-        "cluster": 14,
+        "cluster": 11,
         "code": "from collections import Counter\n\n\ndef task_func(d):\n    counts = Counter()\n    for key in d:\n        counts.update(d[key])\n    return dict(counts)\n"
       },
       {
@@ -650,7 +623,7 @@
         "strategy": "cot",
         "context": "minimal",
         "nfrs": "nfr5",
-        "cluster": 15,
+        "cluster": 12,
         "code": "from collections import Counter\n\n\ndef task_func(d):\n    counter = Counter()\n    for lst in d.values():\n        counter.update(lst)\n    return dict(counter)\n"
       },
       {
@@ -659,7 +632,7 @@
         "strategy": "zero-shot",
         "context": "requirements",
         "nfrs": "nfr5",
-        "cluster": 16,
+        "cluster": 13,
         "code": "def task_func(d):\n    from collections import Counter\n    counter = Counter()\n    for iterable in d.values():\n        for item in iterable:\n            counter[item] += 1\n    return dict(counter)\n"
       },
       {
@@ -668,7 +641,7 @@
         "strategy": "zero-shot",
         "context": "ast",
         "nfrs": "nfr0",
-        "cluster": 17,
+        "cluster": 14,
         "code": "from collections import defaultdict\n\n\ndef task_func(d):\n    count_dict = defaultdict(int)\n    for lst in d.values():\n        for num in lst:\n            count_dict[num] += 1\n    return dict(count_dict)\n"
       },
       {
@@ -677,7 +650,7 @@
         "strategy": "few-shot",
         "context": "translation",
         "nfrs": "nfr5",
-        "cluster": 18,
+        "cluster": 15,
         "code": "from collections import Counter\nfrom typing import Dict, List\n\n\ndef task_func(d: Dict[str, List[int]]) ->Dict[int, int]:\n    \"\"\"\n    Count the occurrences of each integer across all lists in the input dictionary.\n\n    Parameters\n    ----------\n    d : Dict[str, List[int]]\n        A dictionary where each key maps to a list of integers.\n\n    Returns\n    -------\n    Dict[int, int]\n        A dictionary mapping each integer to the total number of times it appears\n        in all the lists combined.\n    \"\"\"\n    counts = Counter()\n    for values in d.values():\n        counts.update(values)\n    return dict(counts)\n"
       },
       {
@@ -686,8 +659,35 @@
         "strategy": "zero-shot",
         "context": "minimal",
         "nfrs": "nfr2",
-        "cluster": 19,
+        "cluster": 16,
         "code": "from collections import defaultdict\nfrom typing import Dict, List\n\n\ndef task_func(d: Dict[str, List[int]]) ->Dict[int, int]:\n    count_dict = defaultdict(int)\n    for value in d.values():\n        for num in value:\n            count_dict[num] += 1\n    return dict(count_dict)\n"
+      },
+      {
+        "clone_id": "few-shot gpt-oss:20b-requirements 1 nfr2",
+        "model": "gpt-oss:20b",
+        "strategy": "few-shot",
+        "context": "requirements",
+        "nfrs": "nfr2",
+        "cluster": 17,
+        "code": "import collections\nimport itertools\nimport numpy as np\nimport pandas as pd\nimport functools\nimport operator\nimport statistics\nimport math\nimport re\nimport json\nimport os\nimport sys\nimport typing\nimport time\nimport datetime\nimport random\nimport fractions\nimport decimal\nimport copy\nimport string\nimport textwrap\n\n\ndef task_func(d: dict) ->dict:\n    if not d:\n        return {}\n    all_items = itertools.chain.from_iterable(d.values())\n    counter = collections.Counter(all_items)\n    return dict(counter)\n"
+      },
+      {
+        "clone_id": "zero-shot llama4:latest-ast 1 nfr3",
+        "model": "llama4:latest",
+        "strategy": "zero-shot",
+        "context": "ast",
+        "nfrs": "nfr3",
+        "cluster": 18,
+        "code": "from collections import Counter\nfrom itertools import chain\n\n\ndef task_func(d: dict) ->dict:\n    \"\"\"\n    This function takes a dictionary where each key is a string and the value is a list of integers.\n    It returns a dictionary where each key is an integer from any of the input lists, \n    and the value is the count of how often that integer appears in all the lists combined.\n\n    Args:\n        d (dict): A dictionary where each key is a string and the value is a list of integers.\n\n    Returns:\n        dict: A dictionary where each key is an integer and the value is the count of how often that integer appears.\n    \"\"\"\n    count_dict = Counter(chain(*d.values()))\n    return dict(count_dict)\n"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1-requirements 1 nfr5",
+        "model": "deepseek-r1",
+        "strategy": "zero-shot",
+        "context": "requirements",
+        "nfrs": "nfr5",
+        "cluster": 19,
+        "code": "def task_func(d):\n    \"\"\"\n    Returns a dictionary with keys as unique integers from the input lists and values as their counts.\n\n    Args:\n        d (dict): A dictionary where each key is a string and the value is a list of integers.\n\n    Returns:\n        dict: A dictionary mapping each integer to its count across all lists.\n    \"\"\"\n    flattened_list = []\n    for sublist in d.values():\n        if isinstance(sublist, list):\n            flattened_list.extend(sublist)\n    return {item: flattened_list.count(item) for item in set(flattened_list)}\n"
       }
     ]
   },
@@ -724,57 +724,12 @@
         "code": "import random\nimport math\n\n\ndef task_func(LETTERS=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',\n    'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',\n    'y', 'z']):\n    result = {}\n    for letter in LETTERS:\n        numbers = [random.randint(1, 100) for _ in range(random.randint(1, 10))\n            ]\n        mean = sum(numbers) / len(numbers)\n        variance = sum((x - mean) ** 2 for x in numbers) / len(numbers)\n        std_dev = math.sqrt(variance)\n        result[letter] = std_dev\n    return result\n"
       },
       {
-        "clone_id": "few-shot gpt-oss:latest-ast 1 nfr4",
-        "model": "gpt-oss:latest",
-        "strategy": "few-shot",
-        "context": "ast",
-        "nfrs": "nfr4",
-        "cluster": 1,
-        "code": "import random\nimport string\nimport statistics\n\n\ndef task_func(LETTERS=None):\n    if LETTERS is None:\n        LETTERS = list(string.ascii_lowercase)\n    result = {}\n    for letter in LETTERS:\n        count = random.randint(1, 10)\n        values = [random.randint(0, 100) for _ in range(count)]\n        result[letter] = statistics.pstdev(values)\n    return result\n\n\nprint(task_func())\n"
-      },
-      {
-        "clone_id": "zero-shot gpt-oss:20b-complete 1 nfr3",
-        "model": "gpt-oss:20b",
-        "strategy": "zero-shot",
-        "context": "complete",
-        "nfrs": "nfr3",
-        "cluster": 2,
-        "code": "import math\nimport random\n\n\ndef task_func(letters=[chr(i) for i in range(97, 123)]):\n    sd_dict = {}\n    for letter in letters:\n        size = random.randint(1, 10)\n        values = [random.randint(0, 100) for _ in range(size)]\n        mean = sum(values) / size\n        variance = sum((x - mean) ** 2 for x in values) / size\n        sd_dict[letter] = math.sqrt(variance)\n    return sd_dict\n"
-      },
-      {
-        "clone_id": "zero-shot gpt-oss:20b-requirements 1 nfr0",
-        "model": "gpt-oss:20b",
-        "strategy": "zero-shot",
-        "context": "requirements",
-        "nfrs": "nfr0",
-        "cluster": 3,
-        "code": "import random\nimport math\n\n\ndef task_func(LETTERS=None):\n    if LETTERS is None:\n        LETTERS = [chr(i) for i in range(ord('a'), ord('z') + 1)]\n    result = {}\n    for letter in LETTERS:\n        length = random.randint(1, 10)\n        numbers = [random.randint(0, 100) for _ in range(length)]\n        mean = sum(numbers) / length\n        variance = sum((x - mean) ** 2 for x in numbers) / length\n        result[letter] = math.sqrt(variance)\n    return result\n"
-      },
-      {
-        "clone_id": "few-shot llama4:latest-requirements 1 nfr2",
-        "model": "llama4:latest",
-        "strategy": "few-shot",
-        "context": "requirements",
-        "nfrs": "nfr2",
-        "cluster": 4,
-        "code": "import random\nimport math\nfrom typing import Dict, List\n\n\ndef task_func(LETTERS: List[str]=[chr(i) for i in range(ord('a'), ord('z') +\n    1)]):\n    result: Dict[str, float] = {}\n    for letter in LETTERS:\n        random_numbers = [random.randint(1, 100) for _ in range(random.\n            randint(1, 10))]\n        variance = sum((x - sum(random_numbers) / len(random_numbers)) ** 2 for\n            x in random_numbers) / len(random_numbers)\n        std_dev = math.sqrt(variance)\n        result[letter] = std_dev\n    return result\n"
-      },
-      {
-        "clone_id": "cot llama3.1:latest-requirements 1 nfr2",
-        "model": "llama3.1:latest",
-        "strategy": "cot",
-        "context": "requirements",
-        "nfrs": "nfr2",
-        "cluster": 5,
-        "code": "import random\nimport math\nfrom string import ascii_lowercase\n\n\ndef task_func(LETTERS=ascii_lowercase):\n    result = {}\n    for letter in LETTERS:\n        length = random.randint(1, 10)\n        numbers = [random.randint(-1000, 1000) for _ in range(length)]\n        std_dev = math.sqrt(sum((x - sum(numbers) / length) ** 2 for x in\n            numbers) / length)\n        result[letter] = std_dev\n    return result\n"
-      },
-      {
         "clone_id": "zero-shot deepseek-r1-translation 1 nfr0",
         "model": "deepseek-r1",
         "strategy": "zero-shot",
         "context": "translation",
         "nfrs": "nfr0",
-        "cluster": 6,
+        "cluster": 1,
         "code": "import random\nfrom typing import List, Dict, Optional\n\n\ndef task_func(letters: Optional[List[str]]=None) ->Dict[str, float]:\n    if letters is None:\n        letters = [chr(ord('a') + i) for i in range(26)]\n    result_dict = {}\n    for char in letters:\n        size = random.randint(1, 10)\n        num_list = [random.randint(0, 100) for _ in range(size)]\n        mean = sum(num_list) / len(num_list)\n        variance = sum((x - mean) ** 2 for x in num_list) / len(num_list)\n        sd = variance ** 0.5\n        result_dict[char] = sd\n    return result_dict\n"
       },
       {
@@ -783,7 +738,7 @@
         "strategy": "cot",
         "context": "minimal",
         "nfrs": "nfr2",
-        "cluster": 7,
+        "cluster": 2,
         "code": "import random\nimport statistics\n\n\ndef task_func(letters=None):\n    if letters is None:\n        letters = [chr(i + ord('a')) for i in range(26)]\n    return {letter: round(statistics.pstdev([random.randint(0, 100) for _ in\n        range(random.randint(1, 10))]), 1) for letter in letters}\n"
       },
       {
@@ -792,8 +747,44 @@
         "strategy": "zero-shot",
         "context": "minimal",
         "nfrs": "nfr0",
-        "cluster": 8,
+        "cluster": 3,
         "code": "import random\nimport math\n\n\ndef task_func(LETTERS=None):\n    if LETTERS is None:\n        LETTERS = [chr(i + ord('a')) for i in range(26)]\n    else:\n        for letter in LETTERS:\n            if len(letter) != 1:\n                raise ValueError(\n                    'Each element in LETTERS must be a single-character string.'\n                    )\n    result = {}\n    for letter in LETTERS:\n        n = random.randint(1, 10)\n        numbers = [random.randint(0, 100) for _ in range(n)]\n        if n == 0:\n            continue\n        mean = sum(numbers) / n\n        variance = sum((x - mean) ** 2 for x in numbers) / n\n        std_dev = math.sqrt(variance)\n        result[letter] = round(std_dev, 2)\n    return result\n"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-ast 1 nfr2",
+        "model": "gpt-oss:20b",
+        "strategy": "zero-shot",
+        "context": "ast",
+        "nfrs": "nfr2",
+        "cluster": 4,
+        "code": "import random\nimport string\nimport numpy as np\nimport pandas as pd\nimport statistics\n\n\ndef task_func(LETTERS: (list[str] | None)=None) ->dict[str, float]:\n    if LETTERS is None:\n        LETTERS = list(string.ascii_lowercase)\n    random_data = {}\n    for letter in LETTERS:\n        n = random.randint(1, 10)\n        random_data[letter] = [random.randint(0, 100) for _ in range(n)]\n    std_dict = {k: statistics.pstdev(v) for k, v in random_data.items()}\n    return std_dict\n"
+      },
+      {
+        "clone_id": "few-shot llama4:latest-requirements 1 nfr2",
+        "model": "llama4:latest",
+        "strategy": "few-shot",
+        "context": "requirements",
+        "nfrs": "nfr2",
+        "cluster": 5,
+        "code": "import random\nimport math\nfrom typing import Dict, List\n\n\ndef task_func(LETTERS: List[str]=[chr(i) for i in range(ord('a'), ord('z') +\n    1)]):\n    result: Dict[str, float] = {}\n    for letter in LETTERS:\n        random_numbers = [random.randint(1, 100) for _ in range(random.\n            randint(1, 10))]\n        variance = sum((x - sum(random_numbers) / len(random_numbers)) ** 2 for\n            x in random_numbers) / len(random_numbers)\n        std_dev = math.sqrt(variance)\n        result[letter] = std_dev\n    return result\n"
+      },
+      {
+        "clone_id": "few-shot gpt-oss:20b-requirements 1 nfr5",
+        "model": "gpt-oss:20b",
+        "strategy": "few-shot",
+        "context": "requirements",
+        "nfrs": "nfr5",
+        "cluster": 6,
+        "code": "import random\nimport math\n\n\ndef task_func(LETTERS=None):\n    if LETTERS is None:\n        LETTERS = [chr(i) for i in range(ord('a'), ord('z') + 1)]\n    result = {}\n    for letter in LETTERS:\n        length = random.randint(1, 10)\n        numbers = [random.randint(0, 100) for _ in range(length)]\n        mean = sum(numbers) / length\n        variance = sum((x - mean) ** 2 for x in numbers) / length\n        result[letter] = math.sqrt(variance)\n    return result\n"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-requirements 1 nfr2",
+        "model": "llama3.1:latest",
+        "strategy": "cot",
+        "context": "requirements",
+        "nfrs": "nfr2",
+        "cluster": 7,
+        "code": "import random\nimport math\nfrom string import ascii_lowercase\n\n\ndef task_func(LETTERS=ascii_lowercase):\n    result = {}\n    for letter in LETTERS:\n        length = random.randint(1, 10)\n        numbers = [random.randint(-1000, 1000) for _ in range(length)]\n        std_dev = math.sqrt(sum((x - sum(numbers) / length) ** 2 for x in\n            numbers) / length)\n        result[letter] = std_dev\n    return result\n"
       }
     ]
   }

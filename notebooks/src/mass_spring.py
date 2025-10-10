@@ -21,6 +21,7 @@ CONTEXT_COLORS = {
     "uml": "blue",
     "ast": "purple",
     "translation": "brown",
+    "code": "cyan",
     "original": "gold"
 }
 

@@ -1,5 +1,5 @@
 import re, textwrap, requests, ast, astor, re, os, json, time
-from .prompts import (SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_TO_UML, context_builders)
+from .prompts import (SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_TO_UML, SYSTEM_PROMPT_MINIMAL, context_builders, build_clone_variation_prompt)
 
 FUNCTION_NAME = "task_func"  
 REMOTE_OLLAMA = False
@@ -24,7 +24,7 @@ def call_ollama_chat(messages, model, options):
 
     with open(config_file, "r", encoding="utf-8") as f:
         config = json.load(f)
-
+    print(config)
     url = config["url"]        
     timeout = config.get("timeout", 600)
 
@@ -358,3 +358,87 @@ def run_clone_generation(
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
 
+import os
+import json
+
+def run_clone_variation_generation(
+    dataset_path,
+    out_path,
+    n_entries,
+    clones_per_entry,
+    ollama_model,
+    llm_opts,
+    nfrs,
+):
+    """
+    Run clone generation for dataset entries, reusing existing clones
+    as examples in the prompt to generate new variations.
+
+    Args:
+        dataset_path: Path to dataset JSON.
+        out_path: Where to save results.
+        n_entries: Number of entries to process.
+        clones_per_entry: Number of new clones per entry.
+        ollama_model: Model name.
+        llm_opts: Dict of LLM options.
+        nfrs: non-functional requirements used in the prompt
+    """
+    with open(dataset_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    sample = data[:n_entries]
+    results = load_existing_results(out_path)
+
+    for i, entry in enumerate(sample, 1):
+        print(f"\n🔄 Generating clones {i}/{len(sample)} for {entry['id']}")
+
+        # Extract entry info
+        original_body = entry["original_code"]
+        description   = entry.get("description", "")
+        libs          = entry.get("metadata", {}).get("libs", [])
+        entry_clones  = entry.get("clones", [])  # already existing clones from dataset
+
+        new_clones = []
+
+        for k in range(clones_per_entry):
+            # Build prompt with existing clones as few-shot examples
+            user_prompt = build_clone_variation_prompt(
+                original_body=original_body,
+                description=description,
+                libs=libs,
+                example_clones=entry_clones,   # pass dataset clones here
+                nfrs=nfrs,
+            )
+
+            messages = [
+                {"role": "system", "content": SYSTEM_PROMPT_MINIMAL},
+                {"role": "user",   "content": user_prompt},
+            ]
+
+            try:
+                code = generate_clones(
+                    messages,
+                    model=ollama_model,
+                    options=llm_opts,
+                    expected_func_name=FUNCTION_NAME,
+                )
+                new_clones.append({
+                    "model": ollama_model,
+                    "context": "variation",
+                    "strategy": "few-shot variation",
+                    "code": code,
+                    "nfrs": nfrs,
+                    "clone_id": f"few-shot variation {ollama_model}-variation {k+1} {nfrs}",
+                })
+            except Exception as e:
+                print(f" ❌ Error generating clone {k+1}: {e}")
+
+        # Merge old clones + new clones
+        all_clones = entry_clones + new_clones
+
+        new_entry = {"id": entry["id"], "clones": all_clones}
+        results = merge_results(results, new_entry)
+
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=2)
