@@ -1,4 +1,4 @@
-import json, unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re
+import json, unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random
 import numpy as np 
 
 def normalize(dataset_split):
@@ -234,11 +234,9 @@ def analyze_test_results(data):
     }
     return summary
  
-
-def filter_dataset(original_dataset_file, test_results_file, output_file):
-    # Load dataset (list of dicts with "id", "original_code", etc.)
+def filter_dataset(original_dataset_file, test_results_file, output_file): 
     with open(original_dataset_file, "r", encoding="utf-8") as f:
-        dataset = json.load(f) 
+        dataset = json.load(f)
 
     with open(test_results_file, "r", encoding="utf-8") as f:
         test_results = json.load(f)
@@ -250,8 +248,14 @@ def filter_dataset(original_dataset_file, test_results_file, output_file):
 
         results = test_results[entry_id].values()
 
-        # Keep only if ALL tests pass
-        if all(r == "PASS" for r in results):
+        # Condition 1: all tests passed
+        all_tests_passed = all(r == "PASS" for r in results)
+
+        # Condition 2: "split" field in metadata equals "easy"
+        is_easy_split = entry.get("metadata", {}).get("split") == "easy"
+
+        # Keep only if both conditions hold
+        if all_tests_passed and is_easy_split:
             filtered_dataset.append(entry)
 
     with open(output_file, "w", encoding="utf-8") as f:
@@ -259,26 +263,64 @@ def filter_dataset(original_dataset_file, test_results_file, output_file):
 
     print(f"Filtered dataset saved to {output_file}")
     print(f"Original entries: {len(dataset)}")
-    print(f"Filtered entries (all tests pass): {len(filtered_dataset)}")
+    print(f"Filtered entries (all tests pass + easy split): {len(filtered_dataset)}")
 
 
-def extract_generated_fields(entry):
-    """Move all keys starting with 'gen_' into a nested 'generated_data' dict."""
-    generated_data = {}
-    other_fields = {}
-    for k, v in entry.items():
-        if k.startswith("gen_"):
-            generated_data[k] = v
-        else:
-            other_fields[k] = v
-    return other_fields, generated_data
 
-def np_converter(obj):
-    if isinstance(obj, (np.integer, np.intc, np.int32, np.int64)):
-        return int(obj)
-    elif isinstance(obj, (np.floating, np.float32, np.float64)):
-        return float(obj)
-    elif isinstance(obj, np.ndarray):
-        return obj.tolist()
-    else:
-        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
+
+    
+def sample_random_entries(input_file, experiment_output_file, extension_output_file, sample_size, seed=42):
+    """
+    Extracts two disjoint random samples of equal size from the dataset.
+    Sampling is reproducible with the given seed.
+    Args:
+        input_file (str): Path to the input JSON file.
+        experiment_output_file (str): Path to save the first sampled dataset.
+        extension_output_file (str): Path to save the second sampled dataset.
+        sample_size (int): Number of entries in each sample.
+        seed (int): Random seed for reproducibility.
+    """
+    with open(input_file, "r", encoding="utf-8") as f:
+        dataset = json.load(f)
+
+    random.seed(seed)
+    # Randomly shuffle all entries, then split into two groups
+    shuffled = dataset.copy()
+    random.shuffle(shuffled)
+    sample_1 = shuffled[:sample_size]
+    sample_2 = shuffled[sample_size:sample_size * 2]
+
+    # Sort the sampled entries by 'id'
+    sample_1.sort(key=lambda e: _id_numeric_key(e.get("id", "")))
+    sample_2.sort(key=lambda e: _id_numeric_key(e.get("id", "")))
+
+    with open(experiment_output_file, "w", encoding="utf-8") as f:
+        json.dump(sample_1, f, indent=2, ensure_ascii=False)
+
+        
+    with open(extension_output_file, "w", encoding="utf-8") as f:
+        json.dump(sample_2, f, indent=2, ensure_ascii=False)
+
+    print(f"Sampled {sample_size} twice from {len(dataset)} total.")
+    print(f"Sampled dataset 1 saved to {experiment_output_file}")
+    print(f"Sampled dataset 2 saved to {extension_output_file}")
+
+
+def _id_numeric_key(id_str: str):
+    """
+    Return a tuple (prefix, number) to sort naturally by numeric suffix.
+    If no trailing number can be found, return (id_str, +inf) so those appear after numeric ones.
+    """
+    if not id_str:
+        return ("", float("inf"))
+    # try splitting by last '/' first (common pattern 'prefix/123')
+    parts = id_str.rsplit('/', 1)
+    if len(parts) == 2 and parts[1].isdigit():
+        return (parts[0], int(parts[1]))
+    # otherwise try any trailing digits
+    m = re.search(r'(\d+)$', id_str)
+    if m:
+        prefix = id_str[:m.start()]
+        return (prefix, int(m.group(1)))
+    # no trailing digits -> put after numeric ids, sorted by full string
+    return (id_str, float("inf"))

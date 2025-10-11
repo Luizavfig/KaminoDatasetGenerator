@@ -1,5 +1,5 @@
 import re, textwrap, requests, ast, astor, re, os, json, time
-from .prompts import (SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_TO_UML, SYSTEM_PROMPT_MINIMAL, context_builders, build_clone_variation_prompt)
+from .prompts import (SYSTEM_PROMPT_TO_NL, SYSTEM_PROMPT_TO_REQ, SYSTEM_PROMPT_TO_UML, SYSTEM_PROMPT_MINIMAL, SYSTEM_PROMPT_TRANSLATION, context_builders, build_clone_variation_prompt)
 
 FUNCTION_NAME = "task_func"  
 REMOTE_OLLAMA = False
@@ -23,8 +23,7 @@ def call_ollama_chat(messages, model, options):
         config_file = os.path.join(root_dir, "ollama_config_local.json")
 
     with open(config_file, "r", encoding="utf-8") as f:
-        config = json.load(f)
-    print(config)
+        config = json.load(f) 
     url = config["url"]        
     timeout = config.get("timeout", 600)
 
@@ -43,10 +42,7 @@ def call_ollama_chat(messages, model, options):
     if "message" in data and "content" in data["message"]:
         return data["message"]["content"]
 
-    raise ValueError(f"Unexpected response format: {data}")
-
-
-
+    raise ValueError(f"Unexpected response format: {data}") 
 
 
 def extract_python_code(text: str) -> str:
@@ -173,54 +169,48 @@ def code_to_ast(code):
         return ast.dump(tree, indent=2, annotate_fields=True, include_attributes=False)
     
     except SyntaxError as e:
-        return f"Invalid Python code: {e}"
+        return f"Invalid Python code: {e}" 
 
-
-
+ 
 
 def add_generated_fields(dataset_path, nl_model, llm_opts, n_entries):
     """
-    Loads dataset, adds "gen_" fields to each entry, 
-    and saves it back to the same file.
+    Loads dataset, generates 'requirement', 'uml', and 'ast' fields
+    for each entry, stores them inside a 'generated_data' sub-dictionary,
+    and saves the updated dataset to the same file.
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
-        data = json.load(f) 
+        data = json.load(f)
+
     for i, entry in enumerate(data[:n_entries], 1):
-        print(f"[{i}/{n_entries}] Generating gen_ fields for {entry['id']}")
+        print(f"[{i}/{n_entries}] Generating fields for {entry['id']}")
         code = entry["original_code"]
         try:
-            #description_nl = code_to_nl_description(code, nl_model, llm_opts)
+            # Generate fields
             requirement = code_to_req(code, nl_model, llm_opts)
             uml = code_to_uml(code, nl_model, llm_opts)
             ast = code_to_ast(code)
-           # entry["gen_description"] = description_nl.strip()
-            entry["gen_requirement"] = requirement.strip()
-            entry["gen_uml"] = uml.strip()
-            entry["gen_ast"] = ast.strip()
+
+            # Store generated fields under 'generated_data'
+            entry["generated_data"] = {
+                "requirement": requirement.strip(),
+                "uml": uml.strip(),
+                "ast": ast.strip()
+            }
+
         except Exception as e:
             print(f"  Error generating for {entry['id']}: {e}")
-           # entry["gen_description"] = ""
-            entry["gen_requirement"] = ""
-            entry["gen_uml"] = ""
-            entry["gen_ast"] = ""
+            entry["generated_data"] = {
+                "requirement": "",
+                "uml": "",
+                "ast": ""
+            }
 
+    # Save back to file
     with open(dataset_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
-    print(f"Updated dataset with gen_ fields in {dataset_path}")
-
-SYSTEM_PROMPT_TRANSLATION = """You are a software developer.
-Your task is to translate a Python function to a different programming language: {language}.
-Be concise but precise, focusing on:
-- the same behavior of the function
-- its parameters and return values
-- side effects (file I/O, network, database, etc.)
-- important edge cases handled
-- Do not add print statements
-- Do to call the function you generated inside a print statement
-
- Generate ONLY the code in a single {language} fenced block.   
-"""
+    print(f"✅ Updated dataset with 'generated_data' fields in {dataset_path}") 
 
 
 
@@ -236,27 +226,32 @@ def code_to_code(code, language, nl_model, llm_opts):
 
 def add_generated_translation(dataset_path, code_model, llm_opts, n_entries, language):
     """
-    Loads dataset, adds a "gen_translation" field to each entry, 
-    and saves it back to the same file.
+    Loads dataset, generates a code translation for each entry,
+    stores it inside the 'generated_data' sub-dictionary,
+    and saves the updated dataset to the same file.
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
-        data = json.load(f) 
+        data = json.load(f)
+
     for i, entry in enumerate(data[:n_entries], 1):
         print(f"[{i}/{n_entries}] Generating code translation to {language} for {entry['id']}")
         code = entry["original_code"]
+
+        # Ensure 'generated_data' exists so we can append safely
+        if "generated_data" not in entry:
+            entry["generated_data"] = {}
+
         try:
-            java_translation = code_to_code(code, language ,code_model, llm_opts)
-            entry["gen_translation"] = java_translation.strip()
+            translation = code_to_code(code, language, code_model, llm_opts)
+            entry["generated_data"]["translation"] = translation.strip()
         except Exception as e:
             print(f"  Error generating for {entry['id']}: {e}")
-            entry["gen_translation"] = "" 
+            entry["generated_data"]["translation"] = ""
 
     with open(dataset_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
-    print(f"Updated dataset with 'gen_translation' in {dataset_path}")
-
-
+    print(f"✅ Updated dataset with '{language}' translations in {dataset_path}")
 
 def run_clone_generation(
     dataset_path,
@@ -299,10 +294,11 @@ def run_clone_generation(
         original_body   = entry["original_code"]
         tests_list      = entry["test"]
         description     = entry.get("description", "")
-        gen_requirement = entry.get("gen_requirement", "")
-        gen_translation = entry.get("gen_translation", "")
-        gen_uml         = entry.get("gen_uml", "")
-        gen_ast         = entry.get("gen_ast", "")
+        generated = entry.get("generated_data", {})
+        gen_requirement = generated.get("requirement", "")
+        gen_uml         = generated.get("uml", "")
+        gen_ast         = generated.get("ast", "")
+        gen_translation = generated.get(f"translation", "")
 
         tests_snippet   = tests_list[0] if tests_list else ""
         params          = entry.get("metadata", {}).get("params", [])
