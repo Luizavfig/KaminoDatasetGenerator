@@ -88,7 +88,7 @@ def run_test_module(tmp_path, return_dict):
         pass
 
 def validate_with_unittest(code: str, tests: list) -> dict:
-    TIMEOUT_SECONDS = 60
+    TIMEOUT_SECONDS = 180
     code_d = textwrap.dedent(code)
     tests_d = "\n\n".join(textwrap.dedent(t) for t in tests)
 
@@ -324,3 +324,30 @@ def _id_numeric_key(id_str: str):
         return (prefix, int(m.group(1)))
     # no trailing digits -> put after numeric ids, sorted by full string
     return (id_str, float("inf"))
+
+def np_converter(obj):
+    if isinstance(obj, (np.integer, np.intc, np.int32, np.int64)):
+        return int(obj)
+    elif isinstance(obj, (np.floating, np.float32, np.float64)):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    else:
+        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
+    
+def mark_hard_easy(normalized_data, hard_split,path):
+    hard_ids = set(hard_split["task_id"] if "task_id" in hard_split.column_names else hard_split["id"])
+    for entry in normalized_data:
+        entry_id = entry.get("id", "")
+        # Extract only numeric part if needed, e.g. "BigCodeBench/25" → "25"
+        if "/" in entry_id:
+            numeric_id = entry_id.split("/")[-1]
+        else:
+            numeric_id = entry_id
+
+        split_value = "hard" if numeric_id in hard_ids or entry_id in hard_ids else "easy"
+        entry["metadata"]["split"] = split_value
+
+    # --- Save the updated JSON file ---
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(normalized_data, f, indent=2, ensure_ascii=False)
