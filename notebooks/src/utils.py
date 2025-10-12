@@ -351,3 +351,100 @@ def mark_hard_easy(normalized_data, hard_split,path):
     # --- Save the updated JSON file ---
     with open(path, "w", encoding="utf-8") as f:
         json.dump(normalized_data, f, indent=2, ensure_ascii=False)
+
+import re
+import ast
+
+def fix_function_signature(code: str) -> str:
+    """
+    Fix multiline LLM-generated function definitions:
+    - Handles raw strings wrapped in quotes: 'r"..."' -> r"..."
+    - Ensures function signature ends with ':'
+    - Balances parentheses for multiline signatures
+    """
+    lines = code.splitlines()
+    fixed_lines = []
+    in_def = False
+    paren_count = 0
+
+    for line in lines:
+        stripped = line.strip()
+
+        # Start of a function
+        if stripped.startswith("def ") and not in_def:
+            in_def = True
+            # Fix raw string wrapped in quotes
+            line = re.sub(r"['\"]r([\"'].*?[\"'])['\"]", r"r\1", line)
+            # Count parentheses
+            paren_count = line.count("(") - line.count(")")
+        
+        elif in_def:
+            # Count parentheses for continued lines
+            paren_count += line.count("(") - line.count(")")
+            # Fix raw string wrapped in quotes in continued lines
+            line = re.sub(r"['\"]r([\"'].*?[\"'])['\"]", r"r\1", line)
+
+        fixed_lines.append(line)
+
+        # End of function signature
+        if in_def and paren_count <= 0:
+            if not stripped.endswith(":"):
+                fixed_lines[-1] = line.rstrip() + ":"
+            in_def = False
+
+    return "\n".join(fixed_lines)
+
+
+
+def add_missing_imports(code: str, common_modules=None) -> str:
+    """
+    Add imports for standard/common modules that are used but not imported.
+    common_modules: optional set of module names to consider
+    """
+    if common_modules is None:
+        common_modules = {"json", "os", "sys", "re", "math", "base64", "zlib", "datetime", "random", "itertools", "collections"}
+
+    try:
+        tree = ast.parse(code)
+    except SyntaxError:
+        return code  # skip if code is broken
+
+    # Collect imported names
+    imported_names = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                imported_names.add(alias.asname or alias.name.split(".")[0])
+        elif isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                imported_names.add(alias.asname or alias.name.split(".")[0])
+
+    # Collect used names
+    used_names = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name):
+            used_names.add(node.id)
+
+    # Determine missing imports
+    missing_imports = (used_names & common_modules) - imported_names
+
+    # Add missing imports at the top
+    if missing_imports:
+        imports_text = "\n".join(f"import {name}" for name in sorted(missing_imports))
+        code = imports_text + "\n\n" + code
+
+    return code
+
+
+
+def clean_code(code: str, common_modules=None) -> str:
+    """
+    Clean LLM-generated Python code to make it compilable:
+    1. Fix broken function signatures (extra parentheses, raw strings)
+    2. Add missing imports for commonly used standard modules
+    """
+     
+    code = add_missing_imports(code, common_modules)
+    code = fix_function_signature(code) 
+
+    return code.strip()

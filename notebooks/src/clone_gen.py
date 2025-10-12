@@ -45,6 +45,8 @@ def call_ollama_chat(messages, model, options):
     raise ValueError(f"Unexpected response format: {data}") 
 
 
+import re
+
 def extract_python_code(text: str) -> str:
     """
     Extract the first ```python ... ``` fenced block;
@@ -63,6 +65,7 @@ def extract_python_code(text: str) -> str:
 
     # Case 3: no fenced block → just return the whole thing
     return text.strip()
+
 
 
 def force_function_name(code: str, expected=FUNCTION_NAME):
@@ -304,6 +307,7 @@ def run_clone_generation(
         params          = entry.get("metadata", {}).get("params", [])
         return_text     = entry.get("metadata", {}).get("return_text", [])
         libs            = entry.get("metadata", {}).get("libs", [])
+        complete_prompt = entry.get("metadata", {}).get("complete_prompt", []) 
 
         for k in range(clones_per_entry):
             if context not in context_builders:
@@ -323,6 +327,7 @@ def run_clone_generation(
                 params=params,
                 return_text=return_text,
                 nfrs=nfrs,
+                complete_prompt=complete_prompt,
             )
             
             messages = [
@@ -352,10 +357,7 @@ def run_clone_generation(
 
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2)
-
-import os
-import json
+        json.dump(results, f, indent=2) 
 
 def run_clone_variation_generation(
     dataset_path,
@@ -438,3 +440,4 @@ def run_clone_variation_generation(
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
+

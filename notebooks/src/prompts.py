@@ -65,8 +65,10 @@ Rules:
 """
 
 MANDATORY_HINTS = """
-- Do NOT output explanations, comments, reasoning, or any text, **only valid Python code**.
-- Do not add print() statements to your code
+- Do NOT output explanations, reasoning, or any text, **only valid Python code**
+- Do NOT add default values to function parameters
+- Do NOT add comments or multiline comments to the function 
+- Do NOT add **print()** statements to your code
 - If needed, library imports should be added before the function definition.
 - Generate ONLY the code in a single ```python fenced block.  
 - If you cannot generate code, output an empty function stub instead.
@@ -101,6 +103,8 @@ Security and Compatibility
 """,
 }
 
+
+
 def build_user_prompt_complete(
   strategy: str,
   original_body: str,
@@ -123,8 +127,6 @@ def build_user_prompt_complete(
  A formatted string prompt for the LLM.
  """
   return f"""
-
-{STRATEGIES[strategy]}
 
 You will be shown:
 1) A short description and allowed libraries.
@@ -152,6 +154,7 @@ Your task:
 In addition, make sure that:
   {MANDATORY_HINTS}
 
+{STRATEGIES[strategy]}
 """
 
 def build_user_prompt_code(
@@ -168,9 +171,7 @@ def build_user_prompt_code(
  A formatted string prompt for the LLM.
  """
   return f"""
-
-{STRATEGIES[strategy]}
-
+ 
 You will be shown:
 1) A short description.
 2) The original function BODY (not including the def line).
@@ -191,6 +192,7 @@ Your task:
 In addition, make sure that:
   {MANDATORY_HINTS}
 
+{STRATEGIES[strategy]}
 """
 
 def build_user_prompt_uml(strategy: str, uml: str, params: str, return_text: str, nfrs: str)-> str:
@@ -202,8 +204,6 @@ def build_user_prompt_uml(strategy: str, uml: str, params: str, return_text: str
  A formatted string prompt for the LLM.
  """
   return f"""
-  {STRATEGIES[strategy]}
-
  Your task:
  - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
  - The implementation must return something based on this text: {return_text}.
@@ -213,6 +213,8 @@ def build_user_prompt_uml(strategy: str, uml: str, params: str, return_text: str
 
  In addition, make sure that:
   {MANDATORY_HINTS}
+
+{STRATEGIES[strategy]}
  """
 
 
@@ -225,7 +227,7 @@ def build_user_prompt_ast(strategy: str, gen_ast: str, description: str, params:
  A formatted string prompt for the LLM.
  """
   return f"""
-  {STRATEGIES[strategy]}
+  
 
  Your task:
  - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
@@ -237,19 +239,39 @@ def build_user_prompt_ast(strategy: str, gen_ast: str, description: str, params:
 
  In addition, make sure that:
   {MANDATORY_HINTS}
+
+{STRATEGIES[strategy]}
+ """
+def build_user_prompt(strategy: str, prompt: str, nfrs: str)-> str:
+  """
+ Build a user prompt for the refactoring LLM with complete_prompt from bigcodebench.
+ """
+  return f"""
+
+ Your task:
+ - Generate a python implementation named `{FUNCTION_NAME}`. 
+ - For that, consider the following complete details:
+ {prompt}
+
+ - Make sure the function follows the following non-functional requirements:
+  {NFRS[nfrs]}
+
+ In addition, make sure that:
+  {MANDATORY_HINTS}
+
+{STRATEGIES[strategy]}
  """
 
 
 def build_user_prompt_minimal(strategy: str, description: str, params: str, return_text: str, nfrs: str)-> str:
   """
- Build a user prompt for the refactoring LLM without minimal context.
+ Build a user prompt for the refactoring LLM with minimal context.
  Args:
  the description of the task
  Returns:
  A formatted string prompt for the LLM.
  """
   return f"""
-  {STRATEGIES[strategy]}
 
  Your task:
  - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
@@ -260,12 +282,12 @@ def build_user_prompt_minimal(strategy: str, description: str, params: str, retu
 
  In addition, make sure that:
   {MANDATORY_HINTS}
+
+{STRATEGIES[strategy]}
  """
 
 def build_user_prompt_from_translation(strategy: str, translation: str, language: str, params: list, return_text: str, nfrs: str) -> str:
   return f"""
-{STRATEGIES[strategy]}
-
 You are given a function code in {language}.
 
 {translation}
@@ -280,6 +302,9 @@ Make sure the function follows the following non-functional requirements
 
 In addition, make sure that:
 {MANDATORY_HINTS}
+
+
+{STRATEGIES[strategy]}
 """
 
 
@@ -340,90 +365,99 @@ In addition, make sure that:
 STRATEGIES = {
   "zero-shot": """""",
   "few-shot": """
-Here are some examples of what Type-4 (semantic) clones look like. 
+Here are some examples of what Type-4 (semantic) clones look like in Python. 
 Each example shows a description and two different semantically equivalent implementations.
 ---
 
 Example 1: Compute the factorial of a number
-Implementation A:
 ```python
+# Implementation A:
 def task_func(n):
- if n == 0 or n == 1:
- return 1
- return n * task_func(n - 1)
-Implementation B:
-def task_func(n):
- result = 1
- for i in range(2, n + 1):
- result *= i
- return result
+    if n == 0 or n == 1:
+        return 1
+    return n * task_func(n - 1)
 
+# Implementation B:
+def task_func(n):
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+``` 
 Example 2: Check if a string is a palindrome
-Implementation A:
+``` python
+# Implementation A:
 def task_func(s):
- return s == s[::-1]
-Implementation B:
+    return s == s[::-1]
+
+# Implementation B:
 def task_func(s):
- left, right = 0, len(s) - 1
- while left < right:
- if s[left] != s[right]:
- return False
- left += 1
- right -= 1
- return True
+    left, right = 0, len(s) - 1
+    while left < right:
+        if s[left] != s[right]:
+            return False
+        left += 1
+        right -= 1
+    return True
+``` 
 
 Example 3: Find the maximum element in a list
-Implementation A:
+``` python
+# Implementation A:
 def task_func(lst):
- return max(lst)
-Implementation B:
+    return max(lst)
+# Implementation B:
 def task_func(lst):
- if not lst:
- raise ValueError("Empty list")
- maximum = lst[0]
- for item in lst[1:]:
- if item > maximum:
- maximum = item
- return maximum
+    if not lst:
+        raise ValueError("Empty list")
+    maximum = lst[0]
+    for item in lst[1:]:
+        if item > maximum:
+            maximum = item
+    return maximum
+``` 
 """,
 "cot": """
-Here is an example of a Type-4 (semantic) clone transformation.
-The goal is to generate semantically equivalent code (same I/O contract) but with a different implementation style.
-
+Here is an example of a Type-4 (semantic) clone transformation in Python.
 Example:
-Original code:
+```python
+# Original code: compute factorial correctly for all non-negative integers
 def task_func(n):
- if n == 0 or n == 1:
- return 1
- return n * task_func(n - 1)
-
-Now we generated a clone by changing the implementation style. We have to make sure that:
-
-- We compute factorial correctly for all non-negative integers.
+    if n == 0 or n == 1:
+        return 1
+    return n * task_func(n - 1)
+```
+Now we generate a clone by changing the implementation style. We have to make sure that:
 - The I/O contract (input: integer n, output: factorial of n) is identical.
 - The change is structural (different AST, control flow) but not semantic.
 - Since the original used recursion, we can use an iterative approach (with a for loop).
 
-Clone Implementation:
+Here is another example:
+```python
+# Clone Implementation: checks whether a string s is equal to its reverse (s[::-1]). This is a palindrome check.
 def task_func(n):
- result = 1
- for i in range(2, n + 1):
- result *= i
- return result
-
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+```
 Here is another example.
-Original code:
+``` python
+# Original code:
 def task_func(s):
- return s == s[::-1]
-
-- The original task_func checks whether a string s is equal to its reverse (s[::-1]). This is a palindrome check.
+    return s == s[::-1]
+```
+Now we generate a clone by changing the implementation style. We have to make sure that:
 - Instead of slicing with [::-1], Python also provides the reversed() built-in function.
 - reversed(s) returns an iterator of the string in reverse order.
 - Joining it back into a string with "".join(...) gives the reversed string.
 
 Clone Implementation:
+``` python
+# clone implementation:
 def task_func(s):
- return s == ''.join(reversed(s))
+    return s == ''.join(reversed(s))
+```
 
 This demonstrates how a Type-4 clone can be generated by changing the syntax and structure of the implementation while preserving its semantics.
 You may reason step-by-step internally to produce a correct implementation.
@@ -459,6 +493,10 @@ context_builders = { # add more builders to extend the supported contexts
   "translation": lambda **kwargs: (
     SYSTEM_PROMPT_COMPLETE,
     build_user_prompt_from_translation(kwargs["strategy"], kwargs["gen_translation"], "Java", kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
- )  
+ ),  
+ "prompt": lambda **kwargs: (
+    SYSTEM_PROMPT_MINIMAL,
+    build_user_prompt(kwargs["strategy"], kwargs["complete_prompt"], kwargs["nfrs"])
+ ),
   
 }
