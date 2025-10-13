@@ -1,4 +1,5 @@
 import json, unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random
+from collections import Counter
 import numpy as np 
 
 def normalize(dataset_split):
@@ -474,3 +475,39 @@ def remove_function_signature(code: str) -> str:
         else:
             cleaned_lines.append(line)
     return "\n".join(cleaned_lines).strip()
+
+def select_balanced_combinations(all_combos, num_to_use, refacs, RANDOM_SEED=42):
+    random.seed(RANDOM_SEED)
+    selected = []
+    refac_counts = Counter({r: 0 for r in refacs})
+    random.shuffle(all_combos)
+
+    while len(selected) < num_to_use and all_combos:
+        # Choose the combination that adds the least imbalance
+        best_combo = None
+        best_score = float("inf")
+
+        for combo in all_combos:
+            # Calculate imbalance if we add this combo
+            new_counts = refac_counts.copy()
+            for r in combo:
+                new_counts[r] += 1
+            # Score = std deviation of counts (lower = more balanced)
+            score = (sum((new_counts[r] - (sum(new_counts.values()) / len(refacs))) ** 2 for r in refacs) / len(refacs)) ** 0.5
+
+            if score < best_score:
+                best_score = score
+                best_combo = combo
+
+        if best_combo is None:
+            break
+
+        selected.append(best_combo)
+        for r in best_combo:
+            refac_counts[r] += 1
+        all_combos.remove(best_combo)
+
+    print("\n✅ Strictly balanced refactor usage:")
+    for r, count in sorted(refac_counts.items()):
+        print(f"  {r}: {count}")
+    return selected

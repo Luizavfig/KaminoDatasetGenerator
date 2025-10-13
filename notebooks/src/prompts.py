@@ -9,7 +9,9 @@ Be concise but precise, focusing on:
 - its parameters and return values
 - side effects (file I/O, network, database, etc.)
 - important edge cases handled
+- Output ONLY the translated function code, without any explanations or comments.
 - Do not add print statements
+- Do not define classes
 - Do to call the function you generated inside a print statement
 
  Generate ONLY the code in a single {language} fenced block. 

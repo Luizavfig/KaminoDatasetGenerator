@@ -15,12 +15,10 @@ MODEL_COLORS = {
 }
 
 CONTEXT_COLORS = {
-    "complete": "red",
-    "minimal": "orange",
-    "requirements": "green",
-    "uml": "blue",
-    "ast": "purple",
-    "translation": "brown",
+    "complete": "red",  
+    "ast": "gray",
+    "test": "green",
+    "translation": "blue",
     "code": "cyan",
     "original": "gold"
 }

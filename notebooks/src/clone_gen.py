@@ -223,7 +223,7 @@ def code_to_code(code, language, nl_model, llm_opts):
     """
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT_TRANSLATION.format(language=language)},
-        {"role": "user", "content": f"Translate the following function to {language}:\n\n```python\n{code}\n```"}
+        {"role": "user", "content": f"Translate the following function to {language}. Output only function/methods, no classes prints, or main methods.:\n\n```\n{code}\n```"}
     ]
     return call_ollama_chat(messages, nl_model, llm_opts)
 
