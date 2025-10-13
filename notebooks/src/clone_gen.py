@@ -264,7 +264,7 @@ def run_clone_generation(
     ollama_model,
     llm_opts,
     context,  
-    nfrs,
+    refacs,
     strategy="zero-shot",
     context_builders=context_builders # pass as parameter to change them
 ):
@@ -278,8 +278,7 @@ def run_clone_generation(
         clones_per_entry: Number of clones per entry.
         ollama_model: Model name.
         llm_opts: Dict of LLM options.
-        context: changes prompt strategy.
-        nfrs: non-functional requirements used in the prompt
+        context: changes prompt strategy. 
         strategy: prompt strategy (default: "zero-shot")
         context_builders: dict mapping context -> callable returning (system_prompt, user_prompt)
     """
@@ -325,11 +324,11 @@ def run_clone_generation(
                 libs=libs,
                 tests_snippet=tests_snippet,
                 params=params,
-                return_text=return_text,
-                nfrs=nfrs,
+                return_text=return_text, 
                 complete_prompt=complete_prompt,
+                refacs=refacs
             )
-            
+            print(user_prompt)
             messages = [
                 {"role": "system", "content": system_prompt},
                 {"role": "user",   "content": user_prompt},
@@ -345,9 +344,9 @@ def run_clone_generation(
                     "model": ollama_model,
                     "context": context,                    
                     "strategy": strategy,
-                    "code": code,
-                    "nfrs": nfrs,
-                    "clone_id": f"{strategy} {ollama_model}-{context} {k+1} {nfrs}",
+                    "code": code, 
+                    "refacs": refacs,
+                    "clone_id": f"{strategy} {ollama_model}-{context} {k+1} {refacs}",
                 })
             except Exception as e:
                 print(f" Error generating clone {k+1}: {e}")
@@ -365,8 +364,7 @@ def run_clone_variation_generation(
     n_entries,
     clones_per_entry,
     ollama_model,
-    llm_opts,
-    nfrs,
+    llm_opts
 ):
     """
     Run clone generation for dataset entries, reusing existing clones
@@ -378,8 +376,7 @@ def run_clone_variation_generation(
         n_entries: Number of entries to process.
         clones_per_entry: Number of new clones per entry.
         ollama_model: Model name.
-        llm_opts: Dict of LLM options.
-        nfrs: non-functional requirements used in the prompt
+        llm_opts: Dict of LLM options. 
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -404,8 +401,7 @@ def run_clone_variation_generation(
                 original_body=original_body,
                 description=description,
                 libs=libs,
-                example_clones=entry_clones,   # pass dataset clones here
-                nfrs=nfrs,
+                example_clones=entry_clones
             )
 
             messages = [
@@ -425,8 +421,7 @@ def run_clone_variation_generation(
                     "context": "variation",
                     "strategy": "few-shot variation",
                     "code": code,
-                    "nfrs": nfrs,
-                    "clone_id": f"few-shot variation {ollama_model}-variation {k+1} {nfrs}",
+                    "clone_id": f"few-shot variation {ollama_model}-variation {k+1}",
                 })
             except Exception as e:
                 print(f" ❌ Error generating clone {k+1}: {e}")

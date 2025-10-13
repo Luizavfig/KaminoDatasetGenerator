@@ -12,7 +12,7 @@ Be concise but precise, focusing on:
 - Do not add print statements
 - Do to call the function you generated inside a print statement
 
- Generate ONLY the code in a single {language} fenced block.  
+ Generate ONLY the code in a single {language} fenced block. 
 """
 
 SYSTEM_PROMPT_TO_NL = """You are a code summarizer.
@@ -55,7 +55,7 @@ You produce Python code based on the information given.
 
 
 SYSTEM_PROMPT_COMPLETE = f"""You are a careful Python refactoring engine.
-You produce a semantically equivalent variant (Type-4 clone) of the given function.
+You produce an alternative solution to the given function.
 Rules:
 - Output ONLY Python code in a single fenced block.
 - Define exactly one function named `{FUNCTION_NAME}` with the correct signature for the tests.
@@ -70,51 +70,50 @@ MANDATORY_HINTS = """
 - Do NOT add comments or multiline comments to the function 
 - Do NOT add **print()** statements to your code
 - If needed, library imports should be added before the function definition.
-- Generate ONLY the code in a single ```python fenced block.  
+- Generate ONLY the code in a single ```python``` fenced block. 
 - If you cannot generate code, output an empty function stub instead.
 """
 
-NFRS = {
-   "nfr0": """
-""",
-  "nfr1": """
-- the generated code must not use any external libraries
-""",
- "nfr2": """
-- the generated code should use as many external libraries as possible
-"""
-,
-"nfr3":""" 
-Runtime & Reliability Quality
-- generate code that focuses on Performance Efficiency, by using system resources effectively and delivering fast, responsive performance.
-- generate code that focuses on Reliability, by consistent performance, fault tolerance, and the ability to recover from failures.
-- generate code that focuses on Safety, by protecting people, assets, and the environment from potential harm, and ensuring fail-safe behavior.""", 
+REFACTORING = {
+  "refac_1": ( # Algorithmic reimplementation
+    "Generate a Python function to achieve the same behavior using a different algorithmic strategy. You may use built-in Python functions, comprehensions, or alternative logic constructs."
+ ),
 
-"nfr4":"""
-Security and Compatibility
-- generate code that focuses on Security, by protecting data, preventing unauthorized access, and ensuring authenticity and accountability.
-- generate code that focuses on Compatibility, by operating smoothly with other products and exchanging information correctly.
+  "refac_2": ( # Library exchange
+    "Generate an alternative solution using different Python libraries. None of the libraries from the example solution should be used."
+ ),
 
-""",
-"nfr5":"""
- Maintainability & Adaptability
-- generate code that focuses on Maintainability, by ease of modification, testing, analysis, and reuse of software components.
-- generate code that focuses on Portability, by adapting software to different environments and ensuring smooth installation and replacement
-""",
+  "refac_3": ( # Data representation shift
+    "Generate an alternative solution using different data structures or representations. For example, replace lists with dictionaries, tuples, or sets where appropriate."
+ ),
+
+  "refac_4": ( # Stylistic and formatting variation
+    "Generate an alternative solution with a different coding style and layout. Change indentation, whitespace, comment placement, and formatting. You should add docstrings or rearrange statements."
+ ),
+
+  "refac_5": ( # Side-effect isolation and purity
+    "Generate an alternative solution that isolates side effects (e.g., I/O operations, state mutations) from pure computations. You should refactor the function to separate concerns."
+ ),
+
+  "refac_6": ( # Security and robustness enhancement
+    "Generate an alternative solution that enhances security and robustness. You may add input validation, error handling, or logging."
+ ),
+
+  "refac_7": ( # Bad smells
+    "Generate an alternative solution that introduces common 'bad smells' in code, such as long methods, duplicated code, or others."
+ )
 }
 
-
-
-def build_user_prompt_complete(
-  strategy: str,
-  original_body: str,
-  description: str,
-  libs: list,
-  tests_snippet: str,
-  nfrs: str
+def build_user_prompt_test(
+ strategy: str, 
+ description: str,
+ tests_snippet: str,
+ params: str,
+ return_text: str, 
+ refacs: list[str],
 ) -> str:
-  """
-  
+ """
+ 
  Build a user prompt to generate type 4 clones.
 
  Args:
@@ -126,168 +125,192 @@ def build_user_prompt_complete(
  Returns:
  A formatted string prompt for the LLM.
  """
-  return f"""
+ return f"""
 
 You will be shown:
-1) A short description and allowed libraries.
-2) The original function BODY (not including the def line).
-3) An excerpt of the unit tests (for signature and behavior cues). Do not overfit.
-
-Description:
-{description}
-
-Allowed/expected libraries (may import as needed): {libs}
-
-Original function BODY (indentation represents inside the function):
-{textwrap.dedent(original_body).strip()}
-
-Unit test excerpt (do not hardcode values; just infer signature/contract):
-{textwrap.shorten(textwrap.dedent(tests_snippet), width=2000, placeholder=" ... ")}
-
+1) A short description of the task.
+2) An excerpt of the unit tests.
 
 Your task:
-- Emit a semantically equivalent implementation named `{FUNCTION_NAME}`.
-- Keep side effects and external calls intact where visible (e.g., urllib/os/json/pandas usage).
-- Make sure the function follows the following non-functional requirements:
-  {NFRS[nfrs]}
+- Generate a solution named `{FUNCTION_NAME}` with the following arguments: {params}. 
+- Your solution must PASS all these unit tests:
+```
+{textwrap.dedent(tests_snippet).strip()}
+```
+- Your solution must correspond to this description: {description}.
+- Your solution must return something based on this text: {return_text}.
+- To ensure syntactic and structural differences, you MUST:
+  {get_combined_refacs(refacs)}
 
-In addition, make sure that:
-  {MANDATORY_HINTS}
 
+- In addition, make sure that:
+ {MANDATORY_HINTS}
+
+{STRATEGIES[strategy]}
+"""
+
+
+
+def build_user_prompt_complete(
+ strategy: str,
+ original_body: str,
+ description: str, 
+ tests_snippet: str, 
+ refacs: list[str],
+) -> str:
+ """
+ 
+ Build a user prompt to generate type 4 clones.
+
+ Args:
+ original_body: The body of the original function (without 'def' line).
+ description: Short textual description of the function's behavior.
+ libs: List of allowed/expected libraries.
+ tests_snippet: Excerpt of unit tests for the function.
+
+ Returns:
+ A formatted string prompt for the LLM.
+ """
+ return f"""
+
+You will be shown:
+1) A short description and a possible solution.
+2) An excerpt of the unit tests.
+
+Your task:
+- Generate an alternative solution named `{FUNCTION_NAME}.
+- Your solution must correspond to this description: {description}.
+- To ensure syntactic and structural differences, you MUST:
+{get_combined_refacs(refacs)}
+- Your solution must PASS all these unit tests:
+```
+{textwrap.dedent(tests_snippet).strip()}
+```
+- Example solution (you must not use it):
+```
+{textwrap.dedent(original_body).strip()}
+```
+
+- In addition, make sure that:
+ {MANDATORY_HINTS}
 {STRATEGIES[strategy]}
 """
 
 def build_user_prompt_code(
-  strategy: str,
-  original_body: str,
-  description: str,
-  params: str,
-  return_text: str,
-  nfrs: str
+ strategy: str,
+ original_body: str,
+ description: str,
+ params: str,
+ return_text: str,
+ refacs: list[str],
 ) -> str:
-  """
+ """
  Build a user prompt to generate type 4 clones.
  Returns:
  A formatted string prompt for the LLM.
  """
-  return f"""
- 
+
+ return f"""
+
 You will be shown:
 1) A short description.
-2) The original function BODY (not including the def line).
+2) The original function.
 
-Description:
-{description}
-
-Original function BODY (indentation represents inside the function):
+- Your solution must correspond to this description: {description}.
+- Example solution (you must not use it):
+```
 {textwrap.dedent(original_body).strip()}
-
+```
 Your task:
-- Generate a semantically equivalent implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
-- Make sure the syntax and structure of the implementation are as different as possible from the original function BODY.
-- The implementation must return something based on this text: {return_text}.
-- Make sure the function follows the following non-functional requirements:
-  {NFRS[nfrs]}
+- Generate an alternative solution named `{FUNCTION_NAME}` with the following arguments: {params}. 
+- Make sure the syntax and structure of your solution are as different as possible from the Example solution BODY.
+- Your solution must return something based on this text: {return_text}.
+- To ensure syntactic and structural differences, you MUST:
+{get_combined_refacs(refacs)}
 
-In addition, make sure that:
-  {MANDATORY_HINTS}
+- In addition, make sure that:
+ {MANDATORY_HINTS}
 
 {STRATEGIES[strategy]}
 """
 
-def build_user_prompt_uml(strategy: str, uml: str, params: str, return_text: str, nfrs: str)-> str:
-  """
- Build a user prompt for the refactoring LLM with UML.
- Args:
- the description of the task
- Returns:
- A formatted string prompt for the LLM.
+
+def build_user_prompt_ast(strategy: str, original_body: str, gen_ast: str, description: str, params: str, return_text: str,refacs: list[str])-> str:
  """
-  return f"""
- Your task:
- - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
- - The implementation must return something based on this text: {return_text}.
- - The implementation must have a single function and should replicate the behavior described in this PlantUML state-machine diagram: {uml}.
- Make sure the function follows the following non-functional requirements:
-  {NFRS[nfrs]}
-
- In addition, make sure that:
-  {MANDATORY_HINTS}
-
-{STRATEGIES[strategy]}
- """
-
-
-def build_user_prompt_ast(strategy: str, gen_ast: str, description: str, params: str, return_text: str, nfrs: str)-> str:
-  """
  Build a user prompt for the refactoring LLM with AST.
  Args:
  the description of the task
  Returns:
  A formatted string prompt for the LLM.
  """
-  return f"""
-  
+ return f"""
+ You will be shown:
+1) A short description.
+2) An example solution.
 
- Your task:
- - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
- - The implementation must return something based on this text: {return_text}.
- - The implementation must implement the following behavior: {description}
- - The implementation abstract syntax tree (AST) should be as different as possible from this one: {gen_ast}
- Make sure the function follows the following non-functional requirements:
-  {NFRS[nfrs]}
+- Your solution must correspond to this description: {description}.
+- Example solution (you must not use it):
+```
+{textwrap.dedent(original_body).strip()}
+```
 
- In addition, make sure that:
-  {MANDATORY_HINTS}
+Your task:
+- Generate an alternative solution named `{FUNCTION_NAME}` with the following arguments: {params}. 
+- Your solution must return something based on this text: {return_text}.
+- Make sure the syntax and structure of your solution are as different as possible from the Example solution BODY.
+- For that, generate an alternative solution with an AST that is as different as possible from this: {gen_ast}.
+- To ensure syntactic and structural differences, you MUST:
+{get_combined_refacs(refacs)}
 
-{STRATEGIES[strategy]}
+- In addition, make sure that:
+ {MANDATORY_HINTS}
+
+{STRATEGIES[strategy]} 
  """
-def build_user_prompt(strategy: str, prompt: str, nfrs: str)-> str:
-  """
+def build_user_prompt(strategy: str, prompt: str,refacs: list[str])-> str:
+ """
  Build a user prompt for the refactoring LLM with complete_prompt from bigcodebench.
  """
-  return f"""
+ return f"""
 
  Your task:
- - Generate a python implementation named `{FUNCTION_NAME}`. 
+ - Generate a Python solution named `{FUNCTION_NAME}`. 
  - For that, consider the following complete details:
- {prompt}
+{prompt}
 
- - Make sure the function follows the following non-functional requirements:
-  {NFRS[nfrs]}
+- To ensure syntactic and structural differences, you MUST:
+{get_combined_refacs(refacs)}
 
- In addition, make sure that:
-  {MANDATORY_HINTS}
+ - In addition, make sure that:
+ {MANDATORY_HINTS}
 
 {STRATEGIES[strategy]}
  """
 
 
-def build_user_prompt_minimal(strategy: str, description: str, params: str, return_text: str, nfrs: str)-> str:
-  """
+def build_user_prompt_minimal(strategy: str, description: str, params: str, return_text: str)-> str:
+ """
  Build a user prompt for the refactoring LLM with minimal context.
  Args:
  the description of the task
  Returns:
  A formatted string prompt for the LLM.
  """
-  return f"""
+ return f"""
 
  Your task:
- - Generate a python implementation named `{FUNCTION_NAME}` with the following arguments: {params}. 
- - The implementation must have a single function to address this description: {description}.
- - The implementation must return something based on this text: {return_text}.
- - Make sure the function follows the following non-functional requirements:
-  {NFRS[nfrs]}
+ - Generate a python solution named `{FUNCTION_NAME}` with the following arguments: {params}. 
+ - Your solution must correspond to this description: {description}.
+ - Your solution must return something based on this text: {return_text}.
 
- In addition, make sure that:
-  {MANDATORY_HINTS}
+ - In addition, make sure that:
+ {MANDATORY_HINTS}
 
 {STRATEGIES[strategy]}
  """
 
-def build_user_prompt_from_translation(strategy: str, translation: str, language: str, params: list, return_text: str, nfrs: str) -> str:
-  return f"""
+def build_user_prompt_from_translation(strategy: str, translation: str, language: str, params: list, return_text: str) -> str:
+ return f"""
 You are given a function code in {language}.
 
 {translation}
@@ -295,12 +318,10 @@ You are given a function code in {language}.
 Your task:
 - Translate this function to Python
 - Implement the function as `{FUNCTION_NAME}` with arguments: {params}.
-- The implementation must return something based on this text: {return_text}.
+- The solution must return something based on this text: {return_text}.
 
-Make sure the function follows the following non-functional requirements
-{NFRS[nfrs]}
 
-In addition, make sure that:
+- In addition, make sure that:
 {MANDATORY_HINTS}
 
 
@@ -311,25 +332,24 @@ In addition, make sure that:
 import textwrap
 
 def build_clone_variation_prompt(
-  original_body: str, 
-  description: str,
-  example_clones: list,
-  params: str, 
-  return_text: str,   
-  nfrs: str, 
+ original_body: str, 
+ description: str,
+ example_clones: list,
+ params: str, 
+ return_text: str,  
 ) -> str:
-  """
+ """
  Build a prompt that shows a few existing clones and asks the LLM to generate a new one.
  Returns:
  A formatted string prompt for the LLM.
  """
 
-  examples_text = ""
-  for i, clone in enumerate(example_clones, 1):
-    examples_text += f"\n### Example {i}\n"
-    examples_text += "```python\n" + clone.get("code", "").strip() + "\n```\n"
+ examples_text = ""
+ for i, clone in enumerate(example_clones, 1):
+  examples_text += f"\n### Example {i}\n"
+  examples_text += "```\n" + clone.get("code", "").strip() + "\n```\n"
 
-  return f"""
+ return f"""
 You are tasked with generating **a new semantically equivalent clone** of the given function.
 
 You will be shown:
@@ -337,8 +357,7 @@ You will be shown:
 2) The original function BODY.
 3) Several existing clones as examples.
 
-Description:
-{description} 
+- Your solution must correspond to this description: {description}.
 
 Original function BODY (indentation represents inside the function):
 {textwrap.dedent(original_body).strip()} 
@@ -352,151 +371,149 @@ Original function BODY (indentation represents inside the function):
 
 ### Your Task
 - Implement a new variation of the function named `{FUNCTION_NAME}` with arguments: {params}.
-- The implementation must return something based on this text: {return_text}.
+- The solution must return something based on this text: {return_text}.
 - It must be semantically equivalent to the original and clones.
 - It must be syntactically and structurally different from the original and all clones.
-- Make sure the function follows the following non-functional requirements:
-  {NFRS[nfrs]}
-In addition, make sure that:
-  {MANDATORY_HINTS}
+- In addition, make sure that:
+ {MANDATORY_HINTS}
 """
 
 
 STRATEGIES = {
-  "zero-shot": """""",
-  "few-shot": """
-Here are some examples of what Type-4 (semantic) clones look like in Python. 
-Each example shows a description and two different semantically equivalent implementations.
+ "zero-shot": """""",
+ "few-shot": """
+Here are some examples of how to create alternative solutions in Python. 
+Each example shows a description and two different semantically equivalent solutions.
 ---
 
 Example 1: Compute the factorial of a number
-```python
-# Implementation A:
+```
+# solution A:
 def task_func(n):
-    if n == 0 or n == 1:
-        return 1
-    return n * task_func(n - 1)
+ if n == 0 or n == 1:
+ return 1
+ return n * task_func(n - 1)
 
-# Implementation B:
+# solution B:
 def task_func(n):
-    result = 1
-    for i in range(2, n + 1):
-        result *= i
-    return result
+ result = 1
+ for i in range(2, n + 1):
+ result *= i
+ return result
 ``` 
 Example 2: Check if a string is a palindrome
-``` python
-# Implementation A:
+```
+# solution A:
 def task_func(s):
-    return s == s[::-1]
+ return s == s[::-1]
 
-# Implementation B:
+# solution B:
 def task_func(s):
-    left, right = 0, len(s) - 1
-    while left < right:
-        if s[left] != s[right]:
-            return False
-        left += 1
-        right -= 1
-    return True
+ left, right = 0, len(s) - 1
+ while left < right:
+ if s[left] != s[right]:
+ return False
+ left += 1
+ right -= 1
+ return True
 ``` 
 
 Example 3: Find the maximum element in a list
-``` python
-# Implementation A:
+```
+# solution A:
 def task_func(lst):
-    return max(lst)
-# Implementation B:
+ return max(lst)
+# solution B:
 def task_func(lst):
-    if not lst:
-        raise ValueError("Empty list")
-    maximum = lst[0]
-    for item in lst[1:]:
-        if item > maximum:
-            maximum = item
-    return maximum
+ if not lst:
+ raise ValueError("Empty list")
+ maximum = lst[0]
+ for item in lst[1:]:
+ if item > maximum:
+ maximum = item
+ return maximum
 ``` 
 """,
 "cot": """
-Here is an example of a Type-4 (semantic) clone transformation in Python.
+Here are some examples of how to create alternative solutions in Python. 
 Example:
-```python
+```
 # Original code: compute factorial correctly for all non-negative integers
 def task_func(n):
-    if n == 0 or n == 1:
-        return 1
-    return n * task_func(n - 1)
+ if n == 0 or n == 1:
+ return 1
+ return n * task_func(n - 1)
 ```
-Now we generate a clone by changing the implementation style. We have to make sure that:
+Now we generate an alternative solution by changing the implementation style. We have to make sure that:
 - The I/O contract (input: integer n, output: factorial of n) is identical.
 - The change is structural (different AST, control flow) but not semantic.
 - Since the original used recursion, we can use an iterative approach (with a for loop).
 
-Here is another example:
-```python
-# Clone Implementation: checks whether a string s is equal to its reverse (s[::-1]). This is a palindrome check.
+Alternative solution:
+```
+# Alternative solution: checks whether a string s is equal to its reverse (s[::-1]). This is a palindrome check.
 def task_func(n):
-    result = 1
-    for i in range(2, n + 1):
-        result *= i
-    return result
+ result = 1
+ for i in range(2, n + 1):
+ result *= i
+ return result
 ```
 Here is another example.
-``` python
+```
 # Original code:
 def task_func(s):
-    return s == s[::-1]
+ return s == s[::-1]
 ```
-Now we generate a clone by changing the implementation style. We have to make sure that:
+Now we generate an alternative solution by changing the implementation style. We have to make sure that:
 - Instead of slicing with [::-1], Python also provides the reversed() built-in function.
 - reversed(s) returns an iterator of the string in reverse order.
 - Joining it back into a string with "".join(...) gives the reversed string.
 
-Clone Implementation:
-``` python
-# clone implementation:
+Alternative solution:
+```
+# Alternative solution:
 def task_func(s):
-    return s == ''.join(reversed(s))
+ return s == ''.join(reversed(s))
 ```
 
-This demonstrates how a Type-4 clone can be generated by changing the syntax and structure of the implementation while preserving its semantics.
-You may reason step-by-step internally to produce a correct implementation.
+You may reason step-by-step internally to produce a correct solution.
 DO NOT output your internal reasoning. Output ONLY the final code snippet (see instructions below).
 """
 }
 
 context_builders = { # add more builders to extend the supported contexts
-  "minimal": lambda **kwargs: (
+ "minimal": lambda **kwargs: (
+  SYSTEM_PROMPT_MINIMAL,
+  build_user_prompt_minimal(kwargs["strategy"], kwargs["description"], kwargs["params"], kwargs["return_text"])
+ ), 
+ "ast": lambda **kwargs: (
+  SYSTEM_PROMPT_MINIMAL,
+  build_user_prompt_ast(kwargs["strategy"], kwargs["original_body"], kwargs["gen_ast"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["refacs"])
+ ),
+ "code": lambda **kwargs: (
+  SYSTEM_PROMPT_MINIMAL,
+  build_user_prompt_code(kwargs["strategy"], kwargs["original_body"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["refacs"])
+ ),
+ "complete": lambda **kwargs: (
+  SYSTEM_PROMPT_COMPLETE,
+  build_user_prompt_complete(kwargs["strategy"], kwargs["original_body"], kwargs["description"], kwargs["tests_snippet"], kwargs["refacs"])
+ ),
+"test": lambda **kwargs: (
     SYSTEM_PROMPT_MINIMAL,
-    build_user_prompt_minimal(kwargs["strategy"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
+  build_user_prompt_test(kwargs["strategy"], kwargs["description"], kwargs["tests_snippet"], kwargs["params"], kwargs["return_text"], kwargs["refacs"])
  ),
-  "requirements": lambda **kwargs: (
-    SYSTEM_PROMPT_MINIMAL,
-    build_user_prompt_minimal(kwargs["strategy"], kwargs["gen_requirement"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
+ "translation": lambda **kwargs: (
+  SYSTEM_PROMPT_COMPLETE,
+  build_user_prompt_from_translation(kwargs["strategy"], kwargs["gen_translation"], "Java", kwargs["params"], kwargs["return_text"])
+ ), 
+"prompt": lambda **kwargs: (
+  SYSTEM_PROMPT_MINIMAL,
+  build_user_prompt(kwargs["strategy"], kwargs["complete_prompt"])
  ),
-  "uml": lambda **kwargs: (
-    SYSTEM_PROMPT_MINIMAL,
-    build_user_prompt_uml(kwargs["strategy"], kwargs["gen_uml"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
- ),
-  "ast": lambda **kwargs: (
-    SYSTEM_PROMPT_MINIMAL,
-    build_user_prompt_ast(kwargs["strategy"], kwargs["gen_ast"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
- ),
-  "code": lambda **kwargs: (
-    SYSTEM_PROMPT_MINIMAL,
-    build_user_prompt_code(kwargs["strategy"], kwargs["original_body"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
- ),
-  "complete": lambda **kwargs: (
-    SYSTEM_PROMPT_COMPLETE,
-    build_user_prompt_complete(kwargs["strategy"], kwargs["original_body"], kwargs["description"], kwargs["libs"], kwargs["tests_snippet"], kwargs["nfrs"])
- ),
-  "translation": lambda **kwargs: (
-    SYSTEM_PROMPT_COMPLETE,
-    build_user_prompt_from_translation(kwargs["strategy"], kwargs["gen_translation"], "Java", kwargs["params"], kwargs["return_text"], kwargs["nfrs"])
- ),  
- "prompt": lambda **kwargs: (
-    SYSTEM_PROMPT_MINIMAL,
-    build_user_prompt(kwargs["strategy"], kwargs["complete_prompt"], kwargs["nfrs"])
- ),
-  
+ 
 }
+
+
+def get_combined_refacs(refacs: list[str]) -> str:
+ combined_refacs = "\n".join([f"- {REFACTORING[key]}" for key in refacs if key in REFACTORING])
+ return combined_refacs

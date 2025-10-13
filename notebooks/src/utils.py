@@ -448,3 +448,29 @@ def clean_code(code: str, common_modules=None) -> str:
     code = fix_function_signature(code) 
 
     return code.strip()
+
+
+def remove_function_signature(code: str) -> str:
+    """
+    Removes the first function definition line (e.g., 'def func(...):')
+    and returns only the body, keeping indentation.
+    Works for both single-line and multi-line signatures.
+    """
+    lines = code.strip().splitlines()
+    body_started = False
+    cleaned_lines = []
+    
+    for line in lines:
+        # Skip lines until we reach the end of the function signature
+        if not body_started:
+            # Start of def ...:
+            if re.match(r'^\s*def\s+\w+\s*\(.*', line):
+                # If it ends with ':', body starts after this line
+                if line.strip().endswith(":"):
+                    body_started = True
+                continue
+            else:
+                continue
+        else:
+            cleaned_lines.append(line)
+    return "\n".join(cleaned_lines).strip()
