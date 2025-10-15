@@ -1,5 +1,5 @@
 
-import re, fractions
+import re
 # === Tokenizer ===
 def tokenize_code(code: str):
     return [tok for tok in re.split(r"(\W)", code) if tok.strip()]

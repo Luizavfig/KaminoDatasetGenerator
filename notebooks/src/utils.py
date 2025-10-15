@@ -1,6 +1,8 @@
 import json, unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random
 from collections import Counter
 import numpy as np 
+CODEBLEU_THRESHOLD = 0.4
+N_ENTRIES = 12
 
 def normalize(dataset_split):
     normalized = []
@@ -266,9 +268,6 @@ def filter_dataset(original_dataset_file, test_results_file, output_file):
     print(f"Original entries: {len(dataset)}")
     print(f"Filtered entries (all tests pass + easy split): {len(filtered_dataset)}")
 
-
-
-
     
 def sample_random_entries(input_file, experiment_output_file, extension_output_file, sample_size, seed=42):
     """
@@ -352,9 +351,6 @@ def mark_hard_easy(normalized_data, hard_split,path):
     # --- Save the updated JSON file ---
     with open(path, "w", encoding="utf-8") as f:
         json.dump(normalized_data, f, indent=2, ensure_ascii=False)
-
-import re
-import ast
 
 def fix_function_signature(code: str) -> str:
     """
@@ -476,27 +472,28 @@ def remove_function_signature(code: str) -> str:
             cleaned_lines.append(line)
     return "\n".join(cleaned_lines).strip()
 
-def select_balanced_combinations(all_combos, num_to_use, refacs, RANDOM_SEED=42):
-    random.seed(RANDOM_SEED)
+def select_balanced_combinations(combos, num_to_use, refacs, seed):
+    random.seed(seed)
     selected = []
     refac_counts = Counter({r: 0 for r in refacs})
-    random.shuffle(all_combos)
+    available = combos.copy()
+    random.shuffle(available)
 
-    while len(selected) < num_to_use and all_combos:
-        # Choose the combination that adds the least imbalance
+    while len(selected) < num_to_use and available:
+        # Pick the combo that keeps refac usage most balanced
         best_combo = None
         best_score = float("inf")
 
-        for combo in all_combos:
-            # Calculate imbalance if we add this combo
-            new_counts = refac_counts.copy()
+        for combo in available:
+            # Simulate adding this combo
+            tmp_counts = refac_counts.copy()
             for r in combo:
-                new_counts[r] += 1
-            # Score = std deviation of counts (lower = more balanced)
-            score = (sum((new_counts[r] - (sum(new_counts.values()) / len(refacs))) ** 2 for r in refacs) / len(refacs)) ** 0.5
+                tmp_counts[r] += 1
+            mean = sum(tmp_counts.values()) / len(refacs)
+            std = (sum((tmp_counts[r] - mean) ** 2 for r in refacs) / len(refacs)) ** 0.5
 
-            if score < best_score:
-                best_score = score
+            if std < best_score:
+                best_score = std
                 best_combo = combo
 
         if best_combo is None:
@@ -505,9 +502,11 @@ def select_balanced_combinations(all_combos, num_to_use, refacs, RANDOM_SEED=42)
         selected.append(best_combo)
         for r in best_combo:
             refac_counts[r] += 1
-        all_combos.remove(best_combo)
+        available.remove(best_combo)
 
-    print("\n✅ Strictly balanced refactor usage:")
+    print("\nBalanced refactor usage:")
     for r, count in sorted(refac_counts.items()):
         print(f"  {r}: {count}")
+    print()
+
     return selected

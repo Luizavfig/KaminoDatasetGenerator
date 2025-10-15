@@ -2,59 +2,11 @@ FUNCTION_NAME = "task_func"
 import textwrap
 
 
-SYSTEM_PROMPT_TRANSLATION = """You are a software developer.
-Your task is to translate a Python function to a different programming language: {language}.
-Be concise but precise, focusing on:
-- the same behavior of the function
-- its parameters and return values
-- side effects (file I/O, network, database, etc.)
-- important edge cases handled
-- Output ONLY the translated function code, without any explanations or comments.
-- Do not add print statements
-- Do not define classes
-- Do to call the function you generated inside a print statement
-
- Generate ONLY the code in a single {language} fenced block. 
-"""
-
-SYSTEM_PROMPT_TO_NL = """You are a code summarizer.
-Your task is to read a Python function and explain, in natural language, what the function does.
-Be concise but precise, focusing on:
-- the purpose of the function
-- its parameters and return values
-- side effects (file I/O, network, database, etc.)
-- important edge cases handled
-Do NOT output code, only natural language explanation.
-"""
-
-
-SYSTEM_PROMPT_TO_REQ = """You are a requirements engineer.
-Your task is to read a Python function and elicit requirements that represent it.
-Be concise but precise, focusing on:
-- The function signature (including params)
-- return values
-- important edge cases handled
-Do NOT output code, only requirements definition.
-"""
-
-SYSTEM_PROMPT_TO_UML = """You are a UML engineer.
-Your task is to read a Python function and create a state-machine diagram in PlanUML that represents it.
-Be concise but precise, focusing on:
-- The behavior of the function
-- Type of Input
-- Type of output
-- Important edge cases handled
-- Avoid using library or function-specific names
-- Try to make the diagram in a generic way
-Do NOT output code or text, only the PlantUML state-machine.
-"""
 
 SYSTEM_PROMPT_MINIMAL = f"""
 You are a Python generation engine.
 You produce Python code based on the information given. 
 """
-
-
 
 SYSTEM_PROMPT_COMPLETE = f"""You are a careful Python refactoring engine.
 You produce an alternative solution to the given function.
@@ -78,11 +30,11 @@ MANDATORY_HINTS = """
 
 REFACTORING = {
   "refac_1": ( # Algorithmic reimplementation
-    "Generate a Python function to achieve the same behavior using a different algorithmic strategy. You may use built-in Python functions, comprehensions, or alternative logic constructs."
+    "Generate an alternative solution using a different algorithmic strategy. You may use built-in functions, comprehensions, or alternative logic constructs."
  ),
 
   "refac_2": ( # Library exchange
-    "Generate an alternative solution using different Python libraries. None of the libraries from the example solution should be used."
+    "Generate an alternative solution using different libraries or external APIs. None of the libraries from the example solution should be used."
  ),
 
   "refac_3": ( # Data representation shift
@@ -141,7 +93,7 @@ Your task:
 ```
 - Your solution must correspond to this description: {description}.
 - Your solution must return something based on this text: {return_text}.
-- To ensure syntactic and structural differences, you MUST:
+- To ensure syntactic and structural differences on your solution, you MUST:
   {get_combined_refacs(refacs)}
 
 
@@ -182,7 +134,7 @@ You will be shown:
 Your task:
 - Generate an alternative solution named `{FUNCTION_NAME}.
 - Your solution must correspond to this description: {description}.
-- To ensure syntactic and structural differences, you MUST:
+- To ensure syntactic and structural differences on your solution, you MUST:
 {get_combined_refacs(refacs)}
 - Your solution must PASS all these unit tests:
 ```
@@ -227,7 +179,7 @@ Your task:
 - Generate an alternative solution named `{FUNCTION_NAME}` with the following arguments: {params}. 
 - Make sure the syntax and structure of your solution are as different as possible from the Example solution BODY.
 - Your solution must return something based on this text: {return_text}.
-- To ensure syntactic and structural differences, you MUST:
+- To ensure syntactic and structural differences on your solution, you MUST:
 {get_combined_refacs(refacs)}
 
 - In addition, make sure that:
@@ -248,20 +200,16 @@ def build_user_prompt_ast(strategy: str, original_body: str, gen_ast: str, descr
  return f"""
  You will be shown:
 1) A short description.
-2) An example solution.
+2) The abstract syntax tree (AST) of an example solution.
 
 - Your solution must correspond to this description: {description}.
-- Example solution (you must not use it):
-```
-{textwrap.dedent(original_body).strip()}
-```
+- Make sure the AST your solution is as different as possible from this Example solution AST:
+{gen_ast}.
 
 Your task:
 - Generate an alternative solution named `{FUNCTION_NAME}` with the following arguments: {params}. 
 - Your solution must return something based on this text: {return_text}.
-- Make sure the syntax and structure of your solution are as different as possible from the Example solution BODY.
-- For that, generate an alternative solution with an AST that is as different as possible from this: {gen_ast}.
-- To ensure syntactic and structural differences, you MUST:
+- To ensure syntactic and structural differences on your solution, you MUST:
 {get_combined_refacs(refacs)}
 
 - In addition, make sure that:
@@ -269,69 +217,76 @@ Your task:
 
 {STRATEGIES[strategy]} 
  """
-def build_user_prompt(strategy: str, prompt: str,refacs: list[str])-> str:
- """
- Build a user prompt for the refactoring LLM with complete_prompt from bigcodebench.
- """
- return f"""
 
- Your task:
- - Generate a Python solution named `{FUNCTION_NAME}`. 
- - For that, consider the following complete details:
-{prompt}
 
-- To ensure syntactic and structural differences, you MUST:
-{get_combined_refacs(refacs)}
-
- - In addition, make sure that:
- {MANDATORY_HINTS}
-
-{STRATEGIES[strategy]}
+def build_user_prompt_retest( 
+ clone_code: str,
+ params: str, 
+ return_text: str, 
+ tests_snippet: str, 
+ failing_tests: list[str],
+) -> str:
  """
 
-
-def build_user_prompt_minimal(strategy: str, description: str, params: str, return_text: str)-> str:
- """
- Build a user prompt for the refactoring LLM with minimal context.
- Args:
- the description of the task
- Returns:
- A formatted string prompt for the LLM.
  """
  return f"""
 
- Your task:
- - Generate a python solution named `{FUNCTION_NAME}` with the following arguments: {params}. 
- - Your solution must correspond to this description: {description}.
- - Your solution must return something based on this text: {return_text}.
-
- - In addition, make sure that:
- {MANDATORY_HINTS}
-
-{STRATEGIES[strategy]}
- """
-
-def build_user_prompt_from_translation(strategy: str, translation: str, language: str, params: list, return_text: str) -> str:
- return f"""
-You are given a function code in {language}.
-
-{translation}
+You will be shown:
+1) A solution for a task that does not pass all tests.
+2) An excerpt of the unit tests.
 
 Your task:
-- Translate this function to Python
-- Implement the function as `{FUNCTION_NAME}` with arguments: {params}.
+- Generate a new solution based on the given one that passes all the tests.
+- Generate a solution named `{FUNCTION_NAME}` with the following arguments: {params}. 
 - The solution must return something based on this text: {return_text}.
-
+- This is the current solution (modify as little as possible):
+```
+{textwrap.dedent(clone_code).strip()}
+```
+- Your solution must PASS all these unit tests:
+```
+{textwrap.dedent(tests_snippet).strip()}
+```
+Currently, these tests fail for this solution:
+{failing_tests}
 
 - In addition, make sure that:
-{MANDATORY_HINTS}
-
-
-{STRATEGIES[strategy]}
+ {MANDATORY_HINTS} 
 """
 
 
-import textwrap
+def build_user_prompt_codebleu( 
+ original_code: str,
+ clone_code: str, 
+ codebleu: str, 
+  refacs: list[str]
+) -> str:
+ """
+
+ """
+ return f"""
+
+You will be shown:
+1) The main solution for a task.
+2) An alternative solution with the same behavior.
+
+- This is the main solution:
+```
+{textwrap.dedent(original_code).strip()}
+```
+- This is the alternative solution:
+```
+{textwrap.dedent(clone_code).strip()}
+```
+- The CodeBLEU score between these two solutions is {codebleu} (higher means more similar).
+- Your task is to modify the alternative solution to make as different as possible from the main solution without changing the behavior of the alternative solution.
+- To ensure syntactic and structural differences on your solution, you MUST:
+{get_combined_refacs(refacs)}
+
+- In addition, make sure that:
+ {MANDATORY_HINTS} 
+"""
+
 
 def build_clone_variation_prompt(
  original_body: str, 
@@ -484,10 +439,6 @@ DO NOT output your internal reasoning. Output ONLY the final code snippet (see i
 }
 
 context_builders = { # add more builders to extend the supported contexts
- "minimal": lambda **kwargs: (
-  SYSTEM_PROMPT_MINIMAL,
-  build_user_prompt_minimal(kwargs["strategy"], kwargs["description"], kwargs["params"], kwargs["return_text"])
- ), 
  "ast": lambda **kwargs: (
   SYSTEM_PROMPT_MINIMAL,
   build_user_prompt_ast(kwargs["strategy"], kwargs["original_body"], kwargs["gen_ast"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["refacs"])
@@ -503,15 +454,7 @@ context_builders = { # add more builders to extend the supported contexts
 "test": lambda **kwargs: (
     SYSTEM_PROMPT_MINIMAL,
   build_user_prompt_test(kwargs["strategy"], kwargs["description"], kwargs["tests_snippet"], kwargs["params"], kwargs["return_text"], kwargs["refacs"])
- ),
- "translation": lambda **kwargs: (
-  SYSTEM_PROMPT_COMPLETE,
-  build_user_prompt_from_translation(kwargs["strategy"], kwargs["gen_translation"], "Java", kwargs["params"], kwargs["return_text"])
- ), 
-"prompt": lambda **kwargs: (
-  SYSTEM_PROMPT_MINIMAL,
-  build_user_prompt(kwargs["strategy"], kwargs["complete_prompt"])
- ),
+ )
  
 }
 
