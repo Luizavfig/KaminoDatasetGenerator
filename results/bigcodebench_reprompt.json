@@ -1,0 +1,321 @@
+[
+  {
+    "id": "BigCodeBench/151",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f'Key {key} not found in data_dict')\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n\n    def normalize(col):\n        min_val = col.min()\n        max_val = col.max()\n        if min_val == max_val:\n            return pd.Series([0] * len(col), index=col.index)\n        return (col - min_val) / (max_val - min_val)\n    df_norm = df.apply(normalize, axis=0)\n    plt.figure(figsize=(10, 6))\n    ax = plt.gca()\n    for key in data_keys:\n        ax.plot(df_norm.index, df_norm[key], label=key)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Value')\n    ax.set_xlabel('Index')\n    ax.legend()\n    return df_norm, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.27851161186657125
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nfrom matplotlib import pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('data_keys cannot be empty')\n    invalid_keys = [key for key in data_keys if key not in data_dict]\n    if invalid_keys:\n        raise ValueError(f'Keys {invalid_keys} not found in data_dict')\n    data_for_keys = {key: np.array(data_dict[key]) for key in data_keys}\n    df = pd.DataFrame(data_for_keys)\n    normalized_data = []\n    for key in data_keys:\n        min_val = df[key].min()\n        max_val = df[key].max()\n        if min_val == max_val:\n            scaled_values = np.zeros_like(df[key])\n        else:\n            scaled_values = (df[key] - min_val) / (max_val - min_val)\n        normalized_data.append(scaled_values)\n    normalized_df = pd.DataFrame({key: normalized_data[i] for i, key in\n        enumerate(data_keys)}, index=df.index)\n    fig, ax = plt.subplots()\n    for key in data_keys:\n        ax.plot(normalized_df[key], label=key)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Value')\n    ax.set_xlabel('Index')\n    ax.legend()\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35528142479150226
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 1 (model=llama3.1:latest)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided')\n    missing_keys = [k for k in data_keys if k not in data_dict]\n    if missing_keys:\n        raise ValueError(f'Keys not found in data_dict: {missing_keys}')\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n    normalized_df = df.copy()\n    for col in normalized_df.columns:\n        col_min = normalized_df[col].min()\n        col_max = normalized_df[col].max()\n        if col_max == col_min:\n            normalized_df[col] = 0.0\n        else:\n            normalized_df[col] = (normalized_df[col] - col_min) / (col_max -\n                col_min)\n    fig, ax = plt.subplots()\n    for col in normalized_df.columns:\n        ax.plot(normalized_df[col], label=col)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Value')\n    ax.set_xlabel('Sample Index')\n    ax.legend()\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2557310069649845
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not all(isinstance(key, str) for\n        key in data_keys):\n        raise TypeError(\n            'Invalid input types: data_dict must be a dictionary and data_keys must contain strings.'\n            )\n    if len(data_keys) == 0:\n        raise ValueError('data_keys cannot be empty.')\n    selected_data = {key: data_dict[key] for key in data_keys if key in\n        data_dict}\n    if not selected_data:\n        raise ValueError('None of the keys were found in the data dictionary.')\n    data_arrays = {key: np.array(value) for key, value in selected_data.items()\n        }\n    normalized_arrays = {}\n    for key in data_keys:\n        arr = data_arrays[key]\n        min_val = np.min(arr)\n        max_val = np.max(arr)\n        if min_val == max_val:\n            raise ValueError(\n                f\"Key '{key}' has constant values, cannot normalize.\")\n        normalized_arr = (arr - min_val) / (max_val - min_val)\n        normalized_arrays[key] = normalized_arr\n    df_normalized = pd.DataFrame(normalized_arrays)\n    fig, ax = plt.subplots()\n    df_normalized.plot(kind='line', ax=ax)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Value')\n    ax.set_xlabel('Index')\n    return df_normalized, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3851701358894762
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 1 (model=gemma3:latest)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport pandas as pd\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not isinstance(data_keys, list):\n        raise TypeError(\n            'Invalid input types. data_dict must be a dictionary and data_keys must be a list.'\n            )\n    if len(data_keys) == 0:\n        raise ValueError('data_keys cannot be empty.')\n    invalid_keys = [key for key in data_keys if key not in data_dict]\n    if invalid_keys:\n        raise ValueError(\n            f'Keys {invalid_keys} do not exist in the data dictionary.')\n    extracted_data = {key: np.array(data_dict[key]) for key in data_keys}\n    normalized_data = {}\n    for key, data in extracted_data.items():\n        min_val = np.min(data)\n        max_val = np.max(data)\n        if min_val == max_val:\n            normalized = np.zeros_like(data)\n        else:\n            normalized = (data - min_val) / (max_val - min_val)\n        normalized_data[key] = normalized\n    df_normalized = pd.DataFrame(normalized_data)\n    return df_normalized, None\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2885193159702322
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 2 (model=gemma3:latest)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import numpy as np\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not isinstance(data_keys, list):\n        raise TypeError(\n            'Invalid input types. data_dict must be a dictionary and data_keys must be a list.'\n            )\n    if len(data_keys) == 0:\n        raise ValueError('data_keys cannot be empty.')\n    extracted_data = {key: data_dict.get(key, []) for key in data_keys}\n    data_arrays = {}\n    for key in extracted_data:\n        arr = np.array(extracted_data[key])\n        if len(arr) == 0:\n            raise ValueError(f'No data found for key: {key}')\n        data_arrays[key] = arr.reshape(-1, 1)\n    normalized_data = {}\n    scaler = MinMaxScaler()\n    for key in data_arrays:\n        normalized_arr = scaler.fit_transform(data_arrays[key])\n        normalized_data[key] = normalized_arr.ravel()\n    df = pd.DataFrame(normalized_data)\n    plt.figure(figsize=(10, 6))\n    for key in normalized_data:\n        plt.plot(df[key], label=key)\n    plt.title('Normalized Data')\n    plt.ylabel('Value')\n    plt.xlabel('Index')\n    plt.legend()\n    plt.close()\n    return df, None\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-code 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2936352382713791
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified for normalization')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not in data_dict\")\n    df = pd.DataFrame({key: data_dict[key] for key in data_keys})\n    normalized_df = pd.DataFrame()\n    for key in data_keys:\n        series = df[key]\n        min_val = np.min(series)\n        max_val = np.max(series)\n        if min_val == max_val:\n            continue\n        normalized_series = (series - min_val) / (max_val - min_val)\n        normalized_df[key] = normalized_series\n    fig, ax = plt.subplots(figsize=(10, 6))\n    for key in data_keys:\n        if key in normalized_df.columns:\n            ax.plot(normalized_df.index, normalized_df[key], label=key)\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    ax.set_title('Min-Max Normalized Data')\n    ax.legend()\n    return normalized_df, ax\n",
+        "refacs": [
+          4,
+          [
+            "refac_2",
+            "refac_5",
+            "refac_6"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [4, ('refac_2', 'refac_5', 'refac_6')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.32690359108858774
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified for normalization')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in data_dict\")\n    normalized_data = {}\n    for key in data_keys:\n        data = np.array(data_dict[key], dtype=float)\n        min_val = np.min(data)\n        max_val = np.max(data)\n        if min_val == max_val:\n            normalized_values = np.zeros_like(data)\n        else:\n            normalized_values = (data - min_val) / (max_val - min_val)\n        normalized_data[key] = normalized_values\n    df_normalized = pd.DataFrame(normalized_data)\n    fig, axes = plt.subplots(len(data_keys), 1, figsize=(10, 5 * len(\n        data_keys)))\n    for i, (key, values) in enumerate(df_normalized.items()):\n        ax = axes[i] if len(data_keys) > 1 else axes\n        ax.plot(values, label=key)\n        ax.set_xlabel('Index')\n        ax.set_ylabel(f'Normalized {key}')\n        ax.legend()\n        ax.grid(True)\n    plt.tight_layout()\n    return df_normalized, axes\n",
+        "refacs": [
+          6,
+          [
+            "refac_2",
+            "refac_4",
+            "refac_6"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [6, ('refac_2', 'refac_4', 'refac_6')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2873837421365053
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified for normalization')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in data_dict\")\n    df = pd.DataFrame({key: data_dict[key] for key in data_keys})\n    normalized_df = pd.DataFrame()\n    for column in df.columns:\n        min_val = df[column].min()\n        max_val = df[column].max()\n        if min_val == max_val:\n            continue\n        normalized_col = (df[column] - min_val) / (max_val - min_val)\n        normalized_df[column] = normalized_col\n    fig, ax = plt.subplots(figsize=(10, 6))\n    for column in normalized_df.columns:\n        ax.plot(normalized_df.index, normalized_df[column], label=column)\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    ax.set_title('Normalized Data Visualization')\n    ax.legend()\n    return normalized_df, ax\n",
+        "refacs": [
+          5,
+          [
+            "refac_3",
+            "refac_5",
+            "refac_7"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [5, ('refac_3', 'refac_5', 'refac_7')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.29309203355311114
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/156",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n\n    def minmax_scale(col):\n        min_val = col.min()\n        max_val = col.max()\n        if max_val == min_val:\n            return pd.Series(0.0, index=col.index)\n        return (col - min_val) / (max_val - min_val)\n    df = pd.DataFrame(data)\n    scaled_df = df.apply(minmax_scale, axis=0)\n    averages = scaled_df.mean(axis=1)\n    df['Average'] = averages\n    fig, ax = plt.subplots()\n    ax.plot(averages, label='Scaled Average')\n    ax.set_title('Average Values Visualization')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Average Value')\n    ax.legend()\n    return df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31949054168681024
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 2 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data):\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.317921254917043
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=llama3.1:latest)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data):\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.317921254917043
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=llama3.1:latest)"
+      }
+    ]
+  }
+]

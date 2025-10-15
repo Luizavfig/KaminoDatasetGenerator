@@ -1,22 +1,99 @@
-"""
-Automatically cluster code clones based on
-CodeBLEU similarity metrics and visualize them in a 2D space using Multidimensional Scaling (MDS).
-
-It uses a fast hierarchical agglomerative clustering approach to determine clusters,
-and assigns gradient colors to each cluster for visualization.
-"""
-import warnings, os, re
+import warnings, os, re, json
+warnings.filterwarnings("ignore") 
 import numpy as np
 from sklearn.manifold import MDS
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from matplotlib.colors import Normalize
 from scipy.cluster.hierarchy import linkage, fcluster
 from scipy.spatial.distance import squareform
-output_dir="../results/clustering"
-warnings.filterwarnings("ignore") 
+from statistics import mean, stdev
+from src.config import *
+
+def run_clustering():
+    """
+    Automatically cluster code clones based on
+    CodeBLEU similarity metrics and visualize them in a 2D space using Multidimensional Scaling (MDS).
+
+    It uses a fast hierarchical agglomerative clustering approach to determine clusters,
+    and assigns gradient colors to each cluster for visualization.
+    """
+    # --- Load datasets ---
+    with open(FILTERED_PATH_TESTS, "r", encoding="utf-8") as f:
+        clone_data = json.load(f)
+
+    with open(DATASET_PATH, "r", encoding="utf-8") as f:
+        complete_data = json.load(f)
+
+    # --- Build lookup ---
+    complete_lookup = {entry["id"]: entry for entry in complete_data}
+
+    merged_data = []
+
+    for entry in clone_data:
+        clones = entry.get("clones", [])
+        if not clones:
+            print(f"⚠️ Entry {entry['id']} has no clones, skipping")
+            continue
+
+        affinity_matrix, clone_ids = _build_affinity_matrix(entry) 
+
+        # Cluster clones
+        labels = _agg_cluster(affinity_matrix, CODEBLEU_THRESHOLD)
+        if len(set(labels)) == 0:
+            labels = [0] * len(clones)
+
+        # Select representatives
+        reps = _select_representative_clones(entry, labels)
+        if not reps:
+            first_clone = clones[0]
+            reps = [(0, first_clone["clone_id"], first_clone["code"])]
+
+        # Build new clones list
+        new_clones = []
+        for cluster_label, cid, code in reps:
+            orig_clone = next((c for c in clones if c["clone_id"] == cid), None)
+            base = orig_clone or {} 
+            new_clones.append({
+                "clone_id": cid,
+                "model": base.get("model"),
+                "strategy": base.get("strategy"),
+                "context": base.get("context"),
+                "refacs": base.get("refacs", []),
+                "cluster": cluster_label,
+                "code": code,
+                "metrics": base.get("metrics", {})
+            })
+
+        # Merge with complete dataset entry
+        original_entry = complete_lookup.get(entry["id"], {}) 
+        filtered_entry = original_entry.copy() 
+        filtered_entry["clones"] = new_clones
+
+        merged_data.append(filtered_entry) 
+
+    # --- Compute clone stats ---
+    clone_counts = [len(entry["clones"]) for entry in merged_data]
+    min_clones = min(clone_counts) if clone_counts else 0
+    max_clones = max(clone_counts) if clone_counts else 0
+    avg_clones = mean(clone_counts) if clone_counts else 0
+    std_clones = stdev(clone_counts) if len(clone_counts) > 1 else 0
+
+    print("\n Clone Statistics:")
+    print(f"  - Min clones per entry: {min_clones}")
+    print(f"  - Max clones per entry: {max_clones}")
+    print(f"  - Avg clones per entry: {avg_clones:.2f}")
+    print(f"  - Std clones per entry: {std_clones:.2f}")
+
+    # --- Save final dataset ---
+    os.makedirs(os.path.dirname(FINAL_DATASET), exist_ok=True)
+    with open(FINAL_DATASET, "w", encoding="utf-8") as f:
+        json.dump(merged_data, f, indent=2, default=_np_converter)
+
+    print(f"\n✅ New dataset with representatives saved to {FINAL_DATASET}, total entries: {len(merged_data)}")
 
 # Agglomerative clustering using scipy (much faster)
-def agg_cluster(affinity_matrix, similarity_threshold):
+def _agg_cluster(affinity_matrix, similarity_threshold):
     n = affinity_matrix.shape[0]
     if n == 1:
         return np.array([0])
@@ -35,20 +112,20 @@ def agg_cluster(affinity_matrix, similarity_threshold):
 
 # Cluster and plot clones
 def cluster_and_plot(entry, similarity_threshold): 
-    affinity_matrix, clone_ids = build_affinity_matrix(entry) 
+    affinity_matrix, clone_ids = _build_affinity_matrix(entry) 
     # Automatic clustering
-    labels = agg_cluster(affinity_matrix, similarity_threshold)
-    save_clusters_as_files(entry, labels) 
-    save_representatives(entry, labels)  
+    labels = _agg_cluster(affinity_matrix, similarity_threshold)
+    _save_clusters_as_files(entry, labels) 
+    _save_representatives(entry, labels)  
     # MDS for visualization (fast config)
     dissimilarity = 1 - affinity_matrix
     mds = MDS(n_components=2, dissimilarity='precomputed', random_state=42, n_init=1, max_iter=100)
     points_2d = mds.fit_transform(dissimilarity)
 
-    plot_clusters_mds(points_2d, labels, entry['id'])
+    _plot_clusters_mds(points_2d, labels, entry['id'])
 
 # Plot with gradient colors
-def plot_clusters_mds(points_2d, labels, entry_id):
+def _plot_clusters_mds(points_2d, labels, entry_id):
     n_clusters = len(np.unique(labels))
     colormap = cm.get_cmap('viridis')
 
@@ -63,14 +140,14 @@ def plot_clusters_mds(points_2d, labels, entry_id):
     ax.set_ylabel("MDS dim 2")
 
     # Create colorbar explicitly
-    sm = plt.cm.ScalarMappable(cmap=colormap, norm=plt.Normalize(vmin=0, vmax=n_clusters-1))
+    sm = plt.cm.ScalarMappable(cmap=colormap, norm=Normalize(vmin=0, vmax=n_clusters-1))
     sm.set_array([])  # dummy array
     cbar = fig.colorbar(sm, ax=ax, ticks=range(n_clusters))
     cbar.set_label('Cluster')
 
     plt.show()
 
-def print_cluster_stats(entry, labels):
+def _print_cluster_stats(entry, labels):
     """
     For each cluster in an entry, prints:
     - Number of clones
@@ -105,7 +182,7 @@ def print_cluster_stats(entry, labels):
 
         print(f"  CodeBLEU stats - mean: {mean_score:.3f}, std: {std_score:.3f}, min: {min_score:.3f}, max: {max_score:.3f}")
 
-def save_clusters_as_files(entry, labels):
+def _save_clusters_as_files(entry, labels):
     """
     Saves all clones from each cluster into a single file.
     """
@@ -114,7 +191,7 @@ def save_clusters_as_files(entry, labels):
     clone_ids = [clone["clone_id"] for clone in clones]
     unique_labels = np.unique(labels)
 
-    entry_dir = os.path.join(f"{output_dir}/clusters", entry["id"])
+    entry_dir = os.path.join(f"{CLUSTER_DIR}/clusters", entry["id"])
     os.makedirs(entry_dir, exist_ok=True)
 
     for cluster_label in unique_labels:
@@ -129,7 +206,7 @@ def save_clusters_as_files(entry, labels):
 
     print(f"Saved clusters for entry {entry['id']} in {entry_dir}")
 
-def select_representative_clones(entry, labels):
+def _select_representative_clones(entry, labels):
     """
     Select one representative clone per cluster (the medoid),
     based on highest average CodeBLEU similarity to other clones in the cluster.
@@ -162,20 +239,20 @@ def select_representative_clones(entry, labels):
             if avg_sim > best_avg_sim:
                 best_avg_sim = avg_sim
                 best_idx = i
-
+        assert best_idx is not None, f"No best index found for cluster {cluster_label}"
         representatives.append((cluster_label, clone_ids[best_idx], clones[best_idx].get("code", "")))
 
     return representatives
 
-def sanitize_id(entry_id: str) -> str:
+def _sanitize_id(entry_id: str) -> str:
     # replace any non-alphanumeric or separator character with underscore
     return re.sub(r"[^\w\-]", "_", entry_id)
 
-def save_representatives(entry, labels):
-    reps = select_representative_clones(entry, labels)
+def _save_representatives(entry, labels):
+    reps = _select_representative_clones(entry, labels)
 
-    safe_id = sanitize_id(entry["id"])
-    entry_dir = os.path.join(output_dir, "representatives", safe_id)
+    safe_id = _sanitize_id(entry["id"])
+    entry_dir = os.path.join(CLUSTER_DIR, "representatives", safe_id)
     os.makedirs(entry_dir, exist_ok=True)
 
     file_path = os.path.join(entry_dir, f"{safe_id}_representatives.py")
@@ -188,7 +265,7 @@ def save_representatives(entry, labels):
 
 
 
-def build_affinity_matrix(entry):
+def _build_affinity_matrix(entry):
     """
     Build the CodeBLEU-based affinity (similarity) matrix for clones in an entry.
 
@@ -218,11 +295,14 @@ def build_affinity_matrix(entry):
             else:
                 affinity_matrix[i, j] = clones[i]["metrics"]["codebleu"].get(clone_ids[j], 0)
 
-    return affinity_matrix, clone_ids
+    return affinity_matrix, clone_ids 
 
-
-
-
-
-
-
+def _np_converter(obj):
+    if isinstance(obj, np.integer):
+        return int(obj)
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    else:
+        raise TypeError(f"Object of type {type(obj)} is not JSON serializable")

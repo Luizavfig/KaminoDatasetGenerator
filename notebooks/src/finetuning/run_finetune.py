@@ -6,8 +6,8 @@
 
 import warnings
 import argparse
-from fine_tune import finetune_clone_model
-
+from .finetune import finetune_clone_model
+from src.config import *
 warnings.filterwarnings("ignore")
 
 # Parse command-line argument for model
@@ -20,10 +20,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-# Fixed parameters
-FINAL_DATASET = "../results/bigcodebench_clone_dataset.json"
-EPOCHS = 3
-BATCH_SIZE = 8
+
 
 # Set output directory based on model
 if "codebert" in args.model_name.lower():

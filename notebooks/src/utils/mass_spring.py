@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
 import numpy as np
 from matplotlib.patches import Patch
 
@@ -106,7 +107,7 @@ def plot_mass_spring_graph(data, entry_index, color_by="model"):
     label_x = orig_x + 1.05
 
     for r in zone_radii:
-        circle = plt.Circle((orig_x, orig_y), r, color='black', fill=False, linestyle='--', alpha=0.8)
+        circle = Circle((orig_x, orig_y), r, color='black', fill=False, linestyle='--', alpha=0.8)
         plt.gca().add_patch(circle)
         codebleu_value = max_score - r * (max_score - min_score)
         plt.plot([orig_x, label_x], [orig_y + r, orig_y + r], color='gray', linewidth=0.8, linestyle='--')

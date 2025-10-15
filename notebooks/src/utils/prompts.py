@@ -1,7 +1,5 @@
-FUNCTION_NAME = "task_func" 
 import textwrap
-
-
+from src.config import FUNCTION_NAME
 
 SYSTEM_PROMPT_MINIMAL = f"""
 You are a Python generation engine.
@@ -447,7 +445,7 @@ context_builders = { # add more builders to extend the supported contexts
   SYSTEM_PROMPT_MINIMAL,
   build_user_prompt_code(kwargs["strategy"], kwargs["original_body"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["refacs"])
  ),
- "complete": lambda **kwargs: (
+ "complete": lambda **kwargs: ( # code + tests
   SYSTEM_PROMPT_COMPLETE,
   build_user_prompt_complete(kwargs["strategy"], kwargs["original_body"], kwargs["description"], kwargs["tests_snippet"], kwargs["refacs"])
  ),
@@ -456,8 +454,7 @@ context_builders = { # add more builders to extend the supported contexts
   build_user_prompt_test(kwargs["strategy"], kwargs["description"], kwargs["tests_snippet"], kwargs["params"], kwargs["return_text"], kwargs["refacs"])
  )
  
-}
-
+} 
 
 def get_combined_refacs(refacs: list[str]) -> str:
  combined_refacs = "\n".join([f"- {REFACTORING[key]}" for key in refacs if key in REFACTORING])
