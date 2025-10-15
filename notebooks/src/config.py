@@ -50,12 +50,13 @@ MAX_RETRIES=3
 DELAY=3
 MAX_WORKERS = 6  # for parallelism
 MIN_TEST_REPROMPT = 1  # minimum number of tests that must pass to consider reprompting
+REPROMPT_PATH = f"../results/{DATASET_NAME}_reprompt.json"
+FAILED_REPROMPT_PATH = f"../results/{DATASET_NAME}_failed_reprompt.json"
 
 # Filters 
 CODEBLEU_THRESHOLD = 0.4
 FILTERED_PATH_CODEBLEU = f"../results/{DATASET_NAME}_filtered_codebleu.json"
 FILTERED_PATH_TESTS = f"../results/{DATASET_NAME}_filtered_tests.json"
-REPROMPT_PATH = f"../results/{DATASET_NAME}_reprompt.json"
 
 # Clustering settings
 CLUSTER_DIR="../results/clustering"

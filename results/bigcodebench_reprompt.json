@@ -235,6 +235,81 @@
           "TestCases.test_normalization_single_key": "PASS"
         },
         "reprompt": "test 1 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "ast",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not isinstance(data_keys, list):\n        raise TypeError(\n            'Invalid input types. data_dict must be a dictionary and data_keys must be a list.'\n            )\n    if not data_keys:\n        raise ValueError('data_keys cannot be empty.')\n    if not all(key in data_dict for key in data_keys):\n        raise ValueError('Not all keys in data_keys are present in data_dict')\n    extracted_data = {key: data_dict[key] for key in data_keys}\n    data_array = np.array(list(extracted_data.values())).T\n    scaler = MinMaxScaler()\n    normalized_data = scaler.fit_transform(data_array)\n    plt.figure(figsize=(10, 6))\n    ax = plt.gca()\n    for i, key in enumerate(data_keys):\n        plt.plot(normalized_data[:, i], label=key)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Value')\n    ax.set_xlabel('Index')\n    ax.legend()\n    normalized_df = pd.DataFrame(normalized_data, columns=data_keys)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.39767307812090263
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('data_keys cannot be empty')\n    missing_keys = [key for key in data_keys if key not in data_dict]\n    if missing_keys:\n        raise ValueError(f'Keys {missing_keys} not found in data dictionary')\n    df = pd.DataFrame({key: data_dict[key] for key in data_keys})\n    scaler = MinMaxScaler()\n    normalized_values = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_values, columns=data_keys)\n    fig, ax = plt.subplots(figsize=(10, 6))\n    normalized_df.plot(kind='line', ax=ax, title='Normalized Data Values')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3925457362264262
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    df = pd.DataFrame({key: data_dict[key] for key in data_keys if key in\n        data_dict})\n    if not df.empty:\n        scaler = MinMaxScaler()\n        normalized_data = scaler.fit_transform(df)\n        normalized_df = pd.DataFrame(normalized_data, columns=data_keys)\n        fig, ax = plt.subplots()\n        return normalized_df, ax\n    else:\n        raise ValueError(\n            'No matching keys found in data dictionary or empty keys list.')\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3814083034041752
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
       }
     ]
   },
@@ -315,6 +390,797 @@
           "TestCases.test_case_5": "PASS"
         },
         "reprompt": "test 3 (model=llama3.1:latest)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    df = pd.DataFrame(data)\n    denom = df.max() - df.min()\n    denom[denom == 0] = 1\n    normalized_df = (df - df.min()) / denom\n    averages = normalized_df.mean(axis=1)\n    df['Average'] = averages\n    plt.figure(figsize=(10, 6))\n    ax = plt.gca()\n    ax.plot(averages, label='Average Values')\n    return df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22567450269390127
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 2 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    min_vals = np.min(data, axis=1, keepdims=True)\n    max_vals = np.max(data, axis=1, keepdims=True)\n    denom = max_vals - min_vals\n    normalized_data = np.where(denom == 0, 0, (data - min_vals) / denom)\n    df = pd.DataFrame(normalized_data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          4,
+          [
+            "refac_2",
+            "refac_5",
+            "refac_6"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [4, ('refac_2', 'refac_5', 'refac_6')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3859695762408212
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data):\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          5,
+          [
+            "refac_3",
+            "refac_5",
+            "refac_7"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [5, ('refac_3', 'refac_5', 'refac_7')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.317921254917043
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=llama3.1:latest)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    mins = np.min(data, axis=0)\n    maxs = np.max(data, axis=0)\n    denom = maxs - mins\n    denom_safe = np.where(denom == 0, 1, denom)\n    normalized_data = (data - mins) / denom_safe\n    averages = np.mean(normalized_data, axis=1)\n    df = pd.DataFrame(data)\n    df['Average'] = averages\n    fig, ax = plt.subplots()\n    ax.plot(averages)\n    return df, ax\n",
+        "refacs": [
+          3,
+          [
+            "refac_1",
+            "refac_3",
+            "refac_4"
+          ]
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 [3, ('refac_1', 'refac_3', 'refac_4')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2958983811314033
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n\ndef task_func(data):\n    min_vals = np.min(data, axis=0)\n    max_vals = np.max(data, axis=0)\n    denom = max_vals - min_vals\n    denom[denom == 0] = 1\n    normalized_data = (data - min_vals) / denom\n    averages = np.mean(normalized_data, axis=1)\n    df = pd.DataFrame(data)\n    df['Average'] = averages\n    fig, ax = plt.subplots()\n    ax.plot(averages)\n    return df, ax\n",
+        "refacs": [
+          7,
+          [
+            "refac_1",
+            "refac_3",
+            "refac_7"
+          ]
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 [7, ('refac_1', 'refac_3', 'refac_7')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2903493269917167
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 2 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data):\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          6,
+          [
+            "refac_2",
+            "refac_4",
+            "refac_6"
+          ]
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 [6, ('refac_2', 'refac_4', 'refac_6')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.317921254917043
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=llama3.1:latest)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    min_vals = np.min(data, axis=0)\n    max_vals = np.max(data, axis=0)\n    denom = max_vals - min_vals\n    denom_safe = np.where(denom == 0, 1, denom)\n    normalized_data = (data - min_vals) / denom_safe\n    df = pd.DataFrame(normalized_data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          1,
+          [
+            "refac_1",
+            "refac_4",
+            "refac_5"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [1, ('refac_1', 'refac_4', 'refac_5')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.37791712973279723
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    min_vals = np.min(data, axis=0)\n    max_vals = np.max(data, axis=0)\n    denom = max_vals - min_vals\n    denom = np.where(denom == 0, 1, denom)\n    normalized_data = (data - min_vals) / denom\n    averages = np.mean(normalized_data, axis=1)\n    df = pd.DataFrame(data)\n    df['Average'] = averages\n    fig, ax = plt.subplots()\n    ax.plot(averages)\n    return df, ax\n",
+        "refacs": [
+          5,
+          [
+            "refac_3",
+            "refac_5",
+            "refac_7"
+          ]
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 [5, ('refac_3', 'refac_5', 'refac_7')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3094118946449168
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          7,
+          [
+            "refac_1",
+            "refac_3",
+            "refac_7"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [7, ('refac_1', 'refac_3', 'refac_7')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.317921254917043
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data):\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          4,
+          [
+            "refac_2",
+            "refac_5",
+            "refac_6"
+          ]
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 [4, ('refac_2', 'refac_5', 'refac_6')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.317921254917043
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=llama3.1:latest)"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/179",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import re\nimport matplotlib.pyplot as plt\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport numpy as np\n\n\ndef task_func(df):\n    title_pattern = re.compile('\\\\b(how|what)\\\\b', flags=re.IGNORECASE)\n    if not {'Title', 'Content'}.issubset(df.columns):\n        fig, ax = plt.subplots()\n        return ax\n    filtered_df = df[df['Title'].apply(lambda x: bool(title_pattern.search(x)))\n        ]\n    if len(filtered_df) == 0:\n        fig, ax = plt.subplots()\n        return ax\n    vectorizer = TfidfVectorizer()\n    tfidf_matrix = vectorizer.fit_transform(filtered_df['Content'])\n    feature_names = vectorizer.get_feature_names_out()\n    tfidf_scores = np.sum(tfidf_matrix.toarray(), axis=0).flat[:]\n    fig, ax = plt.subplots(figsize=(10, 6))\n    ax.bar(feature_names, tfidf_scores)\n    ax.set_title('TF-IDF Scores for Articles with \"how\" or \"what\" in Title')\n    ax.set_ylabel('TF-IDF Score')\n    ax.tick_params(axis='x', rotation=45)\n    return ax\n",
+        "refacs": [
+          3,
+          [
+            "refac_1",
+            "refac_3",
+            "refac_4"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 [3, ('refac_1', 'refac_3', 'refac_4')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3825944151459762
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 1 (model=llama3.1:latest)"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/213",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import time\nimport random\nfrom matplotlib import pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    n_intervals = args[0] if len(args) > 0 else 100\n    seed = args[1] if len(args) > 1 else None\n    if seed is not None:\n        random.seed(seed)\n\n\n    class DataCollector:\n\n        def __init__(self):\n            self.points = []\n\n        def collect_point(self, timestamp, value):\n            self.points.append((timestamp, value))\n    collector = DataCollector()\n    start_time = time.time()\n    try:\n        for _ in range(n_intervals):\n            time.sleep(1)\n            elapsed = time.time() - start_time\n            value = random.random()\n            collector.collect_point(elapsed, value)\n    except KeyboardInterrupt:\n        pass\n    values = [v for _, v in collector.points]\n    kurtosis_value = kurtosis(values, nan_policy='omit')\n    fig = plt.figure()\n    ax = fig.add_subplot(111)\n    ax.plot([t for t, _ in collector.points], values)\n    return ax, kurtosis_value\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.32773465062064766
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 2 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import time\nimport random\nfrom matplotlib import pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args, **kwargs):\n    if len(args) == 0:\n        intervals = 100\n        seed = None\n    elif len(args) == 1:\n        intervals = args[0]\n        seed = None\n    else:\n        intervals = args[0]\n        seed = args[1]\n    data = {'times': [], 'numbers': []}\n    if intervals < 0:\n        return None, None\n    random.seed(seed)\n    try:\n        for _ in range(intervals):\n            start_time = time.time()\n            data['times'].append(start_time)\n            data['numbers'].append(random.random())\n            time.sleep(1)\n    except KeyboardInterrupt:\n        pass\n    kurtosis_val = kurtosis(data['numbers'], nan_policy='omit')\n    fig, ax = plt.subplots()\n    ax.plot(data['times'], data['numbers'])\n    return ax, kurtosis_val\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.30008404423308965
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 2 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    intervals = args[0] if args else 100\n\n    def generate_data(n):\n        data = []\n        for _ in range(n):\n            time.sleep(1)\n            data.append(np.random.rand())\n        return np.array(data)\n\n    def plot_data(x, y):\n        fig, ax = plt.subplots()\n        ax.plot(x, y)\n        ax.set_xlabel('Time (s)')\n        ax.set_ylabel('Random Value')\n        return ax\n\n    def calculate_kurtosis(arr):\n        if len(arr) < 4:\n            return 0.0\n        return kurtosis(arr)\n    x_values = np.arange(intervals)\n    y_values = generate_data(intervals)\n    axes = plot_data(x_values, y_values)\n    kurt = calculate_kurtosis(y_values)\n    return axes, kurt\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.30580860209745403
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 2 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import random\nimport time\nfrom scipy.stats import kurtosis as scipy_kurtosis\nimport matplotlib.pyplot as plt\n\n\ndef task_func(*args):\n    n_intervals = args[0] if args else 100\n\n    def generate_numbers(intervals):\n        return [random.random() for _ in range(intervals)]\n\n    def calculate_kurtosis(numbers):\n        if len(numbers) < 4:\n            return None\n        return scipy_kurtosis(numbers)\n\n    def plot_data(ax, x, y):\n        ax.plot(x, y)\n        ax.set_xlabel('Time')\n        ax.set_ylabel('Random Value')\n        ax.grid(True)\n        return ax\n    random_numbers = generate_numbers(n_intervals)\n    times = list(range(n_intervals))\n    fig, ax = plt.subplots()\n    plot_data(ax, times, random_numbers)\n    try:\n        for _ in range(max(0, n_intervals)):\n            time.sleep(1)\n    except KeyboardInterrupt:\n        pass\n    return ax, calculate_kurtosis(random_numbers)\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3301265331794392
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 2 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import time\nimport random\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(intervals=100, *args):\n\n    def generate_data(n):\n        data = []\n        timestamps = []\n        for _ in range(n):\n            time.sleep(1)\n            timestamps.append(time.time())\n            data.append(random.random())\n        return timestamps, data\n\n    def calculate_kurtosis(data):\n        if not data:\n            return 0.0\n        return kurtosis(data, nan_policy='omit')\n    timestamps, numbers = generate_data(intervals)\n    fig = plt.figure()\n    ax = fig.add_subplot(111)\n    ax.plot(timestamps, numbers)\n    return ax, calculate_kurtosis(numbers)\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.36415165999816945
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        n_intervals = 100\n        seed = None\n    else:\n        n_intervals = args[0]\n        seed = args[1] if len(args) > 1 else None\n    if seed is not None:\n        np.random.seed(seed)\n    fig = plt.figure()\n    ax = fig.add_subplot(111)\n    random_numbers = []\n    for _ in range(n_intervals):\n        time.sleep(1)\n        random_numbers.append(np.random.rand())\n    x_data = np.arange(len(random_numbers))\n    y_data = np.array(random_numbers)\n    ax.plot(x_data, y_data)\n\n    def calculate_kurtosis(data):\n        if len(data) < 4:\n            return 0.0\n        n = len(data)\n        mu = np.mean(data)\n        var = np.var(data, ddof=0)\n        skew = np.sum((data - mu) ** 3 / var ** 1.5) / n\n        kurtosis = np.sum((data - mu) ** 4 / var ** 2) / n - 3\n        return kurtosis\n    kurtosis = calculate_kurtosis(random_numbers)\n    return ax, kurtosis\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2527019898968038
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import random\nimport time\nimport numpy as np\nfrom scipy.stats import kurtosis as scipy_kurtosis\nimport matplotlib.pyplot as plt\n\n\ndef task_func(*args, **kwargs):\n    intervals = args[0] if args else 100\n    if intervals < 0:\n        raise ValueError('Intervals must be a non-negative integer')\n    random_numbers = []\n    start_time = time.time()\n    for _ in range(intervals):\n        time.sleep(1)\n        random_num = np.random.rand()\n        random_numbers.append((time.time() - start_time, random_num))\n    elapsed_times = [t for t, v in random_numbers]\n    values = [v for t, v in random_numbers]\n    fig, ax = plt.subplots()\n    ax.plot(elapsed_times, values)\n    ax.set_xlabel('Time (s)')\n    ax.set_ylabel('Random Value')\n    kurt_val = scipy_kurtosis(values) if values else 0.0\n    return ax, kurt_val\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.32577537820708835
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import time\nimport random\nfrom scipy.stats import kurtosis\nimport matplotlib.pyplot as plt\n\n\ndef task_func(*args):\n    intervals = args[0] if args else 100\n    data = {'time': [], 'numbers': []}\n    start_time = time.time()\n    for _ in range(max(0, intervals)):\n        time.sleep(1)\n        elapsed = time.time() - start_time\n        data['time'].append(elapsed)\n        data['numbers'].append(random.random())\n    kurtosis_val = kurtosis(data['numbers'], nan_policy='omit')\n    fig, ax = plt.subplots()\n    ax.plot(data['time'], data['numbers'])\n    return ax, kurtosis_val\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-code 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2789002546735122
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nfrom scipy.stats import kurtosis as scipy_kurtosis\nimport matplotlib.pyplot as plt\nimport time\n\n\ndef task_func(*args):\n    intervals = args[0] if args else 100\n    if intervals < 0:\n        raise ValueError('Number of intervals must be non-negative')\n\n    def generate_data():\n        data = []\n        for _ in range(intervals):\n            time.sleep(1)\n            data.append(np.random.rand())\n        return data\n\n    def plot_data(data):\n        fig, ax = plt.subplots()\n        ax.plot(range(len(data)), data)\n        ax.set_xlabel('Time')\n        ax.set_ylabel('Random Value')\n        return ax\n\n    def calculate_kurtosis(data):\n        if len(data) < 4:\n            return None\n        return scipy_kurtosis(data)\n    data = generate_data()\n    ax = plot_data(data)\n    kurto = calculate_kurtosis(data)\n    return ax, kurto\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3228388079063347
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(*args, **kwargs):\n    intervals = args[0] if args else 100\n\n    def generate_data():\n        data = []\n        for _ in range(intervals):\n            time.sleep(1)\n            data.append(np.random.rand())\n        return data\n\n    def calculate_kurtosis(data):\n        if len(data) < 4:\n            return 0.0\n        mu = np.mean(data)\n        var = np.var(data)\n        skew = np.sum((data - mu) ** 3 / var ** 1.5)\n        kurt = np.sum((data - mu) ** 4 / var ** 2)\n        return kurt\n    data = generate_data()\n    fig, ax = plt.subplots()\n    ax.plot(range(intervals), data)\n    ax.set_xlabel('Time')\n    ax.set_ylabel('Value')\n    kurtosis = calculate_kurtosis(data)\n    return ax, kurtosis\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.33480528582273333
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import time\nimport random\nfrom scipy.stats import kurtosis\nimport matplotlib.pyplot as plt\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n    else:\n        intervals = args[0]\n    data = []\n    t_start = time.time()\n    while len(data) < intervals:\n        time.sleep(1)\n        elapsed_time = time.time() - t_start\n        data.append((elapsed_time, random.random()))\n    if data:\n        times, numbers = zip(*data)\n        kurtosis_val = kurtosis(numbers, nan_policy='omit')\n    else:\n        times, numbers = [], []\n        kurtosis_val = float('nan')\n    fig, ax = plt.subplots()\n    ax.plot(times, numbers)\n    return ax, kurtosis_val\n",
+        "refacs": [
+          1,
+          [
+            "refac_1",
+            "refac_4",
+            "refac_5"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 [1, ('refac_1', 'refac_4', 'refac_5')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.37200878837165796
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 2 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy import stats\nimport time\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n        seed = None\n    elif len(args) == 1:\n        intervals = args[0]\n        seed = None\n    else:\n        intervals = args[0]\n        seed = args[1]\n    if seed is not None:\n        np.random.seed(seed)\n    data = np.random.rand(intervals)\n    fig, ax = plt.subplots()\n    line, = ax.plot(range(intervals), data)\n    ax.set_xlabel('Time (s)')\n    ax.set_ylabel('Random Value')\n    ax.set_title('Random Values Over Time')\n    for _ in range(intervals):\n        time.sleep(0)\n    kurtosis = stats.kurtosis(data)\n    return ax, kurtosis\n",
+        "refacs": [
+          1,
+          [
+            "refac_1",
+            "refac_4",
+            "refac_5"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [1, ('refac_1', 'refac_4', 'refac_5')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2764497515847196
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=llama3.1:latest)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        n = 100\n        seed = None\n    elif len(args) == 1:\n        n = args[0]\n        seed = None\n    else:\n        n = args[0]\n        seed = args[1]\n    if seed is not None:\n        np.random.seed(seed)\n    data = []\n    for _ in range(n):\n        time.sleep(1)\n        data.append(np.random.rand())\n    fig, ax = plt.subplots()\n    ax.plot(range(len(data)), data)\n    ax.set_xlabel('Time (s)')\n    ax.set_ylabel('Random Value')\n    if len(data) == 0:\n        kurt = 0.0\n    else:\n        kurt = kurtosis(data)\n    return ax, kurt\n",
+        "refacs": [
+          2,
+          [
+            "refac_2",
+            "refac_6",
+            "refac_7"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [2, ('refac_2', 'refac_6', 'refac_7')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2757961200858297
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 2 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    intervals = args[0] if args else 100\n    data = []\n    for _ in range(intervals):\n        time.sleep(1)\n        data.append(np.random.rand())\n    fig, ax = plt.subplots()\n    ax.plot(range(len(data)), data)\n    ax.set_xlabel('Time (s)')\n    ax.set_ylabel('Random Value')\n    kurt = kurtosis(data) if data else 0.0\n    return ax, kurt\n",
+        "refacs": [
+          5,
+          [
+            "refac_3",
+            "refac_5",
+            "refac_7"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [5, ('refac_3', 'refac_5', 'refac_7')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3148856126731366
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import time\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n        seed = None\n    elif len(args) == 1:\n        intervals = args[0]\n        seed = None\n    else:\n        intervals = args[0]\n        seed = args[1]\n    if seed is not None:\n        np.random.seed(seed)\n    data = []\n    for _ in range(intervals):\n        time.sleep(1)\n        data.append(np.random.rand())\n    fig, ax = plt.subplots()\n    ax.plot(range(len(data)), data)\n    ax.set_xlabel('Time (seconds)')\n    ax.set_ylabel('Random Value')\n    if len(data) < 4:\n        kurt = 0.0\n    else:\n        kurt = kurtosis(data)\n    return ax, kurt\n",
+        "refacs": [
+          6,
+          [
+            "refac_2",
+            "refac_4",
+            "refac_6"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [6, ('refac_2', 'refac_4', 'refac_6')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3037190387865656
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 2 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n    else:\n        intervals = args[0]\n    data = []\n    for _ in range(intervals):\n        time.sleep(1)\n        data.append(np.random.rand())\n    timestamps = [(time.time() - intervals + i) for i in range(intervals)]\n    plt.figure()\n    ax = plt.gca()\n    ax.plot(timestamps, data)\n    ax.set_xlabel('Time (s)')\n    ax.set_ylabel('Random Value')\n    if len(data) == 0:\n        kurto = 0.0\n    else:\n        kurto = kurtosis(data)\n    return ax, kurto\n",
+        "refacs": [
+          1,
+          [
+            "refac_1",
+            "refac_4",
+            "refac_5"
+          ]
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 [1, ('refac_1', 'refac_4', 'refac_5')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2847500060302874
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args, **kwargs):\n    if len(args) == 0:\n        intervals = 100\n    else:\n        intervals = args[0]\n    data = []\n    for _ in range(intervals):\n        time.sleep(1)\n        data.append(np.random.rand())\n    fig, ax = plt.subplots()\n    ax.plot(range(len(data)), data)\n    ax.set_xlabel('Time (s)')\n    ax.set_ylabel('Random Value')\n    kurt = kurtosis(data) if data else 0.0\n    return ax, kurt\n",
+        "refacs": [
+          7,
+          [
+            "refac_1",
+            "refac_3",
+            "refac_7"
+          ]
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 [7, ('refac_1', 'refac_3', 'refac_7')]",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3440197633233326
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "test 1 (model=gpt-oss:20b)"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/168",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport os\nimport numpy as np\n\n\ndef task_func(*args, **kwargs):\n\n    def generate_data(num_groups, data_size):\n        return np.random.rand(data_size, num_groups)\n\n    def create_dataframe(values, columns):\n        return pd.DataFrame(values, columns=columns)\n\n    def plot_stacked_bar_chart(df, filename):\n        fig = plt.figure(figsize=(10, 6))\n        df.plot(kind='bar', stacked=True, ax=plt.gca())\n        plt.title('Stacked Bar Chart of Data Distribution')\n        plt.xlabel('Index')\n        plt.ylabel('Value')\n        plt.savefig(filename)\n        return fig\n    num_groups = 5\n    data_size = 5\n    labels = ['Group1', 'Group2', 'Group3', 'Group4', 'Group5']\n    if 'num_groups' in kwargs:\n        num_groups = kwargs['num_groups']\n    if 'data_size' in kwargs:\n        data_size = kwargs['data_size']\n    if 'labels' in kwargs:\n        labels = list(kwargs['labels'])\n    else:\n        labels = [f'Group{i + 1}' for i in range(num_groups)]\n    values = generate_data(num_groups, data_size)\n    df = create_dataframe(values, labels)\n    filename = 'test_plot.png'\n    fig = plot_stacked_bar_chart(df, filename)\n    return fig, df, filename\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.37125229057686926
+          }
+        },
+        "test_results": {
+          "TestCases.test_custom_parameters": "PASS",
+          "TestCases.test_data_values": "PASS",
+          "TestCases.test_default_parameters": "PASS",
+          "TestCases.test_no_labels_provided": "PASS",
+          "TestCases.test_plot_file_cleanup": "PASS"
+        },
+        "reprompt": "test 3 (model=gpt-oss:20b)"
       }
     ]
   }
