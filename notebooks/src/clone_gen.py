@@ -1,6 +1,8 @@
 import re, textwrap, requests, ast, astor, re, os, json, time, random
 from .utils import (validate_with_unittest, remove_function_signature,CODEBLEU_THRESHOLD)
 from .prompts import (SYSTEM_PROMPT_MINIMAL, context_builders, build_clone_variation_prompt, build_user_prompt_retest,build_user_prompt_codebleu)
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
 from codebleu import calc_codebleu
 
 FUNCTION_NAME = "task_func"  
@@ -9,7 +11,7 @@ N_ENTRIES = 12
 CLONES_PER_ENTRY = 1
 MAX_RETRIES=3
 DELAY=3
-
+MAX_WORKERS = 6  # increase for more parallelism
 
 def call_ollama_chat(messages, model, options):
     """
@@ -270,127 +272,48 @@ def run_clone_generation(
         json.dump(results, f, indent=2) 
 
 
-def run_reprompt(
-    dataset_path,
-    clone_dataset_path, 
-    n_entries,
-    llm_opts,
-    models: list[str],
-    out_path      
-):
-    """
-    Adaptive reprompt loop for repairing and diversifying clones.
-
-    Steps:
-    1. Reprompt failing clones until tests pass or MAX_RETRIES is reached.
-    2. If all tests pass, recalc CodeBLEU vs original code.
-    3. If CodeBLEU > threshold, reprompt until below threshold or max retries.
-    4. Retest the new clone.
-    5. Only replace the clone if it passes all tests AND CodeBLEU < threshold.
-    6. Each reprompt uses a model different from the original one.
-    7. Save immediately only if the clone satisfies all conditions.
-    """
-
-    # Load original dataset for metadata
-    with open(dataset_path, "r", encoding="utf-8") as f:
-        original_data = json.load(f)
-    original_by_id = {entry["id"]: entry for entry in original_data}
-
-    # Load existing results
-    results = load_existing_results(clone_dataset_path)  # list of entries
-
-    # Limit to first n_entries
-    sample_entries = results[:n_entries] if n_entries else results
-
-    for i, clone_entry in enumerate(sample_entries, 1):
-        entry_id = clone_entry["id"]
-        entry = original_by_id[entry_id]  # original metadata
-
-        print(f"\n===== Processing entry {i}/{len(sample_entries)} → {entry_id}") 
-        tests_list = entry.get("test", []) 
-
-        clones = clone_entry.get("clones", [])
-        for clone in clones:
-            clone_id = clone.get("clone_id", "unknown") 
-            original_model = clone.get("model")
-            test_results = clone.get("test_results", {})
-
-            # Identify failing tests
-            failing_tests = [
-                t for t, r in test_results.items()
-                if isinstance(r, str) and r.upper() in ("FAIL", "ERROR")
-            ]
-
-            # Skip clone if already passes all tests
-            if not failing_tests:
-                print(f" Clone {clone_id} passes all tests — skipping reprompt.")
-                continue
-
-            #  Reprompt for failing tests 
-            n = 0
-            used_models = []
-            while n < MAX_RETRIES:
-                n += 1
-                clone, failing_tests, codebleu = reprompt_clone(
-                    clone=clone,
-                    entry=entry,
-                    tests_list=tests_list,
-                    models=models,
-                    used_models=used_models,
-                    original_model=original_model,
-                    llm_opts=llm_opts, 
-                    n=n,
-                )
-
-                # Stop if all tests pass and CodeBLEU <= threshold
-                if not failing_tests and codebleu <= CODEBLEU_THRESHOLD:
-                    update_results(entry_id, clone, out_path)
-                    break
-
-                # Continue if fails tests or CodeBLEU still high
-                if failing_tests or codebleu > CODEBLEU_THRESHOLD:
-                    continue
-
-            if failing_tests or codebleu > CODEBLEU_THRESHOLD:
-                print(f"⚠️ Clone {clone_id} still invalid after {MAX_RETRIES} attempts.")
+ 
 
 
-def reprompt_clone(
-    clone,
-    entry,
-    tests_list,
-    models,
-    used_models,
-    original_model,
-    llm_opts, 
-    n,
-):
-    """
-    Reprompt the LLM for a clone either if:
-    - It fails at least one test, or
-    - Its CodeBLEU is higher than the threshold.
+# Cache for CodeBLEU and test runs (avoid recomputation)
+_codebleu_cache = {}
+_test_cache = {}
 
-    Returns:
-        tuple: (updated_clone, failing_tests, codebleu)
-    """
+
+def cached_codebleu(ref_body, clone_body):
+    key = (ref_body, clone_body)
+    if key in _codebleu_cache:
+        return _codebleu_cache[key]
+    score = calc_codebleu([ref_body], [clone_body], lang="python")
+    value = float(score["codebleu"])
+    _codebleu_cache[key] = value
+    return value
+
+
+def cached_testing(code, tests_list):
+    key = (code, tuple(tests_list))
+    if key in _test_cache:
+        return _test_cache[key]
+    result = validate_with_unittest(code, tests_list)
+    _test_cache[key] = result
+    return result
+
+
+def reprompt_clone(clone, entry, tests_list, models, used_models, original_model, llm_opts,n):
     clone_id = clone.get("clone_id", "unknown")
     params = entry.get("metadata", {}).get("params", [])
     return_text = entry.get("metadata", {}).get("return_text", [])
     tests_snippet = "\n".join(tests_list) if tests_list else ""
 
-    # Pick a model different from the original and not already used
+    # Select model
     available_models = [m for m in models if m != original_model and m not in used_models]
     if not available_models:
-        raise RuntimeError(
-            f"No alternative model available for clone {clone_id} "
-            f"(original model={original_model}, used={used_models})."
-        )
-
+        raise RuntimeError(f"No alternative model available for {clone_id}.")
     reprompt_model = random.choice(available_models)
     used_models.append(reprompt_model)
-    print(f"🧠 Using model {reprompt_model} (attempt {n})")
 
-    # --- Build test prompt ---
+    # Prompt setup
+    print(f"⚙️  Reprompting (attempt {n}, model={reprompt_model})")
     user_prompt = build_user_prompt_retest(
         clone_code=clone["code"],
         params=params,
@@ -401,7 +324,6 @@ def reprompt_clone(
             if isinstance(r, str) and r.upper() in ("FAIL", "ERROR")
         ],
     )
-
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT_MINIMAL},
         {"role": "user", "content": user_prompt},
@@ -415,106 +337,123 @@ def reprompt_clone(
             expected_func_name=FUNCTION_NAME,
         )
 
-        # --- Retest ---
-        test_results = validate_with_unittest(repaired_code, tests_list)
+        # Cached evaluation
+        test_results = cached_testing(repaired_code, tests_list)
         failing_tests = [
             t for t, r in test_results.items()
             if isinstance(r, str) and r.upper() in ("FAIL", "ERROR")
         ]
 
-        # --- Recalculate CodeBLEU ---
         ref_body = remove_function_signature(entry.get("original_code"))
         clone_body = remove_function_signature(repaired_code)
-        score = calc_codebleu([ref_body], [clone_body], lang="python")
-        codebleu = float(score["codebleu"])
+        codebleu = cached_codebleu(ref_body, clone_body)
 
-        # --- Update clone info ---
+        # Update clone info
         clone["code"] = repaired_code
         clone["test_results"] = test_results
         clone["metrics"]["codebleu"]["originalcode"] = codebleu
-        clone["reprompt"] = f"test {n} (model={reprompt_model})" 
-        if not failing_tests:
-            print(f"✅ Clone {clone_id} All tests PASSED {n} with codebleu={codebleu:.4f}- reprompt {n}")
-
-        else:
-            print(f"⚠️ Clone {clone_id} Tests FAILING {len(failing_tests)}- reprompt {n}")
+        clone["reprompt"] = f"test {n} (model={reprompt_model})"
 
         return clone, failing_tests, codebleu
 
     except Exception as e:
-        print(f"❌ Error reprompting clone {clone_id} (attempt {n}): {e}")
+        print(f"❌ Error reprompting {clone_id}: {e}")
         clone["reprompt"] = f"test {n} (error, model={reprompt_model})"
-        return clone, ["ERROR"], 1.0  # fail-safe high CodeBLEU
+        return clone, ["ERROR"], 1.0
 
 
-def reprompt_for_diversity(entry_id, clone, entry, tests_list, ref_body, llm_opts, models, out_path):
-    """Reprompt a clone to reduce CodeBLEU below the threshold, retesting each attempt."""
-    codebleu = float(clone["metrics"]["codebleu"]["originalcode"])
-    m = 0
-    used_models_div = []
+def run_reprompt(
+    dataset_path,
+    clone_dataset_path,
+    n_entries,
+    llm_opts,
+    models,
+    out_path,
+):
+    with open(dataset_path, "r", encoding="utf-8") as f:
+        original_data = json.load(f)
+    original_by_id = {e["id"]: e for e in original_data}
 
-    while codebleu > CODEBLEU_THRESHOLD and m < MAX_RETRIES:
-        m += 1
-        available_models_div = [m for m in models if m != clone.get("model") and m not in used_models_div]
-        if not available_models_div:
-            raise RuntimeError(f"No more models available for CodeBLEU reprompt on clone {clone['clone_id']}")
+    results = load_existing_results(clone_dataset_path)
+    sample_entries = results[:n_entries] if n_entries else results
 
-        reprompt_model = random.choice(available_models_div)
-        used_models_div.append(reprompt_model)
-
-        print(f"⚙️  CodeBLEU {codebleu:.4f} > {CODEBLEU_THRESHOLD} — reprompting for diversity (attempt {m}, model={reprompt_model})")
-
-        user_prompt_div = build_user_prompt_codebleu(
-            original_code=entry.get("original_code"),
-            clone_code=clone["code"],
-            codebleu=codebleu,
-            refacs=clone.get("refacs", []),
-        )
-
-        messages_div = [
-            {"role": "system", "content": SYSTEM_PROMPT_MINIMAL},
-            {"role": "user", "content": user_prompt_div},
-        ]
-
-        try:
-            diverse_code = generate_clones(
-                messages_div,
-                model=reprompt_model,
-                options=llm_opts,
-                expected_func_name=FUNCTION_NAME,
-            )
-
-            diverse_body = remove_function_signature(diverse_code)
-            score_new = calc_codebleu([ref_body], [diverse_body], lang="python")
-            new_codebleu = float(score_new["codebleu"])
-            clone["reprompt"] = f"test {m} (model={reprompt_model})"
-
-            # Retest if below threshold
-            if new_codebleu <= CODEBLEU_THRESHOLD:
-                test_results = validate_with_unittest(diverse_code, tests_list)
-                failing_tests_codebleu = [
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = []
+        for clone_entry in sample_entries:
+            print(f"\n🔄 Processing {clone_entry['id']}")
+            entry_id = clone_entry["id"]
+            entry = original_by_id[entry_id]
+            tests_list = entry.get("test", [])
+            clones = clone_entry.get("clones", [])
+            for clone in clones:
+                test_results = clone.get("test_results", {})
+                failing_tests = [
                     t for t, r in test_results.items()
                     if isinstance(r, str) and r.upper() in ("FAIL", "ERROR")
                 ]
-                if not failing_tests_codebleu:
-                    #  Update clone and save
-                    clone["code"] = diverse_code
-                    clone["test_results"] = test_results
-                    clone["metrics"]["codebleu"]["originalcode"] = new_codebleu
-                    update_results(entry_id, clone, out_path)
-                    print("✅  CodeBLEU below threshold and pass tests")
-                    break
-                else:
-                    print("⚠️  CodeBLEU below threshold but fails tests")
-            else:
-                codebleu = new_codebleu 
+                codebleu = clone.get("metrics", {}).get("codebleu", {}).get("originalcode", 1.0)
 
-        except Exception as e:
-            print(f"❌ Error during CodeBLEU reprompt {m}: {e}")
+                # Schedule only if clone passes at least one test (partial success)
+                # and either fails some tests OR has a high CodeBLEU 
+                passed_tests = sum(
+                    1 for r in test_results.values()
+                    if isinstance(r, str) and r.upper() == "PASS"
+                )
+                if passed_tests > 0 and (failing_tests or codebleu > CODEBLEU_THRESHOLD):
+                    futures.append(executor.submit(
+                        process_clone,
+                        clone_entry["id"],
+                        clone,
+                        entry,
+                        tests_list,
+                        models,
+                        llm_opts,
+                        out_path
+                    ))
+
+
+        for f in tqdm(as_completed(futures), total=len(futures), desc="Processing clones"):
+            f.result()  # ensure exceptions propagate
+
+
+def process_clone(entry_id, clone, entry, tests_list, models, llm_opts, out_path): 
+    original_model = clone.get("model")
+    used_models = []
+    n = 0  
+
+    while n < MAX_RETRIES:
+        n += 1
+        clone, failing_tests, codebleu = reprompt_clone(
+            clone=clone,
+            entry=entry,
+            tests_list=tests_list,
+            models=models,
+            used_models=used_models,
+            original_model=original_model,
+            llm_opts=llm_opts,
+            n=n,
+        )
+
+        final_codebleu = codebleu
+        final_failing_tests = failing_tests
+
+        # Only save if both conditions are satisfied
+        if not failing_tests and codebleu <= CODEBLEU_THRESHOLD:
+            update_results(entry_id, clone, out_path) 
+            return
+
+        if not failing_tests and codebleu > CODEBLEU_THRESHOLD:
+            print(f"⚠️ Clone passes tests but too similar (CodeBLEU={codebleu:.4f})")
+            # continue retrying to improve diversity
             continue
 
-    if codebleu > CODEBLEU_THRESHOLD:
-        print(f"⚠️  Clone {clone['clone_id']} remained too similar (CodeBLEU={codebleu:.4f})")
+        if failing_tests:
+            print(f"⚠️ Clone still failing {len(failing_tests)} tests (retry {n}/{MAX_RETRIES})")
+
+    # If reached max retries without a valid clone
+    if final_failing_tests or final_codebleu > CODEBLEU_THRESHOLD:
+        print(f"❌ Clone discarded — tests={'fail' if final_failing_tests else 'pass'} "
+              f"CodeBLEU={final_codebleu:.4f}")
 
 
 def update_results(entry_id, clone, out_path):
