@@ -11,7 +11,6 @@
       "libs": "['collections', 'random', 'itertools']",
       "params": "T1 (tuple of tuples): Each inner tuple contains string representations of numbers that are converted to integers. RANGE (int, optional): The upper limit for the random number generation. Defaults to 100.",
       "return_text": "Counter: A Counter object representing the count of each number appearing in the list of generated random integers.",
-      "complete_prompt": "from collections import Counter\nimport itertools\nfrom random import randint\n\ndef task_func(T1, RANGE=100):\n    \"\"\"\n    Convert elements in 'T1' to integers and create a list of random integers where the number of integers \n    is determined by the sum of the integers in `T1`. Random integers are generated between 0 and `RANGE` \n    (default is 100). Count the occurrences of each number in the generated list using a Counter.\n    \n    Parameters:\n    T1 (tuple of tuples): Each inner tuple contains string representations of numbers that are converted to integers.\n    RANGE (int, optional): The upper limit for the random number generation. Defaults to 100.\n    \n    Returns:\n    Counter: A Counter object representing the count of each number appearing in the list of generated random integers.\n    \n    Requirements:\n    - collections.Counter\n    - itertools\n    - random.randint\n    \n    Example:\n    >>> import random\n    >>> random.seed(42)\n    >>> T1 = (('13', '17', '18', '21', '32'), ('07', '11', '13', '14', '28'), ('01', '05', '06', '08', '15', '16'))\n    >>> counts = task_func(T1)\n    >>> print(counts)  # Output will be a Counter object with random counts.\n    Counter({20: 6, 81: 5, 14: 5, 97: 5, 48: 5, 68: 5, 87: 5, 35: 4, 28: 4, 11: 4, 54: 4, 27: 4, 29: 4, 64: 4, 77: 4, 33: 4, 58: 4, 10: 4, 46: 4, 8: 4, 98: 4, 34: 4, 3: 3, 94: 3, 31: 3, 17: 3, 13: 3, 69: 3, 71: 3, 89: 3, 0: 3, 43: 3, 19: 3, 93: 3, 37: 3, 80: 3, 82: 3, 76: 3, 92: 3, 75: 2, 4: 2, 25: 2, 91: 2, 83: 2, 12: 2, 45: 2, 5: 2, 70: 2, 84: 2, 47: 2, 59: 2, 41: 2, 99: 2, 7: 2, 40: 2, 51: 2, 72: 2, 63: 2, 95: 2, 74: 2, 96: 2, 67: 2, 62: 2, 30: 2, 16: 2, 86: 1, 53: 1, 57: 1, 44: 1, 15: 1, 79: 1, 73: 1, 24: 1, 90: 1, 26: 1, 85: 1, 9: 1, 21: 1, 88: 1, 50: 1, 18: 1, 65: 1, 6: 1, 49: 1, 32: 1, 1: 1, 55: 1, 22: 1, 38: 1, 2: 1, 39: 1})\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -27,7 +26,6 @@
       "libs": "['nltk', 'matplotlib', 'string', 'seaborn']",
       "params": "text (str): The input text.",
       "return_text": "matplotlib.axes._axes.Axes: The plot showing the frequency of words beginning with the '$' character.",
-      "complete_prompt": "import nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\n# Constants\nPUNCTUATION = set(punctuation)\n\n\ndef task_func(text):\n    \"\"\"\n    Draw a bar chart of the frequency of words in a text beginning with the \"$\" character. Words that start with the '$' character but consist only of punctuation (e.g., '$!$' and '$.$') are not included in the frequency count.\n    - If there is no word respecting the above conditions, the plot should be None.\n    - The barplot x words on the x-axis and frequencies on the y-axis.\n\n    Parameters:\n        - text (str): The input text.\n    Returns:\n        - matplotlib.axes._axes.Axes: The plot showing the frequency of words beginning with the '$' character.\n\n    Requirements:\n        - nltk\n        - string\n        - seaborn\n        - matplotlib\n\n    Example:\n    >>> text = \"$child than resource indicate star $community station onto best green $exactly onto then age charge $friend than ready child really $let product coach decision professional $camera life off management factor $alone beat idea bit call $campaign fill stand Congress stuff $performance follow your resource road $data performance himself school here\"\n    >>> ax = task_func(text)\n    >>> print(ax)\n    Axes(0.125,0.11;0.775x0.77)\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -43,7 +41,6 @@
       "libs": "['numpy', 'matplotlib', 'scipy']",
       "params": "df (pandas.DataFrame): The input pandas DataFrame with positive values.",
       "return_text": "pandas.DataFrame: The transformed DataFrame after Box-Cox transformation. matplotlib.figure.Figure: Figure containing KDE plots of the transformed columns.",
-      "complete_prompt": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\nTARGET_VALUES = np.array([1, 3, 4])\n\ndef task_func(df):\n    \"\"\"\n    Replace all elements in DataFrame columns that do not exist in the TARGET_VALUES array with zeros, then perform a Box-Cox transformation on each column (if data is not constant, add 1 to account for zeros) and display the resulting KDE plots.\n\n    Parameters:\n        - df (pandas.DataFrame): The input pandas DataFrame with positive values.\n\n    Returns:\n        - pandas.DataFrame: The transformed DataFrame after Box-Cox transformation.\n        - matplotlib.figure.Figure: Figure containing KDE plots of the transformed columns.\n\n    Requirements:\n    - numpy\n    - scipy.stats\n    - matplotlib.pyplot\n\n    Example:\n    >>> np.random.seed(42)\n    >>> df = pd.DataFrame(np.random.randint(1, 10, size=(100, 5)), columns=list('ABCDE'))  # Values should be positive for Box-Cox\n    >>> transformed_df, fig = task_func(df)\n    >>> print(transformed_df.head(2))\n              A         B    C    D         E\n    0  0.000000  0.566735  0.0  0.0  0.000000\n    1  0.530493  0.000000  0.0  0.0  0.607007\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -59,7 +56,6 @@
       "libs": "['numpy', 'seaborn']",
       "params": "df (DataFrame): The pandas DataFrame.",
       "return_text": "tuple: A tuple containing: DataFrame: A pandas DataFrame with statistics. This includes count, mean, standard deviation (std), min, 25%, 50%, 75%, and max values for each numeric column. List[Axes]: A list of matplotlib Axes objects representing the distribution plots for each numeric column. Each plot visualizes the distribution of data in the respective column with 10 bins.",
-      "complete_prompt": "import numpy as np\nimport seaborn as sns\n\ndef task_func(df):\n    \"\"\"\n    Describe a dataframe and draw a distribution chart for each numeric column after replacing the NaN values with the average of the column.\n\n    Parameters:\n    df (DataFrame): The pandas DataFrame.\n\n    Returns:\n    tuple: A tuple containing:\n        - DataFrame: A pandas DataFrame with statistics. This includes count, mean, standard deviation (std), min, 25%, 50%, 75%, and max values for each numeric column.\n        - List[Axes]: A list of matplotlib Axes objects representing the distribution plots for each numeric column.\n                    Each plot visualizes the distribution of data in the respective column with 10 bins.\n\n    Requirements:\n    - numpy\n    - seaborn\n\n    Example:\n    >>> import pandas as pd\n    >>> import numpy as np\n    >>> df = pd.DataFrame([[1,2,3],[4,5,6],[7.0,np.nan,9.0]], columns=[\"c1\",\"c2\",\"c3\"])\n    >>> description, plots = task_func(df)\n    >>> print(description)\n            c1    c2   c3\n    count  3.0  3.00  3.0\n    mean   4.0  3.50  6.0\n    std    3.0  1.50  3.0\n    min    1.0  2.00  3.0\n    25%    2.5  2.75  4.5\n    50%    4.0  3.50  6.0\n    75%    5.5  4.25  7.5\n    max    7.0  5.00  9.0\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -75,7 +71,6 @@
       "libs": "['matplotlib', 'sklearn']",
       "params": "df (DataFrame): The pandas DataFrame.",
       "return_text": "DataFrame: A pandas DataFrame after normalization. Axes: A matplotlib Axes displaying a box plot for each column.",
-      "complete_prompt": "from sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    \"\"\"\n    Normalize numeric columns in a DataFrame and draw a box plot for each column. Missing values are replaced by column's average.\n\n    Parameters:\n    df (DataFrame): The pandas DataFrame.\n\n    Returns:\n    DataFrame: A pandas DataFrame after normalization.\n    Axes: A matplotlib Axes displaying a box plot for each column.\n\n    Requirements:\n    - pandas\n    - numpy\n    - sklearn.preprocessing.MinMaxScaler\n    - matplotlib.pyplot\n\n    Example:\n    >>> import pandas as pd\n    >>> import numpy as np\n    >>> df = pd.DataFrame([[1,2,3],[4,5,6],[7.0,np.nan,9.0]], columns=[\"c1\",\"c2\",\"c3\"])\n    >>> df, ax = task_func(df)\n    >>> print(df)\n        c1   c2   c3\n    0  0.0  0.0  0.0\n    1  0.5  1.0  0.5\n    2  1.0  0.5  1.0\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -91,7 +86,6 @@
       "libs": "['pandas', 'seaborn']",
       "params": "data (list): The DataFrame to be visualized.",
       "return_text": "tuple: pandas.DataFrame: The DataFrame of the analyzed data. plt.Axes: The seaborn plot object.",
-      "complete_prompt": "import pandas as pd\nimport seaborn as sns\n\n# Constants\nCOLUMNS = ['col1', 'col2', 'col3']\n\ndef task_func(data):\n    \"\"\"\n    You are given a list of elements. Each element of the list is a list of 3 values. Use this list of elements to build a dataframe with 3 columns 'col1', 'col2' and 'col3' and create a distribution of chart of the different values of \"col3\" grouped by \"col1\" and \"col2\" using seaborn.\n\n    The function's logic is as follows:\n    1. Build a pandas DataFrame by using list of elements. Make sure to name the columns as 'col1', 'col2' and 'col3', the constant COLUMNS is provided for this purpose.\n    2. Create a new dataframe by grouping the values in the column 'col3' by ['col1', 'col2'].\n    3. Reset the index of the newly created dataframe. This dataframe is the first element of the output tuple.\n    4. Create a distribution plot of the 'col3' column of the previous dataframe using seaborn. This plot is the second and last element of the output tuple.\n        - The xlabel (label for the x-axis) is set to the 'col3'.\n\n    Parameters:\n    data (list): The DataFrame to be visualized.\n\n    Returns:\n    tuple:\n        pandas.DataFrame: The DataFrame of the analyzed data.\n        plt.Axes: The seaborn plot object.\n\n    Requirements:\n    - pandas\n    - seaborn\n\n    Example:\n    >>> data = [[1, 1, 1], [1, 1, 1], [1, 1, 2], [1, 2, 3], [1, 2, 3], [1, 2, 3], [2, 1, 1], [2, 1, 2], [2, 1, 3], [2, 2, 3], [2, 2, 3], [2, 2, 3]]\n    >>> analyzed_df, plot = task_func(data)\n    >>> print(analyzed_df)\n       col1  col2  col3\n    0     1     1     2\n    1     1     2     1\n    2     2     1     3\n    3     2     2     1\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -107,7 +101,6 @@
       "libs": "['logging', 'flask', 'json']",
       "params": "template_folder (str): The folder containing the Flask application's templates.",
       "return_text": "flask.app.Flask: A Flask application instance configured with a root route that handles POST requests. The route logs incoming request data as JSON and serves the 'index.html' template with the provided data.",
-      "complete_prompt": "from flask import Flask, render_template, request\nimport json\nimport logging\n\nlogging.basicConfig(filename=\"out.log\", level=logging.INFO)\n\ndef task_func(template_folder):\n    \"\"\"\n    Creates a Flask application with a specified templates folder. It defines a route at the root ('/')\n    which handles POST requests, logs the information request data as a JSON, and renders an 'index.html' template using\n    the data provided in POST requests.\n\n    Parameters:\n    template_folder (str): The folder containing the Flask application's templates.\n\n    Returns:\n    flask.app.Flask: A Flask application instance configured with a root route that handles POST requests.\n    The route logs incoming request data as JSON and serves the 'index.html' template with the provided data.\n\n    Requirements:\n    - flask.Flask\n    - flask.render_template\n    - flask.request\n    - json\n    - logging\n\n    Example:\n    >>> app = task_func('my_templates')\n    >>> isinstance(app, Flask)\n    True\n    >>> 'POST' in app.url_map.bind('').match('/', method='POST')\n    False\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -123,7 +116,6 @@
       "libs": "['math', 'itertools', 'functools']",
       "params": "numbers (list of int): A list of integers for which combinations are formed.",
       "return_text": "float: The sum of the logarithms of the products of all combinations of numbers.",
-      "complete_prompt": "import math\nimport itertools\nfrom functools import reduce\n\ndef task_func(numbers):\n    \"\"\"\n    Generates all possible combinations of the provided numbers in a given list for\n    each possible length. For each combination, it computes the product of the numbers\n    in the combination. It then computes the logarithm of each product and sums these\n    logarithms to produce the final result.\n\n    Parameters:\n        numbers (list of int): A list of integers for which combinations are formed.\n\n    Requirements:\n    - math\n    - itertools\n    - functools\n\n    Returns:\n        float: The sum of the logarithms of the products of all combinations of numbers.\n\n    Examples:\n    >>> numbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]\n    >>> type(task_func(numbers)) == float\n    True\n    >>> isinstance(task_func(numbers), float)\n    True\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -139,7 +131,6 @@
       "libs": "['pandas', 'matplotlib', 'numpy', 'seaborn', 'sklearn']",
       "params": "df (DataFrame): The input dataframe.",
       "return_text": "DataFrame: A pandas DataFrame with the imputed last column. Axes: A matplotlib Axes object with the boxplot of the last column of the dataframe.",
-      "complete_prompt": "import numpy as np\nimport pandas as pd\nfrom sklearn.impute import SimpleImputer\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\ndef task_func(df):\n    \"\"\"\n    Impute missing values in the last column of the dataframe using mean imputation, then create a box plot to visualize the distribution of data in the last column.\n\n    Parameters:\n    df (DataFrame): The input dataframe.\n    \n    Returns:\n    DataFrame: A pandas DataFrame with the imputed last column.\n    Axes: A matplotlib Axes object with the boxplot of the last column of the dataframe.\n\n    Raises:\n    ValueError: If the input is not a DataFrame or has no columns.\n\n    Requirements:\n    - numpy\n    - pandas\n    - sklearn\n    - seaborn\n    - matplotlib.pyplot\n    \n    Example:\n    >>> df = pd.DataFrame(np.random.randint(0,100,size=(100, 4)), columns=list('ABCD'))\n    >>> df.iloc[::3, -1] = np.nan  # Insert some NaN values\n    >>> imputed_df, ax = task_func(df)\n    >>> ax.get_title()  # 'Boxplot of Last Column'\n    'Boxplot of Last Column'\n    >>> ax.get_xlabel() # 'D'\n    'D'\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -155,7 +146,6 @@
       "libs": "['pandas', 'numpy', 'random']",
       "params": "",
       "return_text": "DataFrame: A pandas DataFrame with columns for each student's name, their grades for each course, and their average grade across all courses.",
-      "complete_prompt": "import pandas as pd\nimport numpy as np\nfrom random import randint\n\n# Constants\nSTUDENTS = ['Joe', 'Amy', 'Mark', 'Sara', 'John', 'Emily', 'Zoe', 'Matt']\nCOURSES = ['Math', 'Physics', 'Chemistry', 'Biology', 'English', 'History', 'Geography', 'Computer Science']\n\n\ndef task_func():\n    \"\"\"\n    Generates a DataFrame containing random grades for a predefined list of students across a set of courses.\n    Each student will have one grade per course and an average grade calculated across all courses.\n\n    Returns:\n    DataFrame: A pandas DataFrame with columns for each student's name, their grades for each course,\n               and their average grade across all courses.\n\n    Requirements:\n    - pandas\n    - numpy\n    - random\n\n    Note:\n    The grades are randomly generated for each course using a uniform distribution between 0 and 100.\n\n    Example:\n    >>> random.seed(0)\n    >>> grades = task_func()\n    >>> print(grades[['Name', 'Average Grade']].to_string(index=False))\n     Name  Average Grade\n      Joe         51.875\n      Amy         53.250\n     Mark         53.750\n     Sara         47.125\n     John         55.250\n    Emily         48.625\n      Zoe         63.750\n     Matt         54.750\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -171,7 +161,6 @@
       "libs": "['mechanize', 'urllib', 'bs4']",
       "params": "url (str): The URL from which hyperlinks are to be extracted.",
       "return_text": "list: A list of strings, each being a hyperlink found on the page.",
-      "complete_prompt": "import mechanize\nfrom bs4 import BeautifulSoup\nfrom urllib.parse import urljoin\n\ndef task_func(url):\n    \"\"\"\n    Extracts all hyperlinks (href attributes) from the specified URL using the mechanize\n    browser object and BeautifulSoup. Absolute URLs are combined with the base URL.\n\n    Parameters:\n        url (str): The URL from which hyperlinks are to be extracted.\n\n    Returns:\n        list: A list of strings, each being a hyperlink found on the page.\n\n    Requirements:\n        - mechanize\n        - urllib.parse.urljoin\n        - bs4.BeautifulSoup\n\n    Examples:\n        >>> isinstance(task_func('https://www.example.com'), list)\n        True\n        >>> 'https://www.example.com/about' in task_func('https://www.example.com')\n        True or False, depending on the actual content of 'https://www.example.com'\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -187,7 +176,6 @@
       "libs": "['collections', 'itertools']",
       "params": "",
       "return_text": "dict: A dictionary with the sums and their counts.",
-      "complete_prompt": "import itertools\nimport collections\n\n\ndef task_func(elements, subset_size):\n    \"\"\"\n    Generate all 2-element subsets of a tuple and count the occurrences of each sum in the subsets.\n\n    Returns:\n    dict: A dictionary with the sums and their counts.\n\n    Requirements:\n    - itertools\n    - random\n    - collections\n    \n    \n    Example:\n    >>> dict(task_func((1, 2, 3, 4, 5), 2))\n    {3: 1, 4: 1, 5: 2, 6: 2, 7: 2, 8: 1, 9: 1}\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -203,7 +191,6 @@
       "libs": "['nltk', 'collections', 're']",
       "params": "text (str): The input text for word counting.",
       "return_text": "dict: A dictionary with the words (as keys) and their counts (as values).",
-      "complete_prompt": "import re\nfrom collections import Counter\nfrom nltk.corpus import stopwords\n\n\ndef task_func(text: str) -> dict:\n    \"\"\"\n    Count the number of non-stop words in a given text.\n    \n    Parameters:\n    - text (str): The input text for word counting.\n    \n    Returns:\n    dict: A dictionary with the words (as keys) and their counts (as values).\n    \n    Requirements:\n    - re\n    - collections.Counter\n    \n    Example:\n    >>> count = task_func(\"This is a sample text. Some words are repeated.\")\n    >>> print(count)\n    {'sample': 1, 'text': 1, 'words': 1, 'repeated': 1}\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -219,7 +206,6 @@
       "libs": "['subprocess', 'time', 'signal', 'os']",
       "params": "process_name (str): The name of the processes to be stopped.",
       "return_text": "int: The number of processes stopped. If no processes are found, returns 0.",
-      "complete_prompt": "import subprocess\nimport os\nimport signal\nimport time\n\n\ndef task_func(process_name: str) -> int:\n    \"\"\"\n    Stops all running processes with a specific name.\n\n    Parameters:\n    process_name (str): The name of the processes to be stopped.\n\n    Returns:\n    int: The number of processes stopped. If no processes are found, returns 0.\n\n    Requirements:\n    - subprocess\n    - os\n    - signal\n    - time\n\n    Note:\n    - The function sends a termination signal to the processes and waits for 1 second. \n      There is no guarantee that all processes will have terminated within this time.\n\n    Example:\n    >>> pids = task_func('test_name') # Dummy example, should return 0\n    >>> pids\n    0\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -235,7 +221,6 @@
       "libs": "['pandas', 'logging']",
       "params": "sheet_name (str): The name of the sheet to load data from. excel_file_location (str): The path to the Excel file. Default is 'test.xlsx'. csv_file_location (str): The path where the CSV file will be saved. Default is 'test.csv'.",
       "return_text": "dict: A dictionary with the sum of each column.",
-      "complete_prompt": "import pandas as pd\nimport logging\n\n# Set up basic configuration for logging\nlogging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')\n\ndef task_func(sheet_name, excel_file_location=\"test.xlsx\", csv_file_location=\"test.csv\"):\n    \"\"\"\n    Reads data from an Excel spreadsheet, converts it to a CSV file, then calculates the sum of each column in the CSV file.\n\n    Parameters:\n    - sheet_name (str): The name of the sheet to load data from.\n    - excel_file_location (str): The path to the Excel file. Default is 'test.xlsx'.\n    - csv_file_location (str): The path where the CSV file will be saved. Default is 'test.csv'.\n\n    Returns:\n    - dict: A dictionary with the sum of each column.\n\n    Raises:\n    - FileNotFoundError: If the Excel file does not exist at the specified path.\n    - ValueError: If the specified sheet name is not found in the Excel file.\n\n    Requirements:\n    - pandas\n    - logging\n\n    Example:\n    >>> test_excel_file = 'dummy_test.xlsx'\n    >>> test_csv_file = 'dummy_test.csv'\n    >>> test_sheet_name = 'TestSheet'\n    >>> data = {'A': [10, 20, 30], 'B': [40, 50, 60]}\n    >>> df = pd.DataFrame(data)\n    >>> df.to_excel(test_excel_file, sheet_name=test_sheet_name, index=False)\n    >>> task_func(sheet_name='TestSheet', excel_file_location=test_excel_file, csv_file_location=test_csv_file) # {'Column1': sum_value1, 'Column2': sum_value2, ...}\n    {'A': 60, 'B': 150}\n    >>> os.remove(test_excel_file)\n    >>> os.remove(test_csv_file)\n    \n    Note:\n    - Ensure the Excel file contains only numerical data for accurate sum calculations.\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -251,7 +236,6 @@
       "libs": "['matplotlib', 'scipy']",
       "params": "l (numpy array): The input y-values. x_data (numpy array): The x-values corresponding to l. plot (bool, optional): If True, a plot will be returned. Default is False.",
       "return_text": "tuple: A tuple containing the following: params (numpy array): Parameters of the fitted curve. fitted_values (numpy array): Fitted y-values for the provided x_data. ax (matplotlib.axes._axes.Axes, optional): Axes object of the plot if plot=True.",
-      "complete_prompt": "from scipy.optimize import curve_fit\nimport matplotlib.pyplot as plt\n\ndef task_func(l, x_data, plot=False):\n    \"\"\"\n    Adjust a quadratic curve to the specified data and return the parameters and fitted values.\n    \n    Parameters:\n    l (numpy array): The input y-values.\n    x_data (numpy array): The x-values corresponding to l.\n    plot (bool, optional): If True, a plot will be returned. Default is False.\n    \n    Returns:\n    tuple: A tuple containing the following:\n        - params (numpy array): Parameters of the fitted curve.\n        - fitted_values (numpy array): Fitted y-values for the provided x_data.\n        - ax (matplotlib.axes._axes.Axes, optional): Axes object of the plot if plot=True.\n\n    Requirements:\n    - scipy.optimize.curve_fit\n    - matplotlib.pyplot\n\n    Example:\n    >>> import numpy as np\n    >>> l = np.array([1, 4, 9, 16, 25])\n    >>> x_data = np.array([1, 2, 3, 4, 5])\n    >>> params, fitted_values = task_func(l, x_data)\n    >>> print(fitted_values)\n    [ 1.  4.  9. 16. 25.]\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -267,7 +251,6 @@
       "libs": "['numpy', 'matplotlib', 'scipy']",
       "params": "mu (float): The mean of the normal distribution. sigma (float): The standard deviation of the normal distribution. sample_size (int): The size of the sample to generate. Must be a positive integer. seed (int, Optional): The seed to be used for the random number generator. Default is 0.",
       "return_text": "matplotlib.axes._axes.Axes: Axes object containing the plot of the normal distribution.",
-      "complete_prompt": "import matplotlib\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy import stats\n\n\ndef task_func(mu, sigma, sample_size, seed=0):\n    \"\"\"\n    Create a Gaussian kernel density estimate diagram of a normal distribution with a given mean and a \n    standard deviation using a random sample of a size determined by the sample_size parameter. The density \n    diagram is plotted using default settings in a deterministic matplotlib plot. Return the axes object.\n    \n    Parameters:\n    mu (float): The mean of the normal distribution.\n    sigma (float): The standard deviation of the normal distribution.\n    sample_size (int): The size of the sample to generate. Must be a positive integer.\n    seed (int, Optional): The seed to be used for the random number generator. Default is 0.\n    \n    Returns:\n    matplotlib.axes._axes.Axes: Axes object containing the plot of the normal distribution.\n    \n    Requirements:\n    - numpy\n    - matplotlib\n    - scipy.stats\n    \n    Example:\n    >>> ax = task_func(0, 1, 1000)\n    >>> type(ax) # The result should be a matplotlib.axes._axes.Axes object\n    <class 'matplotlib.axes._axes.Axes'>\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -283,7 +266,6 @@
       "libs": "['base64', 'unicodedata', 'json']",
       "params": "json_file (str): The path to the JSON file.",
       "return_text": "dict: A dictionary where each key is mapped to a normalized, decoded string from the base64 encoded value in the input file.",
-      "complete_prompt": "import json\nimport base64\nimport unicodedata\n\ndef task_func(json_file: str) -> dict:\n    \"\"\"\n    This function reads a JSON file where each key is a unique identifier, and the corresponding value is a base64 encoded string.\n    After decoding, it applies Unicode normalization form C (NFC) to each decoded string to ensure the canonical composition of characters.\n    The function returns a dictionary where the keys are preserved, and the values are the normalized, decoded strings. Decoding is performed using the UTF-8 encoding scheme.\n\n    Parameters:\n    - json_file (str): The path to the JSON file.\n\n    Returns:\n    - dict: A dictionary where each key is mapped to a normalized, decoded string from the base64 encoded value in the input file.\n\n    Requirements:\n    - unicodedata\n    - json\n    - base64\n\n    Examples:\n    Given a file 'example.json' with the content:\n    {\"key1\": \"SGVsbG8gV29ybGQ=\", \"key2\": \"UHl0aG9uIENvZGUgUmVmaW5lcg==\"}\n\n    >>> task_func('example.json')\n    {'key1': 'Hello World', 'key2': 'Python Code Refiner'}\n\n    Given a file 'empty.json' with the content:\n    {}\n\n    >>> task_func('empty.json')\n    {}\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -299,7 +281,6 @@
       "libs": "['codecs', 'pandas']",
       "params": "dataframe (pd.DataFrame): The pandas DataFrame which must contain the column \"UnicodeString\".",
       "return_text": "pd.DataFrame: The DataFrame with decoded strings in the \"UnicodeString\" column.",
-      "complete_prompt": "import pandas as pd\nimport codecs\n\ndef task_func(dataframe: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"\n    Decodes all Unicode escape strings in a particular column (\"UnicodeString\") in a given Pandas DataFrame.\n\n    Parameters:\n    dataframe (pd.DataFrame): The pandas DataFrame which must contain the column \"UnicodeString\".\n\n    Returns:\n    pd.DataFrame: The DataFrame with decoded strings in the \"UnicodeString\" column.\n\n    Raises:\n    KeyError: If the column \"UnicodeString\" does not exist in the DataFrame.\n    TypeError: If the input is not a Pandas DataFrame.\n\n    Example:\n    >>> df = pd.DataFrame({\n    ...     'Name': ['John', 'Anna', 'Peter'],\n    ...     'Age': [27, 23, 29],\n    ...     'Salary': [50000, 60000, 70000],\n    ...     'UnicodeString': ['\\u004A\\u006F\\u0068\\u006E', '\\u0041\\u006E\\u006E\\u0061', '\\u0050\\u0065\\u0074\\u0065\\u0072']\n    ... })\n    >>> task_func(df)\n        Name  Age  Salary UnicodeString\n    0   John   27   50000          John\n    1   Anna   23   60000          Anna\n    2  Peter   29   70000         Peter\n\n    Requirements:\n    - pandas\n    - codecs\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -315,7 +296,6 @@
       "libs": "['decimal', 'datetime', 'numpy', 'json']",
       "params": "my_obj (object):  The object to serialize. This could be any Python object, typically a dictionary or a list containing complex data types.",
       "return_text": "str: The serialized JSON string of the object.",
-      "complete_prompt": "import json\nfrom datetime import datetime\nimport numpy as np\nfrom decimal import Decimal\n\ndef task_func(my_obj):\n    \"\"\"\n    Serializes an object to a JSON string, handling complex data types through a custom JSONEncoder.\n    This function is capable of serializing data types such as datetime, numpy.ndarray, and Decimal\n    which are not natively supported by the default JSON serialization mechanisms.\n\n    Parameters:\n    my_obj (object):  The object to serialize. This could be any Python object, typically a dictionary or a list containing complex data types.\n\n    Returns:\n    str: The serialized JSON string of the object.\n\n    Raises:\n    TypeError: If an object of an unsupported type is encountered that cannot be serialized by both the custom and default JSON encoders. This ensures that users are made aware of serialization limitations for types not explicitly handled.\n\n    Requirements:\n    - json\n    - datetime.datetime\n    - numpy\n    - decimal.Decimal\n\n    Examples:\n    Serialize a dictionary containing datetime, numpy array, and Decimal.\n    >>> result = task_func({'time': datetime(2023, 4, 1, 12, 0, tzinfo=pytz.utc), 'array': np.array([1, 2, 3]), 'amount': Decimal('10.99')})\n    >>> '2023-04-01T12:00:00+00:00' in result and '[1, 2, 3]' in result and '10.99' in result\n    True\n\n    Serialize a simple dictionary.\n    >>> task_func({'name': 'Alice', 'age': 30})\n    '{\"name\": \"Alice\", \"age\": 30}'\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -331,7 +311,6 @@
       "libs": "['pytz', 'datetime', 'numpy', 'matplotlib']",
       "params": "start_time (str): The start date in the format \"yyyy-mm-dd\". end_time (str): The end date in the format \"yyyy-mm-dd\".",
       "return_text": "matplotlib.axes.Axes: The Axes object with the plotted time differences in hours between UTC and other time zones.",
-      "complete_prompt": "from datetime import datetime, timedelta\nimport pytz\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(start_time, end_time):\n    \"\"\"\n    Plots the hourly difference between UTC and specified global time zones across a date range.\n\n    This function visualizes the time difference in hours between UTC and predefined time zones for each day\n    within the specified date range. Predefined time zones include UTC, America/Los_Angeles, Europe/Paris,\n    Asia/Kolkata, and Australia/Sydney. The differences are plotted on a graph, using a distinct color for\n    each time zone's time difference curve, selecting from [\"b\", \"g\", \"r\", \"c\", \"m\", \"y\", \"k\"].\n\n    Parameters:\n    - start_time (str): The start date in the format \"yyyy-mm-dd\".\n    - end_time (str): The end date in the format \"yyyy-mm-dd\".\n\n    Returns:\n    - matplotlib.axes.Axes: The Axes object with the plotted time differences in hours between UTC and \n                            other time zones.\n\n    Requirements:\n    - datetime.datetime\n    - datetime.timedelta\n    - pytz\n    - numpy\n    - matplotlib.pyplot\n\n    Example:\n    >>> ax = task_func('2021-01-01', '2021-01-10')\n    >>> type(ax)\n    <class 'matplotlib.axes._axes.Axes'>\n    >>> ax.get_xticklabels()\n    [Text(18628.0, 0, '2021-01-01'), Text(18629.0, 0, '2021-01-02'), Text(18630.0, 0, '2021-01-03'), Text(18631.0, 0, '2021-01-04'), Text(18632.0, 0, '2021-01-05'), Text(18633.0, 0, '2021-01-06'), Text(18634.0, 0, '2021-01-07'), Text(18635.0, 0, '2021-01-08'), Text(18636.0, 0, '2021-01-09')]\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -347,7 +326,6 @@
       "libs": "['difflib', 'gzip']",
       "params": "file_path1 (str): The file path of the first gzip file. file_path2 (str): The file path of the second gzip file.",
       "return_text": "str: A string describing the differences between the two files' contents.",
-      "complete_prompt": "import difflib\nimport gzip\n\ndef task_func(file_path1, file_path2):\n    \"\"\"\n    Compares the contents of two gzip files and returns a string describing the differences between them.\n    It reads the contents of each file, then uses difflib to compute and return the differences. \n    Only differences are returned, with an empty string indicating no differences.\n\n    Parameters:\n    file_path1 (str): The file path of the first gzip file.\n    file_path2 (str): The file path of the second gzip file.\n\n    Returns:\n    str: A string describing the differences between the two files' contents.\n\n    Requirements:\n    - difflib\n    - gzip\n\n    Examples:\n    Assuming 'file1.gz' and 'file2.gz' contain slightly different text,\n    >>> result = task_func('file1.gz', 'file2.gz')\n    >>> len(result) > 0\n    True\n\n    Assuming 'file1.gz' and 'file1.gz' are identical,\n    >>> task_func('file1.gz', 'file1.gz')\n    ''\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -363,7 +341,6 @@
       "libs": "['collections', 'matplotlib']",
       "params": "data (list): A list of dictionaries. The keys are fruit names and the values are sales quantities. Sales quantity must not be negative.",
       "return_text": "total_sales (dict): A dictionary containing the total sales for each fruit. ax (matplotlib.container.BarContainer): A bar chart of total fruit sales, or None if data is empty",
-      "complete_prompt": "import collections\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    \"\"\"\n    Combine a list of dictionaries with the same keys (fruit names) into a single dictionary,\n    calculate the total turnover for each fruit, and return a bar chart's axes with colors representing\n    different fruits. The colors are selected from: 'red', 'yellow', 'green', 'blue', 'purple'. The function\n    ensures that sales quantity must not be negative, throwing a ValueError if encountered.\n\n    Parameters:\n    data (list): A list of dictionaries. The keys are fruit names and the values are sales quantities.\n                 Sales quantity must not be negative.\n\n    Returns:\n    total_sales (dict): A dictionary containing the total sales for each fruit.\n    ax (matplotlib.container.BarContainer): A bar chart of total fruit sales, or None if data is empty\n\n    Requirements:\n    - collections\n    - matplotlib.pyplot\n\n    Example:\n    >>> sales, plot = task_func([{'apple': 10, 'banana': 15, 'cherry': 12},\\\n                             {'apple': 12, 'banana': 20, 'cherry': 14},\\\n                             {'apple': 15, 'banana': 18, 'cherry': 15},\\\n                             {'apple': 11, 'banana': 17, 'cherry': 13}])\n    >>> sales\n    {'apple': 48, 'banana': 70, 'cherry': 54}\n    >>> type(plot)\n    <class 'matplotlib.container.BarContainer'>\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -379,7 +356,6 @@
       "libs": "['pandas', 'collections', 'matplotlib', 'seaborn']",
       "params": "list_of_menuitems (list): A nested list of menu items.",
       "return_text": "matplotlib.axes.Axes: An Axes object representing the visualization, or None if there are no items to plot.",
-      "complete_prompt": "from collections import Counter\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\n\n\ndef task_func(list_of_menuitems):\n    \"\"\"\n    Given a nested list of menu items, this function flattens the list and visualizes the frequency\n    of each menu item using a seaborn barplot.\n\n    Parameters:\n        list_of_menuitems (list): A nested list of menu items.\n\n    Returns:\n        matplotlib.axes.Axes: An Axes object representing the visualization, or None if there are no items to plot.\n\n    Requirements:\n        - collections\n        - seaborn\n        - pandas\n        - matplotlib\n\n    Example:\n        >>> ax = task_func([['Pizza', 'Burger'], ['Pizza', 'Coke'], ['Pasta', 'Coke']])\n        >>> isinstance(ax, matplotlib.axes.Axes)\n        True\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -395,7 +371,6 @@
       "libs": "['pandas', 'matplotlib', 'scipy']",
       "params": "a (list): A list of numbers. b (list): Another list of numbers.",
       "return_text": "float: The computed Euclidean distance between the two lists. pd.DataFrame: A DataFrame containing the two lists as columns. matplotlib.axes.Axes: The generated plot's Axes object.",
-      "complete_prompt": "import pandas as pd\nfrom scipy.spatial import distance\nimport matplotlib.pyplot as plt\n\n\ndef task_func(a, b):\n    \"\"\"\n    Calculate the Euclidean distance between two lists, create a Pandas DataFrame from these lists\n    with indices 'A' and 'B', and then draw the values with a line displaying the Euclidean distance.\n\n    Parameters:\n    a (list): A list of numbers.\n    b (list): Another list of numbers.\n\n    Returns:\n    float: The computed Euclidean distance between the two lists.\n    pd.DataFrame: A DataFrame containing the two lists as columns.\n    matplotlib.axes.Axes: The generated plot's Axes object.\n\n    Requirements:\n    - pandas\n    - scipy.spatial\n    - matplotlib.pyplot\n\n    Example:\n    >>> euclidean_distance, df, ax = task_func([1, 2, 3], [2, 3, 4])\n    >>> print(euclidean_distance)\n    1.7320508075688772\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -411,7 +386,6 @@
       "libs": "['types', 'inspect']",
       "params": "f (function): The function to inspect.",
       "return_text": "dict: A dictionary containing details about the function, such as its name, if it's a lambda function, arguments, default values, and annotations.",
-      "complete_prompt": "import inspect\nimport types\n\ndef task_func(f):\n    \"\"\"\n    Inspects a given function 'f' and returns its specifications, including the function's name,\n    whether it is a lambda function, its arguments, defaults, and annotations. This method\n    utilizes the inspect and types modules to introspect function properties.\n\n    Parameters:\n    f (function): The function to inspect.\n\n    Returns:\n    dict: A dictionary containing details about the function, such as its name, if it's a lambda function,\n          arguments, default values, and annotations.\n\n    Requirements:\n    - inspect\n    - types\n\n    Examples:\n    >>> def sample_function(x, y=5): return x + y\n    >>> result = task_func(sample_function)\n    >>> 'sample_function' == result['function_name'] and len(result['args']) == 2\n    True\n    >>> lambda_func = lambda x: x * 2\n    >>> task_func(lambda_func)['is_lambda']\n    True\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -427,7 +401,6 @@
       "libs": "['matplotlib', 'numpy', 'itertools', 'sklearn']",
       "params": "L (list of lists): A list of lists where each sublist contains integers.",
       "return_text": "matplotlib.axes._axes.Axes: A plot displaying the standardized values.",
-      "complete_prompt": "from itertools import chain\nimport numpy as np\nfrom sklearn.preprocessing import StandardScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(L):\n    '''\n    Convert a list of lists 'L' into a single list of integers, standardize the integers, and plot the standardized values.\n\n    Parameters:\n    L (list of lists): A list of lists where each sublist contains integers.\n    \n    Returns:\n    matplotlib.axes._axes.Axes: A plot displaying the standardized values.\n\n    Requirements:\n    - numpy\n    - itertools\n    - sklearn.preprocessing\n    - matplotlib.pyplot\n\n    Examples:\n    >>> ax = task_func([[1, 2, 3], [4, 5, 6], [7, 8, 9]])\n    '''\n",
       "split": "easy"
     }
   },
@@ -443,7 +416,6 @@
       "libs": "['pytz', 'dateutil', 'random']",
       "params": "date_str (str): The datetime string in \"yyyy-mm-dd hh:mm:ss\" format. from_tz (str): The timezone of the given datetime string.",
       "return_text": "tuple: A tuple containing the converted datetime string and the randomly chosen timezone.",
-      "complete_prompt": "from random import choice\nimport pytz\nfrom dateutil.parser import parse\n\n# Constants\nTIMEZONES = ['America/New_York', 'Europe/London', 'Asia/Shanghai', 'Asia/Tokyo', 'Australia/Sydney']\n\n\ndef task_func(date_str, from_tz):\n    \"\"\"\n    Converts a datetime string from a given timezone to a datetime string in a randomly chosen timezone.\n\n    Parameters:\n    - date_str (str): The datetime string in \"yyyy-mm-dd hh:mm:ss\" format.\n    - from_tz (str): The timezone of the given datetime string.\n\n    Returns:\n    - tuple: A tuple containing the converted datetime string and the randomly chosen timezone.\n    \n    Requirements:\n    - pytz\n    - dateutil.parser\n    - random\n\n    Example:\n    >>> date_str, from_tz = '2023-06-15 12:00:00', 'UTC'\n    >>> converted_date, to_tz = task_func(date_str, from_tz)\n    >>> to_tz in TIMEZONES\n    True\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -459,7 +431,6 @@
       "libs": "['pandas', 'time']",
       "params": "df (dic of list): The input dict. It should have a 'Name' key. target_value (str): The target value to be searched in the DataFrame.",
       "return_text": "tuple: A tuple containing: A pandas Series with counts of the target value per column. A matplotlib Axes object representing the plot (None if dataframe is empty).",
-      "complete_prompt": "import pandas as pd\nimport time\n\n\ndef task_func(df, target_value):\n    '''\n    Convert the input dic of list to DataFrame and searcher in this DataFrame for rows with cells equal to the\n    provided target_value. It then plots the count of such rows per column.\n\n    Parameters:\n    - df (dic of list): The input dict. It should have a 'Name' key.\n    - target_value (str): The target value to be searched in the DataFrame.\n\n    Returns:\n    tuple: A tuple containing:\n        - A pandas Series with counts of the target value per column.\n        - A matplotlib Axes object representing the plot (None if dataframe is empty).\n\n    Requirements:\n    - pandas\n    - time\n\n    Example:\n    >>> df = {'Column1': ['0', 'a', '332', '33']}\n    >>> series, ax = task_func(df, '332')\n    '''\n",
       "split": "easy"
     }
   },
@@ -475,7 +446,6 @@
       "libs": "['numpy', 'matplotlib', 'scipy']",
       "params": "x (list): List of numpy arrays representing the x-values of the data points. y (list): List of numpy arrays representing the y-values of the data points. labels (list): List of strings representing the labels for the chemical compounds.",
       "return_text": "fig: Matplotlib figure object.",
-      "complete_prompt": "import matplotlib.pyplot as plt\nimport numpy as np\nimport scipy.stats as stats\n\n\ndef task_func(x, y, labels):\n    \"\"\"\n    Draw normal distributions for multiple 'x' and 'y' arrays with labels.\n    Each pair (x, y) represents a different chemical compound in the 'labels' list.\n\n    Parameters:\n    x (list): List of numpy arrays representing the x-values of the data points.\n    y (list): List of numpy arrays representing the y-values of the data points.\n    labels (list): List of strings representing the labels for the chemical compounds.\n\n    Returns:\n    fig: Matplotlib figure object.\n\n    Requirements:\n    - numpy\n    - matplotlib.pyplot\n    - scipy.stats\n\n    Example:\n    >>> x = [np.array([1,2,3]), np.array([4,5,6]), np.array([7,8,9])]\n    >>> y = [np.array([4,5,6]), np.array([7,8,9]), np.array([10,11,12])]\n    >>> labels = ['H₂O', 'O₂', 'CO₂']\n    >>> fig = task_func(x, y, labels)\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -491,7 +461,6 @@
       "libs": "['pandas', 'numpy', 'sklearn']",
       "params": "df (pandas.DataFrame): The input DataFrame. features (list): The list of features to standardize. May be empty.",
       "return_text": "df (pandas.DataFrame): The DataFrame with the standardized features.",
-      "complete_prompt": "import pandas as pd\nimport numpy as np\nfrom sklearn.preprocessing import StandardScaler\n\ndef task_func(df, features):\n    \"\"\"\n    Standardize the functions in a DataFrame.\n    The function applies standard scaling to the features.\n    \n    Parameters:\n    - df (pandas.DataFrame): The input DataFrame.\n    - features (list): The list of features to standardize. May be empty.\n    \n    Returns:\n    - df (pandas.DataFrame): The DataFrame with the standardized features.\n\n    Requirements:\n    - pandas\n    - numpy\n    - scikit-learn\n\n    Example:\n    >>> np.random.seed(42)\n    >>> df = pd.DataFrame(np.random.randn(20, 3), columns=['a', 'b', 'c'])\n    >>> df = task_func(df, ['a', 'b'])\n    >>> df.head(2)\n              a         b         c\n    0  0.608932  0.127900  0.647689\n    1  2.025355  0.031682 -0.234137\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -507,7 +476,6 @@
       "libs": "['numpy', 'scipy']",
       "params": "list_of_lists (list): The list to be processed.",
       "return_text": "tuple: The mode and count of the mode in the merged list. mode_value (np.array): The value that appears most frequently in the merged array. mode_count (int): The frequency count of the mode_value within the merged array.",
-      "complete_prompt": "import numpy as np\nfrom scipy.stats import mode\n\ndef task_func(list_of_lists):\n    \"\"\"\n    Merges a predefined set of lists into a list and finds the mode of the elements in the list.\n\n    Parameters:\n    - list_of_lists (list): The list to be processed.\n\n    Returns:\n    - tuple: The mode and count of the mode in the merged list.\n        - mode_value (np.array): The value that appears most frequently in the merged array.\n        - mode_count (int): The frequency count of the mode_value within the merged array.\n\n    Requirements:\n    - numpy\n    - scipy\n    \n    Example:\n    >>> task_func([[1, 1, 3], [4, 5, 6], [7, 8, 9]])\n    (array([1]), array([2]))\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -523,7 +491,6 @@
       "libs": "['struct', 'random']",
       "params": "None",
       "return_text": "rounded_float (float): The rounded float number.",
-      "complete_prompt": "import struct\nimport random\n\n# Constants\nKEYS = ['470FC614', '4A0FC614', '4B9FC614', '4C8FC614', '4D7FC614']\n\ndef task_func(hex_key=None):\n    \"\"\"\n    Generate a random float number from a list of hexadecimal strings and then round the float number to 2 decimal places.\n\n    Parameters:\n    - None\n\n    Returns:\n    - rounded_float (float): The rounded float number.\n\n    Requirements:\n    - struct\n    - random\n\n    Example:\n    >>> random.seed(42)\n    >>> print(repr(f\"{task_func():.1f}\"))\n    '36806.1'\n\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -539,7 +506,6 @@
       "libs": "['collections', 'random']",
       "params": "values (list): List of values to be sampled from. weights (list): List of weights corresponding to the values. n_samples (int): Number of samples to be drawn.",
       "return_text": "histogram (dict): A histogram as a dictionary with the values as keys and counts as values.",
-      "complete_prompt": "import random\nfrom collections import Counter\n\ndef task_func(values, weights, n_samples):\n    \"\"\"\n    Sample random numbers based on a given weighted distribution and return a histogram of the samples.\n\n    Parameters:\n    - values (list): List of values to be sampled from.\n    - weights (list): List of weights corresponding to the values.\n    - n_samples (int): Number of samples to be drawn.\n\n    Returns:\n    - histogram (dict): A histogram as a dictionary with the values as keys and counts as values.\n\n    Requirements:\n    - collections.Counter\n    - random\n\n    Example:\n    >>> random.seed(42)\n    >>> task_func([1, 2, 3], [3, 2, 1], 1000)\n    {2: 342, 1: 480, 3: 178}\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -555,7 +521,6 @@
       "libs": "['pandas', 'random']",
       "params": "dict (dictionary): The dictionary to search. item (str): The item to find. seed(int): seed for random number generation.",
       "return_text": "list: A list of tuples. Each tuple contains the row-index and column-name where the item is found. int: The number of occurences with the added random number. DataFrame: The converted dictionary.",
-      "complete_prompt": "import pandas as pd\nimport random\n\n\ndef task_func(dictionary, item, seed):\n    \"\"\"\n    Converts a dictionary to a pandas DataFrame and find the locations of a particular item in the resulting DataFrame.\n    Counts the number of occurences and adds a random integer x, where 0 <=x < 10, to it.\n\n    Parameters:\n    dict (dictionary): The dictionary to search.\n    item (str): The item to find.\n    seed(int): seed for random number generation.\n\n    Returns:\n    list: A list of tuples. Each tuple contains the row-index and column-name where the item is found.\n    int: The number of occurences with the added random number.\n    DataFrame: The converted dictionary.\n\n    Requirements:\n    - pandas\n    - random\n\n    Example:\n    >>> dict = {'A': ['apple', 'banana'], 'B': ['orange', 'apple']}\n    >>> task_func(dict, 'apple', seed=12)\n    ([(0, 'A'), (1, 'B')], 9,         A       B\n    0   apple  orange\n    1  banana   apple)\n    \n    >>> dict = {'A': ['a', 'b', 'e'], 'B': ['c', 'd', 'd'], '2': ['asdf', 'ddd', 'aaaa'], '12': ['e', 'e', 'd']}\n    >>> task_func(dict, 'e', seed=2)\n    ([(2, 'A'), (0, '12'), (1, '12')], 3,    A  B     2 12\n    0  a  c  asdf  e\n    1  b  d   ddd  e\n    2  e  d  aaaa  d)\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -571,7 +536,6 @@
       "libs": "['string', 're']",
       "params": "text (str): The input string.",
       "return_text": "tuple: A tuple containing the number of words and punctuation marks.",
-      "complete_prompt": "import re\nimport string\n\n# Constants\nPUNCTUATION = string.punctuation\n\ndef task_func(text):\n    \"\"\"\n    Count the number of words and punctuation marks in a string.\n\n    Parameters:\n    - text (str): The input string.\n\n    Returns:\n    - tuple: A tuple containing the number of words and punctuation marks.\n\n    Requirements:\n    - re\n    - string\n\n    Example:\n    >>> task_func(\"Hello, world! This is a test.\")\n    (6, 3)\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -587,7 +551,6 @@
       "libs": "['random', 're']",
       "params": "n_sentences (int): The number of sentences to generate.",
       "return_text": "str: A string containing the generated sentences in lowercase with non-alphanumeric characters removed (except for single periods ending sentences).",
-      "complete_prompt": "import random\nimport re\n\n# Constants\nWORD_LIST = [\"sample\", \"text\", \"contains\", \"several\", \"words\", \"including\"]\n\ndef task_func(n_sentences):\n    \"\"\"\n    Generate a string of random sentences using a predefined word list. \n    Each sentence is guaranteed to have one period at the end, and no period within the sentence.\n    The generated sentences will be concatenated into a single string, \n    with all letters in lowercase and all non-alphanumeric characters except spaces removed.\n\n    Parameters:\n    - n_sentences (int): The number of sentences to generate.\n\n    Returns:\n    - str: A string containing the generated sentences in lowercase \n         with non-alphanumeric characters removed (except for single periods ending sentences).\n    \n    Requirements:\n    - random\n    - re\n    \n    Example:\n    >>> random.seed(42)\n    >>> result = task_func(2)\n    >>> print(result)\n    sample sample including contains text text text including sample including. words sample words several sample sample sample text text words.\n    \n    Note: \n    - The actual output will vary due to the randomness of sentence generation.\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -603,7 +566,6 @@
       "libs": "['nltk', 'collections', 're']",
       "params": "input_string (str): The multi-line string.",
       "return_text": "dict: A dictionary with word frequencies where each key is a unique word and the value is its frequency.",
-      "complete_prompt": "import re\nfrom nltk.corpus import stopwords\nfrom collections import Counter\n\nSTOPWORDS = set(stopwords.words('english'))\n\ndef task_func(input_string):\n    \"\"\"\n    Divide a multi-line string into individual lines, remove stopwords, and count the frequency of each word.\n\n    Parameters:\n    - input_string (str): The multi-line string.\n\n    Returns:\n    - dict: A dictionary with word frequencies where each key is a unique word and the value is its frequency.\n\n    Requirements:\n    - re\n    - nltk.corpus\n    - collections\n\n    Example:\n    >>> task_func('line a\\\\nfollows by line b\\\\n...bye\\\\n')\n    {'line': 2, 'follows': 1, 'b': 1, 'bye': 1}\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -619,7 +581,6 @@
       "libs": "['collections', 'random', 'string']",
       "params": "n (int): The number of random letters to generate. seed (int, optional): A seed for the random number generator for consistent results. Defaults to None.",
       "return_text": "Counter: A collections.Counter object with the count of each letter.",
-      "complete_prompt": "import string\nimport random\nfrom collections import Counter\n\n\ndef task_func(n, seed=None):\n    \"\"\"\n    Generate a number of random lowercase letters and count their occurrences.\n\n    This function takes an integer input to determine how many random letters \n    to generate and an optional seed for consistent randomness. It then creates \n    a list of these letters, chosen from the English lowercase alphabet, and \n    counts each letter's occurrences. The result is returned as a Counter \n    object (from the collections module) which behaves like a dictionary where \n    the keys are the letters, and the values are their counts.\n\n    Parameters:\n    n (int): The number of random letters to generate.\n    seed (int, optional): A seed for the random number generator for consistent\n                         results. Defaults to None.\n\n    Returns:\n    Counter: A collections.Counter object with the count of each letter.\n\n    Requirements:\n    - collections\n    - string\n    - random\n\n    Example:\n    >>> letter_counts = task_func(1000, seed=123)\n    >>> print(letter_counts)\n    Counter({'v': 48, 'b': 47, 'n': 46, 'r': 46, 'k': 46, 'z': 46, 'c': 44, 'e': 43, 'q': 43, 'l': 43, 'y': 42, 'm': 42, 'a': 42, 'u': 42, 'd': 36, 'o': 34, 'j': 34, 'g': 34, 'f': 33, 'h': 33, 'p': 32, 'w': 30, 'x': 30, 'i': 29, 't': 28, 's': 27})\n    >>> task_func(10, seed=12)\n    Counter({'v': 2, 'l': 2, 'p': 1, 'i': 1, 'q': 1, 'e': 1, 'm': 1, 'a': 1})\n\n    Note: \n    The function internally uses a list to store the randomly generated \n    letters before counting them. The randomness of letter selection can be \n    consistent by providing a seed.\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -635,7 +596,6 @@
       "libs": "['datetime', 're']",
       "params": "logs (list): A list of log strings.",
       "return_text": "list: A list of times when errors occurred. time: The average time of occurrence of these errors.",
-      "complete_prompt": "import re\nfrom datetime import time\n\ndef task_func(logs: list):\n    \"\"\"\n    Analyze the given list of logs for the occurrence of errors and calculate the average time of occurrence of errors.\n    \n    Parameters:\n    - logs (list): A list of log strings.\n    \n    Returns:\n    - list: A list of times when errors occurred.\n    - time: The average time of occurrence of these errors.\n    \n    Requirements:\n    - re\n    - datetime\n    \n    Example:\n    >>> task_func(['2021-06-15 09:45:00 ERROR: Failed to connect to database',\\\n            '2021-06-15 10:15:00 WARNING: Low disk space',\\\n            '2021-06-15 10:35:00 INFO: Backup completed successfully'])\n    ([datetime.time(9, 45)], datetime.time(9, 45))\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -651,7 +611,6 @@
       "libs": "['pandas', 'random', 're']",
       "params": "person_names (list of str): A list of person names to use in the records. email_domains (list of str): A list of email domains to use in the records. num_records (int, optional): The number of records to generate. Default is 5.",
       "return_text": "DataFrame: A pandas DataFrame with columns 'Name' and 'Email' containing the person names and cleaned emails.",
-      "complete_prompt": "import pandas as pd\nimport random\nimport re\n\ndef task_func(person_names, email_domains, num_records=5):\n    \"\"\"\n    Generate a DataFrame with a specified number of records containing personal names and emails. \n    The emails are cleaned by replacing all occurrences of \"@\" with \"[at]\".\n    \n    Parameters:\n    - person_names (list of str): A list of person names to use in the records.\n    - email_domains (list of str): A list of email domains to use in the records.\n    - num_records (int, optional): The number of records to generate. Default is 5.\n    \n    Returns:\n    - DataFrame: A pandas DataFrame with columns 'Name' and 'Email' containing the person names and cleaned emails.\n    \n    Requirements:\n    - pandas for DataFrame manipulation\n    - random for random selection\n    - re for regular expression operations\n    \n    Raises:\n    - ValueError: If the number of names provided is less than the number of records requested or if no email domains are provided.\n    \n    Example:\n    >>> random.seed(0)  # Initialize random seed\n    >>> task_func(['John Doe', 'Jane Smith'], ['gmail.com', 'yahoo.com'], 2)\n             Name              Email\n    0  Jane Smith  jane[at]gmail.com\n    1    John Doe  john[at]yahoo.com\n    >>> task_func(['Alice'], ['outlook.com'], 1)\n        Name                 Email\n    0  Alice  alice[at]outlook.com\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -667,7 +626,6 @@
       "libs": "['collections', 're']",
       "params": "word (str): The input string containing the word to analyze. The word should have a length of at least 2 to form pairs.",
       "return_text": "list: A list containing a single tuple. The tuple consists of the most frequent two-letter combination (str) and its frequency (int). Returns an empty list if the word has fewer than 2 letters, or after cleaning, the word has fewer than 2 alphabetic characters.",
-      "complete_prompt": "from collections import Counter\nimport re\n\ndef task_func(word: str) -> list:\n    \"\"\"\n    Finds the most common two-letter combination in a given, cleaned word (lowercased and alphabetic characters only) \n    and returns its frequency. The search is case-insensitive and ignores non-alphabetic characters.\n    \n    Requirements:\n    - collections.Counter\n    - re\n    \n    Parameters:\n    - word (str): The input string containing the word to analyze. The word should have a length of at least 2 to form pairs.\n    \n    Returns:\n    - list: A list containing a single tuple. The tuple consists of the most frequent two-letter combination (str) \n      and its frequency (int). Returns an empty list if the word has fewer than 2 letters, or after cleaning, \n      the word has fewer than 2 alphabetic characters.\n    \n    Examples:\n    >>> task_func(\"aaBBcc\")\n    [('aa', 1)]\n    >>> task_func(\"abc!abc\")\n    [('ab', 2)]\n    >>> task_func(\"a\")\n    []\n    >>> task_func(\"abcd\")\n    [('ab', 1)]\n    >>> task_func(\"a1b2c3\")\n    [('ab', 1)]\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -683,7 +641,6 @@
       "libs": "['numpy', 'matplotlib', 'scipy']",
       "params": "kwargs (dict): A dictionary with two keys, 'group1' and 'group2'. Each key maps to a list of numbers. Lists can contain NaN values, which will be excluded from analysis.",
       "return_text": "dict: A dictionary containing: 'significant': Boolean. True if the means of the two groups are significantly different (p < 0.05). 'group1_stats': Dictionary with mean and standard deviation of 'group1' (excluding NaNs). 'group2_stats': Dictionary with mean and standard deviation of 'group2' (excluding NaNs). 'ax_boxplot': A matplotlib Axes object with a boxplot comparing 'group1' and 'group2'. 'ax_histogram': A matplotlib Axes object with histograms of 'group1' and 'group2'.",
-      "complete_prompt": "import numpy as np\nfrom scipy.stats import ttest_ind\nimport matplotlib.pyplot as plt\n\n\ndef task_func(kwargs):\n    \"\"\"\n    Performs a two-sample t-test on numerical data from two groups to determine if there is a significant\n    difference in their means. The function handles NaN values, computes descriptive statistics for each group,\n    and generates a boxplot and histograms for data visualization.\n\n    Parameters:\n    - kwargs (dict): A dictionary with two keys, 'group1' and 'group2'. Each key maps to a list of numbers.\n                     Lists can contain NaN values, which will be excluded from analysis.\n\n    Returns:\n    - dict: A dictionary containing:\n        - 'significant': Boolean. True if the means of the two groups are significantly different (p < 0.05).\n        - 'group1_stats': Dictionary with mean and standard deviation of 'group1' (excluding NaNs).\n        - 'group2_stats': Dictionary with mean and standard deviation of 'group2' (excluding NaNs).\n        - 'ax_boxplot': A matplotlib Axes object with a boxplot comparing 'group1' and 'group2'.\n        - 'ax_histogram': A matplotlib Axes object with histograms of 'group1' and 'group2'.\n\n    Raises:\n    - ValueError: If either group is empty, contains only NaN values, has less than two non-NaN values,\n                  or if the variance in one or both groups is below a threshold (1e-8).\n\n    Requirements:\n    - numpy\n    - scipy\n    - matplotlib\n\n    Note:\n    - The function sets the significance level (alpha) at 0.05.\n    - It removes NaN values before performing any calculations or plotting.\n    - A t-test is performed with the 'nan_policy' set to 'omit' to ignore NaNs.\n    - The function checks for sufficient non-NaN data points and adequate variance in each group before conducting the t-test.\n    - The boxplot and histograms provide a visual comparison of the data distributions.\n    \n    Example:\n    >>> data = {'group1': [1, 2, 3, 4], 'group2': [5, 6, 7, 8]}\n    >>> results = task_func(data)\n    >>> results['significant']\n    True\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -699,7 +656,6 @@
       "libs": "['matplotlib', 'itertools', 'seaborn']",
       "params": "num_pairs (int): The number of unique shape-color pairs to be displayed in the countplot. Default is 10. If the requested number is less than 1 or greater than the total possible unique combinations (100), it is adjusted to the valid range (1 to 100).",
       "return_text": "ax (matplotlib.axes._axes.Axes): The Axes object of the countplot, which can be used for further customizations or to retrieve information about the plot.",
-      "complete_prompt": "import itertools\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\n# Constants\nSHAPES = [\n    \"Circle\",\n    \"Square\",\n    \"Triangle\",\n    \"Rectangle\",\n    \"Pentagon\",\n    \"Hexagon\",\n    \"Heptagon\",\n    \"Octagon\",\n    \"Nonagon\",\n    \"Decagon\",\n]\nCOLORS = [\n    \"Red\",\n    \"Blue\",\n    \"Green\",\n    \"Yellow\",\n    \"Black\",\n    \"White\",\n    \"Purple\",\n    \"Orange\",\n    \"Pink\",\n    \"Brown\",\n]\n\n\ndef task_func(num_pairs=10):\n    \"\"\"\n    Generate and display a countplot of predefined shape-color pairs.\n\n    This function creates a visual representation of a specified number of unique shape-color combinations,\n    each displayed as a bar in the countplot. The shape-color pairs are selected from a predefined list.\n\n    Parameters:\n    - num_pairs (int): The number of unique shape-color pairs to be displayed in the countplot.\n                       Default is 10. If the requested number is less than 1 or greater than the total\n                       possible unique combinations (100), it is adjusted to the valid range (1 to 100).\n\n    Returns:\n    - ax (matplotlib.axes._axes.Axes): The Axes object of the countplot, which can be used for\n                                                  further customizations or to retrieve information about the plot.\n\n    Requirements:\n    - itertools\n    - seaborn\n    - matplotlib\n\n    Example:\n    >>> ax = task_func(10)\n    >>> [tick.get_text() for tick in ax.get_xticklabels()]\n    ['Circle:Red', 'Circle:Blue', 'Circle:Green', 'Circle:Yellow', 'Circle:Black', 'Circle:White', 'Circle:Purple', 'Circle:Orange', 'Circle:Pink', 'Circle:Brown']\n    >>> ax = task_func(9)\n    >>> [tick.get_text() for tick in ax.get_xticklabels()]\n    ['Circle:Red', 'Circle:Blue', 'Circle:Green', 'Circle:Yellow', 'Circle:Black', 'Circle:White', 'Circle:Purple', 'Circle:Orange', 'Circle:Pink', 'Circle:Brown']\n    >>> ax = task_func(8)\n    >>> [tick.get_text() for tick in ax.get_xticklabels()]\n    ['Circle:Red', 'Circle:Blue', 'Circle:Green', 'Circle:Yellow', 'Circle:Black', 'Circle:White', 'Circle:Purple', 'Circle:Orange', 'Circle:Pink', 'Circle:Brown']\n    >>> ax = task_func(7)\n    >>> [tick.get_text() for tick in ax.get_xticklabels()]\n    ['Circle:Red', 'Circle:Blue', 'Circle:Green', 'Circle:Yellow', 'Circle:Black', 'Circle:White', 'Circle:Purple', 'Circle:Orange', 'Circle:Pink', 'Circle:Brown']\n    >>> ax = task_func(6)\n    >>> [tick.get_text() for tick in ax.get_xticklabels()]\n    ['Circle:Red', 'Circle:Blue', 'Circle:Green', 'Circle:Yellow', 'Circle:Black', 'Circle:White', 'Circle:Purple', 'Circle:Orange', 'Circle:Pink', 'Circle:Brown']\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -715,7 +671,6 @@
       "libs": "['numpy', 'matplotlib', 'scipy']",
       "params": "arr: A 2D numpy array. The array should contain numerical data.",
       "return_text": "A tuple containing: A matplotlib Axes object with the histogram of the normalized data and the overlaid standard normal PDF. The normalized data as a 1D numpy array.",
-      "complete_prompt": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.stats import norm\n\n\ndef task_func(arr: np.ndarray) -> (plt.Axes, np.ndarray):\n    \"\"\"\n    Plots a histogram of normalized data from an input 2D numpy array alongside the probability density function (PDF)\n    of a standard normal distribution.\n\n    Note:\n    - Takes in a 2D numpy array as input.\n    - Calculates the sum of elements in each row of the array.\n    - Normalizes these row sums to have a mean of 0 and a standard deviation of 1.\n      - Normalization is achieved by first calculating the mean and standard deviation of the row sums.\n      - Each row sum is then transformed by subtracting the mean and dividing by the standard deviation.\n      - If the standard deviation is 0 (indicating all row sums are equal), normalization results in an array of zeros with the same shape.\n    - Plots a histogram of the normalized data.\n      - Uses 30 bins for the histogram.\n      - The histogram is density-based, meaning it represents the probability density rather than raw frequencies.\n      - The bars of the histogram are semi-transparent (60% opacity) and green in color.\n    - Overlays the PDF of a standard normal distribution on the histogram for comparison.\n      - The PDF curve is plotted in red with a line width of 2.\n      - The range of the PDF curve is set to cover 99% of a standard normal distribution.\n    - Sets the title of the plot to \"Histogram of Normalized Data with Standard Normal PDF\".\n\n    Parameters:\n    - arr: A 2D numpy array. The array should contain numerical data.\n\n    Returns:\n    - A tuple containing:\n      - A matplotlib Axes object with the histogram of the normalized data and the overlaid standard normal PDF.\n      - The normalized data as a 1D numpy array.\n\n    Requirements:\n    - numpy\n    - scipy\n    - matplotlib\n\n    Example:\n    >>> ax, normalized_data = task_func(np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]))\n    >>> type(ax)\n    <class 'matplotlib.axes._axes.Axes'>\n    >>> print(normalized_data)\n    [-1.22474487  0.          1.22474487]\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -731,7 +686,6 @@
       "libs": "['glob', 'ast', 'os']",
       "params": "directory (str): The path to the directory containing the text files.",
       "return_text": "list: A list of dictionaries extracted from the text files.",
-      "complete_prompt": "import ast\nimport os\nimport glob\n\n# Constants\nDIRECTORY = 'data'\n\ndef task_func(directory):\n    \"\"\"\n    Convert all Unicode string representations of dictionaries in all text files \n    in the specified directory to Python dictionaries.\n\n    Parameters:\n    directory (str): The path to the directory containing the text files.\n\n    Returns:\n    list: A list of dictionaries extracted from the text files.\n\n    Requirements:\n    - ast\n    - os\n    - glob\n\n    Example:\n    >>> task_func(\"sample_directory/\")\n    [{'key1': 'value1'}, {'key2': 'value2'}]\n\n    Note:\n    Ensure that the text files in the directory contain valid Unicode string representations of dictionaries.\n\n    Raises:\n    - The function would raise a ValueError if there are text file(s) that have invalid dictionary representation\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -747,7 +701,6 @@
       "libs": "['nltk', 'collections']",
       "params": "text (str): The input text to analyze.",
       "return_text": "list of tuples: Each tuple contains a dollar-prefixed word (excluding the \"$\" symbol) and its frequency, ordered by most to least common.",
-      "complete_prompt": "from nltk.tokenize import RegexpTokenizer\nfrom collections import Counter\n\n\ndef task_func(text):\n    \"\"\"\n    Identifies and counts words in a given text that start with the \"$\" symbol. It returns the five most frequent\n    dollar-prefixed words along with their counts. Words solely consisting of \"$\" symbols without any following\n    alphanumeric characters are ignored in the frequency count.\n\n    Parameters:\n    - text (str): The input text to analyze.\n\n    Returns:\n    - list of tuples: Each tuple contains a dollar-prefixed word (excluding the \"$\" symbol) and its frequency,\n                      ordered by most to least common.\n\n    Requirements:\n    - nltk.tokenize.RegexpTokenizer\n    - collections.Counter\n\n    Example:\n    >>> text = \"$abc def $efg $hij klm $ $abc $abc $hij $hij\"\n    >>> task_func(text)\n    [('abc', 3), ('hij', 3), ('efg', 1)]\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -763,7 +716,6 @@
       "libs": "['collections', 're']",
       "params": "text (str): The text to analyze. top_n (int): The number of top words to return.",
       "return_text": "list: A list of tuples where each tuple contains a word and its frequency.",
-      "complete_prompt": "import re\nfrom collections import Counter\n\n\ndef task_func(text, top_n):\n    \"\"\"\n    Count the N most common words in a text after removing URLs.\n\n    Parameters:\n    text (str): The text to analyze.\n    top_n (int): The number of top words to return.\n\n    Returns:\n    list: A list of tuples where each tuple contains a word and its frequency.\n\n    Requirements:\n    - re\n    - collections.Counter\n\n    Example:\n    >>> task_func('Visit https://www.python.org for more info. Python is great. I love Python.', 2)\n    [('Python', 2), ('Visit', 1)]\n\n    Note:\n    - Valid url is start with http or https\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -779,7 +731,6 @@
       "libs": "['codecs', 'hashlib', 'random', 'string']",
       "params": "password_length (int, optional): Length of the generated password. Defaults to 10. salt (str, optional): Salt to be added to the password before hashing. Defaults to \"salty\".",
       "return_text": "str: The hashed password.",
-      "complete_prompt": "import codecs\nimport random\nimport string\nimport hashlib\n\ndef task_func(password_length=10, salt=\"salty\"):\n    \"\"\"\n    Generate a random password of a specified length, including Latin characters, numbers, and symbols. \n    Then, hash the password using the SHA256 algorithm after mixing it with a specified salt.\n    \n    Parameters:\n    - password_length (int, optional): Length of the generated password. Defaults to 10.\n    - salt (str, optional): Salt to be added to the password before hashing. Defaults to \"salty\".\n    \n    Returns:\n    str: The hashed password.\n    \n    Requirements:\n    - codecs\n    - random\n    - string\n    - hashlib\n    \n    Example:\n    >>> random.seed(0)\n    >>> hashed_password = task_func(12, \"my_salt\")\n    >>> print(hashed_password)\n    a706478dc5969e90dcfc2fbaffff0b9f8e7f2b006002edac13cb17f5bf9ba941\n    \"\"\"\n",
       "split": "easy"
     }
   },
@@ -795,7 +746,6 @@
       "libs": "['urllib', 're', 'requests', 'json']",
       "params": "myString (str): The string from which URLs are to be extracted. API_KEY (str): The API key for accessing the IP API service which provides geolocation data.",
       "return_text": "dict: A dictionary mapping domains to their geolocation data as returned by the IP API. Each entry contains fields like 'status', 'country', 'region', 'city', etc. If an API request fails, the corresponding value will be None.",
-      "complete_prompt": "import re\nimport urllib.parse\nimport requests\nimport json\n\ndef task_func(myString, API_KEY):\n    \"\"\"\n    Extracts all URLs from the provided string, analyzes each URL to extract the domain, and uses the IP API to get the geolocation data for each domain.\n    \n    Parameters:\n    myString (str): The string from which URLs are to be extracted.\n    API_KEY (str): The API key for accessing the IP API service which provides geolocation data.\n    \n    Returns:\n    dict: A dictionary mapping domains to their geolocation data as returned by the IP API. Each entry contains fields like 'status', 'country', 'region', 'city', etc. If an API request fails, the corresponding value will be None.\n    \n    Requirements:\n    - re\n    - urllib.parse\n    - requests\n    - json\n    \n    Example:\n    >>> task_func(\"Check these links: http://www.google.com, https://www.python.org\")\n    {'www.google.com': {'status': 'success', 'country': 'United States', 'countryCode': 'US', 'region': 'CA', 'regionName': 'California', 'city': 'Mountain View', 'zip': '94043', 'lat': '37.4192', 'lon': '-122.0574', 'timezone': 'America/Los_Angeles', 'isp': 'Google LLC', 'org': 'Google LLC', 'as': 'AS15169 Google LLC', 'query': '172.217.12.142'}, 'www.python.org': {'status': 'success', 'country': 'United States', 'countryCode': 'US', 'region': 'OR', 'regionName': 'Oregon', 'city': 'Boardman', 'zip': '97818', 'lat': '45.8696', 'lon': '-119.688', 'timezone': 'America/Los_Angeles', 'isp': 'Amazon.com, Inc.', 'org': 'Amazon Data Services NoVa', 'as': 'AS16509 Amazon.com, Inc.', 'query': '151.101.193.223'}}\n    \"\"\"\n",
       "split": "easy"
     }
   }

@@ -1,0 +1,12 @@
+{
+  "url": "http://localhost:11434/api/chat",
+  "timeout": 600,
+  "json": {
+    "model": "",
+    "messages": [],
+    "stream": false,
+    "think": false,
+    "options": {}
+  }
+}
+

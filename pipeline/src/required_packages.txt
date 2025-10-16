@@ -1,0 +1,6 @@
+datasets huggingface_hub
+ollama
+tree_sitter
+tree-sitter-python==0.21
+codebleu
+sentence_transformers

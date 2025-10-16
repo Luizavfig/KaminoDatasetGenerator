@@ -1,8 +1,0 @@
-model,context,nfrs,strategy,total_clones,entries_covered,avg_codebleu,efficiency_score
-deepseek-r1:14b,ast,unknown,zero-shot,1,1,,
-deepseek-r1:14b,code,unknown,cot,1,1,,
-deepseek-r1:14b,code,unknown,zero-shot,3,3,,
-deepseek-r1:14b,complete,unknown,cot,2,2,,
-deepseek-r1:14b,complete,unknown,zero-shot,3,3,,
-deepseek-r1:14b,test,unknown,cot,2,1,,
-deepseek-r1:14b,test,unknown,zero-shot,6,5,,
