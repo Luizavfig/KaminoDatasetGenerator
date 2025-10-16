@@ -59,11 +59,13 @@ def run_clustering():
                 "model": base.get("model"),
                 "strategy": base.get("strategy"),
                 "context": base.get("context"),
-                "refacs": base.get("refacs", []),
+                "refacs": base.get("refacs"),
+                "reprompt": base.get("reprompt"),
                 "cluster": cluster_label,
                 "code": code,
-                "metrics": base.get("metrics", {})
-            })
+                "metrics": {"codebleu": {"originalcode": base.get("metrics", {}).get("codebleu", {}).get("originalcode", 1.0)
+        }
+    }})
 
         # Merge with complete dataset entry
         original_entry = complete_lookup.get(entry["id"], {}) 

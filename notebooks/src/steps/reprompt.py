@@ -223,6 +223,7 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
     ]
   
     try:
+        print("using model ", reprompt_model)
         repaired_code = _generate_clones(
             messages,
             model=reprompt_model,
@@ -259,43 +260,48 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
 
 def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_path):
     original_model = clone.get("model")
-    candidate_models = [m for m in models if m != original_model][:MAX_RETRIES]
     used_models = []
     final_failing_tests = []
     final_codebleu = 1.0
 
-    for n, reprompt_model in enumerate(candidate_models, start=1): 
-        print(f"⚙️  Reprompting (attempt {n}, model={reprompt_model})")
+    # Loop until a valid clone is found or all models are exhausted
+    while True:
+        # Select a model not yet used
+        available_models = [m for m in models if m != original_model and m not in used_models]
+        if not available_models:
+            break  # no models left to try
+        model = random.choice(available_models)
+        used_models.append(model)
 
-        clone, failing_tests, codebleu = _reprompt_clone(
-            clone=clone,
-            entry=entry,
-            tests_list=tests_list,
-            models=models,
-            used_models=used_models,
-            original_model=original_model,
-            LLM_OPTS=LLM_OPTS,
-            n=n,
-        )
+        # Retry with this model up to MAX_RETRIES
+        for n in range(1, MAX_RETRIES + 1):
+            clone, failing_tests, codebleu = _reprompt_clone(
+                clone=clone,
+                entry=entry,
+                tests_list=tests_list,
+                models=models,
+                used_models=[],  # don't track used inside _reprompt_clone here
+                original_model=original_model,
+                LLM_OPTS=LLM_OPTS,
+                n=n,
+            )
 
-        final_codebleu = codebleu
-        final_failing_tests = failing_tests
+            final_codebleu = codebleu
+            final_failing_tests = failing_tests
 
-        # ✅ success
-        if not failing_tests and codebleu <= CODEBLEU_THRESHOLD:
-            _update_results(entry_id, clone, out_path)
-            return
+            # Success: save and return
+            if not failing_tests and codebleu <= CODEBLEU_THRESHOLD:
+                _update_results(entry_id, clone, out_path)
+                return
 
-        # ⚠️ passes but too similar
-        if not failing_tests and codebleu > CODEBLEU_THRESHOLD:
-            print(f"⚠️ Clone passes tests but too similar (CodeBLEU={codebleu:.4f}). Trying another model...")
-            continue
+            # passes tests but too similar
+            if not failing_tests and codebleu > CODEBLEU_THRESHOLD:
+                print(f"⚠️ Clone passes tests but too similar (CodeBLEU={codebleu:.4f}) retry {n}/{MAX_RETRIES}")
 
-        # ❌ failing tests
-        if failing_tests:
-            print(f"⚠️ Clone still failing {len(failing_tests)} tests (model={reprompt_model})")
-
-    # All models exhausted → log discarded clone
+            # failing tests
+            if failing_tests:
+                print(f"⚠️ Clone still failing {len(failing_tests)} tests (retry {n}/{MAX_RETRIES})")
+    # All retries and models exhausted → log
     print(f"❌ Clone discarded — tests={'fail' if final_failing_tests else 'pass'} CodeBLEU={final_codebleu:.4f}")
     _log_skipped_clone(entry_id, clone, FAILED_REPROMPT_PATH)
 

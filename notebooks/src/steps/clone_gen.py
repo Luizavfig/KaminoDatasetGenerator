@@ -23,7 +23,7 @@ def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGI
     for model in all_models:
         for strategy in strategies:
             for context in contexts:
-                for refac_tuple in enumerate(subset_combinations, 1):
+                for _, refac_tuple in enumerate(subset_combinations, 1):  # _ ignores the index
                     selected_refacs = list(refac_tuple)
                     print(f"\n=== Generating with {model}, strategy={strategy}, context={context} and {selected_refacs}")
                     _run_clone_generation(
@@ -37,6 +37,7 @@ def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGI
                         refacs=selected_refacs,
                         strategy=strategy,
                     )
+
 
 def call_ollama_chat(messages, model, options):
     """
