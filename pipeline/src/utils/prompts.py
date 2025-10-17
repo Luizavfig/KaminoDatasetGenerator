@@ -253,39 +253,6 @@ Currently, these tests fail for this solution:
 """
 
 
-def build_user_prompt_codebleu( 
- original_code: str,
- clone_code: str, 
- codebleu: str, 
-  refacs: list[str]
-) -> str:
- """
-
- """
- return f"""
-
-You will be shown:
-1) The main solution for a task.
-2) An alternative solution with the same behavior.
-
-- This is the main solution:
-```
-{textwrap.dedent(original_code).strip()}
-```
-- This is the alternative solution:
-```
-{textwrap.dedent(clone_code).strip()}
-```
-- The CodeBLEU score between these two solutions is {codebleu} (higher means more similar).
-- Your task is to modify the alternative solution to make as different as possible from the main solution without changing the behavior of the alternative solution.
-- To ensure syntactic and structural differences on your solution, you MUST:
-{get_combined_refacs(refacs)}
-
-- In addition, make sure that:
- {MANDATORY_HINTS} 
-"""
-
-
 def build_clone_variation_prompt(
  original_body: str, 
  description: str,

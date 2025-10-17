@@ -1,5 +1,5 @@
 import json, re
-from ..utils.helper_functions import clean_code, remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest
+from ..utils.helper_functions import (clean_code, remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest)
 from codebleu import calc_codebleu
 from itertools import combinations
 from src.config import *
@@ -37,7 +37,7 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH):
 
     data_by_id = {entry["id"]: entry for entry in data}
 
-    # --- Iterate entries ---
+    #  Iterate entries 
     for i, clone_entry in enumerate(clone_data, 1):
         entry_id = clone_entry["id"]
         print(f"\nEvaluating Entry {i}/{len(clone_data)} | id={entry_id}")
@@ -72,7 +72,7 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH):
             except Exception as e:
                 print(f"  ❌ Error computing CodeBLEU for clone {idx + 1}: {e}")
 
-    # --- Save results once at the end ---
+    #  Save results once at the end 
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(clone_data, f, indent=2)
 
@@ -221,50 +221,52 @@ def _install_missing_packages():
     print("✅ Finished checking/installing packages.")
  
 
-def run_test_filtering(): 
+def run_test_filtering():
     with open(FILTERED_PATH_CODEBLEU, "r", encoding="utf-8") as f:
         original_data = json.load(f)
 
-    with open(REPROMPT_PATH, "r", encoding="utf-8") as f:
-        reprompt_data = json.load(f)
+    # Try loading reprompt dataset (optional) 
+    reprompt_data = []
+    if os.path.exists(REPROMPT_PATH) and os.path.getsize(REPROMPT_PATH) > 0:
+        with open(REPROMPT_PATH, "r", encoding="utf-8") as f:
+            reprompt_data = json.load(f)
+    else:
+        print(f"Warning: REPROMPT_PATH missing or empty, using only original dataset")
+
 
     orig_dict = _to_dict_by_id(original_data)
     reprompt_dict = _to_dict_by_id(reprompt_data)
 
-    # --- Merge entries ---
-    merged_data = []
 
-    for entry_id in set(orig_dict.keys()) | set(reprompt_dict.keys()):
+    merged_data = []
+    all_entry_ids = set(orig_dict.keys()) | set(reprompt_dict.keys())
+
+    for entry_id in all_entry_ids:
         # Prefer the reprompt entry if available
         base_entry = (reprompt_dict.get(entry_id) or orig_dict.get(entry_id) or {}).copy()
 
-        # Collect all clones from both (if both exist)
+        # Collect all clones from both sources
         orig_clones = {c["clone_id"]: c for c in orig_dict.get(entry_id, {}).get("clones", [])}
-        reprompt_clones = {c["clone_id"]: c for c in reprompt_dict.get(entry_id, {}).get("clones", [])}
-
-        # Merge, preferring reprompt versions
+        reprompt_clones = {c["clone_id"]: c for c in reprompt_dict.get(entry_id, {}).get("clones", [])}        
         merged_clones = {**orig_clones, **reprompt_clones}
 
-        # Keep only passing clones
+        # Keep only clones that pass all tests
         passing_clones = [
             clone.copy()
             for clone in merged_clones.values()
             if clone.get("test_results") and all(r == "PASS" for r in clone["test_results"].values())
         ]
-
         if passing_clones:
             base_entry["clones"] = passing_clones
             merged_data.append(base_entry)
 
-    # --- Save filtered dataset ---
     with open(FILTERED_PATH_TESTS, "w", encoding="utf-8") as f:
         json.dump(merged_data, f, indent=2, ensure_ascii=False)
 
-    print(f"✅ Filtered dataset saved to {FILTERED_PATH_TESTS}, entries: {len(merged_data)}")
+    print(f"Filtered dataset saved to {FILTERED_PATH_TESTS}, entries: {len(merged_data)}")
 
 
-
-# --- Convert to dict keyed by entry ID (assuming each entry has a unique 'id') ---
+#  Convert to dict keyed by entry ID (assuming each entry has a unique 'id') 
 def _to_dict_by_id(data):
     return {entry["id"]: entry for entry in data}
 

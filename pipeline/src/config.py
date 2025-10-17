@@ -48,7 +48,7 @@ OLLAMA_CONFIG_FILE_LOCAL = os.path.join(os.path.abspath(os.path.join(os.path.dir
 MAX_RETRIES= 2
 DELAY=3
 MAX_WORKERS = 6  # for parallelism
-MIN_TEST_REPROMPT = 2  # minimum number of tests that must pass to consider reprompting
+MIN_TEST_REPROMPT = 0.25  # minimum % of tests that must pass to consider reprompting
 REPROMPT_PATH = f"../results/{DATASET_NAME}_reprompt.json"
 FAILED_REPROMPT_PATH = f"../results/{DATASET_NAME}_failed_reprompt.json"
 

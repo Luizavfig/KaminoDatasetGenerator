@@ -1,6 +1,5 @@
 import re, textwrap, requests, ast, astor, re, os, json, time, random
-from ..utils.helper_functions import (validate_with_unittest, remove_function_signature)
-from ..utils.prompts import (SYSTEM_PROMPT_MINIMAL, context_builders, build_clone_variation_prompt, build_user_prompt_retest,build_user_prompt_codebleu)
+from ..utils.prompts import context_builders
 from itertools import combinations
 from collections import Counter
 from src.config import *
@@ -94,8 +93,13 @@ def _extract_python_code(text: str) -> str:
     m = re.search(r"```\s*(.*?)```", text, flags=re.S)
     if m:
         return m.group(1).strip()
+    
+    # Case 3: open fenced block (explicitly python)
+    m = re.search(r"```python\s*(.*?)", text, flags=re.S)
+    if m:
+        return m.group(1).strip()
 
-    # Case 3: no fenced block → just return the whole thing
+    # Case 4: no fenced block → just return the whole thing
     return text.strip()
 
 
@@ -122,18 +126,15 @@ def _generate_clones(messages, model, options, expected_func_name):
     Call Ollama chat with the given messages, extract Python code, 
     and ensure the function has the expected name.
     """
-    for attempt in range(MAX_RETRIES):  # GPT models sometimes return nothing
-        raw = call_ollama_chat(messages, model, options)
+    
+    raw = call_ollama_chat(messages, model, options)
 
-        # Extract Python code
-        code = _extract_python_code(raw)
-        if code:
-            code = _force_function_name(code, expected_func_name)
-            return code  # only return if we actually got code
+    # Extract Python code
+    code = _extract_python_code(raw)
+    if code:
+        code = _force_function_name(code, expected_func_name)
+        return code  # only return if we actually got code
 
-        # Retry after delay if nothing extracted
-        if attempt < MAX_RETRIES - 1:
-            time.sleep(DELAY)
 
     # If all retries fail, return None explicitly
     return "None"

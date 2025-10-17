@@ -4,7 +4,7 @@ from tqdm import tqdm
 from codebleu import calc_codebleu 
 from ..utils.prompts import (SYSTEM_PROMPT_MINIMAL, build_user_prompt_retest)
 from ..utils.helper_functions import (validate_with_unittest, remove_function_signature)
-from .clone_gen import _generate_clones, _load_existing_results
+from .clone_gen import (_generate_clones, _load_existing_results)
 from src.config import *
 _codebleu_cache = {}
 _test_cache = {}
@@ -72,17 +72,16 @@ def run_reprompt():
 
             # Compute eligibility
             test_results = clone.get("test_results", {})
+            pass_rate = _calc_test_percent(test_results)
+
             failing_tests = [
                 t for t, r in test_results.items()
                 if isinstance(r, str) and r.upper() in ("FAIL", "ERROR")
             ]
             codebleu = clone.get("metrics", {}).get("codebleu", {}).get("originalcode", 1.0)
-            passed_tests = sum(
-                1 for r in test_results.values()
-                if isinstance(r, str) and r.upper() == "PASS"
-            )
 
-            if passed_tests >= MIN_TEST_REPROMPT and (failing_tests or codebleu > CODEBLEU_THRESHOLD):
+            # Reprompt if pass rate >= threshold and (at least one failing test or too similar)
+            if pass_rate >= MIN_TEST_REPROMPT and (failing_tests or codebleu > CODEBLEU_THRESHOLD):
                 candidates.append(("submit", entry_id, clone, entry, entry.get("test", [])))
             else:
                 candidates.append(("skip_not_eligible", entry_id, clone))
@@ -106,7 +105,7 @@ def run_reprompt():
             if tag == "skip_already_processed":
                 _, entry_id, clone = item
                 clone_id = clone.get("clone_id")
-                print(f"⏭️  Already processed: {entry_id}:{clone_id}")
+                print(f"Already processed: {entry_id}:{clone_id}")
                 pbar.update(1)
                 continue
 
@@ -114,7 +113,7 @@ def run_reprompt():
             if tag == "skip_not_eligible":
                 _, entry_id, clone = item
                 clone_id = clone.get("clone_id")
-                print(f"🚫 Not eligible for reprompt — logging {entry_id}:{clone_id}")
+                print(f"Not eligible for reprompt — logging {entry_id}:{clone_id}")
                 _log_skipped_clone(entry_id, clone, FAILED_REPROMPT_PATH)
                 pbar.update(1)
                 continue
@@ -135,7 +134,19 @@ def run_reprompt():
             f.result()
 
     pbar.close()
-    print("✅ Reprompting completed.")
+    print("Reprompting completed.")
+
+def _calc_test_percent(test_results: dict) -> float:
+    """Returns the fraction of passed tests (0.0-1.0)."""
+    if not test_results:
+        return 0.0
+    total_tests = len(test_results)
+    passed_tests = sum(
+        1 for r in test_results.values()
+        if isinstance(r, str) and r.upper() == "PASS"
+    )
+    return passed_tests / total_tests
+
 
 def _log_skipped_clone(entry_id, clone, out_path):
     """Append skipped clone info to a JSON file for checkpointing."""
@@ -170,7 +181,7 @@ def _log_skipped_clone(entry_id, clone, out_path):
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 
-    print(f"📝 Logged skipped clone {clone['clone_id']} of entry {entry_id}")
+    print(f"Logged skipped clone {clone['clone_id']} of entry {entry_id}")
 
 
 
@@ -251,7 +262,7 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
         return clone, failing_tests, codebleu
 
     except Exception as e:
-        print(f"❌ Error reprompting {clone_id}: {e}")
+        print(f"Error reprompting {clone_id}: {e}")
         clone["reprompt"] = f"test {n} (error, model={reprompt_model})"
         return clone, ["ERROR"], 1.0
 
@@ -296,13 +307,13 @@ def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_pat
 
             # passes tests but too similar
             if not failing_tests and codebleu > CODEBLEU_THRESHOLD:
-                print(f"⚠️ Clone passes tests but too similar (CodeBLEU={codebleu:.4f}) retry {n}/{MAX_RETRIES}")
+                print(f"!!Clone passes tests but too similar (CodeBLEU={codebleu:.4f}) retry {n}/{MAX_RETRIES}")
 
             # failing tests
             if failing_tests:
-                print(f"⚠️ Clone still failing {len(failing_tests)} tests (retry {n}/{MAX_RETRIES})")
+                print(f"!!Clone still failing {len(failing_tests)} tests (retry {n}/{MAX_RETRIES})")
     # All retries and models exhausted → log
-    print(f"❌ Clone discarded — tests={'fail' if final_failing_tests else 'pass'} CodeBLEU={final_codebleu:.4f}")
+    print(f"XX Clone discarded — tests={'fail' if final_failing_tests else 'pass'} CodeBLEU={final_codebleu:.4f}")
     _log_skipped_clone(entry_id, clone, FAILED_REPROMPT_PATH)
 
 def _update_results(entry_id, clone, out_path):
@@ -343,4 +354,4 @@ def _update_results(entry_id, clone, out_path):
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(saved_results, f, indent=2)
 
-    print(f"💾 Updated results saved for clone {clone['clone_id']} of entry {entry_id}")
+    print(f"SUCCESS!: Updated results saved for clone {clone['clone_id']} of entry {entry_id}")

@@ -1,5 +1,4 @@
 import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re
-import numpy as np 
 
 
 
@@ -240,3 +239,15 @@ def remove_function_signature(code: str) -> str:
         else:
             cleaned_lines.append(line)
     return "\n".join(cleaned_lines).strip()
+
+def startup():
+    banner = r"""
+╔══════════════════════════════════════════════════════════════════╗
+║                          K A M I N O                             ║
+║               Semantic Clone Generation Pipeline                 ║
+╚══════════════════════════════════════════════════════════════════╝
+"""
+    print(banner)
+    print("Starting Kamino pipeline...\n")
+    print("Check the README.md for setup and usage instructions.")
+    print("Make sure to run `pip install -r required_packages.txt` if you haven't already.")
