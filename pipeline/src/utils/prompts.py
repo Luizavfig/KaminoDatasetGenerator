@@ -187,7 +187,7 @@ Your task:
 """
 
 
-def build_user_prompt_ast(strategy: str, original_body: str, gen_ast: str, description: str, params: str, return_text: str,refacs: list[str])-> str:
+def build_user_prompt_ast(strategy: str, gen_ast: str, description: str, params: str, return_text: str,refacs: list[str])-> str:
  """
  Build a user prompt for the refactoring LLM with AST.
  Args:
@@ -217,7 +217,7 @@ Your task:
  """
 
 
-def build_user_prompt_retest( 
+def build_user_prompt_reprompt( 
  clone_code: str,
  params: str, 
  return_text: str, 
@@ -251,55 +251,6 @@ Currently, these tests fail for this solution:
 - In addition, make sure that:
  {MANDATORY_HINTS} 
 """
-
-
-def build_clone_variation_prompt(
- original_body: str, 
- description: str,
- example_clones: list,
- params: str, 
- return_text: str,  
-) -> str:
- """
- Build a prompt that shows a few existing clones and asks the LLM to generate a new one.
- Returns:
- A formatted string prompt for the LLM.
- """
-
- examples_text = ""
- for i, clone in enumerate(example_clones, 1):
-  examples_text += f"\n### Example {i}\n"
-  examples_text += "```\n" + clone.get("code", "").strip() + "\n```\n"
-
- return f"""
-You are tasked with generating **a new semantically equivalent clone** of the given function.
-
-You will be shown:
-1) A short description of the function.
-2) The original function BODY.
-3) Several existing clones as examples.
-
-- Your solution must correspond to this description: {description}.
-
-Original function BODY (indentation represents inside the function):
-{textwrap.dedent(original_body).strip()} 
-
----
-
-### Existing Example Clones
-{examples_text}
-
----
-
-### Your Task
-- Implement a new variation of the function named `{FUNCTION_NAME}` with arguments: {params}.
-- The solution must return something based on this text: {return_text}.
-- It must be semantically equivalent to the original and clones.
-- It must be syntactically and structurally different from the original and all clones.
-- In addition, make sure that:
- {MANDATORY_HINTS}
-"""
-
 
 STRATEGIES = {
  "zero-shot": """""",
@@ -406,7 +357,7 @@ DO NOT output your internal reasoning. Output ONLY the final code snippet (see i
 context_builders = { # add more builders to extend the supported contexts
  "ast": lambda **kwargs: (
   SYSTEM_PROMPT_MINIMAL,
-  build_user_prompt_ast(kwargs["strategy"], kwargs["original_body"], kwargs["gen_ast"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["refacs"])
+  build_user_prompt_ast(kwargs["strategy"], kwargs["gen_ast"], kwargs["description"], kwargs["params"], kwargs["return_text"], kwargs["refacs"])
  ),
  "code": lambda **kwargs: (
   SYSTEM_PROMPT_MINIMAL,

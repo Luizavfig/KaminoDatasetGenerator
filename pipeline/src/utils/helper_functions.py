@@ -1,5 +1,5 @@
 import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re
-
+from codebleu import calc_codebleu
 
 
 class TrackingTestResult(unittest.TextTestResult):
@@ -239,6 +239,27 @@ def remove_function_signature(code: str) -> str:
         else:
             cleaned_lines.append(line)
     return "\n".join(cleaned_lines).strip()
+
+
+
+def calc_syntactic_codebleu(code1: str, code2: str, lang: str = "python") -> float:
+    """
+    Compute a syntactic-only CodeBLEU score between two code snippets.
+    Ignores the semantic component (dataflow_match_score).
+    """
+    score = calc_codebleu([code1], [code2], lang=lang)
+
+    # Combine only syntactic components
+    syntactic_components = [
+        score["ngram_match_score"],
+        score["weighted_ngram_match_score"],
+        score["syntax_match_score"]
+    ]
+
+    # Average them equally
+    syntactic_score = sum(syntactic_components) / len(syntactic_components)
+    return float(syntactic_score)
+
 
 def startup():
     banner = r"""

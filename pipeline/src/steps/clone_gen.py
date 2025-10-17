@@ -1,17 +1,23 @@
-import re, textwrap, requests, ast, astor, re, os, json, time, random
+import re, textwrap, requests, ast, astor, re, os, json, sys, random
 from ..utils.prompts import context_builders
 from itertools import combinations
 from collections import Counter
 from src.config import *
 
 def test_LLM_connection():
-    messages = [
-    {"role": "user", "content": "Are you up and running, answer in one word."}
-    ] 
-    response = call_ollama_chat(messages, DeepSeek, LLM_OPTS)
-    print(f"Is the ollama connection up? {response}")
+    try:
+        messages = [
+        {"role": "user", "content": "Are you up and running, answer in one word."}
+        ] 
+        response = call_ollama_chat(messages, DeepSeek, LLM_OPTS)
+        print(f"Is the ollama connection up? {response}")
+        return
+    except Exception as e:
+        print("LLM connection test failed on Step 2:", e)
+        sys.exit(1) 
 def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGIES):
     print("Starting generation process...")
+    test_LLM_connection()
     used_combinations = _load_used_combinations(OUT_PATH)
     if(not _has_ast_field(dataset_path=SAMPLE_1_PATH)):
         _add_generated_fields(dataset_path=SAMPLE_1_PATH, n_entries=N_ENTRIES)
@@ -102,6 +108,8 @@ def _extract_python_code(text: str) -> str:
 
     # Case 4: no fenced block → just return the whole thing
     return text.strip()
+    
+
 
 
 
@@ -134,9 +142,8 @@ def _generate_clones(messages, model, options, expected_func_name):
     code = _extract_python_code(raw)
     if code:
         code = _force_function_name(code, expected_func_name)
+        code = re.sub(r"```python\s*$", "", code) # Gpt sometimes omits the closing ```
         return code  # only return if we actually got code
-
-
     # If all retries fail, return None explicitly
     return "None"
 

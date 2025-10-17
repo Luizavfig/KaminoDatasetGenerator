@@ -18,8 +18,7 @@ except ImportError:
 #  End of GUI suppression setup 
 
 import json, re
-from ..utils.helper_functions import (clean_code, remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest)
-from codebleu import calc_codebleu
+from ..utils.helper_functions import (clean_code, remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest,calc_syntactic_codebleu) 
 from itertools import combinations
 from src.config import *
 
@@ -85,9 +84,9 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH):
 
             try:
                 clone_body = remove_function_signature(clone["code"])
-                score = calc_codebleu([ref_body], [clone_body], lang="python")
-                clone["metrics"]["codebleu"]["originalcode"] = float(score["codebleu"])
-                print(f"Clone {idx + 1}: CodeBLEU={score['codebleu']:.4f}")
+                score = calc_syntactic_codebleu(ref_body, clone_body, lang="python")
+                clone["metrics"]["codebleu"]["originalcode"] = score
+                print(f"Clone {idx + 1}: CodeBLEU={score:.4f}")
             except Exception as e:
                 print(f"  ❌ Error computing CodeBLEU for clone {idx + 1}: {e}")
 
@@ -142,7 +141,7 @@ def run_codebleu_filtering():
             if not clone_id or clone_id in seen_clone_ids:
                 continue  # skip duplicates within this entry
 
-            if orig_score <= CODEBLEU_THRESHOLD:
+            if orig_score <= CODEBLEU_THRESHOLD and clone["code"].strip().lower() != "none":
                 new_valid_clones.append(clone)
                 seen_clone_ids.add(clone_id)
                 added_count += 1
@@ -320,8 +319,7 @@ def compute_codebleu_for_all():
                 continue
 
             try:
-                score = calc_codebleu([clone1["code"]], [clone2["code"]], lang="python")
-                val = float(score["codebleu"])
+                val = calc_syntactic_codebleu(clone1["code"], clone2["code"], lang="python") 
                 clone1["metrics"]["codebleu"][clone2_id] = val
                 clone2["metrics"]["codebleu"][clone1_id] = val
 
@@ -334,3 +332,5 @@ def compute_codebleu_for_all():
             json.dump(clone_data, f, indent=2)
 
     print(f"\n✅ Done. Final dataset with CodeBLEU scores (clone vs clone) saved to {FILTERED_PATH_TESTS}")
+
+

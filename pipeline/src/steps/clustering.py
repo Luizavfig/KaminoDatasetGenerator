@@ -96,7 +96,7 @@ def run_clustering():
 
     print(f"\n✅ New dataset with representatives saved to {FINAL_DATASET}, total entries: {len(merged_data)}")
 
-# Agglomerative clustering using scipy (much faster)
+# Agglomerative clustering using scipy
 def _agglomerative_cluster(affinity_matrix, similarity_threshold):
     n = affinity_matrix.shape[0]
     if n == 1:

@@ -1,17 +1,16 @@
 import os, json, random
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from tqdm import tqdm
-from codebleu import calc_codebleu 
-from ..utils.prompts import (SYSTEM_PROMPT_MINIMAL, build_user_prompt_retest)
-from ..utils.helper_functions import (validate_with_unittest, remove_function_signature)
-from .clone_gen import (_generate_clones, _load_existing_results)
+from tqdm import tqdm 
+from ..utils.prompts import (SYSTEM_PROMPT_MINIMAL, build_user_prompt_reprompt)
+from ..utils.helper_functions import (validate_with_unittest, remove_function_signature, calc_syntactic_codebleu)
+from .clone_gen import (_generate_clones, _load_existing_results, test_LLM_connection)
 from src.config import *
 _codebleu_cache = {}
 _test_cache = {}
 
 def run_reprompt():
     print("Starting repromt process...")
-    # Load original dataset
+    test_LLM_connection()
     with open(SAMPLE_1_PATH, "r", encoding="utf-8") as f:
         original_data = json.load(f)
     original_by_id = {e["id"]: e for e in original_data}
@@ -190,10 +189,9 @@ def _cached_codebleu(ref_body, clone_body):
     key = (ref_body, clone_body)
     if key in _codebleu_cache:
         return _codebleu_cache[key]
-    score = calc_codebleu([ref_body], [clone_body], lang="python")
-    value = float(score["codebleu"])
-    _codebleu_cache[key] = value
-    return value
+    score = calc_syntactic_codebleu(ref_body, clone_body, lang="python")
+    _codebleu_cache[key] = score
+    return score
 
 
 def _cached_testing(code, tests_list):
@@ -205,7 +203,7 @@ def _cached_testing(code, tests_list):
     return result
 
 
-def _reprompt_clone(clone, entry, tests_list, models, used_models, original_model, LLM_OPTS,n):
+def _reprompt_clone(clone, entry, tests_list, models, used_models, original_model, LLM_OPTS,n): 
     clone_id = clone.get("clone_id", "unknown")
     params = entry.get("metadata", {}).get("params", [])
     return_text = entry.get("metadata", {}).get("return_text", [])
@@ -219,7 +217,7 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
     used_models.append(reprompt_model)
 
     # Prompt setup
-    user_prompt = build_user_prompt_retest(
+    user_prompt = build_user_prompt_reprompt(
         clone_code=clone["code"],
         params=params,
         return_text=return_text,
@@ -275,7 +273,6 @@ def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_pat
     used_models = []
     final_failing_tests = []
     final_codebleu = 1.0
-
     # Loop until a valid clone is found or all models are exhausted
     while True:
         # Select a model not yet used
@@ -287,6 +284,7 @@ def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_pat
 
         # Retry with this model up to MAX_RETRIES
         for n in range(1, MAX_RETRIES + 1):
+            print(f"🔄 Reprompting clone of entry {entry["id"]}...")
             clone, failing_tests, codebleu = _reprompt_clone(
                 clone=clone,
                 entry=entry,

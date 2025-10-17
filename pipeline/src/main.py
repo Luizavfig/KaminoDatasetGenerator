@@ -7,15 +7,11 @@ def main():
     # Step 1: Normalization
     if (not os.path.exists(DATASET_PATH)): # Only runs if dataset files don't exist
         pp.pre_process_data()
-
+    else:
+        print("Dataset files already exist. Skipping Step 1.")
     # Step 2: Clone Generation
-    try:
-        cg.test_LLM_connection() # check connection to LLM
-        cg.run_generation()
-    except Exception as e:
-        print("LLM connection test failed on Step 2:", e)
-        return
-    
+    # cg.run_generation()
+        
     # Step 3: Filtering based on codebleu
     fl.run_codebleu_filtering()
 
@@ -23,13 +19,8 @@ def main():
     fl.run_tests()
     
     # Step 5: Reprompting for clones passing at least 25% of tests but not 100%
-    # try:
-    #     cg.test_LLM_connection() # check connection to LLM
-    #     rp.run_reprompt()
-    # except Exception as e:
-    #     print("LLM connection test failed on Step 5:", e)
-    #     return
-
+    # rp.run_reprompt()
+    
     # Step 6: Filering based on tests
     fl.run_test_filtering()
 
