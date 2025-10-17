@@ -1,3 +1,22 @@
+#  Prevent GUI windows from blocking tests 
+import os
+os.environ["MPLBACKEND"] = "Agg"          # Disable GUI for matplotlib
+os.environ["QT_QPA_PLATFORM"] = "offscreen"  # Disable GUI for Qt/OpenCV
+os.environ["DISPLAY"] = ""                 # Disable X11 GUI (Linux/macOS environments)
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+plt.show = lambda *a, **kw: None
+
+try:
+    import cv2 # type: ignore[import]
+    cv2.imshow = lambda *a, **kw: None
+    cv2.waitKey = lambda *a, **kw: None
+except ImportError:
+    pass
+#  End of GUI suppression setup 
+
 import json, re
 from ..utils.helper_functions import (clean_code, remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest)
 from codebleu import calc_codebleu
@@ -161,7 +180,7 @@ def run_tests(dataset_path=SAMPLE_1_PATH):
         print(f"\nTesting Entry {i}/{len(clone_data)} | id={entry_id}")
 
         if entry_id not in data_by_id:
-            print(f"  ⚠️ No matching entry found for {entry_id}, skipping.")
+            print(f"⚠️ No matching entry found for {entry_id}, skipping.")
             continue
 
         entry = data_by_id[entry_id]

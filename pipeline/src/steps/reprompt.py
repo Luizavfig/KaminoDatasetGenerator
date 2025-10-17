@@ -134,7 +134,7 @@ def run_reprompt():
             f.result()
 
     pbar.close()
-    print("Reprompting completed.")
+    print("✅✅ Reprompting completed.")
 
 def _calc_test_percent(test_results: dict) -> float:
     """Returns the fraction of passed tests (0.0-1.0)."""
@@ -234,7 +234,7 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
     ]
   
     try:
-        print("using model ", reprompt_model)
+        print("Using model ", reprompt_model)
         repaired_code = _generate_clones(
             messages,
             model=reprompt_model,
@@ -262,7 +262,7 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
         return clone, failing_tests, codebleu
 
     except Exception as e:
-        print(f"Error reprompting {clone_id}: {e}")
+        print(f"❌ Error reprompting {clone_id}: {e}")
         clone["reprompt"] = f"test {n} (error, model={reprompt_model})"
         return clone, ["ERROR"], 1.0
 
@@ -307,13 +307,13 @@ def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_pat
 
             # passes tests but too similar
             if not failing_tests and codebleu > CODEBLEU_THRESHOLD:
-                print(f"!!Clone passes tests but too similar (CodeBLEU={codebleu:.4f}) retry {n}/{MAX_RETRIES}")
+                print(f"⚠️ Clone passes tests but too similar (CodeBLEU={codebleu:.4f}) retry {n}/{MAX_RETRIES}")
 
             # failing tests
             if failing_tests:
-                print(f"!!Clone still failing {len(failing_tests)} tests (retry {n}/{MAX_RETRIES})")
+                print(f"❌ Clone still failing {len(failing_tests)} tests (retry {n}/{MAX_RETRIES})")
     # All retries and models exhausted → log
-    print(f"XX Clone discarded — tests={'fail' if final_failing_tests else 'pass'} CodeBLEU={final_codebleu:.4f}")
+    print(f"❌ Clone discarded — tests={'fail' if final_failing_tests else 'pass'} CodeBLEU={final_codebleu:.4f}")
     _log_skipped_clone(entry_id, clone, FAILED_REPROMPT_PATH)
 
 def _update_results(entry_id, clone, out_path):
@@ -354,4 +354,4 @@ def _update_results(entry_id, clone, out_path):
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(saved_results, f, indent=2)
 
-    print(f"SUCCESS!: Updated results saved for clone {clone['clone_id']} of entry {entry_id}")
+    print(f"✅ Updated results saved for clone {clone['clone_id']} of entry {entry_id}")
