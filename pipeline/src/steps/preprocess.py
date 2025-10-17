@@ -5,6 +5,7 @@ from ..utils.helper_functions import (validate_with_unittest, install_package)
 from src.config import *
 
 def pre_process_data():
+    print("Starting normalization process...")
     if(DATASET=="bigcode/bigcodebench"):
         normalized_data = _mark_hard_easy(DATASET,f"{DATASET}-hard")
     else:

@@ -104,6 +104,7 @@ def run_codebleu_filtering():
     keeping only those with CodeBLEU <= CODEBLEU_THRESHOLD and avoiding duplicates.
     The merged dataset is saved to FILTERED_PATH_CODEBLEU.
     """
+    print("Starting codebleu agains original code process...")
     _compute_codebleu_scores()
     if os.path.exists(FILTERED_PATH_CODEBLEU):
         with open(FILTERED_PATH_CODEBLEU, "r", encoding="utf-8") as f:
@@ -167,6 +168,7 @@ def run_codebleu_filtering():
 
 
 def run_tests(dataset_path=SAMPLE_1_PATH):
+    print("Starting testing process...")
     _install_missing_packages()
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)  # original dataset with tests
@@ -291,6 +293,7 @@ def _to_dict_by_id(data):
 
 
 def compute_codebleu_for_all(): 
+    print("Starting codebleu for all process...")
     with open(FILTERED_PATH_TESTS, "r", encoding="utf-8") as f:
         clone_data = json.load(f)
 

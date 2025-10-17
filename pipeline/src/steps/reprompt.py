@@ -10,6 +10,7 @@ _codebleu_cache = {}
 _test_cache = {}
 
 def run_reprompt():
+    print("Starting repromt process...")
     # Load original dataset
     with open(SAMPLE_1_PATH, "r", encoding="utf-8") as f:
         original_data = json.load(f)

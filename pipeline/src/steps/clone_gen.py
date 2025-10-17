@@ -11,6 +11,7 @@ def test_LLM_connection():
     response = call_ollama_chat(messages, DeepSeek, LLM_OPTS)
     print(f"Is the ollama connection up? {response}")
 def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGIES):
+    print("Starting generation process...")
     used_combinations = _load_used_combinations(OUT_PATH)
     if(not _has_ast_field(dataset_path=SAMPLE_1_PATH)):
         _add_generated_fields(dataset_path=SAMPLE_1_PATH, n_entries=N_ENTRIES)

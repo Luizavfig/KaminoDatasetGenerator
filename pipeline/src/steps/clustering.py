@@ -19,6 +19,7 @@ def run_clustering():
     and assigns gradient colors to each cluster for visualization.
     """
     # --- Load datasets ---
+    print("Starting clustering process...")
     with open(FILTERED_PATH_TESTS, "r", encoding="utf-8") as f:
         clone_data = json.load(f)
 
@@ -82,6 +83,7 @@ def run_clustering():
     std_clones = stdev(clone_counts) if len(clone_counts) > 1 else 0
 
     print("\n Clone Statistics:")
+    print(f"  - Total unique clones: {clone_counts}")
     print(f"  - Min clones per entry: {min_clones}")
     print(f"  - Max clones per entry: {max_clones}")
     print(f"  - Avg clones per entry: {avg_clones:.2f}")
