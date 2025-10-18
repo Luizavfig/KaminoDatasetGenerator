@@ -115,7 +115,7 @@ def _agglomerative_cluster(affinity_matrix, similarity_threshold):
     return labels
 
 # Cluster and plot clones
-def cluster_and_plot(entry, similarity_threshold): 
+def cluster_and_plot(entry, similarity_threshold=CODEBLEU_THRESHOLD): 
     affinity_matrix, clone_ids = _build_affinity_matrix(entry) 
     # Automatic clustering
     labels = _agglomerative_cluster(affinity_matrix, similarity_threshold)
