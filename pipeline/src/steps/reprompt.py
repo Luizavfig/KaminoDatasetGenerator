@@ -256,13 +256,13 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
         clone["code"] = repaired_code
         clone["test_results"] = test_results
         clone["metrics"]["codebleu"]["originalcode"] = codebleu
-        clone["reprompt"] = f"test {n} (model={reprompt_model})"
+        clone["reprompt"] = f"{n} {reprompt_model}"
 
         return clone, failing_tests, codebleu
 
     except Exception as e:
         print(f"❌ Error reprompting {clone_id}: {e}")
-        clone["reprompt"] = f"test {n} (error, model={reprompt_model})"
+        clone["reprompt"] = f"{n} error, {reprompt_model}"
         return clone, ["ERROR"], 1.0
 
 

@@ -1,22 +1,22 @@
 from src.config import *
-from src.steps import (preprocess as pp, clone_gen as cg, filtering as fl, reprompt as rp,clustering as cl)
+from src.steps import (normalization as nz, clone_gen as cg, filtering as fl, reprompt as rp,clustering as cl)
 from src.utils.helper_functions import startup
 def main():
     startup()
 
     # Step 1: Normalization
     if (not os.path.exists(DATASET_PATH)): # Only runs if dataset files don't exist
-        pp.pre_process_data()
+        nz.pre_process_data()
     else:
         print("Dataset files already exist. Skipping Step 1.")
     # Step 2: Clone Generation
-    # cg.run_generation()
+    cg.run_generation()
         
     # Step 3: Filtering based on codebleu
-    # fl.run_codebleu_filtering()
+    fl.run_codebleu_filtering()
 
     # Step 4: Run tests on filtered clones
-    # fl.run_tests()
+    fl.run_tests()
     
     # Step 5: Reprompting for clones passing at least 25% of tests but not 100%
     rp.run_reprompt()

@@ -3,15 +3,14 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 import numpy as np
 from matplotlib.patches import Patch
+from src.config import *
 
 # Define all possible color schemes
 MODEL_COLORS = {
-    "gpt-oss:20b": "red",
-    "gpt-oss:latest": "lightcoral",
-    "llama3.1:latest": "blue",
-    "llama4:latest": "lightskyblue",
-    "deepseek-r1": "gray",
-    "gemma3:latest": "green",
+    Gpt20b: "red",
+    LLama3: "blue",
+    DeepSeek: "gray",
+    Gemma3: "green",
     "original": "gold"
 }
 
@@ -19,7 +18,6 @@ CONTEXT_COLORS = {
     "complete": "red",  
     "ast": "gray",
     "test": "green",
-    "translation": "blue",
     "code": "cyan",
     "original": "gold"
 }

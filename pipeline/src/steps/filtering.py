@@ -2,7 +2,7 @@
 import os
 os.environ["MPLBACKEND"] = "Agg"          # Disable GUI for matplotlib
 os.environ["QT_QPA_PLATFORM"] = "offscreen"  # Disable GUI for Qt/OpenCV
-os.environ["DISPLAY"] = ""                 # Disable X11 GUI (Linux/macOS environments)
+os.environ["DISPLAY"] = ""    # Disable X11 GUI (Linux/macOS environments)
 
 import matplotlib
 matplotlib.use("Agg")
@@ -18,34 +18,9 @@ except ImportError:
 #  End of GUI suppression setup 
 
 import json, re
-from ..utils.helper_functions import (clean_code, remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest,calc_syntactic_codebleu) 
+from ..utils.helper_functions import (remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest,calc_syntactic_codebleu) 
 from itertools import combinations
 from src.config import *
-
-def _clean_generated_code():
-    """
-    Clean LLM-generated code snippets in the output JSON file.
-    This includes fixing function signatures and adding missing imports.
-    The cleaned code is saved back to the same JSON file.
-    """
-    #  Load the JSON file
-    with open(OUT_PATH, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    # Clean each code snippet
-    for entry in data:
-        for clone in entry.get("clones", []):
-            code = clone.get("code", "")
-            if code:
-                cleaned = clean_code(code)
-                clone["code"] = cleaned  # save back to JSON
-
-    # Save back to the same JSON file (or a new file)
-    with open(OUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-
-    print(f"Cleaned code saved to {OUT_PATH}")
-
 
 def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH):
     with open(dataset_path, "r", encoding="utf-8") as f:

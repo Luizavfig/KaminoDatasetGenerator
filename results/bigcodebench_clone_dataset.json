@@ -359,42 +359,6 @@
     ]
   },
   {
-    "id": "BigCodeBench/261",
-    "language": "python",
-    "original_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\n\ndef task_func(ax, radius):\n    if radius < 0:\n        raise ValueError('Radius must be non-negative')\n    if not isinstance(ax, plt.PolarAxes):\n        raise TypeError('ax must be a polar plot')\n\n    theta = np.linspace(0, 2 * np.pi, 1000)\n    ax.plot(theta, radius * np.ones_like(theta))\n    ax.set_rlabel_position(radius * 45)\n    return ax",
-    "test": [
-      "import unittest\nimport matplotlib.pyplot as plt\nclass TestCases(unittest.TestCase):\n    def test_polar_plot(self):\n        '''Test if the function plots on a polar plot.'''\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        result_ax = task_func(ax, 1.0)\n        self.assertIsInstance(result_ax, plt.PolarAxes)\n        plt.close()\n    def test_circle_radius(self):\n        '''Test if the circle is drawn with the correct radius.'''\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        radius = 2.0\n        result_ax = task_func(ax, radius)\n        for line in result_ax.get_lines():\n            self.assertTrue(np.allclose(line.get_ydata(), radius))\n        plt.close()\n    def test_negative_radius(self):\n        '''Test handling of negative radius.'''\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        with self.assertRaises(ValueError):\n            task_func(ax, -1.0)\n        plt.close()\n    def test_non_polar_plot(self):\n        '''Test handling of non-polar plot input.'''\n        fig = plt.figure()\n        ax = fig.add_subplot(111)\n        with self.assertRaises(TypeError):\n            task_func(ax, 1.0)\n        plt.close()\n    def test_zero_radius(self):\n        '''Test handling of zero radius.'''\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        radius = 0.0\n        result_ax = task_func(ax, radius)\n        for line in result_ax.get_lines():\n            self.assertTrue(np.allclose(line.get_ydata(), radius))\n        plt.close()"
-    ],
-    "description": "Draw a circle with a given radius on the polar chart 'ax' and set radial ticks. This function manipulates plot data using matplotlib.",
-    "metadata": {
-      "libs": "['numpy', 'matplotlib']",
-      "params": "ax (matplotlib.axes._axes.Axes): The ax to plot on. Must be a polar plot. radius (float): The radius of the circle. Must be non-negative.",
-      "return_text": "matplotlib.axes._axes.Axes: The modified Axes object with the circle plotted.",
-      "split": "easy"
-    },
-    "clones": [
-      {
-        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1', 'refac_3', 'refac_4']",
-        "model": "gpt-oss:20b",
-        "strategy": "cot",
-        "context": "test",
-        "refacs": [
-          "refac_1",
-          "refac_3",
-          "refac_4"
-        ],
-        "reprompt": null,
-        "cluster": 0,
-        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(ax, radius):\n    if not isinstance(ax, plt.PolarAxes):\n        raise TypeError\n    if radius < 0:\n        raise ValueError\n    theta = np.linspace(0, 2 * np.pi, 360, endpoint=False)\n    r = np.full_like(theta, radius)\n    ax.plot(theta, r)\n    ax.set_rticks([radius])\n    return ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.33578223104421506
-          }
-        }
-      }
-    ]
-  },
-  {
     "id": "BigCodeBench/58",
     "language": "python",
     "original_code": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\ndef task_func(mu, sigma, num_samples):\n    samples = np.random.normal(mu, sigma, num_samples)\n    fig, ax = plt.subplots()\n    ax.hist(samples, bins=30, density=True, alpha=0.6, color='g')\n\n    xmin, xmax = plt.xlim()\n    x = np.linspace(xmin, xmax, 100)\n    p = stats.norm.pdf(x, mu, sigma)\n    ax.plot(x, p, 'k', linewidth=2)\n\n    ax.set_title('Normal Distribution')\n    plt.show()\n    return fig",
@@ -545,391 +509,36 @@
     ]
   },
   {
-    "id": "BigCodeBench/213",
+    "id": "BigCodeBench/261",
     "language": "python",
-    "original_code": "import time\nimport random\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(intervals=100, seed=0):\n    random.seed(seed)\n    times = []\n    numbers = []\n\n    try:\n        for _ in range(intervals):\n            time.sleep(1)\n            times.append(time.time())\n            numbers.append(random.random())\n    except KeyboardInterrupt:\n        print('Interrupted by user')\n\n    kurtosis_value = kurtosis(numbers, nan_policy='omit')\n    # Initialize a fresh figure\n    plt.figure()\n    fig, ax = plt.subplots()\n    ax.plot(times, numbers)\n    return ax, kurtosis_value",
+    "original_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\n\ndef task_func(ax, radius):\n    if radius < 0:\n        raise ValueError('Radius must be non-negative')\n    if not isinstance(ax, plt.PolarAxes):\n        raise TypeError('ax must be a polar plot')\n\n    theta = np.linspace(0, 2 * np.pi, 1000)\n    ax.plot(theta, radius * np.ones_like(theta))\n    ax.set_rlabel_position(radius * 45)\n    return ax",
     "test": [
-      "import unittest\nimport doctest\nfrom unittest.mock import patch\nclass TestCases(unittest.TestCase):\n    \n    @patch('time.sleep', return_value=None)  # Mocking time.sleep\n    def test_case_1(self, mock_sleep):\n        ax, kurtosis = task_func(5)\n        self.assertIsInstance(ax, plt.Axes)\n        lines = ax.get_lines()\n        self.assertEqual(len(lines[0].get_xdata()), 5)\n        self.assertEqual(len(lines[0].get_ydata()), 5)\n        self.assertEqual(mock_sleep.call_count, 5)\n    @patch('time.sleep', return_value=None)\n    def test_case_2(self, mock_sleep):\n        ax, kurtosis = task_func(10, 44)\n        self.assertIsInstance(ax, plt.Axes)\n        lines = ax.get_lines()\n        self.assertEqual(len(lines[0].get_xdata()), 10)\n        self.assertEqual(len(lines[0].get_ydata()), 10)\n        self.assertNotAlmostEqual(kurtosis, -0.34024, places=5)\n    @patch('time.sleep', return_value=None)\n    def test_case_3(self, mock_sleep):\n        ax, kurtosis = task_func()  # Default intervals = 100\n        self.assertIsInstance(ax, plt.Axes)\n        lines = ax.get_lines()\n        self.assertEqual(len(lines[0].get_xdata()), 100)\n        self.assertEqual(len(lines[0].get_ydata()), 100)\n        \n    @patch('time.sleep', return_value=None)\n    def test_case_4(self, mock_sleep):\n        ax, kurtosis = task_func(1)\n        self.assertIsInstance(ax, plt.Axes)\n        lines = ax.get_lines()\n        self.assertEqual(len(lines[0].get_xdata()), 1)\n        self.assertEqual(len(lines[0].get_ydata()), 1)\n    @patch('time.sleep', return_value=None)\n    def test_case_5(self, mock_sleep):\n        ax, kurtosis = task_func(0)\n        self.assertIsInstance(ax, plt.Axes)\n        lines = ax.get_lines()\n        self.assertEqual(len(lines[0].get_xdata()), 0)\n        self.assertEqual(len(lines[0].get_ydata()), 0)"
+      "import unittest\nimport matplotlib.pyplot as plt\nclass TestCases(unittest.TestCase):\n    def test_polar_plot(self):\n        '''Test if the function plots on a polar plot.'''\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        result_ax = task_func(ax, 1.0)\n        self.assertIsInstance(result_ax, plt.PolarAxes)\n        plt.close()\n    def test_circle_radius(self):\n        '''Test if the circle is drawn with the correct radius.'''\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        radius = 2.0\n        result_ax = task_func(ax, radius)\n        for line in result_ax.get_lines():\n            self.assertTrue(np.allclose(line.get_ydata(), radius))\n        plt.close()\n    def test_negative_radius(self):\n        '''Test handling of negative radius.'''\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        with self.assertRaises(ValueError):\n            task_func(ax, -1.0)\n        plt.close()\n    def test_non_polar_plot(self):\n        '''Test handling of non-polar plot input.'''\n        fig = plt.figure()\n        ax = fig.add_subplot(111)\n        with self.assertRaises(TypeError):\n            task_func(ax, 1.0)\n        plt.close()\n    def test_zero_radius(self):\n        '''Test handling of zero radius.'''\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        radius = 0.0\n        result_ax = task_func(ax, radius)\n        for line in result_ax.get_lines():\n            self.assertTrue(np.allclose(line.get_ydata(), radius))\n        plt.close()"
     ],
-    "description": "Generates a series of random numbers over a specified number of intervals with a delay of 1 second between each interval. It then plots these numbers as a function of elapsed time and returns the Axes object along with the kurtosis value of the generated numbers.",
+    "description": "Draw a circle with a given radius on the polar chart 'ax' and set radial ticks. This function manipulates plot data using matplotlib.",
     "metadata": {
-      "libs": "['random', 'matplotlib', 'scipy', 'time']",
-      "params": "intervals (int, optional): Number of intervals for generating random numbers. Default is 100.",
-      "return_text": "matplotlib.axes.Axes: The Axes object representing the plot. float: The kurtosis value of the generated numbers.",
+      "libs": "['numpy', 'matplotlib']",
+      "params": "ax (matplotlib.axes._axes.Axes): The ax to plot on. Must be a polar plot. radius (float): The radius of the circle. Must be non-negative.",
+      "return_text": "matplotlib.axes._axes.Axes: The modified Axes object with the circle plotted.",
       "split": "easy"
     },
     "clones": [
       {
-        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1', 'refac_4', 'refac_5']",
-        "model": "gpt-oss:20b",
-        "strategy": "cot",
-        "context": "test",
-        "refacs": [
-          "refac_1",
-          "refac_4",
-          "refac_5"
-        ],
-        "reprompt": null,
-        "cluster": 0,
-        "code": "import time\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n        seed = None\n    elif len(args) == 1:\n        intervals = args[0]\n        seed = None\n    else:\n        intervals = args[0]\n        seed = args[1]\n    if seed is not None:\n        np.random.seed(seed)\n    xdata = []\n    ydata = []\n    for i in range(intervals):\n        xdata.append(i)\n        ydata.append(np.random.rand())\n        time.sleep(1)\n    fig, ax = plt.subplots()\n    ax.plot(xdata, ydata)\n    y = np.array(ydata)\n    if y.size < 4:\n        kurt = np.nan\n    else:\n        mean = y.mean()\n        std = y.std(ddof=0)\n        kurt = ((y - mean) ** 4).mean() / std ** 4 - 3\n    return ax, kurt\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.25752950419894144
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1', 'refac_3', 'refac_7']",
-        "model": "deepseek-r1:14b",
-        "strategy": "zero-shot",
-        "context": "test",
-        "refacs": [
-          "refac_1",
-          "refac_3",
-          "refac_7"
-        ],
-        "reprompt": null,
-        "cluster": 1,
-        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(*args):\n    intervals = args[0] if len(args) > 0 else 100\n    data_points = []\n    for _ in range(intervals):\n        time.sleep(1)\n        data_points.append(np.random.rand())\n    fig, ax = plt.subplots()\n    x_data = list(range(len(data_points)))\n    y_data = data_points\n    ax.plot(x_data, y_data)\n\n    def calculate_kurtosis(arr):\n        n = len(arr)\n        if n <= 1:\n            return 0.0\n        mean = np.mean(arr)\n        variance = np.var(arr)\n        if variance == 0:\n            return 0.0\n        fourth_moment = np.mean((arr - mean) ** 4)\n        kurtosis = fourth_moment / variance ** 2 - 3\n        return kurtosis\n    kurtosis_value = calculate_kurtosis(data_points)\n    return ax, kurtosis_value\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.30572716665833194
-          }
-        }
-      },
-      {
-        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1', 'refac_4', 'refac_5']",
-        "model": "gpt-oss:20b",
-        "strategy": "cot",
-        "context": "complete",
-        "refacs": [
-          "refac_1",
-          "refac_4",
-          "refac_5"
-        ],
-        "reprompt": null,
-        "cluster": 2,
-        "code": "import time\nimport random\nimport matplotlib.pyplot as plt\nimport scipy.stats as stats\n\n\ndef task_func(intervals=None, seed=None):\n    if intervals is None:\n        intervals = 100\n    if seed is None:\n        seed = 0\n    random.seed(seed)\n    times = []\n    values = []\n    for i in range(intervals):\n        time.sleep(1)\n        times.append(i)\n        values.append(random.random())\n    kurt = stats.kurtosis(values, nan_policy='omit')\n    plt.figure()\n    ax = plt.gca()\n    ax.plot(times, values)\n    return ax, kurt\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.329437020161976
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3', 'refac_5', 'refac_7']",
-        "model": "llama3.1:latest",
-        "strategy": "zero-shot",
-        "context": "code",
-        "refacs": [
-          "refac_3",
-          "refac_5",
-          "refac_7"
-        ],
-        "reprompt": null,
-        "cluster": 3,
-        "code": "import time\nimport random\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(intervals=100, seed=0):\n\n\n    class RandomGenerator:\n\n        def __init__(self, seed):\n            self.seed = seed\n            self.random_state = random.Random(seed)\n\n        def generate_number(self):\n            return self.random_state.random()\n\n\n    class Plotter:\n\n        def __init__(self):\n            self.fig, self.ax = plt.subplots()\n            self.times = []\n            self.numbers = []\n\n        def plot_interval(self, time, number):\n            self.times.append(time)\n            self.numbers.append(number)\n\n        def plot(self):\n            self.ax.plot(self.times, self.numbers)\n    random_generator = RandomGenerator(seed)\n    plotter = Plotter()\n    try:\n        for _ in range(intervals):\n            time.sleep(1)\n            plotter.plot_interval(time.time(), random_generator.\n                generate_number())\n    except KeyboardInterrupt:\n        plt.close('all')\n    kurtosis_value = kurtosis(plotter.numbers, nan_policy='omit')\n    plotter.plot()\n    return plotter.ax, kurtosis_value\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.2659946408225165
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "BigCodeBench/151",
-    "language": "python",
-    "original_code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\n\n\ndef task_func(data_dict, data_keys):\n    # Extract and transform the data for the specified keys\n    data_for_keys = {key: data_dict[key] for key in data_keys if key in data_dict}\n    df = pd.DataFrame(data_for_keys)\n\n    # Check if DataFrame is empty (i.e., no keys matched)\n    if df.empty:\n        raise ValueError(\"No matching keys found in data dictionary, or keys list is empty.\")\n\n    # Apply MinMax normalization\n    scaler = MinMaxScaler()\n    normalized_data = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_data, columns=data_keys)\n\n    # Plot the normalized data\n    ax = normalized_df.plot(kind='line')\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Normalized Value')\n    ax.set_xlabel('Index')\n\n    return normalized_df, ax",
-    "test": [
-      "import unittest\nimport matplotlib.pyplot as plt\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        # Sample data dictionary\n        self.data_dict = {\n            'A': [10, 20, 30, 40],\n            'B': [20, 30, 40, 50],\n            'C': [30, 40, 50, 60]\n        }\n    def test_normalization_single_key(self):\n        # Test normalization with a single key\n        data_keys = ['A']\n        normalized_df, ax = task_func(self.data_dict, data_keys)\n        self.assertTrue((normalized_df >= 0).all().all() and (normalized_df <= 1).all().all(),\n                        \"Normalized data should be in the range [0, 1]\")\n    def test_normalization_multiple_keys(self):\n        # Test normalization with multiple keys\n        data_keys = ['A', 'B']\n        normalized_df, ax = task_func(self.data_dict, data_keys)\n        self.assertEqual(len(normalized_df.columns), 2, \"Normalized DataFrame should have 2 columns\")\n        self.assertTrue({'A', 'B'}.issubset(normalized_df.columns), \"DataFrame should contain specified keys\")\n    def test_normalization_all_keys(self):\n        # Test normalization with all keys in the dictionary\n        data_keys = list(self.data_dict.keys())\n        normalized_df, ax = task_func(self.data_dict, data_keys)\n        self.assertEqual(len(normalized_df.columns), 3, \"Normalized DataFrame should have 3 columns\")\n        self.assertTrue({'A', 'B', 'C'}.issubset(normalized_df.columns), \"DataFrame should contain all keys\")\n    def test_empty_keys(self):\n        # Test with no keys specified\n        data_keys = []\n        with self.assertRaises(ValueError):\n            task_func(self.data_dict, data_keys)\n    def test_key_not_in_dict(self):\n        # Test with a key that's not in the dictionary\n        data_keys = ['D']  # Assuming 'D' is not in `data_dict`\n        with self.assertRaises(ValueError):\n            task_func(self.data_dict, data_keys)"
-    ],
-    "description": "Normalize data specified by keys in a dictionary using MinMax scaling and plot the results. This function is useful for preprocessing data for machine learning models where data scaling can impact performance.",
-    "metadata": {
-      "libs": "['pandas', 'sklearn']",
-      "params": "data_dict (dict): A dictionary where keys map to lists of numeric values. data_keys (list): Keys within the dictionary whose corresponding values are to be normalized.",
-      "return_text": "tuple: A tuple containing a DataFrame of normalized values and a matplotlib Axes object representing a plot of the normalized data.",
-      "split": "easy"
-    },
-    "clones": [
-      {
-        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1', 'refac_4', 'refac_5']",
-        "model": "deepseek-r1:14b",
-        "strategy": "zero-shot",
-        "context": "test",
-        "refacs": [
-          "refac_1",
-          "refac_4",
-          "refac_5"
-        ],
-        "reprompt": null,
-        "cluster": 0,
-        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    \"\"\"\n    Normalize data specified by keys in a dictionary using MinMax scaling and plot the results.\n\n    Parameters:\n        data_dict (dict): Dictionary containing data to be normalized\n        data_keys (list): List of keys specifying which data to normalize\n\n    Returns:\n        tuple: A tuple containing a DataFrame with normalized data and a matplotlib axes object\n    \"\"\"\n    if not data_keys:\n        raise ValueError('No keys specified for normalization')\n    missing_keys = [key for key in data_keys if key not in data_dict]\n    if missing_keys:\n        raise ValueError(f'Keys {missing_keys} not found in data_dict')\n    df = pd.DataFrame(data_dict)\n    scaler = MinMaxScaler()\n    normalized_data = scaler.fit_transform(df[data_keys])\n    normalized_df = pd.DataFrame(normalized_data, columns=data_keys)\n    fig, ax = plt.subplots(figsize=(10, 6))\n    df[data_keys].plot(ax=ax, kind='line', label='Original Data')\n    normalized_df.plot(ax=ax, kind='line', color=['red' for _ in data_keys],\n        label='Normalized Data')\n    ax.set_title('Data Normalization Visualization')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Value')\n    ax.legend()\n    return normalized_df, ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.3842643677777215
-          }
-        }
-      },
-      {
-        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1', 'refac_3', 'refac_4']",
-        "model": "gpt-oss:20b",
-        "strategy": "cot",
-        "context": "complete",
-        "refacs": [
-          "refac_1",
-          "refac_3",
-          "refac_4"
-        ],
-        "reprompt": null,
-        "cluster": 1,
-        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided.')\n    missing = [k for k in data_keys if k not in data_dict]\n    if missing:\n        raise ValueError(f'Keys not found: {missing}')\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n    mins = df.min()\n    maxs = df.max()\n    denom = maxs - mins\n    denom = denom.replace(0, 1)\n    norm_df = (df - mins) / denom\n    ax = norm_df.plot()\n    ax.set_title('Normalized Data')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    return norm_df, ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.20654988286513568
-          }
-        }
-      },
-      {
-        "clone_id": "cot llama3.1:latest-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
         "model": "llama3.1:latest",
         "strategy": "cot",
         "context": "test",
         "refacs": [
-          "refac_2",
-          "refac_4",
-          "refac_6"
-        ],
-        "reprompt": null,
-        "cluster": 2,
-        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('At least one key must be specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' is not present in the dictionary\")\n    df = pd.DataFrame(data_dict)\n    scaler = MinMaxScaler()\n    normalized_df = scaler.fit_transform(df[data_keys])\n    normalized_df = pd.DataFrame(normalized_df, columns=data_keys)\n    fig, ax = plt.subplots()\n    for key in data_keys:\n        ax.plot(normalized_df[key], label=key)\n    ax.legend()\n    return normalized_df, ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.25419408964926826
-          }
-        }
-      },
-      {
-        "clone_id": "cot gemma3:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
-        "model": "gemma3:latest",
-        "strategy": "cot",
-        "context": "test",
-        "refacs": [
           "refac_1",
           "refac_4",
           "refac_5"
         ],
-        "reprompt": null,
-        "cluster": 3,
-        "code": "import matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified')\n    df = pd.DataFrame(data_dict)\n    if any(key not in data_dict for key in data_keys):\n        raise ValueError('Key not in dictionary')\n    normalized_df = df[data_keys].apply(lambda x: (x - x.min()) / (x.max() -\n        x.min()), axis=0)\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    plt.show()\n    return normalized_df, fig\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.20939823108418376
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_1', 'refac_3', 'refac_7']",
-        "model": "gpt-oss:20b",
-        "strategy": "zero-shot",
-        "context": "test",
-        "refacs": [
-          "refac_1",
-          "refac_3",
-          "refac_7"
-        ],
-        "reprompt": null,
-        "cluster": 4,
-        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided')\n    if any(k not in data_dict for k in data_keys):\n        raise ValueError('One or more keys not found in data_dict')\n\n    def scale_list(lst):\n        mn = min(lst)\n        mx = max(lst)\n        return [((x - mn) / (mx - mn) if mx != mn else 0) for x in lst]\n    scaled = {}\n    for k in data_keys:\n        scaled[k] = scale_list(data_dict[k])\n    df = pd.DataFrame(scaled)\n    fig, ax = plt.subplots()\n    for col in df.columns:\n        ax.plot(df[col], label=col)\n    ax.legend()\n    return df, ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.20274392586973192
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_1', 'refac_4', 'refac_5']",
-        "model": "gpt-oss:20b",
-        "strategy": "zero-shot",
-        "context": "test",
-        "refacs": [
-          "refac_1",
-          "refac_4",
-          "refac_5"
-        ],
-        "reprompt": null,
-        "cluster": 5,
-        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    \"\"\"\n    Normalize specified columns of a data dictionary using MinMax scaling and plot the results.\n    \"\"\"\n    if not data_keys:\n        raise ValueError('No keys provided for normalization.')\n    missing = [k for k in data_keys if k not in data_dict]\n    if missing:\n        raise ValueError(f'Keys not found in data dictionary: {missing}')\n\n    def _normalize_data(d, keys):\n        data = {}\n        for k in keys:\n            arr = np.array(d[k], dtype=float)\n            min_val = arr.min()\n            max_val = arr.max()\n            denom = max_val - min_val\n            if denom == 0:\n                scaled = np.zeros_like(arr)\n            else:\n                scaled = (arr - min_val) / denom\n            data[k] = scaled\n        return pd.DataFrame(data)\n\n    def _plot_data(df):\n        fig, ax = plt.subplots()\n        for col in df.columns:\n            ax.plot(df.index, df[col], label=col)\n        ax.legend()\n        return ax\n    normalized_df = _normalize_data(data_dict, data_keys)\n    ax = _plot_data(normalized_df)\n    return normalized_df, ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.22191193887736926
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "BigCodeBench/411",
-    "language": "python",
-    "original_code": "import pandas as pd\nimport json\n\n\ndef task_func(data: dict, output_path: str = \"./default_data_output.json\") -> str:\n    df = pd.DataFrame(data)\n    # Drop column named 'c' if it exists\n    df = df.drop(columns=\"c\", errors=\"ignore\")\n    # Convert the DataFrame to dictionary\n    data_dict = df.to_dict(orient=\"dict\")\n    # Save the dictionary as a JSON file\n    with open(output_path, \"w\") as file:\n        json.dump(data_dict, file)\n\n    return output_path",
-    "test": [
-      "import unittest\nimport pandas as pd\nimport json\nimport os\nclass TestCases(unittest.TestCase):\n    def read_json_file(self, path):\n        # Helper function to read content from a JSON file\n        with open(path, \"r\") as f:\n            return json.load(f)\n    def tearDown(self):\n        # Cleanup procedure after each test to remove generated files\n        files_to_remove = [\n            \"./default_data_output.json\",\n            \"./custom_data_output_2.json\",\n            \"./custom_data_output_3.json\",\n            \"./custom_data_output_4.json\",\n            \"./custom_data_output_5.json\",\n        ]\n        for file in files_to_remove:\n            if os.path.exists(file):\n                os.remove(file)\n    def convert_keys_to_str(self, dictionary):\n        # Convert dictionary keys to strings recursively\n        if not isinstance(dictionary, dict):\n            return dictionary\n        return {str(k): self.convert_keys_to_str(v) for k, v in dictionary.items()}\n    def test_case_1(self):\n        # Test basic DataFrame with column \"c\"\n        data = {\"a\": [1, 2], \"b\": [3, 4], \"c\": [5, 6]}\n        df = pd.DataFrame(data)\n        output_path = task_func(data)\n        self.assertTrue(os.path.exists(output_path))\n        expected_data = self.convert_keys_to_str(\n            df.drop(columns=\"c\").to_dict(orient=\"dict\")\n        )\n        self.assertEqual(self.read_json_file(output_path), expected_data)\n    def test_case_2(self):\n        # Test DataFrame with non-numeric data and column \"c\"\n        data = {\"name\": [\"Alice\", \"Bob\"], \"country\": [\"USA\", \"Canada\"], \"c\": [\"x\", \"y\"]}\n        df = pd.DataFrame(data)\n        custom_path = \"./custom_data_output_2.json\"\n        output_path = task_func(data, custom_path)\n        self.assertTrue(os.path.exists(output_path))\n        expected_data = self.convert_keys_to_str(\n            df.drop(columns=\"c\").to_dict(orient=\"dict\")\n        )\n        self.assertEqual(self.read_json_file(output_path), expected_data)\n    def test_case_3(self):\n        # Test DataFrame with multiple columns and no column \"c\"\n        data = {\"age\": [25, 30], \"height\": [170, 175]}\n        df = pd.DataFrame(data)\n        custom_path = \"./custom_data_output_3.json\"\n        output_path = task_func(data, custom_path)\n        self.assertTrue(os.path.exists(output_path))\n        expected_data = self.convert_keys_to_str(df.to_dict(orient=\"dict\"))\n        self.assertEqual(self.read_json_file(output_path), expected_data)\n    def test_case_4(self):\n        # Test DataFrame with mixed data types including column \"c\"\n        data = {\n                \"id\": [1, 2],\n                \"is_student\": [True, False],\n                \"grades\": [\"A\", \"B\"],\n                \"c\": [0.5, 0.8],\n            }\n        df = pd.DataFrame(data)\n        output_path = task_func(data)\n        self.assertTrue(os.path.exists(output_path))\n        expected_data = self.convert_keys_to_str(\n            df.drop(columns=\"c\").to_dict(orient=\"dict\")\n        )\n        self.assertEqual(self.read_json_file(output_path), expected_data)\n    def test_case_5(self):\n        # Test an empty DataFrame\n        data = {}\n        df = pd.DataFrame(data)\n        custom_path = \"./custom_data_output_5.json\"\n        output_path = task_func(data, custom_path)\n        self.assertTrue(os.path.exists(output_path))\n        expected_data = self.convert_keys_to_str(df.to_dict(orient=\"dict\"))\n        self.assertEqual(self.read_json_file(output_path), expected_data)"
-    ],
-    "description": "Converts the given DataFrame to a dictionary, dropping the column named 'c' if it exists, and then saves it as a JSON file.",
-    "metadata": {
-      "libs": "['pandas', 'json']",
-      "params": "data (dict): The input data dictionary. output_path (str, optional): The path where the JSON file should be saved. Default is './default_data_output.json'.",
-      "return_text": "str: Path where the JSON file was saved.",
-      "split": "easy"
-    },
-    "clones": [
-      {
-        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_3', 'refac_5', 'refac_7']",
-        "model": "deepseek-r1:14b",
-        "strategy": "zero-shot",
-        "context": "test",
-        "refacs": [
-          "refac_3",
-          "refac_5",
-          "refac_7"
-        ],
-        "reprompt": null,
+        "reprompt": "2 gpt-oss:20b",
         "cluster": 0,
-        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, custom_path=None):\n\n    def dataframe_to_dict(df):\n        df_copy = df.copy()\n        if 'c' in df_copy.columns:\n            df_copy = df_copy.drop(columns='c')\n        return df_copy.to_dict(orient='dict')\n\n    def save_to_json(data, path):\n        with open(path, 'w') as f:\n            json.dump(data, f)\n\n    def generate_output_path():\n        return './default_data_output.json'\n    df = pd.DataFrame(data)\n    data_dict = dataframe_to_dict(df)\n    if custom_path is None:\n        output_path = generate_output_path()\n    else:\n        output_path = custom_path\n    save_to_json(data_dict, output_path)\n    return output_path\n",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(ax, radius):\n    if not isinstance(ax, plt.PolarAxes):\n        raise TypeError\n    if radius < 0:\n        raise ValueError\n    theta = np.linspace(0, 2 * np.pi, 360)\n    ax.plot(theta, np.full_like(theta, radius))\n    return ax\n",
         "metrics": {
           "codebleu": {
-            "originalcode": 0.3114107961190671
-          }
-        }
-      },
-      {
-        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2', 'refac_4', 'refac_6']",
-        "model": "deepseek-r1:14b",
-        "strategy": "cot",
-        "context": "test",
-        "refacs": [
-          "refac_2",
-          "refac_4",
-          "refac_6"
-        ],
-        "reprompt": null,
-        "cluster": 1,
-        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, custom_path=None):\n    \"\"\"\n    Converts DataFrame to dictionary and saves as JSON file.\n\n    Args:\n        data: Dictionary representation of DataFrame data\n        custom_path: Optional string path for saving the JSON file\n\n    Returns:\n        String path where the JSON file was saved\n\n    Drops column 'c' if present and converts all keys to strings in nested dictionaries.\n    Handles empty DataFrames gracefully.\n    \"\"\"\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    dict_data = df.to_dict(orient='dict')\n\n    def convert_keys(d):\n        return {str(k): convert_keys(v) for k, v in d.items()} if isinstance(d,\n            dict) else d\n    converted_data = convert_keys(dict_data)\n    if custom_path:\n        output_path = custom_path\n    else:\n        output_path = 'default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(converted_data, f, indent=2)\n    return output_path\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.28069817169817557
-          }
-        }
-      },
-      {
-        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2', 'refac_5', 'refac_6']",
-        "model": "llama3.1:latest",
-        "strategy": "cot",
-        "context": "complete",
-        "refacs": [
-          "refac_2",
-          "refac_5",
-          "refac_6"
-        ],
-        "reprompt": null,
-        "cluster": 2,
-        "code": "import pandas as pd\nimport json\nfrom typing import Dict, Optional\n\n\ndef task_func(data: Dict[str, list], output_path: Optional[str]=None) ->str:\n    df = pd.DataFrame(data)\n\n    def convert_to_dict(df):\n        if 'c' in df.columns:\n            return df.drop(columns='c').to_dict(orient='dict')\n        else:\n            return df.to_dict(orient='dict')\n    data_dict = convert_to_dict(df)\n\n    def save_json(data, path):\n        with open(path, 'w') as file:\n            json.dump(data, file)\n    if output_path is None:\n        output_path = './default_data_output.json'\n    save_json(data_dict, output_path)\n    return output_path\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.29729517574694575
-          }
-        }
-      },
-      {
-        "clone_id": "cot gemma3:latest-complete 1 ['refac_1', 'refac_4', 'refac_5']",
-        "model": "gemma3:latest",
-        "strategy": "cot",
-        "context": "complete",
-        "refacs": [
-          "refac_1",
-          "refac_4",
-          "refac_5"
-        ],
-        "reprompt": null,
-        "cluster": 3,
-        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, output_path='./default_data_output.json'):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    data_dict = df.to_dict(orient='dict')\n    with open(output_path, 'w') as f:\n        json.dump(data_dict, f, indent=4)\n    return output_path\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.2689095306462974
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2', 'refac_5', 'refac_6']",
-        "model": "gpt-oss:20b",
-        "strategy": "zero-shot",
-        "context": "test",
-        "refacs": [
-          "refac_2",
-          "refac_5",
-          "refac_6"
-        ],
-        "reprompt": null,
-        "cluster": 4,
-        "code": "import json\nimport logging\n\n\ndef task_func(*args, **kwargs):\n    if len(args) < 1:\n        raise ValueError('Data argument missing')\n    data = args[0]\n    output_path = args[1] if len(args) >= 2 else './default_data_output.json'\n    if not isinstance(data, dict):\n        raise TypeError('Data must be a dictionary')\n    try:\n        import pandas as pd\n    except Exception as e:\n        raise ImportError('pandas is required') from e\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    result_dict = df.to_dict(orient='dict')\n    try:\n        with open(output_path, 'w', encoding='utf-8') as f:\n            json.dump(result_dict, f)\n    except Exception as e:\n        raise IOError(f'Failed to write JSON to {output_path}') from e\n    return output_path\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.25440548546185154
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "BigCodeBench/179",
-    "language": "python",
-    "original_code": "import re\nimport matplotlib.pyplot as plt\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport numpy as np\n\n\ndef task_func(df):\n    pattern = re.compile(r'(how|what)', re.IGNORECASE)\n\n    # Check if the DataFrame has the required columns\n    if not set(['Title', 'Content']).issubset(df.columns):\n        fig, ax = plt.subplots()\n        return ax\n\n    interesting_articles = df[df['Title'].apply(lambda x: bool(pattern.search(x)))]\n\n    fig, ax = plt.subplots()\n\n    # If there are no interesting articles, return an empty plot\n    if interesting_articles.empty:\n        return ax\n\n    vectorizer = TfidfVectorizer()\n    X = vectorizer.fit_transform(interesting_articles['Content'])\n    tfidf_scores = np.array(X.sum(axis=0))[0]\n\n    ax.bar(vectorizer.get_feature_names_out(), tfidf_scores)\n    ax.set_ylabel('TF-IDF Score')\n    plt.xticks(rotation='vertical')\n\n    return ax",
-    "test": [
-      "import unittest\nimport pandas as pd\nimport matplotlib\nmatplotlib.use('Agg')\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        # Sample data for testing\n        self.DATA = {\n            'Title': ['How to code?', 'What is Python?', 'The art of programming', 'How to cook?', 'What is life?'],\n            'Content': ['This is a tutorial about coding...', 'Python is a programming language...',\n                        'Programming is an art...', 'This is a cooking tutorial...', 'Life is complicated...']\n        }\n        self.df_sample = pd.DataFrame(self.DATA)\n    def test_case_1(self):\n        # Test with original data\n        ax = task_func(self.df_sample)\n        self.assertEqual(len(ax.patches), 11)  # Adjusting based on actual data\n        self.assertEqual(ax.get_ylabel(), \"TF-IDF Score\")\n    def test_case_2(self):\n        # Test with no interesting articles\n        df_no_interesting = self.df_sample.copy()\n        df_no_interesting['Title'] = ['Coding 101', 'Python tutorial', 'Programming basics', 'Cooking basics',\n                                      'Life basics']\n        ax = task_func(df_no_interesting)\n        self.assertEqual(len(ax.patches), 0)  # No bars in the plot as no interesting articles\n    def test_case_3(self):\n        # Test with only one interesting article\n        df_one_interesting = self.df_sample.copy()\n        df_one_interesting['Title'] = ['How to play guitar?', 'Python tutorial', 'Programming basics', 'Cooking basics',\n                                       'Life basics']\n        ax = task_func(df_one_interesting)\n        self.assertEqual(len(ax.patches), 5)  # 5 unique words in the interesting article\n    def test_case_4(self):\n        # Test with data not containing columns 'Title' and 'Content'\n        df_empty = pd.DataFrame(columns=['Title', 'Description'])\n        ax = task_func(df_empty)\n        self.assertEqual(len(ax.patches), 0)  # No bars in the plot as dataframe is empty\n    def test_case_5(self):\n        # Test with empty dataframe\n        df_empty = pd.DataFrame(columns=['Title', 'Content'])\n        ax = task_func(df_empty)\n        self.assertEqual(len(ax.patches), 0)  # No bars in the plot as dataframe is empty"
-    ],
-    "description": "Analyzes a given DataFrame containing article titles and content to identify articles with titles that include the words \"how\" or \"what\". It calculates the TF-IDF scores for the words in the content of these articles and visualizes these scores in a bar plot.",
-    "metadata": {
-      "libs": "['numpy', 'matplotlib', 're', 'sklearn']",
-      "params": "df (DataFrame): A DataFrame containing at least two columns: 'Title' and 'Content'.",
-      "return_text": "Axes: A matplotlib Axes object displaying a bar plot of the TF-IDF scores.",
-      "split": "easy"
-    },
-    "clones": [
-      {
-        "clone_id": "cot deepseek-r1:14b-code 1 ['refac_3', 'refac_5', 'refac_7']",
-        "model": "deepseek-r1:14b",
-        "strategy": "cot",
-        "context": "code",
-        "refacs": [
-          "refac_3",
-          "refac_5",
-          "refac_7"
-        ],
-        "reprompt": null,
-        "cluster": 0,
-        "code": "import re\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n\ndef task_func(df):\n    title_pattern = re.compile('\\\\b(how|what)\\\\b', flags=re.IGNORECASE)\n    required_columns = {'Title', 'Content'}\n    if not required_columns.issubset(set(df.columns)):\n        return plt.subplots()[1]\n    filtered_df = df[df['Title'].apply(lambda x: bool(title_pattern.search(x)))\n        ]\n    if len(filtered_df) == 0:\n        return plt.subplots()[1]\n    vectorizer = TfidfVectorizer()\n    tfidf_matrix = vectorizer.fit_transform(filtered_df['Content'])\n    feature_names = vectorizer.get_feature_names_out()\n    tfidf_scores = np.array(tfidf_matrix.sum(axis=0))[0]\n    fig, ax = plt.subplots()\n    ax.bar(feature_names, tfidf_scores)\n    ax.set_ylabel('TF-IDF Score')\n    plt.xticks(rotation='vertical')\n    return ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.3824629289573436
-          }
-        }
-      },
-      {
-        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1', 'refac_3', 'refac_7']",
-        "model": "deepseek-r1:14b",
-        "strategy": "cot",
-        "context": "test",
-        "refacs": [
-          "refac_1",
-          "refac_3",
-          "refac_7"
-        ],
-        "reprompt": null,
-        "cluster": 1,
-        "code": "import pandas as pd\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    tfidf = TfidfVectorizer()\n    df['is_interesting'] = df['Title'].str.lower().str.contains('how|what')\n    interesting_articles = df[df['is_interesting']]\n    if not interesting_articles.empty:\n        corpus = interesting_articles['Content']\n        tfidf_matrix = tfidf.fit_transform(corpus)\n        feature_names = tfidf.get_feature_names_out()\n        plt.figure(figsize=(10, 6))\n        ax = plt.gca()\n        scores = tfidf_matrix[0].toarray().flatten()\n        bars = ax.bar(feature_names, scores)\n        ax.set_xlabel('Words')\n        ax.set_ylabel('TF-IDF Score')\n        ax.set_title('TF-IDF Scores for Interesting Articles')\n    else:\n        plt.figure(figsize=(10, 6))\n        ax = plt.gca()\n        bars = []\n    return ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.1637241212662953
+            "originalcode": 0.36374569502099696
           }
         }
       }
@@ -951,44 +560,6 @@
     },
     "clones": [
       {
-        "clone_id": "cot gemma3:latest-test 1 ['refac_2', 'refac_5', 'refac_6']",
-        "model": "gemma3:latest",
-        "strategy": "cot",
-        "context": "test",
-        "refacs": [
-          "refac_2",
-          "refac_5",
-          "refac_6"
-        ],
-        "reprompt": null,
-        "cluster": 0,
-        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(l):\n    u, s, v = np.linalg.svd(l)\n    plt.figure(figsize=(8, 6))\n    plt.scatter(l[:, 0], l[:, 1])\n    plt.title('PCA Result')\n    plt.xlabel('First Principal Component')\n    plt.ylabel('Second Principal Component')\n    plt.axis('equal')\n    plt.show()\n    return plt.gca()\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.3642331846667896
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2', 'refac_6', 'refac_7']",
-        "model": "gpt-oss:20b",
-        "strategy": "zero-shot",
-        "context": "test",
-        "refacs": [
-          "refac_2",
-          "refac_6",
-          "refac_7"
-        ],
-        "reprompt": null,
-        "cluster": 1,
-        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport logging\nlogger = logging.getLogger(__name__)\n\n\ndef task_func(l):\n    if not isinstance(l, np.ndarray):\n        logger.error('Input is not a numpy array')\n        raise ValueError('Input must be a numpy array')\n    if l.ndim != 2 or l.shape[1] != 2:\n        logger.error('Input array must be 2D with two columns')\n        raise ValueError('Input array must be 2D with two columns')\n    try:\n        l = l.astype(float)\n    except Exception as e:\n        logger.error('Input array contains non-numeric values')\n        raise ValueError('Input array must contain numeric values') from e\n    try:\n        centered = l - np.mean(l, axis=0)\n        U, S, Vt = np.linalg.svd(centered, full_matrices=False)\n        components = Vt[:2, :]\n        scores = centered @ components.T\n        fig, ax = plt.subplots()\n        ax.scatter(scores[:, 0], scores[:, 1])\n        ax.set_title('PCA Result')\n        ax.set_xlabel('First Principal Component')\n        ax.set_ylabel('Second Principal Component')\n        ax.set_title('PCA Result')\n        ax.set_xlabel('First Principal Component')\n        ax.set_ylabel('Second Principal Component')\n        return ax\n    except Exception as e:\n        logger.exception('PCA computation failed')\n        raise RuntimeError('PCA computation failed') from e\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.2409289802086885
-          }
-        }
-      },
-      {
         "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2', 'refac_6', 'refac_7']",
         "model": "deepseek-r1:14b",
         "strategy": "cot",
@@ -999,7 +570,7 @@
           "refac_7"
         ],
         "reprompt": null,
-        "cluster": 2,
+        "cluster": 0,
         "code": "import numpy as np\nfrom sklearn.decomposition import PCA\nimport matplotlib.pyplot as plt\n\n\ndef task_func(l):\n    pca = PCA(n_components=2)\n    principal_components = pca.fit_transform(l)\n    fig, ax = plt.subplots()\n    scatter = ax.scatter(principal_components[:, 0], principal_components[:, 1]\n        )\n    ax.set_xlabel('First Principal Component')\n    ax.set_ylabel('Second Principal Component')\n    ax.set_title('PCA Result')\n    return ax\n",
         "metrics": {
           "codebleu": {
@@ -1018,7 +589,7 @@
           "refac_7"
         ],
         "reprompt": null,
-        "cluster": 3,
+        "cluster": 1,
         "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(l):\n    if not isinstance(l, np.ndarray) or l.ndim != 2:\n        raise ValueError('Input must be a 2D NumPy array.')\n    n_samples, n_features = l.shape\n    if n_features < 2:\n        raise ValueError('Array must have at least two features (columns).')\n    mean = np.mean(l, axis=0)\n    normalized_data = l - mean\n    covariance_matrix = np.cov(normalized_data, rowvar=False)\n    eigen_values, eigen_vectors = np.linalg.eigh(covariance_matrix)\n    sorted_indices = np.argsort(eigen_values)[::-1]\n    principal_components = eigen_vectors[:, sorted_indices[:2]]\n    transformed_data = normalized_data.dot(principal_components)\n    plt.figure(figsize=(8, 6))\n    ax = plt.gca()\n    scatter = ax.scatter(transformed_data[:, 0], transformed_data[:, 1])\n    ax.set_title('PCA Result')\n    ax.set_xlabel('First Principal Component')\n    ax.set_ylabel('Second Principal Component')\n    return ax\n",
         "metrics": {
           "codebleu": {
@@ -1037,11 +608,49 @@
           "refac_5"
         ],
         "reprompt": null,
-        "cluster": 4,
+        "cluster": 2,
         "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(l):\n    mean = np.mean(l, axis=0)\n    centered = l - mean\n    cov = np.cov(centered, rowvar=False)\n    eigvals, eigvecs = np.linalg.eigh(cov)\n    idx = np.argsort(eigvals)[::-1]\n    eigvecs = eigvecs[:, idx]\n    proj = centered @ eigvecs[:, :2]\n    fig, ax = plt.subplots()\n    ax.scatter(proj[:, 0], proj[:, 1])\n    ax.set_xlabel('First Principal Component')\n    ax.set_ylabel('Second Principal Component')\n    ax.set_title('PCA Result')\n    return ax\n",
         "metrics": {
           "codebleu": {
             "originalcode": 0.24632300819196215
+          }
+        }
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "model": "gemma3:latest",
+        "strategy": "cot",
+        "context": "test",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "reprompt": null,
+        "cluster": 3,
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(l):\n    u, s, v = np.linalg.svd(l)\n    plt.figure(figsize=(8, 6))\n    plt.scatter(l[:, 0], l[:, 1])\n    plt.title('PCA Result')\n    plt.xlabel('First Principal Component')\n    plt.ylabel('Second Principal Component')\n    plt.axis('equal')\n    plt.show()\n    return plt.gca()\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3642331846667896
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "model": "gpt-oss:20b",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "reprompt": null,
+        "cluster": 4,
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport logging\nlogger = logging.getLogger(__name__)\n\n\ndef task_func(l):\n    if not isinstance(l, np.ndarray):\n        logger.error('Input is not a numpy array')\n        raise ValueError('Input must be a numpy array')\n    if l.ndim != 2 or l.shape[1] != 2:\n        logger.error('Input array must be 2D with two columns')\n        raise ValueError('Input array must be 2D with two columns')\n    try:\n        l = l.astype(float)\n    except Exception as e:\n        logger.error('Input array contains non-numeric values')\n        raise ValueError('Input array must contain numeric values') from e\n    try:\n        centered = l - np.mean(l, axis=0)\n        U, S, Vt = np.linalg.svd(centered, full_matrices=False)\n        components = Vt[:2, :]\n        scores = centered @ components.T\n        fig, ax = plt.subplots()\n        ax.scatter(scores[:, 0], scores[:, 1])\n        ax.set_title('PCA Result')\n        ax.set_xlabel('First Principal Component')\n        ax.set_ylabel('Second Principal Component')\n        ax.set_title('PCA Result')\n        ax.set_xlabel('First Principal Component')\n        ax.set_ylabel('Second Principal Component')\n        return ax\n    except Exception as e:\n        logger.exception('PCA computation failed')\n        raise RuntimeError('PCA computation failed') from e\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2409289802086885
           }
         }
       },
@@ -1080,6 +689,382 @@
         "metrics": {
           "codebleu": {
             "originalcode": 0.39848011359306285
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/253",
+    "language": "python",
+    "original_code": "import numpy as np\nimport random\n\n# Constants\nCOLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n\ndef task_func(ax):\n\n    x = np.linspace(0, 2 * np.pi, 1000)\n    y = np.sin(random.randint(1, 10)*x)\n\n    color = random.choice(COLORS)\n    ax.plot(x, y, color=color)\n    ax.set_rlabel_position(random.randint(0, 180))\n\n    return color",
+    "test": [
+      "import matplotlib.pyplot as plt\nimport unittest\nimport random\nclass TestCases(unittest.TestCase):\n    def test_color_returned(self):\n        random.seed(0)\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        color = task_func(ax)\n        self.assertIn(color, ['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n        plt.close()\n    def test_random_color(self):\n        random.seed(0)\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        colors = set(task_func(ax) for _ in range(10))\n        self.assertTrue(len(colors) > 1)\n        plt.close()\n    def test_plot_exists(self):\n        random.seed(0)\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        task_func(ax)\n        self.assertTrue(len(ax.lines) > 0)\n        plt.close()\n    def test_plot_properties(self):\n        random.seed(0)\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        color = task_func(ax)\n        line = ax.lines[0]\n        self.assertEqual(line.get_color(), color)\n        plt.close()\n    def test_label_position(self):\n        random.seed(0)\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        task_func(ax)\n        position = ax.get_rlabel_position()\n        self.assertTrue(position>1.0)\n        plt.close()"
+    ],
+    "description": "Generate a random sine wave function and draw it on a provided matplotlib polar subplot 'ax'. The function randomly selects a color from a predefined list and sets a random position for radial labels.",
+    "metadata": {
+      "libs": "['numpy', 'random']",
+      "params": "ax (matplotlib.axes._axes.Axes): The ax to plot on.",
+      "return_text": "str: The color code (as a string) of the plotted function.",
+      "split": "easy"
+    },
+    "clones": [
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "model": "gpt-oss:20b",
+        "strategy": "zero-shot",
+        "context": "complete",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "reprompt": null,
+        "cluster": 0,
+        "code": "import math\nimport secrets\nimport logging\nlogger = logging.getLogger(__name__)\nCOLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n\n\ndef task_func(ax):\n    if ax is None:\n        raise ValueError('ax must not be None')\n    if not hasattr(ax, 'plot') or not hasattr(ax, 'set_rlabel_position'):\n        raise TypeError('ax must have plot and set_rlabel_position methods')\n    try:\n        x = [(i * 2 * math.pi / 999) for i in range(1000)]\n        y = [math.sin(i * 2 * math.pi / 999) for i in range(1000)]\n        y_duplicate = []\n        for i in range(1000):\n            y_duplicate.append(math.sin(i * 2 * math.pi / 999))\n        color = secrets.choice(COLORS)\n        ax.plot(x, y, color=color)\n        pos = secrets.randbelow(180) + 1.0\n        ax.set_rlabel_position(pos)\n        return color\n    except Exception as exc:\n        logger.exception('Failed to plot sine wave: %s', exc)\n        raise\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.19867756172259624
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "model": "deepseek-r1:14b",
+        "strategy": "zero-shot",
+        "context": "complete",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "reprompt": "2 gpt-oss:20b",
+        "cluster": 1,
+        "code": "import matplotlib.pyplot as plt\nimport random\nfrom math import pi\n\n\ndef task_func(ax):\n    if not isinstance(ax, plt.Axes):\n        raise TypeError('ax must be a matplotlib Axes instance')\n    theta = [(i * 0.1) for i in range(200)]\n    r = [(random.uniform(-1, 1) + random.gauss(0, 0.1)) for _ in theta]\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    ax.plot(theta, r, color=color)\n    angle = random.uniform(1.0, 360.0)\n    ax.set_rlabel_position(angle)\n    return color\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.177394409800832
+          }
+        }
+      },
+      {
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_1', 'refac_3', 'refac_4']",
+        "model": "llama3.1:latest",
+        "strategy": "cot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "reprompt": null,
+        "cluster": 2,
+        "code": "import matplotlib.pyplot as plt\nimport random\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    ax.plot([0, 1], [0, 1], color=color)\n    ax.set_rlabel_position(random.uniform(0.5, 2))\n    return color\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.11555364325192863
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-ast 1 ['refac_2', 'refac_5', 'refac_6']",
+        "model": "gemma3:latest",
+        "strategy": "zero-shot",
+        "context": "ast",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "reprompt": null,
+        "cluster": 3,
+        "code": "import random\nimport math\nimport matplotlib.pyplot as plt\n\n\ndef task_func(ax):\n    x = [i for i in range(1000)]\n    y = [math.sin(i * x[i]) for i in range(1000)]\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    ax.plot(x, y, color=color)\n    ax.set_rlabel_position(random.randint(0, 180))\n    return color\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3916322753663788
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "model": "deepseek-r1:14b",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "reprompt": null,
+        "cluster": 4,
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(ax):\n    amplitude = random.uniform(0.5, 2)\n    frequency = random.uniform(1, 3)\n    phase_shift = random.uniform(0, 2 * np.pi)\n    theta = np.linspace(0, 2 * np.pi, 100)\n    r = amplitude * np.sin(frequency * theta + phase_shift)\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    line = ax.plot(theta, r, color=color)\n    ax.set_rlabel_position(random.uniform(0, 2 * np.pi))\n    return color\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.34599365817497113
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1', 'refac_3', 'refac_4']",
+        "model": "deepseek-r1:14b",
+        "strategy": "zero-shot",
+        "context": "complete",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "reprompt": null,
+        "cluster": 5,
+        "code": "import numpy as np\nimport random\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(ax):\n    \"\"\"\n    Generates a random sine wave and plots it on a polar subplot.\n    Returns the color used for the plot.\n    \"\"\"\n    theta = np.linspace(0, 2 * np.pi, 1000)\n    frequency = random.randint(1, 10)\n    r = np.sin(frequency * theta)\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    ax.plot(theta, r, color=color)\n    angle = random.uniform(0, np.pi)\n    ax.set_rlabel_position(angle)\n    return color\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.379539502207994
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "model": "gemma3:latest",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "reprompt": "1 gpt-oss:20b",
+        "cluster": 6,
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    theta = np.linspace(0, 2 * np.pi, 100)\n    r = 10 * np.sin(theta)\n    ax.plot(r, theta, color=color)\n    ax.set_rlabel_position(1.5)\n    return color\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3407568350577151
+          }
+        }
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1', 'refac_3', 'refac_4']",
+        "model": "gpt-oss:20b",
+        "strategy": "cot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "reprompt": null,
+        "cluster": 7,
+        "code": "import random\nimport numpy as np\n\n\ndef task_func(ax):\n    colors = 'b', 'g', 'r', 'c', 'm', 'y', 'k'\n    color = random.choice(colors)\n    theta = np.linspace(0, 2 * np.pi, 200)\n    amp = random.uniform(0.5, 2.0)\n    freq = random.uniform(1.0, 5.0)\n    phase = random.uniform(0, 2 * np.pi)\n    r = amp * np.sin(freq * theta + phase)\n    ax.plot(theta, r, color=color)\n    ax.set_rlabel_position(random.uniform(1.0, 360.0))\n    return color\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31985552858996974
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-complete 1 ['refac_1', 'refac_4', 'refac_5']",
+        "model": "gemma3:latest",
+        "strategy": "zero-shot",
+        "context": "complete",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "reprompt": null,
+        "cluster": 8,
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport random\n\n\ndef task_func(ax):\n    theta = np.linspace(0, 2 * np.pi, 100)\n    amplitude = random.uniform(0.5, 1.5)\n    phase = random.uniform(0, 2 * np.pi)\n    y = amplitude * np.sin(phase * theta)\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    ax.plot(theta, y, color=color)\n    ax.set_rlabel_position(random.uniform(0, 360))\n    return color\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.36899593061053154
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "model": "llama3.1:latest",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "reprompt": null,
+        "cluster": 9,
+        "code": "import matplotlib.pyplot as plt\nimport random\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    ax.plot([0], [0], color=color)\n    ax.set_rlabel_position(random.uniform(1.0, 2.0))\n    return color\n\n\nclass TaskFuncAlternative:\n\n    def __init__(self):\n        self.color = None\n        self.ax = None\n\n    def _random_color(self):\n        return random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n\n    def _draw_plot(self, ax):\n        color = self._random_color()\n        ax.plot([0], [0], color=color)\n\n    def _set_rlabel_position(self, ax):\n        ax.set_rlabel_position(random.uniform(1.0, 2.0))\n\n    def task_func(self, ax):\n        self.ax = ax\n        self.color = self._random_color()\n        self._draw_plot(ax)\n        self._set_rlabel_position(ax)\n\n\ntask_func_alternative = TaskFuncAlternative()\n\n\ndef task_func_alternative_wrapper(ax):\n    return task_func_alternative.task_func(ax)\n\n\nclass TaskFuncPure:\n\n    def __init__(self, ax):\n        self.ax = ax\n\n    def _random_color(self):\n        return random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n\n    def _draw_plot(self):\n        color = self._random_color()\n        return [0], [0], color\n\n    def _set_rlabel_position(self):\n        return random.uniform(1.0, 2.0)\n\n    def task_func_pure(self):\n        x, y, color = self._draw_plot()\n        rlabel_position = self._set_rlabel_position()\n        self.ax.plot(x, y, color=color)\n        self.ax.set_rlabel_position(rlabel_position)\n        return color\n\n\ndef task_func_pure_wrapper(ax):\n    return TaskFuncPure(ax).task_func_pure()\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1384755875293279
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/213",
+    "language": "python",
+    "original_code": "import time\nimport random\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(intervals=100, seed=0):\n    random.seed(seed)\n    times = []\n    numbers = []\n\n    try:\n        for _ in range(intervals):\n            time.sleep(1)\n            times.append(time.time())\n            numbers.append(random.random())\n    except KeyboardInterrupt:\n        print('Interrupted by user')\n\n    kurtosis_value = kurtosis(numbers, nan_policy='omit')\n    # Initialize a fresh figure\n    plt.figure()\n    fig, ax = plt.subplots()\n    ax.plot(times, numbers)\n    return ax, kurtosis_value",
+    "test": [
+      "import unittest\nimport doctest\nfrom unittest.mock import patch\nclass TestCases(unittest.TestCase):\n    \n    @patch('time.sleep', return_value=None)  # Mocking time.sleep\n    def test_case_1(self, mock_sleep):\n        ax, kurtosis = task_func(5)\n        self.assertIsInstance(ax, plt.Axes)\n        lines = ax.get_lines()\n        self.assertEqual(len(lines[0].get_xdata()), 5)\n        self.assertEqual(len(lines[0].get_ydata()), 5)\n        self.assertEqual(mock_sleep.call_count, 5)\n    @patch('time.sleep', return_value=None)\n    def test_case_2(self, mock_sleep):\n        ax, kurtosis = task_func(10, 44)\n        self.assertIsInstance(ax, plt.Axes)\n        lines = ax.get_lines()\n        self.assertEqual(len(lines[0].get_xdata()), 10)\n        self.assertEqual(len(lines[0].get_ydata()), 10)\n        self.assertNotAlmostEqual(kurtosis, -0.34024, places=5)\n    @patch('time.sleep', return_value=None)\n    def test_case_3(self, mock_sleep):\n        ax, kurtosis = task_func()  # Default intervals = 100\n        self.assertIsInstance(ax, plt.Axes)\n        lines = ax.get_lines()\n        self.assertEqual(len(lines[0].get_xdata()), 100)\n        self.assertEqual(len(lines[0].get_ydata()), 100)\n        \n    @patch('time.sleep', return_value=None)\n    def test_case_4(self, mock_sleep):\n        ax, kurtosis = task_func(1)\n        self.assertIsInstance(ax, plt.Axes)\n        lines = ax.get_lines()\n        self.assertEqual(len(lines[0].get_xdata()), 1)\n        self.assertEqual(len(lines[0].get_ydata()), 1)\n    @patch('time.sleep', return_value=None)\n    def test_case_5(self, mock_sleep):\n        ax, kurtosis = task_func(0)\n        self.assertIsInstance(ax, plt.Axes)\n        lines = ax.get_lines()\n        self.assertEqual(len(lines[0].get_xdata()), 0)\n        self.assertEqual(len(lines[0].get_ydata()), 0)"
+    ],
+    "description": "Generates a series of random numbers over a specified number of intervals with a delay of 1 second between each interval. It then plots these numbers as a function of elapsed time and returns the Axes object along with the kurtosis value of the generated numbers.",
+    "metadata": {
+      "libs": "['random', 'matplotlib', 'scipy', 'time']",
+      "params": "intervals (int, optional): Number of intervals for generating random numbers. Default is 100.",
+      "return_text": "matplotlib.axes.Axes: The Axes object representing the plot. float: The kurtosis value of the generated numbers.",
+      "split": "easy"
+    },
+    "clones": [
+      {
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1', 'refac_3', 'refac_4']",
+        "model": "deepseek-r1:14b",
+        "strategy": "cot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "reprompt": "2 gpt-oss:20b",
+        "cluster": 0,
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis as kurtosis_fn\nimport time\n\n\ndef task_func(intervals=100, *args):\n    data = []\n    for _ in range(intervals):\n        time.sleep(1)\n        data.append(np.random.rand())\n    timestamps = np.arange(len(data))\n    fig, ax = plt.subplots()\n    ax.plot(timestamps, data)\n    ax.set_xlabel('Time')\n    ax.set_ylabel('Value')\n    if len(data) == 0:\n        kurt = 0.0\n    else:\n        kurt = kurtosis_fn(data)\n    return ax, kurt\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.33447581855090397
+          }
+        }
+      },
+      {
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1', 'refac_3', 'refac_7']",
+        "model": "deepseek-r1:14b",
+        "strategy": "cot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "reprompt": "1 gpt-oss:20b",
+        "cluster": 1,
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(*args, **kwargs):\n    n = args[0] if len(args) > 0 else 100\n    seed = args[1] if len(args) > 1 else None\n    if seed is not None:\n        np.random.seed(seed)\n    data = []\n    for _ in range(n):\n        time.sleep(1)\n        data.append(np.random.rand())\n    elapsed_time = np.arange(n)\n    plt.figure()\n    ax = plt.gca()\n    ax.plot(elapsed_time, data)\n    ax.set_xlabel('Time')\n    ax.set_ylabel('Random Value')\n    kurtosis = np.mean((data - np.mean(data)) ** 4) / np.std(data) ** 4\n    return ax, kurtosis\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23095147333402313
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1', 'refac_3', 'refac_7']",
+        "model": "deepseek-r1:14b",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "reprompt": null,
+        "cluster": 2,
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(*args):\n    intervals = args[0] if len(args) > 0 else 100\n    data_points = []\n    for _ in range(intervals):\n        time.sleep(1)\n        data_points.append(np.random.rand())\n    fig, ax = plt.subplots()\n    x_data = list(range(len(data_points)))\n    y_data = data_points\n    ax.plot(x_data, y_data)\n\n    def calculate_kurtosis(arr):\n        n = len(arr)\n        if n <= 1:\n            return 0.0\n        mean = np.mean(arr)\n        variance = np.var(arr)\n        if variance == 0:\n            return 0.0\n        fourth_moment = np.mean((arr - mean) ** 4)\n        kurtosis = fourth_moment / variance ** 2 - 3\n        return kurtosis\n    kurtosis_value = calculate_kurtosis(data_points)\n    return ax, kurtosis_value\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.30572716665833194
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1', 'refac_3', 'refac_4']",
+        "model": "deepseek-r1:14b",
+        "strategy": "zero-shot",
+        "context": "code",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "reprompt": "1 gpt-oss:20b",
+        "cluster": 3,
+        "code": "import time\nimport random\nfrom matplotlib import pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n    else:\n        intervals = args[0]\n    timestamp = []\n    sequence = []\n    random.seed()\n    try:\n        for _ in range(intervals):\n            time.sleep(1)\n            timestamp.append(time.time())\n            sequence.append(random.random())\n    except KeyboardInterrupt:\n        pass\n    kurtosis_val = kurtosis(sequence, nan_policy='omit')\n    style_dict = {'figure.figsize': (10, 6), 'axes.linewidth': 2,\n        'lines.marker': 'o', 'lines.markersize': 4}\n    plt.rcParams.update(style_dict)\n    fig = plt.figure()\n    ax = fig.add_subplot(1, 1, 1)\n    ax.plot(timestamp, sequence)\n    return ax, kurtosis_val\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.37631116184728414
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "model": "gemma3:latest",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "reprompt": "2 gpt-oss:20b",
+        "cluster": 4,
+        "code": "import matplotlib.pyplot as plt\nimport numpy as np\nimport time\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n        seed = None\n    elif len(args) == 1:\n        intervals = args[0]\n        seed = None\n    else:\n        intervals = args[0]\n        seed = args[1]\n    if seed is not None:\n        np.random.seed(seed)\n    x = np.arange(intervals)\n    y = np.random.randn(intervals)\n    for _ in range(intervals):\n        time.sleep(1)\n    fig, ax = plt.subplots()\n    ax.plot(x, y)\n    if intervals == 0:\n        kurtosis = 0.0\n    else:\n        mean_y = np.mean(y)\n        std_y = np.std(y, ddof=0)\n        if std_y == 0:\n            kurtosis = 0.0\n        else:\n            kurtosis = np.mean((y - mean_y) ** 4) / std_y ** 4 - 3\n    return ax, kurtosis\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2546928432140341
+          }
+        }
+      },
+      {
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "model": "deepseek-r1:14b",
+        "strategy": "cot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "reprompt": "2 gpt-oss:20b",
+        "cluster": 5,
+        "code": "import matplotlib.pyplot as plt\nimport numpy as np\nimport time\n\n\ndef task_func(intervals=100, seed=None):\n    if seed is not None:\n        np.random.seed(seed)\n    if intervals < 0:\n        intervals = 0\n    x = np.arange(0, intervals)\n    y = np.random.rand(intervals)\n    for _ in range(intervals):\n        time.sleep(0)\n    fig, ax = plt.subplots()\n    ax.plot(x, y)\n    if intervals <= 1:\n        kurtosis = np.nan\n    else:\n        kurtosis = np.mean((y - np.mean(y)) ** 4) / np.std(y) ** 4\n    return ax, kurtosis\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.252857570673613
+          }
+        }
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1', 'refac_3', 'refac_4']",
+        "model": "gpt-oss:20b",
+        "strategy": "cot",
+        "context": "complete",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "reprompt": null,
+        "cluster": 6,
+        "code": "import time\nimport random\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(intervals=None, seed=None):\n    if intervals is None:\n        intervals = 100\n    if seed is not None:\n        random.seed(seed)\n    data = {'x': [], 'y': []}\n    for i in range(intervals):\n        time.sleep(1)\n        data['x'].append(i)\n        data['y'].append(random.random())\n    k = kurtosis(data['y'], nan_policy='omit')\n    plt.figure()\n    ax = plt.gca()\n    ax.plot(data['x'], data['y'])\n    return ax, k\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2135198502491108
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3', 'refac_5', 'refac_7']",
+        "model": "llama3.1:latest",
+        "strategy": "zero-shot",
+        "context": "code",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "reprompt": null,
+        "cluster": 7,
+        "code": "import time\nimport random\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(intervals=100, seed=0):\n\n\n    class RandomGenerator:\n\n        def __init__(self, seed):\n            self.seed = seed\n            self.random_state = random.Random(seed)\n\n        def generate_number(self):\n            return self.random_state.random()\n\n\n    class Plotter:\n\n        def __init__(self):\n            self.fig, self.ax = plt.subplots()\n            self.times = []\n            self.numbers = []\n\n        def plot_interval(self, time, number):\n            self.times.append(time)\n            self.numbers.append(number)\n\n        def plot(self):\n            self.ax.plot(self.times, self.numbers)\n    random_generator = RandomGenerator(seed)\n    plotter = Plotter()\n    try:\n        for _ in range(intervals):\n            time.sleep(1)\n            plotter.plot_interval(time.time(), random_generator.\n                generate_number())\n    except KeyboardInterrupt:\n        plt.close('all')\n    kurtosis_value = kurtosis(plotter.numbers, nan_policy='omit')\n    plotter.plot()\n    return plotter.ax, kurtosis_value\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2659946408225165
           }
         }
       }
@@ -1194,8 +1179,63 @@
         }
       },
       {
-        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2', 'refac_4', 'refac_6']",
-        "model": "gpt-oss:20b",
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "model": "gemma3:latest",
+        "strategy": "cot",
+        "context": "test",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "reprompt": "1 deepseek-r1:14b",
+        "cluster": 2,
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(num_groups=5, data_size=5, labels=None):\n    np.random.seed(42)\n    data = np.random.rand(data_size, num_groups)\n    if labels is None:\n        columns = ['Group1', 'Group2', 'Group3', 'Group4', 'Group5'][:\n            num_groups]\n    else:\n        columns = labels\n    df = pd.DataFrame(data, columns=columns)\n    fig, ax = plt.subplots()\n    ax.imshow(data, aspect='auto', cmap='viridis')\n    ax.set_title('Stacked Bar Chart')\n    ax.set_xlabel('Groups')\n    ax.set_ylabel('Categories')\n    plot_filename = 'test_plot.png'\n    plt.savefig(plot_filename)\n    return plt.Figure(), df, plot_filename\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2562896555687903
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/411",
+    "language": "python",
+    "original_code": "import pandas as pd\nimport json\n\n\ndef task_func(data: dict, output_path: str = \"./default_data_output.json\") -> str:\n    df = pd.DataFrame(data)\n    # Drop column named 'c' if it exists\n    df = df.drop(columns=\"c\", errors=\"ignore\")\n    # Convert the DataFrame to dictionary\n    data_dict = df.to_dict(orient=\"dict\")\n    # Save the dictionary as a JSON file\n    with open(output_path, \"w\") as file:\n        json.dump(data_dict, file)\n\n    return output_path",
+    "test": [
+      "import unittest\nimport pandas as pd\nimport json\nimport os\nclass TestCases(unittest.TestCase):\n    def read_json_file(self, path):\n        # Helper function to read content from a JSON file\n        with open(path, \"r\") as f:\n            return json.load(f)\n    def tearDown(self):\n        # Cleanup procedure after each test to remove generated files\n        files_to_remove = [\n            \"./default_data_output.json\",\n            \"./custom_data_output_2.json\",\n            \"./custom_data_output_3.json\",\n            \"./custom_data_output_4.json\",\n            \"./custom_data_output_5.json\",\n        ]\n        for file in files_to_remove:\n            if os.path.exists(file):\n                os.remove(file)\n    def convert_keys_to_str(self, dictionary):\n        # Convert dictionary keys to strings recursively\n        if not isinstance(dictionary, dict):\n            return dictionary\n        return {str(k): self.convert_keys_to_str(v) for k, v in dictionary.items()}\n    def test_case_1(self):\n        # Test basic DataFrame with column \"c\"\n        data = {\"a\": [1, 2], \"b\": [3, 4], \"c\": [5, 6]}\n        df = pd.DataFrame(data)\n        output_path = task_func(data)\n        self.assertTrue(os.path.exists(output_path))\n        expected_data = self.convert_keys_to_str(\n            df.drop(columns=\"c\").to_dict(orient=\"dict\")\n        )\n        self.assertEqual(self.read_json_file(output_path), expected_data)\n    def test_case_2(self):\n        # Test DataFrame with non-numeric data and column \"c\"\n        data = {\"name\": [\"Alice\", \"Bob\"], \"country\": [\"USA\", \"Canada\"], \"c\": [\"x\", \"y\"]}\n        df = pd.DataFrame(data)\n        custom_path = \"./custom_data_output_2.json\"\n        output_path = task_func(data, custom_path)\n        self.assertTrue(os.path.exists(output_path))\n        expected_data = self.convert_keys_to_str(\n            df.drop(columns=\"c\").to_dict(orient=\"dict\")\n        )\n        self.assertEqual(self.read_json_file(output_path), expected_data)\n    def test_case_3(self):\n        # Test DataFrame with multiple columns and no column \"c\"\n        data = {\"age\": [25, 30], \"height\": [170, 175]}\n        df = pd.DataFrame(data)\n        custom_path = \"./custom_data_output_3.json\"\n        output_path = task_func(data, custom_path)\n        self.assertTrue(os.path.exists(output_path))\n        expected_data = self.convert_keys_to_str(df.to_dict(orient=\"dict\"))\n        self.assertEqual(self.read_json_file(output_path), expected_data)\n    def test_case_4(self):\n        # Test DataFrame with mixed data types including column \"c\"\n        data = {\n                \"id\": [1, 2],\n                \"is_student\": [True, False],\n                \"grades\": [\"A\", \"B\"],\n                \"c\": [0.5, 0.8],\n            }\n        df = pd.DataFrame(data)\n        output_path = task_func(data)\n        self.assertTrue(os.path.exists(output_path))\n        expected_data = self.convert_keys_to_str(\n            df.drop(columns=\"c\").to_dict(orient=\"dict\")\n        )\n        self.assertEqual(self.read_json_file(output_path), expected_data)\n    def test_case_5(self):\n        # Test an empty DataFrame\n        data = {}\n        df = pd.DataFrame(data)\n        custom_path = \"./custom_data_output_5.json\"\n        output_path = task_func(data, custom_path)\n        self.assertTrue(os.path.exists(output_path))\n        expected_data = self.convert_keys_to_str(df.to_dict(orient=\"dict\"))\n        self.assertEqual(self.read_json_file(output_path), expected_data)"
+    ],
+    "description": "Converts the given DataFrame to a dictionary, dropping the column named 'c' if it exists, and then saves it as a JSON file.",
+    "metadata": {
+      "libs": "['pandas', 'json']",
+      "params": "data (dict): The input data dictionary. output_path (str, optional): The path where the JSON file should be saved. Default is './default_data_output.json'.",
+      "return_text": "str: Path where the JSON file was saved.",
+      "split": "easy"
+    },
+    "clones": [
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "model": "deepseek-r1:14b",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "reprompt": null,
+        "cluster": 0,
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, custom_path=None):\n\n    def dataframe_to_dict(df):\n        df_copy = df.copy()\n        if 'c' in df_copy.columns:\n            df_copy = df_copy.drop(columns='c')\n        return df_copy.to_dict(orient='dict')\n\n    def save_to_json(data, path):\n        with open(path, 'w') as f:\n            json.dump(data, f)\n\n    def generate_output_path():\n        return './default_data_output.json'\n    df = pd.DataFrame(data)\n    data_dict = dataframe_to_dict(df)\n    if custom_path is None:\n        output_path = generate_output_path()\n    else:\n        output_path = custom_path\n    save_to_json(data_dict, output_path)\n    return output_path\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3114107961190671
+          }
+        }
+      },
+      {
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "model": "deepseek-r1:14b",
         "strategy": "cot",
         "context": "test",
         "refacs": [
@@ -1204,73 +1244,37 @@
           "refac_6"
         ],
         "reprompt": null,
-        "cluster": 2,
-        "code": "import os\nimport logging\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nlogging.basicConfig(level=logging.INFO, format='%(levelname)s:%(message)s')\n\n\ndef task_func(*args, **kwargs):\n    \"\"\"\n    Generate random data and visualize it with a stacked bar chart.\n    Returns a matplotlib Figure, a pandas DataFrame, and the plot filename.\n    \"\"\"\n    num_groups = 5\n    data_size = 5\n    labels = None\n    plot_filename = 'test_plot.png'\n    if 'num_groups' in kwargs:\n        num_groups = kwargs['num_groups']\n    if 'data_size' in kwargs:\n        data_size = kwargs['data_size']\n    if 'labels' in kwargs:\n        labels = kwargs['labels']\n    if not isinstance(num_groups, int) or num_groups <= 0:\n        raise ValueError('num_groups must be a positive integer')\n    if not isinstance(data_size, int) or data_size <= 0:\n        raise ValueError('data_size must be a positive integer')\n    if labels is not None:\n        if not isinstance(labels, list) or len(labels) != num_groups:\n            raise ValueError(\n                'labels must be a list with length equal to num_groups')\n    else:\n        labels = [f'Group{i + 1}' for i in range(num_groups)]\n    rng = np.random.default_rng()\n    data_array = rng.random((data_size, num_groups))\n    data = pd.DataFrame(data_array, columns=labels)\n    fig, ax = plt.subplots(figsize=(8, 6))\n    bottom = np.zeros(data_size)\n    for col in labels:\n        ax.bar(range(data_size), data[col], bottom=bottom, label=col)\n        bottom += data[col]\n    ax.set_xlabel('Sample')\n    ax.set_ylabel('Value')\n    ax.set_title('Stacked Bar Chart')\n    ax.legend()\n    fig.savefig(plot_filename, dpi=150, bbox_inches='tight')\n    plt.close(fig)\n    return fig, data, plot_filename\n",
+        "cluster": 1,
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, custom_path=None):\n    \"\"\"\n    Converts DataFrame to dictionary and saves as JSON file.\n\n    Args:\n        data: Dictionary representation of DataFrame data\n        custom_path: Optional string path for saving the JSON file\n\n    Returns:\n        String path where the JSON file was saved\n\n    Drops column 'c' if present and converts all keys to strings in nested dictionaries.\n    Handles empty DataFrames gracefully.\n    \"\"\"\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    dict_data = df.to_dict(orient='dict')\n\n    def convert_keys(d):\n        return {str(k): convert_keys(v) for k, v in d.items()} if isinstance(d,\n            dict) else d\n    converted_data = convert_keys(dict_data)\n    if custom_path:\n        output_path = custom_path\n    else:\n        output_path = 'default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(converted_data, f, indent=2)\n    return output_path\n",
         "metrics": {
           "codebleu": {
-            "originalcode": 0.37398081696124547
+            "originalcode": 0.28069817169817557
           }
         }
-      }
-    ]
-  },
-  {
-    "id": "BigCodeBench/253",
-    "language": "python",
-    "original_code": "import numpy as np\nimport random\n\n# Constants\nCOLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n\ndef task_func(ax):\n\n    x = np.linspace(0, 2 * np.pi, 1000)\n    y = np.sin(random.randint(1, 10)*x)\n\n    color = random.choice(COLORS)\n    ax.plot(x, y, color=color)\n    ax.set_rlabel_position(random.randint(0, 180))\n\n    return color",
-    "test": [
-      "import matplotlib.pyplot as plt\nimport unittest\nimport random\nclass TestCases(unittest.TestCase):\n    def test_color_returned(self):\n        random.seed(0)\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        color = task_func(ax)\n        self.assertIn(color, ['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n        plt.close()\n    def test_random_color(self):\n        random.seed(0)\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        colors = set(task_func(ax) for _ in range(10))\n        self.assertTrue(len(colors) > 1)\n        plt.close()\n    def test_plot_exists(self):\n        random.seed(0)\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        task_func(ax)\n        self.assertTrue(len(ax.lines) > 0)\n        plt.close()\n    def test_plot_properties(self):\n        random.seed(0)\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        color = task_func(ax)\n        line = ax.lines[0]\n        self.assertEqual(line.get_color(), color)\n        plt.close()\n    def test_label_position(self):\n        random.seed(0)\n        fig = plt.figure()\n        ax = fig.add_subplot(111, polar=True)\n        task_func(ax)\n        position = ax.get_rlabel_position()\n        self.assertTrue(position>1.0)\n        plt.close()"
-    ],
-    "description": "Generate a random sine wave function and draw it on a provided matplotlib polar subplot 'ax'. The function randomly selects a color from a predefined list and sets a random position for radial labels.",
-    "metadata": {
-      "libs": "['numpy', 'random']",
-      "params": "ax (matplotlib.axes._axes.Axes): The ax to plot on.",
-      "return_text": "str: The color code (as a string) of the plotted function.",
-      "split": "easy"
-    },
-    "clones": [
+      },
       {
-        "clone_id": "cot llama3.1:latest-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2', 'refac_5', 'refac_6']",
         "model": "llama3.1:latest",
         "strategy": "cot",
-        "context": "test",
+        "context": "complete",
         "refacs": [
           "refac_2",
           "refac_5",
           "refac_6"
         ],
         "reprompt": null,
-        "cluster": 0,
-        "code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom typing import List, Tuple\n\n\ndef task_func(ax: plt.Axes) ->str:\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = np.random.choice(colors)\n    theta = np.linspace(0, 2 * np.pi, 100)\n    r = np.sin(theta)\n    ax.plot(theta, r, color=color)\n    ax.set_rlabel_position(np.random.uniform(1.0, 10.0))\n    return color\n",
+        "cluster": 2,
+        "code": "import pandas as pd\nimport json\nfrom typing import Dict, Optional\n\n\ndef task_func(data: Dict[str, list], output_path: Optional[str]=None) ->str:\n    df = pd.DataFrame(data)\n\n    def convert_to_dict(df):\n        if 'c' in df.columns:\n            return df.drop(columns='c').to_dict(orient='dict')\n        else:\n            return df.to_dict(orient='dict')\n    data_dict = convert_to_dict(df)\n\n    def save_json(data, path):\n        with open(path, 'w') as file:\n            json.dump(data, file)\n    if output_path is None:\n        output_path = './default_data_output.json'\n    save_json(data_dict, output_path)\n    return output_path\n",
         "metrics": {
           "codebleu": {
-            "originalcode": 0.3426586406957566
+            "originalcode": 0.29729517574694575
           }
         }
       },
       {
-        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1', 'refac_3', 'refac_4']",
+        "clone_id": "cot gemma3:latest-complete 1 ['refac_1', 'refac_4', 'refac_5']",
         "model": "gemma3:latest",
-        "strategy": "zero-shot",
-        "context": "test",
-        "refacs": [
-          "refac_1",
-          "refac_3",
-          "refac_4"
-        ],
-        "reprompt": null,
-        "cluster": 1,
-        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    \"\"\"\n    Generates a random sine wave function and draws it on a provided matplotlib polar subplot 'ax'.\n    The function randomly selects a color from a predefined list and sets a random position for radial labels.\n    \"\"\"\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    theta = np.linspace(0, 2 * np.pi, 100)\n    r = 10 * np.sin(theta)\n    line, = ax.plot(r, theta, color=color)\n    position = random.uniform(1.0, 5.0)\n    ax.set_rlabel_position(position)\n    return color\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.30011282882981616
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot gemma3:latest-complete 1 ['refac_1', 'refac_4', 'refac_5']",
-        "model": "gemma3:latest",
-        "strategy": "zero-shot",
+        "strategy": "cot",
         "context": "complete",
         "refacs": [
           "refac_1",
@@ -1278,38 +1282,19 @@
           "refac_5"
         ],
         "reprompt": null,
-        "cluster": 2,
-        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport random\n\n\ndef task_func(ax):\n    theta = np.linspace(0, 2 * np.pi, 100)\n    amplitude = random.uniform(0.5, 1.5)\n    phase = random.uniform(0, 2 * np.pi)\n    y = amplitude * np.sin(phase * theta)\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    ax.plot(theta, y, color=color)\n    ax.set_rlabel_position(random.uniform(0, 360))\n    return color\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.36899593061053154
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1', 'refac_3', 'refac_4']",
-        "model": "deepseek-r1:14b",
-        "strategy": "zero-shot",
-        "context": "complete",
-        "refacs": [
-          "refac_1",
-          "refac_3",
-          "refac_4"
-        ],
-        "reprompt": null,
         "cluster": 3,
-        "code": "import numpy as np\nimport random\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(ax):\n    \"\"\"\n    Generates a random sine wave and plots it on a polar subplot.\n    Returns the color used for the plot.\n    \"\"\"\n    theta = np.linspace(0, 2 * np.pi, 1000)\n    frequency = random.randint(1, 10)\n    r = np.sin(frequency * theta)\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    ax.plot(theta, r, color=color)\n    angle = random.uniform(0, np.pi)\n    ax.set_rlabel_position(angle)\n    return color\n",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, output_path='./default_data_output.json'):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    data_dict = df.to_dict(orient='dict')\n    with open(output_path, 'w') as f:\n        json.dump(data_dict, f, indent=4)\n    return output_path\n",
         "metrics": {
           "codebleu": {
-            "originalcode": 0.379539502207994
+            "originalcode": 0.2689095306462974
           }
         }
       },
       {
-        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2', 'refac_4', 'refac_6']",
         "model": "llama3.1:latest",
-        "strategy": "zero-shot",
-        "context": "test",
+        "strategy": "cot",
+        "context": "complete",
         "refacs": [
           "refac_2",
           "refac_4",
@@ -1317,35 +1302,90 @@
         ],
         "reprompt": null,
         "cluster": 4,
-        "code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom colorsys import hsv_to_rgb\n\n\ndef task_func(ax):\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    theta = np.linspace(0, 2 * np.pi, 100)\n    r = np.sin(theta) + np.random.rand(100) * 0.5\n    ax.plot(theta, r, color=color)\n    ax.set_rlabel_position(np.random.uniform(1.0, 10.0))\n    return color\n\n\nimport matplotlib.pyplot as plt\nimport numpy as np\nfrom colorsys import hsv_to_rgb\nimport random\n\n\ndef task_func(ax):\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    theta = np.linspace(0, 2 * np.pi, 100)\n    r = np.sin(theta) + np.random.rand(100) * 0.5\n    ax.plot(theta, r, color=color)\n    ax.set_rlabel_position(np.random.uniform(1.0, 10.0))\n    return color\n\n\nimport matplotlib.pyplot as plt\nimport numpy as np\nfrom colorsys import hsv_to_rgb\nimport random\nimport logging\n\n\ndef task_func(ax):\n    try:\n        colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n        if not isinstance(ax, plt.Axes):\n            raise ValueError('Input must be a matplotlib Axes object')\n        color = random.choice(colors)\n        theta = np.linspace(0, 2 * np.pi, 100)\n        r = np.sin(theta) + np.random.rand(100) * 0.5\n        ax.plot(theta, r, color=color)\n        ax.set_rlabel_position(np.random.uniform(1.0, 10.0))\n        logging.info('Plot created with random color')\n        return color\n    except Exception as e:\n        logging.error(f'Error creating plot: {str(e)}')\n",
+        "code": "import json\nimport pandas as pd\nimport tempfile\n\n\ndef task_func(data: dict, output_path: str='./default_data_output.json') ->str:\n    with tempfile.NamedTemporaryFile(mode='w', delete=False) as tmp_file:\n        df = pd.DataFrame(data)\n        if 'c' in df.columns:\n            df.drop(columns=['c'], inplace=True)\n        data_dict = df.to_dict(orient='dict')\n        json.dump(data_dict, tmp_file)\n        output_path = tmp_file.name\n    return output_path\n",
         "metrics": {
           "codebleu": {
-            "originalcode": 0.29798352059293215
+            "originalcode": 0.2473600440265891
           }
         }
       },
       {
-        "clone_id": "cot llama3.1:latest-test 1 ['refac_1', 'refac_3', 'refac_4']",
-        "model": "llama3.1:latest",
-        "strategy": "cot",
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "model": "gpt-oss:20b",
+        "strategy": "zero-shot",
         "context": "test",
         "refacs": [
-          "refac_1",
-          "refac_3",
-          "refac_4"
+          "refac_2",
+          "refac_5",
+          "refac_6"
         ],
         "reprompt": null,
         "cluster": 5,
-        "code": "import matplotlib.pyplot as plt\nimport random\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    ax.plot([0, 1], [0, 1], color=color)\n    ax.set_rlabel_position(random.uniform(0.5, 2))\n    return color\n",
+        "code": "import json\nimport logging\n\n\ndef task_func(*args, **kwargs):\n    if len(args) < 1:\n        raise ValueError('Data argument missing')\n    data = args[0]\n    output_path = args[1] if len(args) >= 2 else './default_data_output.json'\n    if not isinstance(data, dict):\n        raise TypeError('Data must be a dictionary')\n    try:\n        import pandas as pd\n    except Exception as e:\n        raise ImportError('pandas is required') from e\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    result_dict = df.to_dict(orient='dict')\n    try:\n        with open(output_path, 'w', encoding='utf-8') as f:\n            json.dump(result_dict, f)\n    except Exception as e:\n        raise IOError(f'Failed to write JSON to {output_path}') from e\n    return output_path\n",
         "metrics": {
           "codebleu": {
-            "originalcode": 0.11555364325192863
+            "originalcode": 0.25440548546185154
           }
         }
       },
       {
-        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_2', 'refac_6', 'refac_7']",
-        "model": "gpt-oss:20b",
+        "clone_id": "cot deepseek-r1:14b-code 1 ['refac_1', 'refac_4', 'refac_5']",
+        "model": "deepseek-r1:14b",
+        "strategy": "cot",
+        "context": "code",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "reprompt": "1 gpt-oss:20b",
+        "cluster": 6,
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data: dict, *args):\n    if args:\n        output_path = args[0]\n    else:\n        output_path = './default_data_output.json'\n    df = pd.DataFrame.from_dict(data)\n    df.drop(columns=['c'], errors='ignore', inplace=True)\n    with open(output_path, 'w') as f:\n        json.dump(df.to_dict('dict'), f)\n    return output_path\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.18851569382952482
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_2', 'refac_5', 'refac_6']",
+        "model": "deepseek-r1:14b",
+        "strategy": "zero-shot",
+        "context": "code",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "reprompt": "1 gpt-oss:20b",
+        "cluster": 7,
+        "code": "import pandas as pd\nimport json\nfrom pathlib import Path\nfrom typing import Dict, Any\n\n\ndef task_func(data: Dict[str, Any], *args) ->str:\n    output_path = args[0] if args else './default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns=['c'])\n    data_dict = df.to_dict(orient='dict')\n\n    def convert(d):\n        if isinstance(d, dict):\n            return {str(k): convert(v) for k, v in d.items()}\n        return d\n    data_dict = convert(data_dict)\n    output_file = Path(output_path).resolve()\n    with output_file.open('w') as f:\n        json.dump(data_dict, f, indent=2)\n    return str(output_file)\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2285062082281238
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/151",
+    "language": "python",
+    "original_code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\n\n\ndef task_func(data_dict, data_keys):\n    # Extract and transform the data for the specified keys\n    data_for_keys = {key: data_dict[key] for key in data_keys if key in data_dict}\n    df = pd.DataFrame(data_for_keys)\n\n    # Check if DataFrame is empty (i.e., no keys matched)\n    if df.empty:\n        raise ValueError(\"No matching keys found in data dictionary, or keys list is empty.\")\n\n    # Apply MinMax normalization\n    scaler = MinMaxScaler()\n    normalized_data = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_data, columns=data_keys)\n\n    # Plot the normalized data\n    ax = normalized_df.plot(kind='line')\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Normalized Value')\n    ax.set_xlabel('Index')\n\n    return normalized_df, ax",
+    "test": [
+      "import unittest\nimport matplotlib.pyplot as plt\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        # Sample data dictionary\n        self.data_dict = {\n            'A': [10, 20, 30, 40],\n            'B': [20, 30, 40, 50],\n            'C': [30, 40, 50, 60]\n        }\n    def test_normalization_single_key(self):\n        # Test normalization with a single key\n        data_keys = ['A']\n        normalized_df, ax = task_func(self.data_dict, data_keys)\n        self.assertTrue((normalized_df >= 0).all().all() and (normalized_df <= 1).all().all(),\n                        \"Normalized data should be in the range [0, 1]\")\n    def test_normalization_multiple_keys(self):\n        # Test normalization with multiple keys\n        data_keys = ['A', 'B']\n        normalized_df, ax = task_func(self.data_dict, data_keys)\n        self.assertEqual(len(normalized_df.columns), 2, \"Normalized DataFrame should have 2 columns\")\n        self.assertTrue({'A', 'B'}.issubset(normalized_df.columns), \"DataFrame should contain specified keys\")\n    def test_normalization_all_keys(self):\n        # Test normalization with all keys in the dictionary\n        data_keys = list(self.data_dict.keys())\n        normalized_df, ax = task_func(self.data_dict, data_keys)\n        self.assertEqual(len(normalized_df.columns), 3, \"Normalized DataFrame should have 3 columns\")\n        self.assertTrue({'A', 'B', 'C'}.issubset(normalized_df.columns), \"DataFrame should contain all keys\")\n    def test_empty_keys(self):\n        # Test with no keys specified\n        data_keys = []\n        with self.assertRaises(ValueError):\n            task_func(self.data_dict, data_keys)\n    def test_key_not_in_dict(self):\n        # Test with a key that's not in the dictionary\n        data_keys = ['D']  # Assuming 'D' is not in `data_dict`\n        with self.assertRaises(ValueError):\n            task_func(self.data_dict, data_keys)"
+    ],
+    "description": "Normalize data specified by keys in a dictionary using MinMax scaling and plot the results. This function is useful for preprocessing data for machine learning models where data scaling can impact performance.",
+    "metadata": {
+      "libs": "['pandas', 'sklearn']",
+      "params": "data_dict (dict): A dictionary where keys map to lists of numeric values. data_keys (list): Keys within the dictionary whose corresponding values are to be normalized.",
+      "return_text": "tuple: A tuple containing a DataFrame of normalized values and a matplotlib Axes object representing a plot of the normalized data.",
+      "split": "easy"
+    },
+    "clones": [
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "model": "llama3.1:latest",
         "strategy": "zero-shot",
         "context": "complete",
         "refacs": [
@@ -1353,75 +1393,37 @@
           "refac_6",
           "refac_7"
         ],
-        "reprompt": null,
-        "cluster": 6,
-        "code": "import math\nimport secrets\nimport logging\nlogger = logging.getLogger(__name__)\nCOLORS = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n\n\ndef task_func(ax):\n    if ax is None:\n        raise ValueError('ax must not be None')\n    if not hasattr(ax, 'plot') or not hasattr(ax, 'set_rlabel_position'):\n        raise TypeError('ax must have plot and set_rlabel_position methods')\n    try:\n        x = [(i * 2 * math.pi / 999) for i in range(1000)]\n        y = [math.sin(i * 2 * math.pi / 999) for i in range(1000)]\n        y_duplicate = []\n        for i in range(1000):\n            y_duplicate.append(math.sin(i * 2 * math.pi / 999))\n        color = secrets.choice(COLORS)\n        ax.plot(x, y, color=color)\n        pos = secrets.randbelow(180) + 1.0\n        ax.set_rlabel_position(pos)\n        return color\n    except Exception as exc:\n        logger.exception('Failed to plot sine wave: %s', exc)\n        raise\n",
+        "reprompt": "1 gpt-oss:20b",
+        "cluster": 0,
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\nfrom scipy import stats\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in dictionary\")\n    data_for_keys = {key: np.array(data_dict[key]) for key in data_keys}\n    if any(len(values) == 0 for values in data_for_keys.values()):\n        raise ValueError(\n            'No matching keys found in data dictionary, or keys list is empty.'\n            )\n    normalized_data = []\n    for key in data_for_keys:\n        min_val = np.min(data_for_keys[key])\n        max_val = np.max(data_for_keys[key])\n        if min_val == max_val:\n            raise ValueError(f\"Key '{key}' has constant values\")\n        normalized_values = (data_for_keys[key] - min_val) / (max_val - min_val\n            )\n        normalized_data.append(normalized_values)\n    normalized_array = np.array(normalized_data).T\n    normalized_df = pd.DataFrame(normalized_array, columns=data_keys)\n    fig, ax = plt.subplots()\n    for i, key in enumerate(data_keys):\n        ax.plot(normalized_data[i], label=key)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Normalized Value')\n    ax.set_xlabel('Index')\n    ax.legend()\n    return normalized_df, ax\n",
         "metrics": {
           "codebleu": {
-            "originalcode": 0.19867756172259624
+            "originalcode": 0.36759951568131105
           }
         }
       },
       {
-        "clone_id": "zero-shot gemma3:latest-ast 1 ['refac_2', 'refac_5', 'refac_6']",
-        "model": "gemma3:latest",
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "model": "deepseek-r1:14b",
         "strategy": "zero-shot",
-        "context": "ast",
-        "refacs": [
-          "refac_2",
-          "refac_5",
-          "refac_6"
-        ],
-        "reprompt": null,
-        "cluster": 7,
-        "code": "import random\nimport math\nimport matplotlib.pyplot as plt\n\n\ndef task_func(ax):\n    x = [i for i in range(1000)]\n    y = [math.sin(i * x[i]) for i in range(1000)]\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    ax.plot(x, y, color=color)\n    ax.set_rlabel_position(random.randint(0, 180))\n    return color\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.3916322753663788
-          }
-        }
-      },
-      {
-        "clone_id": "cot gemma3:latest-complete 1 ['refac_3', 'refac_5', 'refac_7']",
-        "model": "gemma3:latest",
-        "strategy": "cot",
         "context": "complete",
         "refacs": [
-          "refac_3",
-          "refac_5",
+          "refac_2",
+          "refac_6",
           "refac_7"
         ],
-        "reprompt": null,
-        "cluster": 8,
-        "code": "import matplotlib.pyplot as plt\nimport random\n\n\ndef task_func(ax):\n    radius = [random.uniform(0.5, 1.5) for _ in range(10)]\n    angles = [random.uniform(0, 2 * 3.14159) for _ in range(10)]\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    ax.plot(radius, angles, color=color)\n    ax.set_rlabel_position(random.uniform(0, 180))\n    return color\n",
+        "reprompt": "1 gpt-oss:20b",
+        "cluster": 1,
+        "code": "import numpy as np\nfrom matplotlib import pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not isinstance(data_keys, list):\n        raise TypeError(\n            'Invalid input types. data_dict must be a dictionary and data_keys must be a list.'\n            )\n    if len(data_keys) == 0:\n        raise ValueError('data_keys cannot be empty.')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in data_dict.\")\n    extracted_data = {key: data_dict[key] for key in data_keys}\n    arrays = {k: np.array(v) for k, v in extracted_data.items()}\n    normalized_arrays = {}\n    for key in data_keys:\n        arr = arrays[key]\n        min_val = np.min(arr)\n        max_val = np.max(arr)\n        if min_val == max_val:\n            normalized_arr = np.zeros_like(arr)\n        else:\n            normalized_arr = (arr - min_val) / (max_val - min_val)\n        normalized_arrays[key] = normalized_arr\n    df_normalized = pd.DataFrame(normalized_arrays)\n    fig, ax = plt.subplots()\n    df_normalized.plot(kind='line', ax=ax)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Value')\n    ax.set_xlabel('Index')\n    return df_normalized, ax\n",
         "metrics": {
           "codebleu": {
-            "originalcode": 0.2670730523477098
+            "originalcode": 0.29854704672700694
           }
         }
       },
       {
-        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_2', 'refac_4', 'refac_6']",
-        "model": "gpt-oss:20b",
-        "strategy": "zero-shot",
-        "context": "complete",
-        "refacs": [
-          "refac_2",
-          "refac_4",
-          "refac_6"
-        ],
-        "reprompt": null,
-        "cluster": 9,
-        "code": "import math\nimport random\nimport matplotlib.axes\n\n\ndef task_func(ax):\n    if not isinstance(ax, matplotlib.axes.Axes):\n        raise TypeError('ax must be a matplotlib Axes instance')\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    amplitude = random.randint(1, 10)\n    x = [(i * 2 * math.pi / 999) for i in range(1000)]\n    y = [math.sin(amplitude * xi) for xi in x]\n    color = random.choice(colors)\n    ax.plot(x, y, color=color)\n    ax.set_rlabel_position(random.randint(0, 360))\n    return color\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.31933847716760716
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
-        "model": "llama3.1:latest",
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "model": "deepseek-r1:14b",
         "strategy": "zero-shot",
         "context": "test",
         "refacs": [
@@ -1430,11 +1432,237 @@
           "refac_5"
         ],
         "reprompt": null,
-        "cluster": 10,
-        "code": "import matplotlib.pyplot as plt\nimport random\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    ax.plot([0], [0], color=color)\n    ax.set_rlabel_position(random.uniform(1.0, 2.0))\n    return color\n\n\nclass TaskFuncAlternative:\n\n    def __init__(self):\n        self.color = None\n        self.ax = None\n\n    def _random_color(self):\n        return random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n\n    def _draw_plot(self, ax):\n        color = self._random_color()\n        ax.plot([0], [0], color=color)\n\n    def _set_rlabel_position(self, ax):\n        ax.set_rlabel_position(random.uniform(1.0, 2.0))\n\n    def task_func(self, ax):\n        self.ax = ax\n        self.color = self._random_color()\n        self._draw_plot(ax)\n        self._set_rlabel_position(ax)\n\n\ntask_func_alternative = TaskFuncAlternative()\n\n\ndef task_func_alternative_wrapper(ax):\n    return task_func_alternative.task_func(ax)\n\n\nclass TaskFuncPure:\n\n    def __init__(self, ax):\n        self.ax = ax\n\n    def _random_color(self):\n        return random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n\n    def _draw_plot(self):\n        color = self._random_color()\n        return [0], [0], color\n\n    def _set_rlabel_position(self):\n        return random.uniform(1.0, 2.0)\n\n    def task_func_pure(self):\n        x, y, color = self._draw_plot()\n        rlabel_position = self._set_rlabel_position()\n        self.ax.plot(x, y, color=color)\n        self.ax.set_rlabel_position(rlabel_position)\n        return color\n\n\ndef task_func_pure_wrapper(ax):\n    return TaskFuncPure(ax).task_func_pure()\n",
+        "cluster": 2,
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    \"\"\"\n    Normalize data specified by keys in a dictionary using MinMax scaling and plot the results.\n\n    Parameters:\n        data_dict (dict): Dictionary containing data to be normalized\n        data_keys (list): List of keys specifying which data to normalize\n\n    Returns:\n        tuple: A tuple containing a DataFrame with normalized data and a matplotlib axes object\n    \"\"\"\n    if not data_keys:\n        raise ValueError('No keys specified for normalization')\n    missing_keys = [key for key in data_keys if key not in data_dict]\n    if missing_keys:\n        raise ValueError(f'Keys {missing_keys} not found in data_dict')\n    df = pd.DataFrame(data_dict)\n    scaler = MinMaxScaler()\n    normalized_data = scaler.fit_transform(df[data_keys])\n    normalized_df = pd.DataFrame(normalized_data, columns=data_keys)\n    fig, ax = plt.subplots(figsize=(10, 6))\n    df[data_keys].plot(ax=ax, kind='line', label='Original Data')\n    normalized_df.plot(ax=ax, kind='line', color=['red' for _ in data_keys],\n        label='Normalized Data')\n    ax.set_title('Data Normalization Visualization')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Value')\n    ax.legend()\n    return normalized_df, ax\n",
         "metrics": {
           "codebleu": {
-            "originalcode": 0.1384755875293279
+            "originalcode": 0.3842643677777215
+          }
+        }
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-code 1 ['refac_1', 'refac_4', 'refac_5']",
+        "model": "gpt-oss:20b",
+        "strategy": "cot",
+        "context": "code",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "reprompt": "1 llama3.1:latest",
+        "cluster": 3,
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    selected = {k: np.array(v) for k, v in data_dict.items() if k in data_keys}\n    if not selected:\n        raise ValueError('No matching keys found.')\n    norm = pd.DataFrame({k: ((v - v.min()) / (v.max() - v.min()) if v.max() !=\n        v.min() else np.zeros_like(v)) for k, v in selected.items()})\n    fig, ax = plt.subplots()\n    for k, v in norm.items():\n        ax.plot(v, label=k)\n    ax.set_title('Normalized Data')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    ax.legend()\n    return norm, fig\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2197055745416735
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "model": "gpt-oss:20b",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "reprompt": null,
+        "cluster": 4,
+        "code": "import logging\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(__name__)\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict):\n        logger.error('data_dict must be a dictionary')\n        raise ValueError('data_dict must be a dictionary')\n    if not isinstance(data_keys, list):\n        logger.error('data_keys must be a list')\n        raise ValueError('data_keys must be a list')\n    if not data_keys:\n        logger.error('data_keys list is empty')\n        raise ValueError('data_keys list cannot be empty')\n    for key in data_keys:\n        if key not in data_dict:\n            logger.error(f\"Key '{key}' not found in data_dict\")\n            raise ValueError(f\"Key '{key}' not found in data_dict\")\n    data = {}\n    for key in data_keys:\n        values = np.asarray(data_dict[key], dtype=float)\n        if values.size == 0:\n            logger.error(f\"Values for key '{key}' are empty\")\n            raise ValueError(f\"Values for key '{key}' are empty\")\n        min_val = np.min(values)\n        max_val = np.max(values)\n        if max_val == min_val:\n            scaled = np.zeros_like(values)\n        else:\n            scaled = (values - min_val) / (max_val - min_val)\n        data[key] = scaled\n    normalized_df = pd.DataFrame(data)\n    fig, ax = plt.subplots()\n    for col in normalized_df.columns:\n        ax.plot(normalized_df[col], label=col)\n    ax.legend()\n    return normalized_df, ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23611505354858775
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-complete 1 ['refac_1', 'refac_3', 'refac_7']",
+        "model": "gemma3:latest",
+        "strategy": "zero-shot",
+        "context": "complete",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "reprompt": "1 gpt-oss:20b",
+        "cluster": 5,
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified for normalization.')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in the data dictionary.\")\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n    scaler = MinMaxScaler()\n    normalized_data = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_data, columns=data_keys)\n    fig, ax = plt.subplots()\n    ax.plot(normalized_df)\n    return normalized_df, ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35763877947279266
+          }
+        }
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1', 'refac_3', 'refac_7']",
+        "model": "gpt-oss:20b",
+        "strategy": "cot",
+        "context": "complete",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "reprompt": null,
+        "cluster": 6,
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided')\n    for k in data_keys:\n        if k not in data_dict:\n            raise ValueError(f'Key {k} not in data dictionary')\n    data_list = []\n    for k in data_keys:\n        data_list.append((k, data_dict[k]))\n    df = pd.DataFrame({k: v for k, v in data_list})\n    norm_dict = {}\n    for col in df.columns:\n        col_vals = df[col].tolist()\n        min_val = min(col_vals)\n        max_val = max(col_vals)\n        min_val_dup = min(col_vals)\n        max_val_dup = max(col_vals)\n        if max_val == min_val:\n            norm_vals = [0.0] * len(col_vals)\n        else:\n            norm_vals = [((x - min_val) / (max_val - min_val)) for x in\n                col_vals]\n        norm_dict[col] = norm_vals\n    norm_df = pd.DataFrame(norm_dict)\n    ax = norm_df.plot()\n    ax.set_title('Normalized Data')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    return norm_df, ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23074180768085129
+          }
+        }
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "model": "gemma3:latest",
+        "strategy": "cot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "reprompt": null,
+        "cluster": 7,
+        "code": "import matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified')\n    df = pd.DataFrame(data_dict)\n    if any(key not in data_dict for key in data_keys):\n        raise ValueError('Key not in dictionary')\n    normalized_df = df[data_keys].apply(lambda x: (x - x.min()) / (x.max() -\n        x.min()), axis=0)\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    plt.show()\n    return normalized_df, fig\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.20939823108418376
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1', 'refac_3', 'refac_4']",
+        "model": "gpt-oss:20b",
+        "strategy": "zero-shot",
+        "context": "complete",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "reprompt": null,
+        "cluster": 8,
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided.')\n    missing = [k for k in data_keys if k not in data_dict]\n    if missing:\n        raise ValueError(f'Keys not found in data dictionary: {missing}')\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n    min_vals = df.min()\n    max_vals = df.max()\n    denom = max_vals - min_vals\n    denom.replace(0, np.nan, inplace=True)\n    normalized = (df - min_vals) / denom\n    normalized.fillna(0, inplace=True)\n    ax = normalized.plot()\n    ax.set_title('Normalized Data')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    return normalized, ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.21197313129261863
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "model": "gpt-oss:20b",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "reprompt": null,
+        "cluster": 9,
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    \"\"\"\n    Normalize specified columns of a data dictionary using MinMax scaling and plot the results.\n    \"\"\"\n    if not data_keys:\n        raise ValueError('No keys provided for normalization.')\n    missing = [k for k in data_keys if k not in data_dict]\n    if missing:\n        raise ValueError(f'Keys not found in data dictionary: {missing}')\n\n    def _normalize_data(d, keys):\n        data = {}\n        for k in keys:\n            arr = np.array(d[k], dtype=float)\n            min_val = arr.min()\n            max_val = arr.max()\n            denom = max_val - min_val\n            if denom == 0:\n                scaled = np.zeros_like(arr)\n            else:\n                scaled = (arr - min_val) / denom\n            data[k] = scaled\n        return pd.DataFrame(data)\n\n    def _plot_data(df):\n        fig, ax = plt.subplots()\n        for col in df.columns:\n            ax.plot(df.index, df[col], label=col)\n        ax.legend()\n        return ax\n    normalized_df = _normalize_data(data_dict, data_keys)\n    ax = _plot_data(normalized_df)\n    return normalized_df, ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22191193887736926
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-code 1 ['refac_2', 'refac_6', 'refac_7']",
+        "model": "gemma3:latest",
+        "strategy": "zero-shot",
+        "context": "code",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "reprompt": "2 gpt-oss:20b",
+        "cluster": 10,
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided.')\n    missing_keys = set(data_keys) - set(data_dict.keys())\n    if missing_keys:\n        raise ValueError(f'Keys not found in data dictionary: {missing_keys}')\n    data_array = np.array([data_dict[key] for key in data_keys])\n    if data_array.size == 0:\n        raise ValueError('No matching keys found in data dictionary.')\n    min_vals = np.min(data_array, axis=0)\n    max_vals = np.max(data_array, axis=0)\n    denom = max_vals - min_vals\n    denom[denom == 0] = 1\n    normalized_data = (data_array - min_vals) / denom\n    df = pd.DataFrame(normalized_data.T, columns=data_keys)\n    plt.figure(figsize=(10, 6))\n    plt.plot(normalized_data.T)\n    plt.title('Normalized Data')\n    plt.xlabel('Index')\n    plt.ylabel('Normalized Value')\n    plt.grid(True)\n    plt.tight_layout()\n    ax = plt.gca()\n    return df, ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.24631816252843405
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/179",
+    "language": "python",
+    "original_code": "import re\nimport matplotlib.pyplot as plt\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport numpy as np\n\n\ndef task_func(df):\n    pattern = re.compile(r'(how|what)', re.IGNORECASE)\n\n    # Check if the DataFrame has the required columns\n    if not set(['Title', 'Content']).issubset(df.columns):\n        fig, ax = plt.subplots()\n        return ax\n\n    interesting_articles = df[df['Title'].apply(lambda x: bool(pattern.search(x)))]\n\n    fig, ax = plt.subplots()\n\n    # If there are no interesting articles, return an empty plot\n    if interesting_articles.empty:\n        return ax\n\n    vectorizer = TfidfVectorizer()\n    X = vectorizer.fit_transform(interesting_articles['Content'])\n    tfidf_scores = np.array(X.sum(axis=0))[0]\n\n    ax.bar(vectorizer.get_feature_names_out(), tfidf_scores)\n    ax.set_ylabel('TF-IDF Score')\n    plt.xticks(rotation='vertical')\n\n    return ax",
+    "test": [
+      "import unittest\nimport pandas as pd\nimport matplotlib\nmatplotlib.use('Agg')\nclass TestCases(unittest.TestCase):\n    def setUp(self):\n        # Sample data for testing\n        self.DATA = {\n            'Title': ['How to code?', 'What is Python?', 'The art of programming', 'How to cook?', 'What is life?'],\n            'Content': ['This is a tutorial about coding...', 'Python is a programming language...',\n                        'Programming is an art...', 'This is a cooking tutorial...', 'Life is complicated...']\n        }\n        self.df_sample = pd.DataFrame(self.DATA)\n    def test_case_1(self):\n        # Test with original data\n        ax = task_func(self.df_sample)\n        self.assertEqual(len(ax.patches), 11)  # Adjusting based on actual data\n        self.assertEqual(ax.get_ylabel(), \"TF-IDF Score\")\n    def test_case_2(self):\n        # Test with no interesting articles\n        df_no_interesting = self.df_sample.copy()\n        df_no_interesting['Title'] = ['Coding 101', 'Python tutorial', 'Programming basics', 'Cooking basics',\n                                      'Life basics']\n        ax = task_func(df_no_interesting)\n        self.assertEqual(len(ax.patches), 0)  # No bars in the plot as no interesting articles\n    def test_case_3(self):\n        # Test with only one interesting article\n        df_one_interesting = self.df_sample.copy()\n        df_one_interesting['Title'] = ['How to play guitar?', 'Python tutorial', 'Programming basics', 'Cooking basics',\n                                       'Life basics']\n        ax = task_func(df_one_interesting)\n        self.assertEqual(len(ax.patches), 5)  # 5 unique words in the interesting article\n    def test_case_4(self):\n        # Test with data not containing columns 'Title' and 'Content'\n        df_empty = pd.DataFrame(columns=['Title', 'Description'])\n        ax = task_func(df_empty)\n        self.assertEqual(len(ax.patches), 0)  # No bars in the plot as dataframe is empty\n    def test_case_5(self):\n        # Test with empty dataframe\n        df_empty = pd.DataFrame(columns=['Title', 'Content'])\n        ax = task_func(df_empty)\n        self.assertEqual(len(ax.patches), 0)  # No bars in the plot as dataframe is empty"
+    ],
+    "description": "Analyzes a given DataFrame containing article titles and content to identify articles with titles that include the words \"how\" or \"what\". It calculates the TF-IDF scores for the words in the content of these articles and visualizes these scores in a bar plot.",
+    "metadata": {
+      "libs": "['numpy', 'matplotlib', 're', 'sklearn']",
+      "params": "df (DataFrame): A DataFrame containing at least two columns: 'Title' and 'Content'.",
+      "return_text": "Axes: A matplotlib Axes object displaying a bar plot of the TF-IDF scores.",
+      "split": "easy"
+    },
+    "clones": [
+      {
+        "clone_id": "cot deepseek-r1:14b-code 1 ['refac_1', 'refac_3', 'refac_7']",
+        "model": "deepseek-r1:14b",
+        "strategy": "cot",
+        "context": "code",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "reprompt": "1 llama3.1:latest",
+        "cluster": 0,
+        "code": "import re\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n\ndef task_func(df):\n    title_pattern = re.compile('\\\\b(how|what)\\\\b', flags=re.IGNORECASE)\n    if 'Title' not in df.columns or 'Content' not in df.columns:\n        fig, ax = plt.subplots()\n        return ax\n    filtered_df = df[df['Title'].apply(lambda x: bool(title_pattern.search(x)))\n        ]\n    if len(filtered_df) == 0:\n        fig, ax = plt.subplots()\n        return ax\n    vectorizer = TfidfVectorizer()\n    tfidf_matrix = vectorizer.fit_transform(filtered_df['Content'])\n    feature_names = vectorizer.get_feature_names_out()\n    tfidf_scores = np.sum(tfidf_matrix.toarray(), axis=0).flatten()\n    fig, ax = plt.subplots(figsize=(10, 6))\n    ax.bar(feature_names, tfidf_scores)\n    ax.set_ylabel('TF-IDF Score', fontsize=12)\n    ax.tick_params(axis='x', rotation=45)\n    return ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.36670028500736734
+          }
+        }
+      },
+      {
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "model": "deepseek-r1:14b",
+        "strategy": "cot",
+        "context": "test",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "reprompt": "1 gemma3:latest",
+        "cluster": 1,
+        "code": "import pandas as pd\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    \"\"\"\n    Analyzes a DataFrame containing article titles and content to identify articles with titles that include 'how' or 'what'.\n    Calculates TF-IDF scores for the words in the content of these articles and visualizes these scores in a bar plot.\n    Returns a matplotlib axis object containing the plot.\n    \"\"\"\n    if not all(key in df.columns for key in ['Title', 'Content']):\n        fig, ax = plt.subplots()\n        return ax\n    df['Title_Lower'] = df['Title'].str.lower()\n    mask = df['Title_Lower'].apply(lambda x: 'how' in x or 'what' in x)\n    if not mask.any():\n        fig, ax = plt.subplots()\n        return ax\n    tfidf = TfidfVectorizer()\n    content_corpus = df[mask]['Content']\n    tfidf_matrix = tfidf.fit_transform(content_corpus)\n    feature_names = tfidf.get_feature_names_out()\n    scores = tfidf.idf_\n    score_df = pd.DataFrame({'Word': feature_names, 'TF_IDF_Score': scores})\n    score_df = score_df.sort_values('TF_IDF_Score', ascending=False)\n    fig, ax = plt.subplots()\n    bars = ax.bar(score_df['Word'], score_df['TF_IDF_Score'])\n    ax.set_title('TF-IDF Scores for Interesting Articles')\n    ax.set_xlabel('Words')\n    ax.set_ylabel('TF-IDF Score')\n    ax.tick_params(axis='x', rotation=45)\n    return ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.27241548978924673
+          }
+        }
+      },
+      {
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1', 'refac_3', 'refac_7']",
+        "model": "deepseek-r1:14b",
+        "strategy": "cot",
+        "context": "test",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "reprompt": null,
+        "cluster": 2,
+        "code": "import pandas as pd\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    tfidf = TfidfVectorizer()\n    df['is_interesting'] = df['Title'].str.lower().str.contains('how|what')\n    interesting_articles = df[df['is_interesting']]\n    if not interesting_articles.empty:\n        corpus = interesting_articles['Content']\n        tfidf_matrix = tfidf.fit_transform(corpus)\n        feature_names = tfidf.get_feature_names_out()\n        plt.figure(figsize=(10, 6))\n        ax = plt.gca()\n        scores = tfidf_matrix[0].toarray().flatten()\n        bars = ax.bar(feature_names, scores)\n        ax.set_xlabel('Words')\n        ax.set_ylabel('TF-IDF Score')\n        ax.set_title('TF-IDF Scores for Interesting Articles')\n    else:\n        plt.figure(figsize=(10, 6))\n        ax = plt.gca()\n        bars = []\n    return ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1637241212662953
           }
         }
       }
@@ -1456,6 +1684,25 @@
     },
     "clones": [
       {
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "model": "deepseek-r1:14b",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "reprompt": null,
+        "cluster": 0,
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    \"\"\"\n    Normalizes data using MinMax scaling and calculates row averages.\n    Adds the average as a new column 'Average' to the DataFrame.\n    Visualizes the averages in a plot.\n\n    Parameters:\n        data (numpy.ndarray): Input dataset with shape (n_rows, n_columns)\n\n    Returns:\n        tuple: (DataFrame, matplotlib.axes._subplots.AxesSubplot)\n              The first element is the DataFrame with normalized values and 'Average' column.\n              The second element is the plot axes showing the averages.\n    \"\"\"\n    df = pd.DataFrame(data)\n    for i in range(len(df)):\n        min_val = df.iloc[i].min()\n        max_val = df.iloc[i].max()\n        if min_val == max_val:\n            normalized_row = [0.0] * len(df.columns)\n        else:\n            normalized_row = (df.iloc[i] - min_val) / (max_val - min_val)\n        df.iloc[i] = normalized_row\n    df['Average'] = df.mean(axis=1)\n    plt.figure(figsize=(10, 6))\n    ax = plt.gca()\n    line = ax.plot(df['Average'], label='Average Values')\n    ax.set_title('Average Values Visualization')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Value')\n    ax.legend()\n    return df, ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22890372777194357
+          }
+        }
+      },
+      {
         "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2', 'refac_6', 'refac_7']",
         "model": "deepseek-r1:14b",
         "strategy": "cot",
@@ -1466,11 +1713,30 @@
           "refac_7"
         ],
         "reprompt": null,
-        "cluster": 0,
+        "cluster": 1,
         "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    normalized_data = []\n    for row in data.T:\n        min_val = np.min(row)\n        max_val = np.max(row)\n        if max_val == min_val:\n            scaled_row = np.zeros_like(row)\n        else:\n            scaled_row = (row - min_val) / (max_val - min_val)\n        normalized_data.append(scaled_row)\n    normalized_data = np.array(normalized_data).T\n    averages = []\n    for row in normalized_data:\n        avg = np.mean(row)\n        averages.append(avg)\n    df = pd.DataFrame(normalized_data, columns=[f'Column_{i + 1}' for i in\n        range(data.shape[1])])\n    df['Average'] = averages\n    fig, ax = plt.subplots()\n    ax.plot(averages, label='Average')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Value')\n    ax.legend()\n    return df, ax\n",
         "metrics": {
           "codebleu": {
             "originalcode": 0.2673323395261317
+          }
+        }
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "model": "deepseek-r1:14b",
+        "strategy": "zero-shot",
+        "context": "test",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "reprompt": "1 gpt-oss:20b",
+        "cluster": 2,
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.36083194349299424
           }
         }
       },
@@ -1485,68 +1751,11 @@
           "refac_7"
         ],
         "reprompt": null,
-        "cluster": 1,
+        "cluster": 3,
         "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n\n\nclass TaskFunc:\n\n    def __init__(self):\n        self.data = None\n        self.df = None\n        self.ax = None\n\n    def normalize_and_calculate_average(self, data):\n        if not isinstance(data, np.ndarray) or len(data.shape) != 2:\n            raise ValueError('Input must be a 2D numpy array')\n        self.data = data\n        self.df = pd.DataFrame(data)\n        self.df['Average'] = self.df.mean(axis=1)\n\n    def visualize_average(self):\n        if self.ax is None:\n            fig, ax = plt.subplots()\n            self.ax = ax\n        else:\n            fig, ax = self.ax.get_figure(), self.ax\n        ax.clear()\n        ax.plot(self.df['Average'])\n\n    def get_result(self):\n        return self.df, self.ax\n\n\ndef task_func_side_effects(data):\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    plt.savefig('plot.png')\n    return df, ax\n\n\ndef task_func_bad_smells(data):\n    if len(data) > 1000:\n        pass\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    for i in range(10):\n        ax.plot(df['Average'], color='red')\n        ax.plot(df['Average'], color='blue')\n    return df, ax\n\n\ndef task_func_alternative(data):\n    if not isinstance(data, np.ndarray) or len(data.shape) != 2:\n        raise ValueError('Input must be a 2D numpy array')\n    data_dict = {i: row for i, row in enumerate(data)}\n    average_dict = {}\n    for key, value in data_dict.items():\n        average_dict[key] = np.mean(value)\n    fig, ax = plt.subplots()\n    ax.plot(list(average_dict.values()))\n    return average_dict, ax\n",
         "metrics": {
           "codebleu": {
             "originalcode": 0.3224642048106854
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_4', 'refac_6']",
-        "model": "deepseek-r1:14b",
-        "strategy": "zero-shot",
-        "context": "test",
-        "refacs": [
-          "refac_2",
-          "refac_4",
-          "refac_6"
-        ],
-        "reprompt": null,
-        "cluster": 2,
-        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    \"\"\"\n    Normalizes data using MinMax scaling and calculates row averages.\n    Adds the average as a new column 'Average' to the DataFrame.\n    Visualizes the averages in a plot.\n\n    Parameters:\n        data (numpy.ndarray): Input dataset with shape (n_rows, n_columns)\n\n    Returns:\n        tuple: (DataFrame, matplotlib.axes._subplots.AxesSubplot)\n              The first element is the DataFrame with normalized values and 'Average' column.\n              The second element is the plot axes showing the averages.\n    \"\"\"\n    df = pd.DataFrame(data)\n    for i in range(len(df)):\n        min_val = df.iloc[i].min()\n        max_val = df.iloc[i].max()\n        if min_val == max_val:\n            normalized_row = [0.0] * len(df.columns)\n        else:\n            normalized_row = (df.iloc[i] - min_val) / (max_val - min_val)\n        df.iloc[i] = normalized_row\n    df['Average'] = df.mean(axis=1)\n    plt.figure(figsize=(10, 6))\n    ax = plt.gca()\n    line = ax.plot(df['Average'], label='Average Values')\n    ax.set_title('Average Values Visualization')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Value')\n    ax.legend()\n    return df, ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.22890372777194357
-          }
-        }
-      },
-      {
-        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1', 'refac_3', 'refac_7']",
-        "model": "gpt-oss:20b",
-        "strategy": "zero-shot",
-        "context": "complete",
-        "refacs": [
-          "refac_1",
-          "refac_3",
-          "refac_7"
-        ],
-        "reprompt": null,
-        "cluster": 3,
-        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    mins = [np.min(data[:, i]) for i in range(data.shape[1])]\n    maxs = [np.max(data[:, i]) for i in range(data.shape[1])]\n    scaled = []\n    for row in data:\n        new_row = []\n        for i, val in enumerate(row):\n            denom = maxs[i] - mins[i]\n            if denom == 0:\n                new_row.append(0.0)\n            else:\n                new_row.append((val - mins[i]) / denom)\n        scaled.append(new_row)\n    col_names = [('C%d' % (i + 1)) for i in range(data.shape[1])]\n    df = pd.DataFrame(scaled, columns=col_names)\n    avg = []\n    for r in scaled:\n        avg.append(sum(r) / len(r))\n    df['Average'] = avg\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.27843427991771097
-          }
-        }
-      },
-      {
-        "clone_id": "cot llama3.1:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
-        "model": "llama3.1:latest",
-        "strategy": "cot",
-        "context": "test",
-        "refacs": [
-          "refac_1",
-          "refac_4",
-          "refac_5"
-        ],
-        "reprompt": null,
-        "cluster": 4,
-        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    df = pd.DataFrame(data, columns=[f'Feature {i}' for i in range(8)])\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
-        "metrics": {
-          "codebleu": {
-            "originalcode": 0.3517513950441564
           }
         }
       },
@@ -1561,7 +1770,7 @@
           "refac_6"
         ],
         "reprompt": null,
-        "cluster": 5,
+        "cluster": 4,
         "code": "import numpy as np\nimport matplotlib\nimport matplotlib.figure\nimport matplotlib.axes\nimport logging\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(__name__)\n\n\nclass SimpleDataFrame:\n\n    def __init__(self, data, columns):\n        self._data = np.asarray(data)\n        self.columns = list(columns)\n\n    @property\n    def shape(self):\n        return self._data.shape\n\n    def __getitem__(self, key):\n        if key not in self.columns:\n            raise KeyError(f'Column {key!r} not found')\n        idx = self.columns.index(key)\n        return self._data[:, idx]\n\n\ndef task_func(data):\n    if not isinstance(data, np.ndarray):\n        raise TypeError('Input must be a NumPy array')\n    if data.ndim != 2:\n        raise ValueError('Input array must be 2-dimensional')\n    if not np.issubdtype(data.dtype, np.number):\n        raise TypeError('Input array must contain numeric data')\n    n_rows, n_cols = data.shape\n    if n_cols != 8:\n        raise ValueError('Input array must have exactly 8 columns')\n    col_min = data.min(axis=0)\n    col_max = data.max(axis=0)\n    denom = col_max - col_min\n    denom[denom == 0] = 1.0\n    normalized = (data - col_min) / denom\n    averages = normalized.mean(axis=1)\n    final_data = np.column_stack((normalized, averages))\n    column_names = [chr(ord('A') + i) for i in range(8)] + ['Average']\n    df = SimpleDataFrame(final_data, column_names)\n    fig = matplotlib.figure.Figure()\n    ax = fig.add_subplot(111)\n    ax.plot(df['Average'])\n    ax.set_xlabel('Row Index')\n    ax.set_ylabel('Average')\n    ax.set_title('Row Averages')\n    return df, ax\n",
         "metrics": {
           "codebleu": {

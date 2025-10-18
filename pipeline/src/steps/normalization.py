@@ -15,7 +15,7 @@ def pre_process_data():
         _run_original_tests(normalized_data)
     _filter_dataset_easy(original_dataset_file=DATASET_PATH, output_file=FILTERED_DATASET_PATH)
     _sample_random_entries(input_file=FILTERED_DATASET_PATH, experiment_output_file=SAMPLE_1_PATH,
-    extension_output_file=SAMPLE_2_PATH, sample_size=50, seed=0)
+    extension_output_file=SAMPLE_2_PATH, sample_size=SAMPLE_SIZE, seed=SAMPLE_SEED)
 
 def _normalize(dataset_split):
     normalized = []

@@ -1,0 +1,3222 @@
+[
+  {
+    "id": "BigCodeBench/151",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not isinstance(data_keys, list):\n        raise ValueError('Invalid input types')\n    if len(data_keys) == 0:\n        raise ValueError('No keys specified for normalization')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in data dictionary\")\n    df = pd.DataFrame(data_dict, columns=data_keys)\n    scaler = MinMaxScaler()\n    normalized_data = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_data, columns=df.columns)\n    fig, ax = plt.subplots(len(data_keys), 1, figsize=(10, 5 * len(\n        data_keys)), squeeze=False)\n    ax = ax.flatten()\n    for i, key in enumerate(data_keys):\n        original_data = df[key]\n        normalized_values = normalized_df[key]\n        ax[i].hist(original_data, alpha=0.5, label='Original')\n        ax[i].hist(normalized_values, alpha=0.5, label='Normalized')\n        ax[i].set_title(f'Distribution of {key}')\n        ax[i].set_xlabel('Value')\n        ax[i].set_ylabel('Frequency')\n        ax[i].legend()\n    plt.tight_layout()\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3465819179566037
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nfrom matplotlib import pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not isinstance(data_keys, list):\n        raise TypeError(\n            'Invalid input types. data_dict must be a dictionary and data_keys must be a list.'\n            )\n    if len(data_keys) == 0:\n        raise ValueError('data_keys cannot be empty.')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in data_dict.\")\n    extracted_data = {key: data_dict[key] for key in data_keys}\n    arrays = {k: np.array(v) for k, v in extracted_data.items()}\n    normalized_arrays = {}\n    for key in data_keys:\n        arr = arrays[key]\n        min_val = np.min(arr)\n        max_val = np.max(arr)\n        if min_val == max_val:\n            normalized_arr = np.zeros_like(arr)\n        else:\n            normalized_arr = (arr - min_val) / (max_val - min_val)\n        normalized_arrays[key] = normalized_arr\n    df_normalized = pd.DataFrame(normalized_arrays)\n    fig, ax = plt.subplots()\n    df_normalized.plot(kind='line', ax=ax)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Value')\n    ax.set_xlabel('Index')\n    return df_normalized, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.29854704672700694
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport pandas as pd\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('data_keys cannot be empty')\n    invalid_keys = [key for key in data_keys if key not in data_dict]\n    if invalid_keys:\n        raise ValueError(f'Keys {invalid_keys} not found in data_dict')\n    data_for_keys = {key: np.array(data_dict[key]) for key in data_keys}\n    df = pd.DataFrame(data_for_keys)\n    normalized_data = []\n    for key in data_keys:\n        min_val = np.min(df[key])\n        max_val = np.max(df[key])\n        if min_val == max_val:\n            normalized_col = np.zeros_like(df[key])\n        else:\n            normalized_col = (df[key] - min_val) / (max_val - min_val)\n        normalized_data.append(normalized_col)\n    normalized_df = pd.DataFrame({key: normalized_data[i] for i, key in\n        enumerate(data_keys)}, index=df.index)\n    fig, ax = plt.subplots()\n    for key in data_keys:\n        ax.plot(normalized_df[key], label=key)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Value')\n    ax.set_xlabel('Index')\n    ax.legend()\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3213276140077173
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import numpy as np\nfrom matplotlib import pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not all(isinstance(key, str) for\n        key in data_keys):\n        raise TypeError(\n            'Invalid input types: data_dict must be a dictionary and data_keys must contain strings.'\n            )\n    missing_keys = [key for key in data_keys if key not in data_dict]\n    if len(missing_keys) > 0:\n        raise ValueError(f'Keys {missing_keys} not found in data_dict.')\n    if len(data_keys) == 0:\n        raise ValueError('data_keys cannot be empty.')\n    data_for_keys = {key: data_dict[key] for key in data_keys}\n    arrays = {key: np.array(values) for key, values in data_for_keys.items()}\n    normalized_arrays = {}\n    for key in data_keys:\n        arr = arrays[key]\n        if len(arr) == 0:\n            raise ValueError(f\"Empty data found for key '{key}'.\")\n        min_val = np.min(arr)\n        max_val = np.max(arr)\n        if min_val == max_val:\n            normalized_arr = np.zeros_like(arr)\n        else:\n            normalized_arr = (arr - min_val) / (max_val - min_val)\n        normalized_arrays[key] = normalized_arr\n    df = pd.DataFrame(normalized_arrays)\n    fig, ax = plt.subplots()\n    for key in data_keys:\n        ax.plot(df.index, df[key], label=key)\n    ax.set_title('Normalized Data')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    ax.legend()\n    return df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.32892285865741594
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('data_keys cannot be empty.')\n    extracted_data = {key: np.array(data_dict[key]) for key in data_keys if\n        key in data_dict}\n    if not extracted_data:\n        raise ValueError(\n            'None of the specified keys exist in the data dictionary.')\n    normalized = {}\n    for key, values in extracted_data.items():\n        min_val = np.min(values)\n        max_val = np.max(values)\n        normalized[key] = (values - min_val) / (max_val - min_val + 1e-09)\n    df = pd.DataFrame(normalized)\n    ax = df.plot(kind='line')\n    ax.set_title('Normalized Data Values')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    return df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35508358550384145
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import numpy as np\nfrom matplotlib import pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not all(isinstance(v, list) for v in\n        data_dict.values()):\n        raise TypeError('data_dict must be a dictionary with lists as values')\n    if not isinstance(data_keys, list) or any(not isinstance(k, str) for k in\n        data_keys):\n        raise TypeError('data_keys must be a list of strings')\n    if len(data_keys) == 0:\n        raise ValueError('data_keys cannot be empty')\n    extracted_data = {key: data_dict[key] for key in data_keys if key in\n        data_dict}\n    if not extracted_data:\n        raise ValueError('None of the keys were found in data_dict')\n    arr = np.array(list(extracted_data.values()))\n    min_vals = arr.min(axis=0)\n    max_vals = arr.max(axis=0)\n    normalized_arr = (arr - min_vals) / (max_vals - min_vals + 1e-09)\n    normalized_df = pd.DataFrame(normalized_arr.T, columns=data_keys)\n    fig, ax = plt.subplots()\n    normalized_df.plot(kind='line', ax=ax)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Value')\n    ax.set_xlabel('Index')\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.34579353773320154
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided.')\n    missing_keys = set(data_keys) - set(data_dict.keys())\n    if missing_keys:\n        raise ValueError(f'Keys not found in data dictionary: {missing_keys}')\n    data_array = np.array([data_dict[key] for key in data_keys])\n    if data_array.size == 0:\n        raise ValueError('No matching keys found in data dictionary.')\n    min_vals = np.min(data_array, axis=0)\n    max_vals = np.max(data_array, axis=0)\n    denom = max_vals - min_vals\n    denom[denom == 0] = 1\n    normalized_data = (data_array - min_vals) / denom\n    df = pd.DataFrame(normalized_data.T, columns=data_keys)\n    plt.figure(figsize=(10, 6))\n    plt.plot(normalized_data.T)\n    plt.title('Normalized Data')\n    plt.xlabel('Index')\n    plt.ylabel('Normalized Value')\n    plt.grid(True)\n    plt.tight_layout()\n    ax = plt.gca()\n    return df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot gemma3:latest-code 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.24631816252843405
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided for normalization.')\n    data_keys = [key for key in data_keys if key in data_dict]\n    if not data_keys:\n        raise ValueError('No keys provided for normalization.')\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n    normalized_df = df.apply(lambda x: (x - x.min()) / (x.max() - x.min()),\n        axis=0)\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23931341549478116
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided for normalization.')\n    data_keys = [key for key in data_keys if key in data_dict]\n    if not data_keys:\n        raise ValueError('No keys provided for normalization.')\n    normalized_df = pd.DataFrame({key: data_dict[key] for key in data_keys})\n    normalized_df = normalized_df.apply(lambda x: (x - x.min()) / (x.max() -\n        x.min()), axis=0)\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    ax.set_title('Normalized Data')\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.28395431249082964
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified for normalization.')\n    data_values = []\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in the data dictionary.\")\n        data_values.append(data_dict[key])\n    df = pd.DataFrame({col: vals for col, vals in zip(data_keys, data_values)})\n    normalized_df = (df - df.min()) / (df.max() - df.min())\n    fig, ax = plt.subplots()\n    ax.plot(normalized_df.index, normalized_df.values)\n    ax.set_title('Normalized Data')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot gemma3:latest-complete 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1975175007347835
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided for normalization.')\n    if not set(data_keys).issubset(data_dict.keys()):\n        raise ValueError('Some keys are not present in the data dictionary.')\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n    min_vals = df.min()\n    max_vals = df.max()\n    normalized_df = (df - min_vals) / (max_vals - min_vals + 1e-09)\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    ax.set_title('Normalized Data')\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.21187423824766474
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified for normalization.')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in the data dictionary.\")\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n    scaler = MinMaxScaler()\n    normalized_data = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_data, columns=data_keys)\n    return normalized_df, None\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot gemma3:latest-complete 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.33541797824337943
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified for normalization.')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in the data dictionary.\")\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n    scaler = MinMaxScaler()\n    normalized_data = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_data, columns=data_keys)\n    fig, ax = plt.subplots()\n    ax.plot(normalized_df)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot gemma3:latest-complete 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35763877947279266
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided for scaling.')\n    norm_data = {}\n    for key in data_keys:\n        if key in data_dict:\n            series = np.array(data_dict[key], dtype=float)\n            min_val = np.min(series)\n            max_val = np.max(series)\n            if max_val == min_val:\n                normalized_series = np.zeros_like(series)\n            else:\n                normalized_series = (series - min_val) / (max_val - min_val)\n            norm_data[key] = normalized_series\n        else:\n            raise ValueError(f\"Key '{key}' not found in data dictionary.\")\n    df = pd.DataFrame(norm_data)\n    df.index = range(1, len(df) + 1)\n    ax = df.plot()\n    return df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot gemma3:latest-ast 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2136630076332808
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('data_keys cannot be empty')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in data_dict\")\n    df = pd.DataFrame({key: data_dict[key] for key in data_keys})\n    normalized_df = (df - df.min()) / (df.max() - df.min())\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot gemma3:latest-ast 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.19917904642349193
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified')\n    df = pd.DataFrame(data_dict)\n    if any(key not in data_dict for key in data_keys):\n        raise ValueError('Key not in dictionary')\n    normalized_df = df[data_keys].apply(lambda x: (x - x.min()) / (x.max() -\n        x.min()), axis=0)\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    plt.show()\n    return normalized_df, fig\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.20939823108418376
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided for normalization.')\n    if not all(key in data_dict for key in data_keys):\n        raise ValueError('One or more keys are not in the dictionary.')\n    df = pd.DataFrame(data_dict)\n    normalized_df = df.copy()\n    for col in normalized_df.columns:\n        min_val = normalized_df[col].min()\n        max_val = normalized_df[col].max()\n        if max_val - min_val != 0:\n            normalized_df[col] = (normalized_df[col] - min_val) / (max_val -\n                min_val)\n    normalized_df = normalized_df[data_keys]\n    fig, ax = plt.subplots()\n    for key in data_keys:\n        ax.plot(normalized_df.index, normalized_df[key], label=key)\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    ax.set_title('MinMax Scaled Data')\n    ax.legend()\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25163446043860316
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided for normalization.')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in the dictionary.\")\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n    normalized_df = (df - df.min()) / (df.max() - df.min())\n    fig, ax = plt.subplots(figsize=(8, 6))\n    if not normalized_df.empty:\n        for col in normalized_df.columns:\n            ax.plot(normalized_df[col], label=col)\n        ax.legend()\n        ax.set_title('Normalized Data')\n        ax.set_xlabel('Index')\n        ax.set_ylabel('Normalized Value')\n    plt.close(fig)\n    return normalized_df, None\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22019642821755617
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified.')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in the dictionary.\")\n    df = pd.DataFrame({k: data_dict[k] for k in data_keys})\n    scaler = MinMaxScaler()\n    normalized_data = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_data, columns=data_keys)\n    return normalized_df, None\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "cot gemma3:latest-complete 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3303810876833201
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified for normalization.')\n    normalized_df = pd.DataFrame()\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in the dictionary.\")\n        data = pd.Series(data_dict[key])\n        min_val = data.min()\n        max_val = data.max()\n        normalized_values = (data - min_val) / (max_val - min_val)\n        normalized_df[key] = normalized_values\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.16643724856998565
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('At least one key must be specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' is not present in the dictionary\")\n    df = pd.DataFrame(data_dict)[data_keys]\n    scaler = MinMaxScaler()\n    normalized_array = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_array, columns=data_keys)\n    fig, ax = plt.subplots()\n    for col in normalized_df.columns:\n        ax.plot(normalized_df[col], label=col)\n    ax.legend()\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2826746623125634
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f'Key {key} not found in data_dict')\n    df = pd.DataFrame({k: pd.Series(data_dict[k]) for k in data_keys})\n    min_vals = df.min()\n    max_vals = df.max()\n    normalized_df = (df - min_vals) / (max_vals - min_vals)\n    fig, ax = plt.subplots()\n    ax.set_visible(False)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.16633676976829453
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified')\n    normalized_df = pd.DataFrame()\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not in dictionary\")\n        series = pd.Series(data_dict[key])\n        normalized_df[key] = (series - series.min()) / (series.max() -\n            series.min())\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    ax.set_title('Normalized Data')\n    ax.set_xlabel('Keys')\n    ax.set_ylabel('Normalized Value')\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1990794807349989
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('At least one key must be specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' is not present in the dictionary\")\n    scaler = MinMaxScaler()\n    normalized_df = pd.DataFrame({key: scaler.fit_transform(pd.Series(\n        data_dict[key]).values.reshape(-1, 1)).flatten() for key in data_keys})\n    fig, ax = plt.subplots()\n    for key, series in normalized_df.items():\n        ax.plot(series.values, label=key)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1917601914905274
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in data dictionary\")\n    df = pd.DataFrame()\n    for key in data_keys:\n        values = data_dict[key]\n        min_val = min(values)\n        max_val = max(values)\n        normalized_values = [((v - min_val) / (max_val - min_val) if \n            max_val != min_val else 0.0) for v in values]\n        df[key] = normalized_values\n    fig, ax = plt.subplots()\n    df.plot(ax=ax)\n    return df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.18359799321146486
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport pandas as pd\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided')\n    matching_keys = [key for key in data_keys if key in data_dict]\n    if not matching_keys:\n        raise ValueError(\n            f'None of the keys {data_keys} found in data dictionary')\n    try:\n        min_values = np.array([np.min(np.array(data_dict[key])) for key in\n            matching_keys])\n        max_values = np.array([np.max(np.array(data_dict[key])) for key in\n            matching_keys])\n        normalized_data = {}\n        for i, key in enumerate(matching_keys):\n            arr = np.array(data_dict[key])\n            denom = max_values[i] - min_values[i]\n            if denom == 0:\n                normalized_data[key] = np.zeros_like(arr, dtype=float)\n            else:\n                normalized_data[key] = (arr - min_values[i]) / denom\n        df_normalized = pd.DataFrame(normalized_data)\n        fig, ax = plt.subplots(figsize=(10, 6))\n        for key in matching_keys:\n            ax.plot(df_normalized[key], label=key)\n        ax.set_title('Normalized Data')\n        ax.set_xlabel('Index')\n        ax.set_ylabel('Normalized Value')\n        ax.legend()\n        return df_normalized, ax\n    except Exception as e:\n        raise ValueError(f'Error during normalization: {str(e)}')\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot llama3.1:latest-code 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3189018726529765
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy import stats\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' is not in the dictionary\")\n    data_for_keys = {key: np.array(data_dict[key]) for key in data_keys}\n    if any(not values.size for values in data_for_keys.values()):\n        raise ValueError(\n            'No matching keys found in data dictionary, or keys list is empty.'\n            )\n    normalized_data = {}\n    for key, values in data_for_keys.items():\n        min_val, max_val = np.min(values), np.max(values)\n        if min_val == max_val:\n            normalized_values = np.ones_like(values)\n        else:\n            normalized_values = (values - min_val) / (max_val - min_val)\n        normalized_data[key] = normalized_values\n    fig, ax = plt.subplots()\n    for key in data_keys:\n        ax.plot(normalized_data[key], label=key)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Normalized Value')\n    ax.set_xlabel('Index')\n    ax.legend()\n    return pd.DataFrame(normalized_data), ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3542419072274762
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gemma3:latest"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('At least one key must be specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' is not present in the dictionary\")\n    df = pd.DataFrame({key: data_dict[key] for key in data_keys})\n    scaler = MinMaxScaler()\n    normalized_array = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_array, columns=data_keys)\n    fig, ax = plt.subplots()\n    for i, key in enumerate(data_keys):\n        ax.plot(normalized_df[key], label=key)\n    ax.legend()\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3114760882630644
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\nfrom scipy import stats\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in dictionary\")\n    data_for_keys = {key: np.array(data_dict[key]) for key in data_keys}\n    if any(len(values) == 0 for values in data_for_keys.values()):\n        raise ValueError(\n            'No matching keys found in data dictionary, or keys list is empty.'\n            )\n    normalized_data = []\n    for key in data_for_keys:\n        min_val = np.min(data_for_keys[key])\n        max_val = np.max(data_for_keys[key])\n        if min_val == max_val:\n            raise ValueError(f\"Key '{key}' has constant values\")\n        normalized_values = (data_for_keys[key] - min_val) / (max_val - min_val\n            )\n        normalized_data.append(normalized_values)\n    normalized_array = np.array(normalized_data).T\n    normalized_df = pd.DataFrame(normalized_array, columns=data_keys)\n    fig, ax = plt.subplots()\n    for i, key in enumerate(data_keys):\n        ax.plot(normalized_data[i], label=key)\n    ax.set_title('Normalized Data')\n    ax.set_ylabel('Normalized Value')\n    ax.set_xlabel('Index')\n    ax.legend()\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.36759951568131105
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict):\n        raise ValueError('Invalid input type')\n    if not isinstance(data_keys, list) or not all(isinstance(k, str) for k in\n        data_keys):\n        raise ValueError('Invalid input type')\n    if not data_keys:\n        raise ValueError('No keys specified')\n    keys_to_transform = [k for k in data_keys if k in data_dict]\n    if not keys_to_transform:\n        raise ValueError('No matching keys found in data dictionary')\n    df = pd.DataFrame({k: data_dict[k] for k in keys_to_transform})\n    normalized_df = df.copy()\n    for col in normalized_df.columns:\n        col_min = normalized_df[col].min()\n        col_max = normalized_df[col].max()\n        if col_max == col_min:\n            normalized_df[col] = 0.0\n        else:\n            normalized_df[col] = (normalized_df[col] - col_min) / (col_max -\n                col_min)\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    ax.set_title('Normalized Data')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "cot llama3.1:latest-code 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25796555550071937
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import numpy as np\nfrom matplotlib import pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not all(isinstance(key, str) for\n        key in data_keys):\n        raise ValueError('Invalid input type')\n    data_for_keys = {key: np.array(data_dict[key]) for key in data_keys if \n        key in data_dict}\n    if not data_for_keys:\n        raise ValueError(\n            'No matching keys found in data dictionary, or keys list is empty.'\n            )\n    normalized_data = {}\n    for key in data_keys:\n        if key not in data_for_keys:\n            continue\n        min_val = np.min(data_for_keys[key])\n        max_val = np.max(data_for_keys[key])\n        if max_val - min_val == 0:\n            normalized = np.zeros_like(data_for_keys[key])\n        else:\n            normalized = (data_for_keys[key] - min_val) / (max_val - min_val)\n        normalized_data[key] = normalized\n    df = pd.DataFrame(normalized_data)\n    plt.figure()\n    for key in data_keys:\n        if key not in df.columns:\n            continue\n        plt.plot(df[key], label=key)\n    plt.title('Normalized Data')\n    plt.ylabel('Normalized Value')\n    plt.xlabel('Index')\n    plt.legend()\n    return df, plt.gca()\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-code 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3666749780424699
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport pandas as pd\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict) or not isinstance(data_keys, list\n        ) or not all(isinstance(key, str) for key in data_keys):\n        raise ValueError('Invalid input type')\n    data_for_keys = {key: data_dict[key] for key in data_keys if key in\n        data_dict}\n    if not data_for_keys:\n        raise ValueError('No matching keys found in data dictionary')\n    max_len = max(len(v) for v in data_for_keys.values())\n    normalized_data = np.zeros((len(data_for_keys), max_len))\n    for i, (key, values) in enumerate(data_for_keys.items()):\n        min_val = min(values)\n        max_val = max(values)\n        normalized_values = [((val - min_val) / (max_val - min_val) if \n            max_val != min_val else 0.5) for val in values]\n        normalized_data[i] = normalized_values\n    plt.plot(normalized_data.T)\n    plt.title('Normalized Data')\n    plt.ylabel('Normalized Value')\n    plt.xlabel('Index')\n    df = pd.DataFrame(normalized_data.T, columns=data_keys)\n    return df, plt\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-code 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35607231592977207
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('At least one key must be specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' is not present in the dictionary\")\n    df = pd.DataFrame({key: data_dict[key] for key in data_keys})\n    scaler = MinMaxScaler()\n    normalized_array = scaler.fit_transform(df)\n    plt.figure(figsize=(10, 6))\n    for i, col in enumerate(data_keys):\n        plt.plot(normalized_array[:, i], label=col)\n    plt.xlabel('Index')\n    plt.ylabel('Normalized Value')\n    plt.title('Normalized Data')\n    plt.legend()\n    plt.show()\n    normalized_df = pd.DataFrame(normalized_array, columns=data_keys)\n    return normalized_df, None\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3095175412121715
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided')\n    df = pd.DataFrame(data_dict)\n    normalized_df = pd.DataFrame()\n    for key in data_keys:\n        if key not in df:\n            raise ValueError(f\"Key '{key}' not in dictionary\")\n        normalized_df[key] = (df[key] - df[key].min()) / (df[key].max() -\n            df[key].min())\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    ax.set_title('Normalized Data')\n    ax.set_xlabel('Keys')\n    ax.set_ylabel('Normalized Value')\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "cot llama3.1:latest-code 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.24425195114060902
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('At least one key must be specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' is not present in the dictionary\")\n    df = pd.DataFrame({key: value for key, value in data_dict.items() if \n        key in data_keys})\n    scaler = MinMaxScaler()\n    normalized_array = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_array, columns=df.columns)\n    return normalized_df, None\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2418159732868087
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('At least one key must be specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' is not present in the dictionary\")\n    df = pd.DataFrame({key: value for key, value in data_dict.items() if \n        key in data_keys})\n    scaler = MinMaxScaler()\n    normalized_df = scaler.fit_transform(df)\n    plt.figure(figsize=(10, 6))\n    ax = plt.axes()\n    return pd.DataFrame(normalized_df, columns=data_keys), ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2314710954572539
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in dictionary\")\n    df = pd.DataFrame({key: data_dict[key] for key in data_keys})\n    normalized_df = (df - df.min()) / (df.max() - df.min())\n    fig, ax = plt.subplots()\n    normalized_df.plot(kind='line', ax=ax)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.20506511590021523
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gpt-oss:20b",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    selected = {k: np.array(v) for k, v in data_dict.items() if k in data_keys}\n    if not selected:\n        raise ValueError('No matching keys found.')\n    norm = pd.DataFrame({k: ((v - v.min()) / (v.max() - v.min()) if v.max() !=\n        v.min() else np.zeros_like(v)) for k, v in selected.items()})\n    fig, ax = plt.subplots()\n    for k, v in norm.items():\n        ax.plot(v, label=k)\n    ax.set_title('Normalized Data')\n    ax.set_xlabel('Index')\n    ax.set_ylabel('Normalized Value')\n    ax.legend()\n    return norm, fig\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot gpt-oss:20b-code 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2197055745416735
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('At least one key must be specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' is not present in the dictionary\")\n    df = pd.DataFrame({key: data_dict[key] for key in data_keys})\n    scaler = MinMaxScaler()\n    normalized_array = scaler.fit_transform(df)\n    normalized_df = pd.DataFrame(normalized_array, columns=df.columns)\n    fig, ax = plt.subplots(figsize=(10, 6))\n    for col in data_keys:\n        ax.plot(normalized_df[col], label=col)\n    ax.legend()\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2888027533051176
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gpt-oss:20b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys provided')\n    keys_set = set(data_keys)\n    if not keys_set.issubset(data_dict.keys()):\n        raise ValueError('Some keys not in data_dict')\n    df = pd.DataFrame({k: np.array(data_dict[k]) for k in keys_set})\n    min_vals = df.min()\n    max_vals = df.max()\n    normalized_df = (df - min_vals) / (max_vals - min_vals)\n    ax = normalized_df.plot()\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1647784687119839
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "gpt-oss:20b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom pandas import DataFrame\nimport logging\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(__name__)\n\n\nclass SimpleAll:\n\n    def __init__(self, bool_array):\n        self.bool_array = bool_array\n\n    def all(self):\n        return self.bool_array.all()\n\n\nclass SimpleDF:\n\n    def __init__(self, data, columns):\n        self.data = data\n        self.columns = columns\n\n    def all(self):\n        return SimpleAll(self.data.all(axis=0))\n\n\ndef task_func(data_dict, data_keys):\n    if not isinstance(data_dict, dict):\n        logger.error('data_dict is not a dictionary')\n        raise ValueError('data_dict must be a dictionary')\n    if not isinstance(data_keys, list):\n        logger.error('data_keys is not a list')\n        raise ValueError('data_keys must be a list')\n    if not data_keys:\n        logger.error('No keys provided')\n        raise ValueError('data_keys list is empty')\n    for key in data_keys:\n        if key not in data_dict:\n            logger.error(f'Key {key} not found in data_dict')\n            raise ValueError(f'Key {key} not found in data_dict')\n    normalized_df = DataFrame({key: (np.array(value) / max(np.array(value))\n        ) for key, value in data_dict.items() if key in data_keys})\n    return normalized_df, None\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.19775394011842928
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "gpt-oss:20b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('data_keys must contain at least one key')\n    missing = [k for k in data_keys if k not in data_dict]\n    if missing:\n        raise ValueError(f'Keys not found in data_dict: {missing}')\n    normalized_df = _normalize_data(data_dict, data_keys)\n    fig, ax = plt.subplots()\n    normalized_df.plot(ax=ax)\n    return normalized_df, ax\n\n\ndef _normalize_data(data_dict, data_keys):\n    data = {k: np.array(data_dict[k], dtype=float) for k in data_keys}\n    df = pd.DataFrame(data)\n    mins = df.min()\n    maxs = df.max()\n    ranges = maxs - mins\n    ranges[ranges == 0] = 1.0\n    normalized = (df - mins) / ranges\n    return normalized\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22203880613578977
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "1 gemma3:latest"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data_dict, data_keys):\n    if not data_keys:\n        raise ValueError('No keys specified')\n    for key in data_keys:\n        if key not in data_dict:\n            raise ValueError(f\"Key '{key}' not found in dictionary\")\n    df = pd.DataFrame({key: pd.Series(data_dict[key]) for key in data_keys})\n    normalized_df = (df - df.min()) / (df.max() - df.min())\n    fig, ax = plt.subplots()\n    normalized_df.plot(kind='line', ax=ax)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.17720014886104984
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_keys": "PASS",
+          "TestCases.test_key_not_in_dict": "PASS",
+          "TestCases.test_normalization_all_keys": "PASS",
+          "TestCases.test_normalization_multiple_keys": "PASS",
+          "TestCases.test_normalization_single_key": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/156",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    df = pd.DataFrame(data)\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.36083194349299424
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    df = pd.DataFrame(data, columns=[f'Col{i + 1}' for i in range(data.\n        shape[1])])\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(range(len(df)), df['Average'])\n    return df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3623386652788807
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    avg = data.mean(axis=1)\n    df = pd.DataFrame(data, columns=[f'Col{i}' for i in range(1, data.shape\n        [1] + 1)])\n    df['Average'] = avg\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.27173639748373657
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    df = pd.DataFrame(data, columns=[f'col{i}' for i in range(data.shape[1])])\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3498592114124573
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    df = pd.DataFrame(data, columns=[f'Col{i}' for i in range(1, 9)])\n    df['Average'] = df.mean(axis=1)\n    fig, ax = plt.subplots()\n    ax.plot(df['Average'])\n    return df, ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3517513950441564
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/168",
+    "clones": [
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport os\n\n\ndef task_func(num_groups=5, data_size=5, labels=None):\n    \"\"\"Generates random data and visualizes it with a stacked bar chart, saving the chart to a file.\"\"\"\n    np.random.seed(42)\n    if labels is None:\n        labels = [f'Group{i + 1}' for i in range(num_groups)]\n    data = np.random.rand(data_size, num_groups)\n    df = pd.DataFrame(data, columns=labels)\n    plt.figure(figsize=(8, 6))\n    plt.bar(df.columns, df.values.sum(axis=0))\n    plt.title('Stacked Bar Chart of Random Data')\n    plt.xlabel('Groups')\n    plt.ylabel('Sum of Values')\n    plot_filename = 'test_plot.png'\n    plt.savefig(plot_filename)\n    plt.close()\n    return plt.Figure(), df, plot_filename\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.398338206560187
+          }
+        },
+        "test_results": {
+          "TestCases.test_custom_parameters": "PASS",
+          "TestCases.test_data_values": "PASS",
+          "TestCases.test_default_parameters": "PASS",
+          "TestCases.test_no_labels_provided": "PASS",
+          "TestCases.test_plot_file_cleanup": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\n\n\ndef task_func(num_groups=5, data_size=5, labels=None):\n    np.random.seed(42)\n    data = np.random.rand(data_size, num_groups)\n    if labels is None:\n        columns = ['Group1', 'Group2', 'Group3', 'Group4', 'Group5'][:\n            num_groups]\n    else:\n        columns = labels\n    df = pd.DataFrame(data, columns=columns)\n    fig, ax = plt.subplots()\n    ax.imshow(data, aspect='auto', cmap='viridis')\n    ax.set_title('Stacked Bar Chart')\n    ax.set_xlabel('Groups')\n    ax.set_ylabel('Categories')\n    plot_filename = 'test_plot.png'\n    plt.savefig(plot_filename)\n    return plt.Figure(), df, plot_filename\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2562896555687903
+          }
+        },
+        "test_results": {
+          "TestCases.test_custom_parameters": "PASS",
+          "TestCases.test_data_values": "PASS",
+          "TestCases.test_default_parameters": "PASS",
+          "TestCases.test_no_labels_provided": "PASS",
+          "TestCases.test_plot_file_cleanup": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/179",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import re\nimport matplotlib.pyplot as plt\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport numpy as np\n\n\ndef task_func(df):\n    title_pattern = re.compile('\\\\b(how|what)\\\\b', flags=re.IGNORECASE)\n    if not {'Title', 'Content'}.issubset(set(df.columns)):\n        fig, ax = plt.subplots()\n        return ax\n    filtered_df = df[df['Title'].apply(lambda x: bool(title_pattern.search(x)))\n        ]\n    if len(filtered_df) == 0:\n        fig, ax = plt.subplots()\n        return ax\n    vectorizer = TfidfVectorizer()\n    tfidf_matrix = vectorizer.fit_transform(filtered_df['Content'])\n    feature_names = vectorizer.get_feature_names_out()\n    tfidf_scores = np.sum(tfidf_matrix.toarray(), axis=0).flatten()\n    fig, ax = plt.subplots(figsize=(12, 6))\n    ax.bar(feature_names, tfidf_scores)\n    ax.set_xlabel('Feature')\n    ax.set_ylabel('TF-IDF Score')\n    plt.xticks(rotation=45, ha='right')\n    return ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.38407123251235054
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import re\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n\ndef task_func(df):\n    title_pattern = re.compile('\\\\b(how|what)\\\\b', flags=re.IGNORECASE)\n    if 'Title' not in df.columns or 'Content' not in df.columns:\n        fig, ax = plt.subplots()\n        return ax\n    filtered_df = df[df['Title'].apply(lambda x: bool(title_pattern.search(x)))\n        ]\n    if len(filtered_df) == 0:\n        fig, ax = plt.subplots()\n        return ax\n    vectorizer = TfidfVectorizer()\n    tfidf_matrix = vectorizer.fit_transform(filtered_df['Content'])\n    feature_names = vectorizer.get_feature_names_out()\n    tfidf_scores = np.sum(tfidf_matrix.toarray(), axis=0).flatten()\n    fig, ax = plt.subplots(figsize=(10, 6))\n    ax.bar(feature_names, tfidf_scores)\n    ax.set_ylabel('TF-IDF Score', fontsize=12)\n    ax.tick_params(axis='x', rotation=45)\n    return ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-code 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.36670028500736734
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nfrom sklearn.feature_extraction.text import TfidfVectorizer\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    \"\"\"\n    Analyzes a DataFrame containing article titles and content to identify articles with titles that include 'how' or 'what'.\n    Calculates TF-IDF scores for the words in the content of these articles and visualizes these scores in a bar plot.\n    Returns a matplotlib axis object containing the plot.\n    \"\"\"\n    if not all(key in df.columns for key in ['Title', 'Content']):\n        fig, ax = plt.subplots()\n        return ax\n    df['Title_Lower'] = df['Title'].str.lower()\n    mask = df['Title_Lower'].apply(lambda x: 'how' in x or 'what' in x)\n    if not mask.any():\n        fig, ax = plt.subplots()\n        return ax\n    tfidf = TfidfVectorizer()\n    content_corpus = df[mask]['Content']\n    tfidf_matrix = tfidf.fit_transform(content_corpus)\n    feature_names = tfidf.get_feature_names_out()\n    scores = tfidf.idf_\n    score_df = pd.DataFrame({'Word': feature_names, 'TF_IDF_Score': scores})\n    score_df = score_df.sort_values('TF_IDF_Score', ascending=False)\n    fig, ax = plt.subplots()\n    bars = ax.bar(score_df['Word'], score_df['TF_IDF_Score'])\n    ax.set_title('TF-IDF Scores for Interesting Articles')\n    ax.set_xlabel('Words')\n    ax.set_ylabel('TF-IDF Score')\n    ax.tick_params(axis='x', rotation=45)\n    return ax\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.27241548978924673
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gemma3:latest"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/213",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import time\nimport random\nfrom matplotlib import pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n    else:\n        intervals = args[0]\n    timestamp = []\n    sequence = []\n    random.seed()\n    try:\n        for _ in range(intervals):\n            time.sleep(1)\n            timestamp.append(time.time())\n            sequence.append(random.random())\n    except KeyboardInterrupt:\n        pass\n    kurtosis_val = kurtosis(sequence, nan_policy='omit')\n    style_dict = {'figure.figsize': (10, 6), 'axes.linewidth': 2,\n        'lines.marker': 'o', 'lines.markersize': 4}\n    plt.rcParams.update(style_dict)\n    fig = plt.figure()\n    ax = fig.add_subplot(1, 1, 1)\n    ax.plot(timestamp, sequence)\n    return ax, kurtosis_val\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.37631116184728414
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom scipy.stats import kurtosis\nimport time\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        n = 100\n        seed = None\n    elif len(args) == 1:\n        n = args[0]\n        seed = None\n    else:\n        n = args[0]\n        seed = args[1]\n    rng = np.random.default_rng(seed)\n    y = rng.standard_normal(n)\n    x = np.arange(n)\n    for _ in range(n):\n        time.sleep(0)\n    fig, ax = plt.subplots()\n    ax.plot(x, y)\n    k = kurtosis(y)\n    return ax, k\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2313351227933298
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        n_intervals = 100\n        seed = None\n    elif len(args) == 1:\n        n_intervals = args[0]\n        seed = None\n    elif len(args) == 2:\n        n_intervals = args[0]\n        seed = args[1]\n    else:\n        raise TypeError('task_func accepts at most two positional arguments')\n    if seed is not None:\n        np.random.seed(seed)\n\n    def generate_data():\n        data = []\n        for _ in range(n_intervals):\n            time.sleep(1)\n            data.append(np.random.rand())\n        return np.array(data)\n    data = generate_data()\n    fig, ax = plt.subplots()\n    ax.plot(range(n_intervals), data)\n    ax.set_xlabel('Time')\n    ax.set_ylabel('Random Value')\n    return ax, kurtosis(data)\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25452112704270463
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import time\nimport random\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n        seed = None\n    elif len(args) == 1:\n        intervals = args[0]\n        seed = None\n    else:\n        intervals = args[0]\n        seed = args[1]\n    if seed is not None:\n        random.seed(seed)\n    data_points = {'times': [], 'numbers': []}\n    try:\n        for _ in range(intervals):\n            time.sleep(1)\n            current_time = time.time()\n            random_value = random.random()\n            data_points['times'].append(current_time)\n            data_points['numbers'].append(random_value)\n    except KeyboardInterrupt:\n        pass\n    kurtosis_value = kurtosis(data_points['numbers'], nan_policy='omit')\n    fig, ax = plt.subplots()\n    ax.plot(data_points['times'], data_points['numbers'])\n    return ax, kurtosis_value\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31662046487056295
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport numpy as np\nimport time\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n        seed = None\n    elif len(args) == 1:\n        intervals = args[0]\n        seed = None\n    else:\n        intervals = args[0]\n        seed = args[1]\n    if seed is not None:\n        np.random.seed(seed)\n    x = np.arange(intervals)\n    y = np.random.rand(intervals)\n    for _ in range(intervals):\n        time.sleep(1)\n    fig, ax = plt.subplots()\n    ax.plot(x, y)\n    if intervals == 0:\n        kurtosis = np.nan\n    else:\n        mean_y = np.mean(y)\n        std_y = np.std(y, ddof=0)\n        if std_y == 0:\n            kurtosis = np.nan\n        else:\n            kurtosis = np.mean((y - mean_y) ** 4) / std_y ** 4 - 3\n    return ax, kurtosis\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2546928432140341
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis as kurtosis_fn\nimport time\n\n\ndef task_func(intervals=100, *args):\n    data = []\n    for _ in range(intervals):\n        time.sleep(1)\n        data.append(np.random.rand())\n    timestamps = np.arange(len(data))\n    fig, ax = plt.subplots()\n    ax.plot(timestamps, data)\n    ax.set_xlabel('Time')\n    ax.set_ylabel('Value')\n    if len(data) == 0:\n        kurt = 0.0\n    else:\n        kurt = kurtosis_fn(data)\n    return ax, kurt\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.33447581855090397
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport numpy as np\nimport time\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        n = 100\n        seed = None\n    elif len(args) == 1:\n        n = args[0]\n        seed = None\n    elif len(args) == 2:\n        n = args[0]\n        seed = args[1]\n    else:\n        raise TypeError('task_func accepts at most 2 positional arguments')\n    if seed is not None:\n        np.random.seed(seed)\n    for _ in range(n):\n        time.sleep(0)\n    x = np.arange(n)\n    y = np.random.randn(n)\n    fig, ax = plt.subplots()\n    ax.plot(x, y)\n    if n < 2:\n        kurt = 0.0\n    else:\n        mean = np.mean(y)\n        std = np.std(y, ddof=0)\n        if std == 0:\n            kurt = 0.0\n        else:\n            kurt = np.mean((y - mean) ** 4) / std ** 4 - 3\n    return ax, kurt\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.24052385769723994
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(*args):\n    intervals = 100 if not args else args[0]\n\n    def generate_data(n):\n        data = []\n        for _ in range(n):\n            data.append(np.random.rand())\n            time.sleep(1)\n        return data\n\n    def calculate_kurtosis(data):\n        if len(data) < 4:\n            return 0.0\n        arr = np.array(data)\n        mu = np.mean(arr)\n        var = np.var(arr)\n        if var == 0:\n            return 0.0\n        return np.mean((arr - mu) ** 4) / var ** 2 - 3\n    data = generate_data(intervals)\n    fig, ax = plt.subplots()\n    ax.plot(range(intervals), data)\n    ax.set_xlabel('Time')\n    ax.set_ylabel('Value')\n    kurtosis = calculate_kurtosis(data)\n    return ax, kurtosis\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25981213233370987
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nfrom scipy.stats import kurtosis as calculate_kurtosis\nimport matplotlib.pyplot as plt\nimport time\n\n\ndef task_func(*args, **kwargs):\n    intervals = args[0] if args else 100\n    if intervals < 0:\n        raise ValueError('Number of intervals must be non-negative')\n\n    def generate_data():\n        data = []\n        for _ in range(intervals):\n            time.sleep(1)\n            data.append(np.random.rand())\n        return data\n    data = generate_data()\n    kurt = calculate_kurtosis(data) if data else 0.0\n    fig, ax = plt.subplots()\n    ax.plot(range(intervals), data)\n    ax.set_xlabel('Time (s)')\n    ax.set_ylabel('Random Value')\n    return ax, kurt\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3070671158142681
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import time\nimport numpy as np\nfrom matplotlib import pyplot as plt\n\n\ndef task_func(*args, **kwargs):\n    n = args[0] if len(args) > 0 else 100\n    seed = args[1] if len(args) > 1 else None\n    if seed is not None:\n        np.random.seed(seed)\n    data = []\n    for _ in range(n):\n        time.sleep(1)\n        data.append(np.random.rand())\n    elapsed_time = np.arange(n)\n    plt.figure()\n    ax = plt.gca()\n    ax.plot(elapsed_time, data)\n    ax.set_xlabel('Time')\n    ax.set_ylabel('Random Value')\n    kurtosis = np.mean((data - np.mean(data)) ** 4) / np.std(data) ** 4\n    return ax, kurtosis\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23095147333402313
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\nimport numpy as np\nimport time\n\n\ndef task_func(intervals=100, seed=None):\n    if seed is not None:\n        np.random.seed(seed)\n    if intervals < 0:\n        intervals = 0\n    x = np.arange(0, intervals)\n    y = np.random.rand(intervals)\n    for _ in range(intervals):\n        time.sleep(0)\n    fig, ax = plt.subplots()\n    ax.plot(x, y)\n    if intervals <= 1:\n        kurtosis = np.nan\n    else:\n        kurtosis = np.mean((y - np.mean(y)) ** 4) / np.std(y) ** 4\n    return ax, kurtosis\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.252857570673613
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport numpy as np\nimport time\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n        seed = None\n    elif len(args) == 1:\n        intervals = args[0]\n        seed = None\n    else:\n        intervals = args[0]\n        seed = args[1]\n    if seed is not None:\n        np.random.seed(seed)\n    x = np.arange(intervals)\n    y = np.random.randn(intervals)\n    for _ in range(intervals):\n        time.sleep(1)\n    fig, ax = plt.subplots()\n    ax.plot(x, y)\n    if intervals == 0:\n        kurtosis = 0.0\n    else:\n        mean_y = np.mean(y)\n        std_y = np.std(y, ddof=0)\n        if std_y == 0:\n            kurtosis = 0.0\n        else:\n            kurtosis = np.mean((y - mean_y) ** 4) / std_y ** 4 - 3\n    return ax, kurtosis\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2546928432140341
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "cot",
+        "code": "import random\nimport time\nimport matplotlib.pyplot as plt\nimport numpy as np\nfrom scipy.stats import kurtosis\n\n\ndef task_func(*args):\n    if len(args) == 0:\n        intervals = 100\n    else:\n        intervals = args[0]\n    if len(args) > 1:\n        random.seed(args[1])\n    numbers = []\n    times = []\n    for _ in range(intervals):\n        time.sleep(1)\n        numbers.append(random.random())\n        times.append(time.time())\n    kurtosis_value = kurtosis(np.array(numbers))\n    fig = plt.figure()\n    ax = fig.add_subplot(1, 1, 1)\n    ax.plot(times, numbers)\n    return ax, kurtosis_value\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "cot gemma3:latest-ast 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.39606015949074197
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import time\nimport random\nimport matplotlib.pyplot as plt\nfrom scipy.stats import kurtosis\n\n\ndef task_func(intervals=100, seed=0):\n    random.seed(seed)\n    data = []\n    elapsed_times = []\n    for i in range(intervals):\n        time.sleep(1)\n        elapsed_time = time.time()\n        num = random.random()\n        data.append(num)\n        elapsed_times.append(elapsed_time)\n    kurtosis_value = kurtosis(data, nan_policy='omit')\n    fig, ax = plt.subplots()\n    ax.plot(elapsed_times, data)\n    return ax, kurtosis_value\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3381649842295355
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/253",
+    "clones": [
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    theta = np.linspace(0, 2 * np.pi, 100)\n    r = 10 * np.sin(theta)\n    ax.plot(r, theta, color=color)\n    ax.set_rlabel_position(1.5)\n    return color\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3407568350577151
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nfrom math import pi\n\n\ndef task_func(ax):\n    if not isinstance(ax, plt.Axes):\n        raise TypeError('ax must be a matplotlib Axes instance')\n    theta = [(i * 0.1) for i in range(200)]\n    r = [(random.uniform(-1, 1) + random.gauss(0, 0.1)) for _ in theta]\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    ax.plot(theta, r, color=color)\n    angle = random.uniform(1.0, 360.0)\n    ax.set_rlabel_position(angle)\n    return color\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.177394409800832
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    radius = np.linspace(1, 2 * np.pi, 100)\n    angle = radius\n    y = np.sin(angle)\n    ax.plot(radius, y, color=color)\n    ax.set_rlabel_position(45)\n    return color\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25900030356182435
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    theta = np.linspace(0, 2 * np.pi, 100)\n    radius = 1\n    height = 1 + 0.5 * np.sin(theta)\n    ax.plot(radius * theta, height, color=color)\n    ax.set_rlabel_position(1.5)\n    return color\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3018780736780176
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    theta = np.linspace(0, 2 * np.pi, 100)\n    amplitude = 1\n    frequency = 0.1\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    ax.plot(theta, amplitude * np.sin(frequency * theta), color=color)\n    ax.set_rlabel_position(1.5)\n    return color\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.270661484359467
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    radius = np.linspace(1, 2 * np.pi, 100)\n    angle = radius\n    y = np.sin(angle)\n    ax.plot(radius, y, color=color)\n    ax.set_rlabel_position(np.pi / 2)\n    return color\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.257550753950681
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    radius = np.linspace(1, 2 * np.pi, 100)\n    angle = radius\n    y = np.sin(angle)\n    ax.plot(radius, y, color=color)\n    ax.set_rlabel_position(0.6 * (2 * np.pi))\n    return color\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25629172188111576
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    radius = np.linspace(1, 2 * np.pi, 100)\n    angle = radius\n    y = np.sin(angle)\n    ax.plot(radius, y, color=color)\n    ax.set_rlabel_position(1.5)\n    return color\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25900030356182435
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    radius = np.linspace(1, 2 * np.pi, 100)\n    angle = radius\n    y = np.sin(angle)\n    ax.plot(radius, y, color=color)\n    rlabel_pos = (radius.max() - radius.min()) / 2 + radius.min()\n    ax.set_rlabel_position(rlabel_pos)\n    return color\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25376584334423263
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    radius = np.linspace(1, 2 * np.pi, 100)\n    angle = radius\n    y = np.sin(angle)\n    ax.plot(radius, y, color=color)\n    ax.set_rlabel_position(1.5)\n    return color\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25900030356182435
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\nimport random\nimport numpy as np\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    radius = np.linspace(1, 2 * np.pi, 100)\n    angle = radius\n    y = np.sin(angle)\n    ax.plot(radius, y, color=color)\n    ax.set_rlabel_position(1.5)\n    return color\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25900030356182435
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom scipy import stats\n\n\ndef task_func(ax):\n    color = np.random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    x = np.linspace(0, 2 * np.pi, 100)\n    y = stats.norm.rvs(loc=np.random.uniform(-1, 1), scale=np.random.\n        uniform(0.5, 1), size=100)\n    ax.plot(x, y, color=color)\n    ax.set_rlabel_position(np.random.uniform(0.0, 360.0))\n    return color\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3690745801603032
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import random\n\n\ndef task_func(ax):\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    ax.plot([0, 1], [0, 1], color=color)\n    ax.set_rlabel_position(random.uniform(1, 360))\n    return color\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22103949056013808
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nimport random\n\n\ndef task_func(ax):\n    colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']\n    color = random.choice(colors)\n    theta = [0, 2 * 3.1415926535]\n    ax.plot(theta, [0, 1], color=color, label='Test Line')\n    ax.set_rlabel_position(180)\n    return color\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.15518864291960813
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import random\n\n\ndef task_func(ax):\n    color = random.choice(['b', 'g', 'r', 'c', 'm', 'y', 'k'])\n    ax.plot([0, 1], [0, 1], color=color)\n    ax.set_rlabel_position(45)\n    return color\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "cot llama3.1:latest-code 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1154979123606039
+          }
+        },
+        "test_results": {
+          "TestCases.test_color_returned": "PASS",
+          "TestCases.test_label_position": "PASS",
+          "TestCases.test_plot_exists": "PASS",
+          "TestCases.test_plot_properties": "PASS",
+          "TestCases.test_random_color": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/261",
+    "clones": [
+      {
+        "model": "gpt-oss:20b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(ax, radius):\n    \"\"\"Draw a circle of given radius on a polar Axes.\"\"\"\n    if not isinstance(ax, plt.PolarAxes):\n        raise TypeError\n    if radius < 0:\n        raise ValueError\n    theta = np.linspace(0, 2 * np.pi, 360)\n    r = np.full(len(theta), radius)\n    ax.plot(theta, r)\n    ax.set_rticks(np.arange(0, max(r) + 1, radius / 10)\n        ) if radius != 0 else ax.set_rticks([0])\n    return ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.36301444353679574
+          }
+        },
+        "test_results": {
+          "TestCases.test_circle_radius": "PASS",
+          "TestCases.test_negative_radius": "PASS",
+          "TestCases.test_non_polar_plot": "PASS",
+          "TestCases.test_polar_plot": "PASS",
+          "TestCases.test_zero_radius": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(ax, radius):\n    if not isinstance(ax, plt.PolarAxes):\n        raise TypeError\n    if radius < 0:\n        raise ValueError\n    theta = np.linspace(0, 2 * np.pi, 360)\n    ax.plot(theta, np.full_like(theta, radius))\n    return ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.36374569502099696
+          }
+        },
+        "test_results": {
+          "TestCases.test_circle_radius": "PASS",
+          "TestCases.test_negative_radius": "PASS",
+          "TestCases.test_non_polar_plot": "PASS",
+          "TestCases.test_polar_plot": "PASS",
+          "TestCases.test_zero_radius": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/375",
+    "clones": [
+      {
+        "model": "gpt-oss:20b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(l):\n    mean_vec = np.mean(l, axis=0)\n    centered = l - mean_vec\n    cov_mat = np.cov(centered, rowvar=False)\n    eig_vals, eig_vecs = np.linalg.eigh(cov_mat)\n    sorted_pairs = sorted(zip(eig_vals, eig_vecs.T), key=lambda x: -x[0])\n    top_eig_vals = [p[0] for p in sorted_pairs[:2]]\n    top_eig_vecs = np.array([p[1] for p in sorted_pairs[:2]]).T\n    projected = centered @ top_eig_vecs\n    fig, ax = plt.subplots(figsize=(6, 4))\n    ax.scatter(projected[:, 0], projected[:, 1])\n    ax.set_xlabel('First Principal Component')\n    ax.set_ylabel('Second Principal Component')\n    ax.set_title('PCA Result')\n    return ax\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.26535345407612254
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(l):\n    plt.figure(figsize=(8, 6))\n    plt.scatter(l[:, 0], l[:, 1])\n    plt.title('PCA Result')\n    plt.xlabel('First Principal Component')\n    plt.ylabel('Second Principal Component')\n    return plt.gca()\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3467336367104233
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/411",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nfrom pathlib import Path\nfrom typing import Dict, Any\n\n\ndef task_func(data: Dict[str, Any], *args) ->str:\n    output_path = args[0] if args else './default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns=['c'])\n    data_dict = df.to_dict(orient='dict')\n\n    def convert(d):\n        if isinstance(d, dict):\n            return {str(k): convert(v) for k, v in d.items()}\n        return d\n    data_dict = convert(data_dict)\n    output_file = Path(output_path).resolve()\n    with output_file.open('w') as f:\n        json.dump(data_dict, f, indent=2)\n    return str(output_file)\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2285062082281238
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, custom_path=None):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        expected_data = df.drop(columns='c').to_dict(orient='dict')\n    else:\n        expected_data = df.to_dict(orient='dict')\n    expected_data = {str(k): v for k, v in expected_data.items()}\n    output_path = custom_path or './default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(expected_data, f)\n    return output_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3135011037551991
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    df = pd.DataFrame(data)\n    path = args[0] if args else './default_data_output.json'\n    output_dict = df.drop(columns='c', errors='ignore').to_dict(orient='dict')\n    with open(path, 'w') as f:\n        json.dump(output_dict, f, ensure_ascii=False)\n    return path\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25137298034257205
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    output_data = df.to_dict(orient='dict')\n\n    def convert_keys_to_str(dictionary):\n        if not isinstance(dictionary, dict):\n            return dictionary\n        return {str(k): convert_keys_to_str(v) for k, v in dictionary.items()}\n    output_data = convert_keys_to_str(output_data)\n    if args:\n        output_path = args[0]\n    else:\n        output_path = './default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(output_data, f, indent=2)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.27599943613692457
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data: dict, *args) ->str:\n    output_path = args[0] if args else './default_data_output.json'\n    df = pd.DataFrame.from_dict(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    data_dict = df.to_dict('dict')\n    with open(output_path, 'w') as f:\n        json.dump(data_dict, f)\n    return output_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2750549203920472
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    path = args[0] if args else './default_data_output.json'\n    df = pd.DataFrame(data)\n    df = df.drop(columns='c', errors='ignore')\n    json_data = df.to_dict(orient='dict')\n    with open(path, 'w') as f:\n        json.dump(json_data, f)\n    return path\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3469153440332997
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data: dict, output_path: str='./default_data_output.json') ->str:\n    if not data:\n        df = pd.DataFrame()\n    else:\n        df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    data_dict = df.to_dict(orient='dict')\n    with open(output_path, 'w') as f:\n        json.dump(data_dict, f)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31680322680683504
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data: dict, *args):\n    if args:\n        output_path = args[0]\n    else:\n        output_path = './default_data_output.json'\n    df = pd.DataFrame.from_dict(data)\n    df.drop(columns=['c'], errors='ignore', inplace=True)\n    with open(output_path, 'w') as f:\n        json.dump(df.to_dict('dict'), f)\n    return output_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-code 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.18851569382952482
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(*args):\n    data = args[0]\n    path = args[1] if len(args) > 1 else './default_data_output.json'\n    df = pd.DataFrame(data)\n    df_out = df.drop(columns='c', errors='ignore')\n    out_dict = df_out.to_dict(orient='dict')\n    with open(path, 'w') as f:\n        json.dump(out_dict, f)\n    return path\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3449906791006547
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    df = pd.DataFrame(data)\n    path = args[0] if args else './default_data_output.json'\n    output_dict = df.drop(columns='c', errors='ignore').to_dict(orient='dict')\n    with open(path, 'w') as f:\n        json.dump(output_dict, f)\n    return path\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.29742993622477526
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data, *args):\n    df = pd.DataFrame.from_dict(data)\n    if 'c' in df.columns:\n        df = df.drop(columns=['c'])\n    data_dict = df.to_dict('dict')\n    output_path = args[0] if args else './default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(data_dict, f)\n    return output_path\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-code 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2102401055772324
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import os\nimport json\nimport pandas as pd\n\n\ndef task_func(data, *args):\n\n    def convert_keys_to_str(d):\n        if not isinstance(d, dict):\n            return d\n        return {str(k): convert_keys_to_str(v) for k, v in d.items()}\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns=['c'])\n    data_dict = df.to_dict(orient='dict')\n    output_path = args[0] if args else './default_data_output.json'\n    os.makedirs(os.path.dirname(output_path), exist_ok=True)\n    with open(output_path, 'w') as f:\n        json.dump(convert_keys_to_str(data_dict), f, indent=2)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-code 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.27795215248265237
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    output_path = args[0] if args else './default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(df.to_dict(orient='dict'), f)\n    return output_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2678705263359351
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    output_path = args[0] if args else './default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(df.to_dict(orient='dict'), f)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-code 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2678705263359351
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    path = args[0] if args else './default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    result = df.to_dict(orient='dict')\n    with open(path, 'w') as f:\n        json.dump(result, f)\n    return path\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3107426102465946
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(*args):\n    data = args[0]\n    path = args[1] if len(args) > 1 else './default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    output_dict = df.to_dict(orient='dict')\n    with open(path, 'w') as f:\n        json.dump(output_dict, f)\n    return path\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3111907684247311
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, custom_path=None):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        expected_data = df.drop(columns='c').to_dict(orient='dict')\n    else:\n        expected_data = df.to_dict(orient='dict')\n    expected_data = {str(k): v for k, v in expected_data.items()}\n    output_path = './default_data_output.json'\n    if custom_path is not None:\n        output_path = custom_path\n    with open(output_path, 'w') as f:\n        json.dump(expected_data, f)\n    return output_path\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.312913988201773
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(*args):\n    data = args[0]\n    path = args[1] if len(args) > 1 else None\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    output_path = path if path is not None else './default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(df.to_dict(orient='dict'), f)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2691368645032219
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(*args):\n    data = args[0]\n    output_path = args[1] if len(args) > 1 else './default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    result = df.to_dict(orient='dict')\n    with open(output_path, 'w') as f:\n        json.dump(result, f)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31529062495469984
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, custom_path=None):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        expected_data = df.drop(columns='c').to_dict(orient='dict')\n    else:\n        expected_data = df.to_dict(orient='dict')\n    expected_data = {str(k): v for k, v in expected_data.items()}\n    output_path = './default_data_output.json'\n    if custom_path is not None:\n        output_path = custom_path\n    with open(output_path, 'w') as f:\n        json.dump(expected_data, f)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.312913988201773
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 llama3.1:latest"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, custom_path=None):\n    \"\"\"\n    Converts the given DataFrame to a dictionary, dropping the column named 'c' if it exists,\n    and then saves it as a JSON file.\n    \"\"\"\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    if custom_path is None:\n        output_path = 'default_data_output.json'\n    else:\n        output_path = custom_path\n    with open(output_path, 'w') as f:\n        json.dump(df.to_dict(orient='dict'), f, indent=4)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3498673498526315
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data, *args) ->str:\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns=['c'])\n    data_dict = df.to_dict(orient='dict')\n    output_path = args[0] if args else './default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(data_dict, f, indent=4)\n    return output_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot gemma3:latest-code 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.27066551766636765
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data: dict, custom_path: str=None) ->str:\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    result = df.to_dict(orient='dict')\n    if custom_path is not None:\n        json_path = custom_path\n    else:\n        json_path = './default_data_output.json'\n    with open(json_path, 'w') as f:\n        json.dump(result, f, indent=4)\n    return json_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "zero-shot gemma3:latest-complete 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.26494087872162464
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import json\nimport os\nimport pandas as pd\n\n\ndef task_func(data: dict, *args) ->str:\n    output_path = args[0] if args else './default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c', errors='ignore')\n    data_dict = df.to_dict(orient='dict')\n    dir_name = os.path.dirname(output_path)\n    if dir_name:\n        os.makedirs(dir_name, exist_ok=True)\n    with open(output_path, 'w') as file:\n        json.dump(data_dict, file, indent=4)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot gemma3:latest-code 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3172167926271932
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    if not isinstance(data, dict):\n        raise TypeError('Input must be a dictionary')\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    output_path = args[0] if args else 'default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(df.to_dict(orient='dict'), f, indent=4)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.27875807025762606
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    path = args[0] if args else './default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    result = df.to_dict(orient='dict')\n    with open(path, 'w') as f:\n        json.dump(result, f)\n    return path\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3107426102465946
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    output_path = args[0] if args else 'default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(df.to_dict(orient='dict'), f)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2678705263359351
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data, *args):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c', errors='ignore')\n    result = df.to_dict(orient='dict')\n    output_path = args[0] if args else './default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(result, f, indent=4)\n    return output_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "zero-shot gemma3:latest-complete 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3057709082294102
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data, *args):\n    path = args[0] if args else './default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns=['c'])\n    data_dict = df.to_dict(orient='dict')\n    with open(path, 'w') as file:\n        json.dump(data_dict, file)\n    return path\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "zero-shot gemma3:latest-ast 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.38269704817605804
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "cot",
+        "code": "import pandas as pd\nfrom datetime import datetime\n\n\ndef task_func(*args):\n    data = args[0] if len(args) > 0 else {}\n    custom_path = args[1] if len(args) > 1 else None\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    json_data = df.to_dict(orient='dict')\n    if custom_path:\n        output_path = custom_path\n    else:\n        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')\n        output_path = f'./default_data_output_{timestamp}.json'\n    with open(output_path, 'w') as f:\n        json.dump(json_data, f)\n    return output_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot gemma3:latest-ast 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31249532135558505
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data, *args):\n    try:\n        df = pd.DataFrame(data)\n        if 'c' in df.columns:\n            df = df.drop(columns=['c'])\n        data_dict = df.to_dict(orient='dict')\n        path = args[0] if args else 'default_data_output.json'\n        with open(path, 'w') as file:\n            json.dump(data_dict, file)\n        return path\n    except Exception:\n        return None\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot gemma3:latest-ast 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3845478957297554
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom datetime import datetime\n\n\ndef task_func(*args):\n    data = args[0] if len(args) > 0 else {}\n    custom_path = args[1] if len(args) > 1 else None\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    json_data = df.to_dict(orient='dict')\n    if custom_path:\n        output_path = custom_path\n    else:\n        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')\n        output_path = f'./default_data_output_{timestamp}.json'\n    with open(output_path, 'w') as f:\n        json.dump(json_data, f)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_6",
+          "refac_7"
+        ],
+        "clone_id": "zero-shot gemma3:latest-ast 1 ['refac_2', 'refac_6', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31249532135558505
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "cot",
+        "code": "import json\nimport pandas as pd\n\n\ndef task_func(data, *args):\n    output_path = args[0] if args else './default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns=['c'])\n    result = df.to_dict(orient='dict')\n    with open(output_path, 'w') as file:\n        json.dump(result, file)\n    return output_path\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot gemma3:latest-ast 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.32382599125548767
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nfrom typing import Dict\n\n\ndef task_func(data: Dict, *args) ->str:\n    if not isinstance(data, dict):\n        raise ValueError('Input must be a dictionary')\n    df = pd.DataFrame(data)\n    df = df.drop(columns='c', errors='ignore')\n    data_dict = df.to_dict(orient='dict')\n    path = args[0] if args else './default_data_output.json'\n    with open(path, 'w') as f:\n        json.dump(data_dict, f)\n    return path\n",
+        "refacs": [
+          "refac_2",
+          "refac_4",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_2', 'refac_4', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35088590876542214
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(*args):\n    data = args[0] if len(args) > 0 else {}\n    custom_path = args[1] if len(args) > 1 else None\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    json_data = df.to_dict(orient='dict')\n    if custom_path:\n        output_path = custom_path\n    else:\n        output_path = 'default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(json_data, f)\n    return output_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_4"
+        ],
+        "clone_id": "cot gemma3:latest-ast 1 ['refac_1', 'refac_3', 'refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31316148883713674
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data: dict, output_path: str='./default_data_output.json') ->str:\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    data_dict = df.to_dict(orient='dict')\n    with open(output_path, 'w') as file:\n        json.dump(data_dict, file)\n    return output_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_4",
+          "refac_5"
+        ],
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_1', 'refac_4', 'refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3999441023641119
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "gemma3:latest",
+        "context": "ast",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(data, *args):\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    output_path = args[0] if args else './default_data_output.json'\n    with open(output_path, 'w') as f:\n        json.dump(df.to_dict(orient='dict'), f)\n    return output_path\n",
+        "refacs": [
+          "refac_1",
+          "refac_3",
+          "refac_7"
+        ],
+        "clone_id": "cot gemma3:latest-ast 1 ['refac_1', 'refac_3', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2678705263359351
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(*args):\n    data = args[0]\n    if len(args) > 1:\n        output_path = args[1]\n    else:\n        output_path = 'default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    result = df.to_dict(orient='dict')\n    with open(output_path, 'w') as f:\n        json.dump(result, f)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-code 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3153871005597873
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      },
+      {
+        "model": "gpt-oss:20b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\n\n\ndef task_func(data, *args):\n    output_path = args[0] if args else './default_data_output.json'\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns=['c'])\n    data_dict = {str(k): v for k, v in df.to_dict(orient='dict').items()}\n    with open(output_path, 'w') as f:\n        json.dump(data_dict, f)\n    return output_path\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2989202664789763
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gemma3:latest"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport json\nimport os\nfrom typing import Dict, Optional, Any\n\n\ndef task_func(data: Dict[str, Any], output_path: Optional[str]=None) ->str:\n    df = pd.DataFrame(data)\n\n    def convert_to_dict(df: pd.DataFrame) ->Dict[str, Any]:\n        return df.to_dict(orient='dict')\n\n    def save_json(file_path: str, data: Dict[str, Any]) ->None:\n        with open(file_path, 'w') as file:\n            json.dump(data, file)\n    if output_path is None:\n        output_path = './default_data_output.json'\n    if df.empty:\n        data_dict = {}\n    else:\n        data_dict = convert_to_dict(df.drop(columns='c', errors='ignore'))\n    save_json(output_path, data_dict)\n    return output_path\n",
+        "refacs": [
+          "refac_2",
+          "refac_5",
+          "refac_6"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_2', 'refac_5', 'refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3141927759053971
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport json\nimport os\n\n\ndef task_func(*args):\n    data = args[0] if len(args) > 0 else {}\n    custom_path = args[1] if len(args) > 1 else None\n    df = pd.DataFrame(data)\n    if 'c' in df.columns:\n        df = df.drop(columns='c')\n    json_data = df.to_dict(orient='dict')\n\n    def convert_keys_to_str(d):\n        if not isinstance(d, dict):\n            return d\n        return {str(k): convert_keys_to_str(v) for k, v in d.items()}\n    str_data = convert_keys_to_str(json_data)\n    if custom_path:\n        output_path = custom_path\n    else:\n        current_dir = os.getcwd()\n        output_path = os.path.join(current_dir, 'default_data_output.json')\n    with open(output_path, 'w') as f:\n        json.dump(str_data, f)\n    return output_path\n",
+        "refacs": [
+          "refac_3",
+          "refac_5",
+          "refac_7"
+        ],
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_3', 'refac_5', 'refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3095037871974906
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      }
+    ]
+  }
+]

@@ -81,9 +81,10 @@ def run_clustering():
     max_clones = max(clone_counts) if clone_counts else 0
     avg_clones = mean(clone_counts) if clone_counts else 0
     std_clones = stdev(clone_counts) if len(clone_counts) > 1 else 0
+    sum_clones = sum(clone_counts)
 
     print("\n Clone Statistics:")
-    print(f"  - Total unique clones: {clone_counts}")
+    print(f"  - Total unique clones: {sum_clones}")
     print(f"  - Min clones per entry: {min_clones}")
     print(f"  - Max clones per entry: {max_clones}")
     print(f"  - Avg clones per entry: {avg_clones:.2f}")

@@ -200,21 +200,6 @@ def add_missing_imports(code: str, common_modules=None) -> str:
 
     return code
 
-
-
-def clean_code(code: str, common_modules=None) -> str:
-    """
-    Clean LLM-generated Python code to make it compilable:
-    1. Fix broken function signatures (extra parentheses, raw strings)
-    2. Add missing imports for commonly used standard modules
-    """
-     
-    code = add_missing_imports(code, common_modules)
-    code = fix_function_signature(code) 
-
-    return code.strip()
-
-
 def remove_function_signature(code: str) -> str:
     """
     Removes the first function definition line (e.g., 'def func(...):')
