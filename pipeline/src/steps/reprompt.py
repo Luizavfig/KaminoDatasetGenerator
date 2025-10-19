@@ -8,7 +8,7 @@ from src.config import *
 _codebleu_cache = {}
 _test_cache = {}
 
-def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_DATASET_PATH, reprompt_path=REPROMPT_PATH, failed_reprompt_path=FAILED_REPROMPT_PATH):
+def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH_CODEBLEU, reprompt_path=REPROMPT_PATH, failed_reprompt_path=FAILED_REPROMPT_PATH):
     print("Starting repromt process...")
     test_LLM_connection()
     with open(sample_path, "r", encoding="utf-8") as f:
