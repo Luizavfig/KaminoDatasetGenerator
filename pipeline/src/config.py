@@ -12,8 +12,8 @@ FILTERED_DATASET_PATH = f"../dataset/{DATASET_NAME}_normalized_filtered.json"
 TESTS_PATH = "../results/original_test_results.json"
 SAMPLE_1_PATH = "../dataset/sample1.json"
 SAMPLE_2_PATH = "../dataset/sample2.json"
-OUT_PATH     = f"../results/{DATASET_NAME}_llm_clones.json"
-FINAL_DATASET = f"../results/{DATASET_NAME}_clone_dataset.json"
+OUT_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones.json"
+FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json"
 
 # Normalization settings
 SAMPLE_SIZE = 50  # number of entries to sample for experiments
@@ -34,7 +34,7 @@ LLM_OPTS = {
     "num_predict": 1500,       # max output tokens
 }
 REMOTE_OLLAMA = True # change to False to use local ollama server
-N_ENTRIES = 12 # number of dataset entries to use as inputs for generation
+N_ENTRIES = 50 # number of dataset entries to use as inputs for generation
 CLONES_PER_ENTRY = 1 # number of clones to generate per dataset entry per prompt configuration
 OLLAMA_CONFIG_FILE_REMOTE = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")), "resources", "ollama_config_remote.json")
 OLLAMA_CONFIG_FILE_LOCAL = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")), "resources", "ollama_config_local.json")
@@ -49,20 +49,20 @@ RANDOM_SEED = 42 # seed for random selection of refactoring combinations
 FUNCTION_NAME = "task_func"  
 
 # Reprompting settings
-MAX_RETRIES= 2
-DELAY=3
+MAX_RETRIES = 2
+DELAY = 3
 MAX_WORKERS = 6  # for parallelism
-MIN_TEST_REPROMPT = 0.25  # minimum % of tests that must pass to consider reprompting
-REPROMPT_PATH = f"../results/{DATASET_NAME}_reprompt.json"
-FAILED_REPROMPT_PATH = f"../results/{DATASET_NAME}_failed_reprompt.json"
+MIN_TEST_REPROMPT = 0.5  # minimum % of tests that must pass to consider reprompting
+REPROMPT_PATH = f"../results/RQ1/{DATASET_NAME}_reprompt.json"
+FAILED_REPROMPT_PATH = f"../results/RQ1/{DATASET_NAME}_failed_reprompt.json"
 
 # Filters 
 CODEBLEU_THRESHOLD = 0.4 # 0-1 higher = more similar
-FILTERED_PATH_CODEBLEU = f"../results/{DATASET_NAME}_filtered_codebleu.json"
-FILTERED_PATH_TESTS = f"../results/{DATASET_NAME}_filtered_tests.json"
+FILTERED_PATH_CODEBLEU = f"../results/RQ1/{DATASET_NAME}_filtered_codebleu.json"
+FILTERED_PATH_TESTS = f"../results/RQ1/{DATASET_NAME}_filtered_tests.json"
 
 # Clustering settings
-CLUSTER_DIR="../results/clustering" # directory to save clustering scrips for data visualization
+CLUSTER_DIR="../results/RQ1/clustering" # directory to save clustering scrips for data visualization
 
 # Embedding settings
 EPOCHS = 3
