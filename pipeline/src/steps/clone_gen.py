@@ -3,6 +3,7 @@ from ..utils.prompts import context_builders
 from itertools import combinations
 from collections import Counter
 from src.config import *
+from src.utils.helper_functions import set_rq2_config
 
 def test_LLM_connection():
     try:
@@ -15,12 +16,13 @@ def test_LLM_connection():
     except Exception as e:
         print("LLM connection test failed on Step 2:", e)
         sys.exit(1) 
-def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGIES):
+
+def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGIES, out_path=OUT_PATH, sample_path=SAMPLE_1_PATH):
     print("Starting generation process...")
     test_LLM_connection()
-    used_combinations = _load_used_combinations(OUT_PATH)
-    if(not _has_ast_field(dataset_path=SAMPLE_1_PATH)):
-        _add_generated_fields(dataset_path=SAMPLE_1_PATH, n_entries=N_ENTRIES)
+    used_combinations = _load_used_combinations(out_path)
+    if(not _has_ast_field(dataset_path=sample_path)):
+        _add_generated_fields(dataset_path=sample_path, n_entries=N_ENTRIES)
     random.seed(RANDOM_SEED)
     all_combinations = list(combinations(REFACS, COMBINATIONS_PER_SET)) 
     # --- Choose balanced subset ---
@@ -37,8 +39,8 @@ def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGI
                     else: 
                         print(f"\n=== Generating with {model}, strategy={strategy}, context={context} and {selected_refacs}")
                         _run_clone_generation(
-                            dataset_path=SAMPLE_1_PATH,
-                            out_path=OUT_PATH,
+                            dataset_path=sample_path,
+                            out_path=out_path,
                             n_entries=N_ENTRIES, 
                             clones_per_entry=CLONES_PER_ENTRY,
                             ollama_model=model,
@@ -48,6 +50,57 @@ def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGI
                             strategy=strategy,
                         )
 
+def run_efficient_generation(top_configs, out_path=OUT_PATH, sample_path=SAMPLE_2_PATH):
+    """
+    Run clone generation only for the most efficient configurations (RQ2).
+    Expects a JSON file with entries containing:
+        model, context, refac, strategy
+    Saves results to ../results/RQ2/
+    """
+    print("Starting efficient generation (RQ2)...")
+    test_LLM_connection()
+    set_rq2_config()
+    # Prepare dataset
+    if not _has_ast_field(dataset_path=sample_path):
+        _add_generated_fields(dataset_path=sample_path, n_entries=N_ENTRIES)
+
+    # Load used combinations to avoid duplicates
+    used_combinations = _load_used_combinations(out_path)
+
+    # Iterate through top configurations
+    for cfg in top_configs:
+        model = cfg["model"]
+        context = cfg["context"]
+        strategy = cfg["strategy"]
+        refacs = cfg["refac"]
+
+        # Convert stringified lists back to Python lists if needed
+        if isinstance(refacs, str):
+            try:
+                refacs = ast.literal_eval(refacs)
+            except Exception:
+                refacs = [refacs]
+
+        combo_key = (model, strategy, context, tuple(sorted(refacs)))
+        if combo_key in used_combinations:
+            print(f"Skipping {model}, {strategy}, {context}, {refacs} (already used)")
+            continue
+
+        print(f"\nEfficient Generating  {model}, strategy={strategy}, context={context}, refacs={refacs}")
+
+        _run_clone_generation(
+            dataset_path=sample_path,
+            out_path=out_path,
+            n_entries=N_ENTRIES,
+            clones_per_entry=CLONES_PER_ENTRY,
+            ollama_model=model,
+            llm_opts=LLM_OPTS,
+            context=context,
+            refacs=refacs,
+            strategy=strategy,
+        )
+
+    print("\n✅ Efficient generation (RQ2) completed successfully!")
 
 def call_ollama_chat(messages, model, options):
     """

@@ -8,28 +8,28 @@ from src.config import *
 _codebleu_cache = {}
 _test_cache = {}
 
-def run_reprompt():
+def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_DATASET_PATH, reprompt_path=REPROMPT_PATH, failed_reprompt_path=FAILED_REPROMPT_PATH):
     print("Starting repromt process...")
     test_LLM_connection()
-    with open(SAMPLE_1_PATH, "r", encoding="utf-8") as f:
+    with open(sample_path, "r", encoding="utf-8") as f:
         original_data = json.load(f)
     original_by_id = {e["id"]: e for e in original_data}
 
     # Load filtered results (base clones to reprompt)
-    results = _load_existing_results(FILTERED_PATH_CODEBLEU)
+    results = _load_existing_results(filtered_path_codebleu)
     sample_entries = results[:N_ENTRIES] if N_ENTRIES else results
 
     # Load previously reprompted clones (skip them)
-    if os.path.exists(REPROMPT_PATH):
-        with open(REPROMPT_PATH, "r", encoding="utf-8") as f:
+    if os.path.exists(reprompt_path):
+        with open(reprompt_path, "r", encoding="utf-8") as f:
             reprompted_data = json.load(f)
         reprompted_map = {(e["id"], c["clone_id"]) for e in reprompted_data for c in e.get("clones", [])}
     else:
         reprompted_map = set()
 
     # Load previously failed/skipped clones (skip them too)
-    if os.path.exists(FAILED_REPROMPT_PATH):
-        with open(FAILED_REPROMPT_PATH, "r", encoding="utf-8") as f:
+    if os.path.exists(failed_reprompt_path):
+        with open(failed_reprompt_path, "r", encoding="utf-8") as f:
             failed_data = json.load(f)
         skipped_map = {(e["id"], c["clone_id"]) for e in failed_data for c in e.get("clones", [])}
     else:
@@ -114,7 +114,7 @@ def run_reprompt():
                 _, entry_id, clone = item
                 clone_id = clone.get("clone_id")
                 print(f"Not eligible for reprompt — logging {entry_id}:{clone_id}")
-                _log_skipped_clone(entry_id, clone, FAILED_REPROMPT_PATH)
+                _log_skipped_clone(entry_id, clone, failed_reprompt_path)
                 pbar.update(1)
                 continue
 
@@ -122,7 +122,7 @@ def run_reprompt():
             _, entry_id, clone, entry, tests_list = item
             future = executor.submit(
                 _process_clone, entry_id, clone, entry,
-                tests_list, ALL_MODELS, LLM_OPTS, REPROMPT_PATH
+                tests_list, ALL_MODELS, LLM_OPTS, reprompt_path
             )
 
             # Progress update callback when task finishes
@@ -268,7 +268,7 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
 
 
 
-def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_path):
+def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_path, failed_reprompt_path=FAILED_REPROMPT_PATH):
     original_model = clone.get("model")
     used_models = []
     final_failing_tests = []
@@ -313,7 +313,7 @@ def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_pat
                 print(f"❌ Clone still failing {len(failing_tests)} tests (retry {n}/{MAX_RETRIES})")
     # All retries and models exhausted → log
     print(f"❌ Clone discarded — tests={'fail' if final_failing_tests else 'pass'} CodeBLEU={final_codebleu:.4f}")
-    _log_skipped_clone(entry_id, clone, FAILED_REPROMPT_PATH)
+    _log_skipped_clone(entry_id, clone, failed_reprompt_path)
 
 def _update_results(entry_id, clone, out_path):
     """

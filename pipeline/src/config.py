@@ -1,7 +1,7 @@
 import os
 """
-Global configuration file Kamino settings.
-Import this anywhere using:
+Global configuration file - KAMINO settings.
+Import this using:
     from src.config import *
 """
 # Paths 

@@ -10,7 +10,7 @@ from scipy.spatial.distance import squareform
 from statistics import mean, stdev
 from src.config import *
 
-def run_clustering():
+def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1_PATH, final_dataset=FINAL_DATASET):
     """
     Automatically cluster code clones based on
     CodeBLEU similarity metrics and visualize them in a 2D space using Multidimensional Scaling (MDS).
@@ -20,10 +20,10 @@ def run_clustering():
     """
     # --- Load datasets ---
     print("Starting clustering process...")
-    with open(FILTERED_PATH_TESTS, "r", encoding="utf-8") as f:
+    with open(filtered_path_tests, "r", encoding="utf-8") as f:
         clone_data = json.load(f)
 
-    with open(DATASET_PATH, "r", encoding="utf-8") as f:
+    with open(sample_path, "r", encoding="utf-8") as f:
         complete_data = json.load(f)
 
     # --- Build lookup ---
@@ -91,11 +91,11 @@ def run_clustering():
     print(f"  - Std clones per entry: {std_clones:.2f}")
 
     # --- Save final dataset ---
-    os.makedirs(os.path.dirname(FINAL_DATASET), exist_ok=True)
-    with open(FINAL_DATASET, "w", encoding="utf-8") as f:
+    os.makedirs(os.path.dirname(final_dataset), exist_ok=True)
+    with open(final_dataset, "w", encoding="utf-8") as f:
         json.dump(merged_data, f, indent=2, default=_np_converter)
 
-    print(f"\n✅ New dataset with representatives saved to {FINAL_DATASET}, total entries: {len(merged_data)}")
+    print(f"\n✅ New dataset with representatives saved to {final_dataset}, total entries: {len(merged_data)}")
 
 # Agglomerative clustering using scipy
 def _agglomerative_cluster(affinity_matrix, similarity_threshold):

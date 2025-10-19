@@ -22,10 +22,10 @@ from ..utils.helper_functions import (remove_function_signature, install_package
 from itertools import combinations
 from src.config import *
 
-def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH):
+def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH, out_path=OUT_PATH):
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    with open(OUT_PATH, "r", encoding="utf-8") as f:
+    with open(out_path, "r", encoding="utf-8") as f:
         clone_data = json.load(f)
 
     data_by_id = {entry["id"]: entry for entry in data}
@@ -66,13 +66,13 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH):
                 print(f"  ❌ Error computing CodeBLEU for clone {idx + 1}: {e}")
 
     #  Save results once at the end 
-    with open(OUT_PATH, "w", encoding="utf-8") as f:
+    with open(out_path, "w", encoding="utf-8") as f:
         json.dump(clone_data, f, indent=2)
 
-    print(f"\n✅ Done. Updated dataset with new CodeBLEU scores saved to {OUT_PATH}")
+    print(f"\n✅ Done. Updated dataset with new CodeBLEU scores saved to {out_path}")
 
 
-def run_codebleu_filtering():
+def run_codebleu_filtering(out_path=OUT_PATH ,filtered_path=FILTERED_PATH_CODEBLEU):
     """
     Merges new clones from OUT_PATH into an existing filtered dataset,
     keeping only those with CodeBLEU <= CODEBLEU_THRESHOLD and avoiding duplicates.
@@ -80,14 +80,14 @@ def run_codebleu_filtering():
     """
     print("Starting codebleu agains original code process...")
     _compute_codebleu_scores()
-    if os.path.exists(FILTERED_PATH_CODEBLEU):
-        with open(FILTERED_PATH_CODEBLEU, "r", encoding="utf-8") as f:
+    if os.path.exists(filtered_path):
+        with open(filtered_path, "r", encoding="utf-8") as f:
             existing_data = json.load(f)
     else:
         existing_data = []
 
     # Load new clones
-    with open(OUT_PATH, "r", encoding="utf-8") as f:
+    with open(out_path, "r", encoding="utf-8") as f:
         new_data = json.load(f)
 
     # Build lookup by entry ID
@@ -134,19 +134,19 @@ def run_codebleu_filtering():
 
     # Save merged dataset
     merged_data = list(existing_by_id.values())
-    with open(FILTERED_PATH_CODEBLEU, "w", encoding="utf-8") as f:
+    with open(filtered_path, "w", encoding="utf-8") as f:
         json.dump(merged_data, f, indent=2)
 
-    print(f"Merged dataset saved to {FILTERED_PATH_CODEBLEU}")
+    print(f"Merged dataset saved to {filtered_path}")
     print(f"Newly added clones: {added_count}")
 
 
-def run_tests(dataset_path=SAMPLE_1_PATH):
+def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
     print("Starting testing process...")
     _install_missing_packages()
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)  # original dataset with tests
-    with open(FILTERED_PATH_CODEBLEU, "r", encoding="utf-8") as f:
+    with open(filtered_path, "r", encoding="utf-8") as f:
         clone_data = json.load(f)  # dataset with clones
 
     data_by_id = {entry["id"]: entry for entry in data}
@@ -188,13 +188,13 @@ def run_tests(dataset_path=SAMPLE_1_PATH):
                     error_results[test_name] = "ERROR"
                 clone["test_results"] = error_results
     
-            with open(FILTERED_PATH_CODEBLEU, "w", encoding="utf-8") as f:
+            with open(filtered_path, "w", encoding="utf-8") as f:
                 json.dump(clone_data, f, indent=2)
 
-    print(f"\n✅ Done. Saved dataset with test results to {FILTERED_PATH_CODEBLEU}")    
+    print(f"\n✅ Done. Saved dataset with test results to {filtered_path}")    
 
-def _install_missing_packages():    
-    with open(FILTERED_PATH_CODEBLEU, "r", encoding="utf-8") as f:
+def _install_missing_packages(filtered_path=FILTERED_PATH_CODEBLEU):    
+    with open(filtered_path, "r", encoding="utf-8") as f:
         clone_data = json.load(f)  # dataset with clones
     packages = extract_required_packages_clones(clone_data)
     print(f"Required packages: {packages}")
@@ -216,14 +216,14 @@ def _install_missing_packages():
     print("✅ Finished checking/installing packages.")
  
 
-def run_test_filtering():
-    with open(FILTERED_PATH_CODEBLEU, "r", encoding="utf-8") as f:
+def run_test_filtering(filtered_path=FILTERED_PATH_CODEBLEU, reprompt_path=REPROMPT_PATH, filtered_path_tests=FILTERED_PATH_TESTS):
+    with open(filtered_path, "r", encoding="utf-8") as f:
         original_data = json.load(f)
 
     # Try loading reprompt dataset (optional) 
     reprompt_data = []
-    if os.path.exists(REPROMPT_PATH) and os.path.getsize(REPROMPT_PATH) > 0:
-        with open(REPROMPT_PATH, "r", encoding="utf-8") as f:
+    if os.path.exists(reprompt_path) and os.path.getsize(reprompt_path) > 0:
+        with open(reprompt_path, "r", encoding="utf-8") as f:
             reprompt_data = json.load(f)
     else:
         print(f"Warning: REPROMPT_PATH missing or empty, using only original dataset")
@@ -255,10 +255,10 @@ def run_test_filtering():
             base_entry["clones"] = passing_clones
             merged_data.append(base_entry)
 
-    with open(FILTERED_PATH_TESTS, "w", encoding="utf-8") as f:
+    with open(filtered_path_tests, "w", encoding="utf-8") as f:
         json.dump(merged_data, f, indent=2, ensure_ascii=False)
 
-    print(f"Filtered dataset saved to {FILTERED_PATH_TESTS}, entries: {len(merged_data)}")
+    print(f"Filtered dataset saved to {filtered_path_tests}, entries: {len(merged_data)}")
 
 
 #  Convert to dict keyed by entry ID (assuming each entry has a unique 'id') 
@@ -266,9 +266,9 @@ def _to_dict_by_id(data):
     return {entry["id"]: entry for entry in data}
 
 
-def compute_codebleu_for_all(): 
+def compute_codebleu_for_all(filtered_path_tests=FILTERED_PATH_TESTS): 
     print("Starting codebleu for all process...")
-    with open(FILTERED_PATH_TESTS, "r", encoding="utf-8") as f:
+    with open(filtered_path_tests, "r", encoding="utf-8") as f:
         clone_data = json.load(f)
 
     for i, clone_entry in enumerate(clone_data, 1):
@@ -303,9 +303,9 @@ def compute_codebleu_for_all():
                 print(f"  ❌ Error computing CodeBLEU for clones {idx1 + 1} vs {idx2 + 1}: {e}")
 
         # Save after finishing each entry
-        with open(FILTERED_PATH_TESTS, "w", encoding="utf-8") as f:
+        with open(filtered_path_tests, "w", encoding="utf-8") as f:
             json.dump(clone_data, f, indent=2)
 
-    print(f"\n✅ Done. Final dataset with CodeBLEU scores (clone vs clone) saved to {FILTERED_PATH_TESTS}")
+    print(f"\n✅ Done. Final dataset with CodeBLEU scores (clone vs clone) saved to {filtered_path_tests}")
 
 
