@@ -71,14 +71,14 @@ EFFICIENCY_RESULTS = "../results/RQ1/top_configs.json"
 
 #----------------------------------------------#
 # RQ2 specific overrides (uncomment for RQ2)
-SAMPLE_1_PATH = SAMPLE_2_PATH
-OUT_PATH = f"../results/RQ2/{DATASET_NAME}_llm_clones.json"
-FINAL_DATASET = f"../results/RQ2/{DATASET_NAME}_clone_dataset.json"
-REPROMPT_PATH = f"../results/RQ2/{DATASET_NAME}_reprompt.json"
-FAILED_REPROMPT_PATH = f"../results/RQ2/{DATASET_NAME}_failed_reprompt.json"
-FILTERED_PATH_CODEBLEU = f"../results/RQ2/{DATASET_NAME}_filtered_codebleu.json"
-FILTERED_PATH_TESTS = f"../results/RQ2/{DATASET_NAME}_filtered_tests.json"
-CLUSTER_DIR = "../results/RQ2/clustering"
+# SAMPLE_1_PATH = SAMPLE_2_PATH
+# OUT_PATH = f"../results/RQ2/{DATASET_NAME}_llm_clones.json"
+# FINAL_DATASET = f"../results/RQ2/{DATASET_NAME}_clone_dataset.json"
+# REPROMPT_PATH = f"../results/RQ2/{DATASET_NAME}_reprompt.json"
+# FAILED_REPROMPT_PATH = f"../results/RQ2/{DATASET_NAME}_failed_reprompt.json"
+# FILTERED_PATH_CODEBLEU = f"../results/RQ2/{DATASET_NAME}_filtered_codebleu.json"
+# FILTERED_PATH_TESTS = f"../results/RQ2/{DATASET_NAME}_filtered_tests.json"
+# CLUSTER_DIR = "../results/RQ2/clustering"
 # End of RQ2 specific overrides
 
 # For finetuning (RQ3)

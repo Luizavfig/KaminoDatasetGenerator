@@ -42,7 +42,7 @@ def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1
 
         # Cluster clones
         labels = _agglomerative_cluster(affinity_matrix, CODEBLEU_THRESHOLD)
-        # save_cluster_csv_from_labels( entry, labels, output_csv_path=os.path.join(CLUSTER_DIR, "all_clusters.csv"))
+        save_cluster_csv_from_labels( entry, labels, output_csv_path=os.path.join(CLUSTER_DIR, "all_clusters.csv"))
 
         if len(set(labels)) == 0:
             labels = [0] * len(clones)
