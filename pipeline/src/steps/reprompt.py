@@ -73,7 +73,7 @@ def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH
         print("No new clones to process.")
         return
 
-    print(f"Considering {total_candidates} candidate clones (including skipped ones).")
+    print(f"Considering {total_candidates} candidate clones (including skipped ones)")
 
     #  Process with a proper progress bar 
     pbar = tqdm(total=total_candidates, desc="Processing clones")

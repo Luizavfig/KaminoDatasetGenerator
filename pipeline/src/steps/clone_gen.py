@@ -3,7 +3,6 @@ from ..utils.prompts import context_builders
 from itertools import combinations
 from collections import Counter
 from src.config import *
-from src.utils.helper_functions import set_rq2_config
 
 def test_LLM_connection():
     try:
@@ -57,10 +56,12 @@ def run_efficient_generation(top_configs, out_path=OUT_PATH, sample_path=SAMPLE_
         model, context, refac, strategy
     Saves results to ../results/RQ2/
     """
-    print("Starting efficient generation with ...")
-    print(f"Using {TOP_N} Top configurations.")
+    print(f"Starting efficient generation with {TOP_N} Top configurations.")
+    if(out_path.__contains__("RQ1")):
+        print("⚠️ Config error: RQ2 generation requires RQ2 paths. Please check your config.py settings. ABORTING. ⚠️")
+        sys.exit(1) 
+    
     test_LLM_connection()
-    set_rq2_config() # This will adjust global settings for RQ2
     # Prepare dataset
     if not _has_ast_field(dataset_path=sample_path):
         _add_generated_fields(dataset_path=sample_path, n_entries=N_ENTRIES)
@@ -251,9 +252,8 @@ def _add_generated_fields(dataset_path, n_entries):
         try:
             # Generate fields 
             ast = _code_to_ast(code) 
-            entry["metadata"] = {
-                "ast": ast.strip()
-            }
+            entry["metadata"]["ast"] = ast.strip()
+
 
         except Exception as e:
             print(f"  Error generating for {entry['id']}: {e}")
@@ -265,7 +265,7 @@ def _add_generated_fields(dataset_path, n_entries):
     with open(dataset_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
-    print(f"✅ Updated dataset with 'metadata' fields in {dataset_path}") 
+    print(f"\n✅ Updated dataset with 'metadata' fields in {dataset_path}") 
 
 def _run_clone_generation(
     dataset_path,

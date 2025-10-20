@@ -245,16 +245,6 @@ def calc_syntactic_codebleu(code1: str, code2: str, lang: str = "python") -> flo
     syntactic_score = sum(syntactic_components) / len(syntactic_components)
     return float(syntactic_score)
 
-def set_rq2_config():
-    print("Setting RQ2 configuration...")
-    config.SAMPLE_1_PATH = config.SAMPLE_2_PATH
-    config.OUT_PATH = f"../results/RQ2/{config.DATASET_NAME}_llm_clones.json"
-    config.FINAL_DATASET = f"../results/RQ2/{config.DATASET_NAME}_clone_dataset.json"
-    config.REPROMPT_PATH = f"../results/RQ2/{config.DATASET_NAME}_reprompt.json"
-    config.FAILED_REPROMPT_PATH = f"../results/RQ2/{config.DATASET_NAME}_failed_reprompt.json"
-    config.FILTERED_PATH_CODEBLEU = f"../results/RQ2/{config.DATASET_NAME}_filtered_codebleu.json"
-    config.FILTERED_PATH_TESTS = f"../results/RQ2/{config.DATASET_NAME}_filtered_tests.json"
-    config.CLUSTER_DIR = "../results/RQ2/clustering"
 
 def startup():
     banner = r"""

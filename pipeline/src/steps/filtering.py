@@ -42,7 +42,7 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH, out_path=OUT_PATH):
         entry = data_by_id[entry_id]
         ref_code = entry.get("original_code")
         if not ref_code:
-            print("  ⚠️ No reference code found, skipping.")
+            print("⚠️ No reference code found, skipping.")
             continue
 
         ref_body = remove_function_signature(ref_code)
