@@ -25,9 +25,9 @@ def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGI
         _add_generated_fields(dataset_path=sample_path, n_entries=N_ENTRIES)
     random.seed(RANDOM_SEED)
     all_combinations = list(combinations(REFACS, COMBINATIONS_PER_SET)) 
-    # --- Choose balanced subset ---
+    #  Choose balanced subset 
     subset_combinations = _select_balanced_combinations(all_combinations, NUM_COMBINATIONS_TOUSE, REFACS, RANDOM_SEED)
-    # --- Iterate over combinations for all strategy+context pairs ---
+    #  Iterate over combinations for all strategy+context pairs 
     for model in all_models:
         for strategy in strategies:
             for context in contexts:
@@ -57,9 +57,10 @@ def run_efficient_generation(top_configs, out_path=OUT_PATH, sample_path=SAMPLE_
         model, context, refac, strategy
     Saves results to ../results/RQ2/
     """
-    print("Starting efficient generation (RQ2)...")
+    print("Starting efficient generation with ...")
+    print(f"Using {TOP_N} Top configurations.")
     test_LLM_connection()
-    set_rq2_config()
+    set_rq2_config() # This will adjust global settings for RQ2
     # Prepare dataset
     if not _has_ast_field(dataset_path=sample_path):
         _add_generated_fields(dataset_path=sample_path, n_entries=N_ENTRIES)
@@ -315,7 +316,6 @@ def _run_clone_generation(
         for k in range(clones_per_entry):
             if context not in context_builders:
                 raise ValueError(f"Unknown context: {context}")
-
             
             system_prompt, user_prompt = context_builders[context](
                 strategy=strategy,
@@ -355,90 +355,6 @@ def _run_clone_generation(
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2) 
-
-
- 
-
-
-# Cache for CodeBLEU and test runs (avoid recomputation)
-
-
-
-# def run_clone_variation_generation(
-#     dataset_path,
-#     out_path,
-#     n_entries,
-#     clones_per_entry,
-#     ollama_model,
-#     llm_opts,
-# ):
-#     """
-#     Run clone generation for dataset entries, reusing existing clones
-#     as examples in the prompt to generate new variations.
-
-#     Args:
-#         dataset_path: Path to dataset JSON.
-#         out_path: Where to save results.
-#         n_entries: Number of entries to process.
-#         clones_per_entry: Number of new clones per entry.
-#         ollama_model: Model name.
-#         llm_opts: Dict of LLM options. 
-#     """
-#     with open(dataset_path, "r", encoding="utf-8") as f:
-#         data = json.load(f)
-
-#     sample = data[:n_entries]
-#     results = _load_existing_results(out_path)
-
-#     for i, entry in enumerate(sample, 1):
-#         print(f"\n🔄 Generating clones {i}/{len(sample)} for {entry['id']}")
-
-#         # Extract entry info
-#         original_body = entry["original_code"]
-#         description   = entry.get("description", "") 
-#         entry_clones  = entry.get("clones", [])  # already existing clones from dataset
-
-#         new_clones = []
-
-#         for k in range(clones_per_entry):
-#             # Build prompt with existing clones as few-shot examples
-#             user_prompt = build_clone_variation_prompt(
-#                 original_body=original_body,
-#                 description=description, 
-#                 example_clones=entry_clones
-#             )
-
-#             messages = [
-#                 {"role": "system", "content": SYSTEM_PROMPT_MINIMAL},
-#                 {"role": "user",   "content": user_prompt},
-#             ]
-
-#             try:
-#                 code = _generate_clones(
-#                     messages,
-#                     model=ollama_model,
-#                     options=llm_opts,
-#                     expected_func_name=FUNCTION_NAME,
-#                 )
-#                 new_clones.append({
-#                     "model": ollama_model,
-#                     "context": "variation",
-#                     "strategy": "few-shot variation",
-#                     "code": code,
-#                     "clone_id": f"few-shot variation {ollama_model}-variation {k+1}",
-#                 })
-#             except Exception as e:
-#                 print(f" ❌ Error generating clone {k+1}: {e}")
-
-#         # Merge old clones + new clones
-#         all_clones = entry_clones + new_clones
-
-#         new_entry = {"id": entry["id"], "clones": all_clones}
-#         results = _merge_results(results, new_entry)
-
-#     os.makedirs(os.path.dirname(out_path), exist_ok=True)
-#     with open(out_path, "w", encoding="utf-8") as f:
-#         json.dump(results, f, indent=2)
 
 
 def _has_ast_field(dataset_path) -> bool:

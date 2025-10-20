@@ -1,4 +1,4 @@
-import os, json, random
+import os, json, random, threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm 
 from ..utils.prompts import (SYSTEM_PROMPT_MINIMAL, build_user_prompt_reprompt)
@@ -7,6 +7,7 @@ from .clone_gen import (_generate_clones, _load_existing_results, test_LLM_conne
 from src.config import *
 _codebleu_cache = {}
 _test_cache = {}
+_log_lock = threading.Lock()
 
 def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH_CODEBLEU, reprompt_path=REPROMPT_PATH, failed_reprompt_path=FAILED_REPROMPT_PATH):
     print("Starting repromt process...")
@@ -34,25 +35,6 @@ def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH
         skipped_map = {(e["id"], c["clone_id"]) for e in failed_data for c in e.get("clones", [])}
     else:
         skipped_map = set()
-
-    # Helper to log skipped/failed clones
-    def _log_skipped_clone(entry_id, clone, out_path):
-        os.makedirs(os.path.dirname(out_path), exist_ok=True)
-        if os.path.exists(out_path):
-            with open(out_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        else:
-            data = []
-        for e in data:
-            if e["id"] == entry_id:
-                clone_map = {c["clone_id"]: c for c in e.get("clones", [])}
-                clone_map[clone["clone_id"]] = clone
-                e["clones"] = list(clone_map.values())
-                break
-        else:
-            data.append({"id": entry_id, "clones": [clone]})
-        with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
 
     #  Collect all candidate clones (submitted + skipped) 
     candidates = []
@@ -112,8 +94,7 @@ def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH
             #  Skipped not eligible 
             if tag == "skip_not_eligible":
                 _, entry_id, clone = item
-                clone_id = clone.get("clone_id")
-                print(f"Not eligible for reprompt — logging {entry_id}:{clone_id}")
+                clone_id = clone.get("clone_id")                
                 _log_skipped_clone(entry_id, clone, failed_reprompt_path)
                 pbar.update(1)
                 continue
@@ -136,6 +117,8 @@ def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH
     pbar.close()
     print("✅✅ Reprompting completed.")
 
+
+
 def _calc_test_percent(test_results: dict) -> float:
     """Returns the fraction of passed tests (0.0-1.0)."""
     if not test_results:
@@ -147,41 +130,43 @@ def _calc_test_percent(test_results: dict) -> float:
     )
     return passed_tests / total_tests
 
-
 def _log_skipped_clone(entry_id, clone, out_path):
     """Append skipped clone info to a JSON file for checkpointing."""
-    if os.path.exists(out_path):
-        with open(out_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    else:
-        data = []
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
 
-    # Add or update entry
-    for entry in data:
-        if entry["id"] == entry_id:
-            if not any(c["clone_id"] == clone["clone_id"] for c in entry.get("clones", [])):
-                entry.setdefault("clones", []).append({
+    with _log_lock:  # ensure only one thread writes at a time
+        if os.path.exists(out_path):
+            try:
+                with open(out_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except json.JSONDecodeError:
+                print(f"⚠️ Corrupted JSON detected in {out_path}, resetting file.")
+                data = []
+        else:
+            data = []
+
+        # Add or update entry
+        for entry in data:
+            if entry["id"] == entry_id:
+                if not any(c["clone_id"] == clone["clone_id"] for c in entry.get("clones", [])):
+                    entry.setdefault("clones", []).append({
+                        "clone_id": clone["clone_id"],
+                        "model": clone.get("model"),
+                        "reason": "did_not_meet_criteria"
+                    })
+                break
+        else:
+            data.append({
+                "id": entry_id,
+                "clones": [{
                     "clone_id": clone["clone_id"],
                     "model": clone.get("model"),
-                    "reason": "already reprompted"
-                })
-            break
-    else:
-        data.append({
-            "id": entry_id,
-            "clones": [{
-                "clone_id": clone["clone_id"],
-                "model": clone.get("model"),
-                "reason": "did_not_meet_criteria"
-            }]
-        })
+                    "reason": "did_not_meet_criteria"
+                }]
+            })
 
-    # Save
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
-
-    print(f"Logged skipped clone {clone['clone_id']} of entry {entry_id}")
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
 
 
 
