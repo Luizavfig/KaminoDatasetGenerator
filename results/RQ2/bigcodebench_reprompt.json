@@ -1,0 +1,643 @@
+[
+  {
+    "id": "BigCodeBench/8",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "from collections import Counter\nimport random\n\n\ndef task_func(T1, *args):\n    RANGE = args[0] if args else 100\n    int_elements = [int(num) for tuple_ in T1 for num in tuple_]\n    if not int_elements:\n        return Counter()\n    total = sum(int_elements)\n    random_list = [random.randint(0, RANGE) for _ in range(total)]\n    return Counter(random_list)\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.20687617008111778
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_empty_input": "PASS",
+          "TestCases.test_range_limit": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/31",
+    "clones": [
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nfrom collections import defaultdict\n\n\ndef task_func(text):\n    words = text.split()\n    dollar_words = []\n    for word in words:\n        if word.startswith('$'):\n            if len(word) > 1 and not all(c == '$' or c in\n                '!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~' for c in word):\n                dollar_words.append(word)\n    freq = defaultdict(int)\n    for word in dollar_words:\n        freq[word] += 1\n    if not freq:\n        return None\n    fig, ax = plt.subplots()\n    categories = list(freq.keys())\n    values = list(freq.values())\n    ax.bar(categories, values)\n    return ax\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3113795469252704
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\n\n\ndef task_func(text: str):\n    tokens = text.split()\n    counts = {}\n    for token in tokens:\n        if token.startswith('$') and len(token) > 1 and any(c.isalpha() for\n            c in token):\n            if token not in counts:\n                counts[token] = 0\n            counts[token] += 1\n    if not counts:\n        return None\n    categories = list(counts.keys())\n    values = [float(counts[cat]) for cat in categories]\n    _, ax = plt.subplots()\n    ax.bar(categories, values)\n    return ax\n",
+        "refacs": [
+          "refac_3,refac_5,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_3,refac_5,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.21672392210554822
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/44",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    normalized_df = df.copy()\n    for col in normalized_df.columns:\n        series = normalized_df[col]\n        median_val = series.median()\n        series_filled = series.fillna(median_val)\n        col_min = series_filled.min()\n        col_max = series_filled.max()\n        if pd.isna(col_min) or pd.isna(col_max) or col_max == col_min:\n            normalized_series = pd.Series(0.0, index=series.index)\n        else:\n            normalized_series = (series_filled - col_min) / (col_max - col_min)\n        normalized_df[col] = normalized_series\n    fig, ax = plt.subplots()\n    ax.boxplot(normalized_df.values, vert=False)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.11334614696906968
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    df_copy = df.copy()\n    for col in df_copy.columns:\n        col_series = df_copy[col]\n        if col_series.isna().all():\n            df_copy[col] = 0\n        else:\n            median_val = col_series.median()\n            df_copy[col] = col_series.fillna(median_val)\n    normalized_df = df_copy.copy()\n    for col in normalized_df.columns:\n        col_series = normalized_df[col]\n        min_val = col_series.min()\n        max_val = col_series.max()\n        if max_val == min_val:\n            normalized_df[col] = 0.0\n        else:\n            normalized_df[col] = (col_series - min_val) / (max_val - min_val)\n    fig, ax = plt.subplots()\n    ax.boxplot([normalized_df[col].values for col in normalized_df.columns],\n        labels=normalized_df.columns)\n    return normalized_df, ax\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.09680827880231663
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/80",
+    "clones": [
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "from flask import Flask, request, render_template_string\nimport logging\nimport json\n\n\ndef task_func(template_folder):\n    app = Flask(__name__)\n    app.template_folder = template_folder\n\n    @app.route('/', methods=['POST'])\n    def home():\n        data = request.json\n        logging.info(json.dumps(data))\n        return render_template_string('<html><body>{{ data }}</body></html>',\n            data=data)\n    return app\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.30231026282711054
+          }
+        },
+        "test_results": {
+          "TestCases.test_app_creation": "PASS",
+          "TestCases.test_app_instance": "PASS",
+          "TestCases.test_home_route": "PASS",
+          "TestCases.test_logging_info_called_with_correct_arguments": "PASS",
+          "TestCases.test_logging_request_data": "PASS",
+          "TestCases.test_template_folder_configuration": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/97",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import math\nfrom itertools import combinations\n\n\ndef task_func(numbers):\n    if any(num < 0 for num in numbers):\n        raise ValueError('Input list contains negative numbers')\n    total = 0.0\n    for r in range(1, len(numbers) + 1):\n        for combo in combinations(numbers, r):\n            product = 1\n            for num in combo:\n                product *= num\n            if product <= 0:\n                continue\n            total += math.log(product)\n    return total\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31531072561236445
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_list": "PASS",
+          "TestCases.test_large_list": "PASS",
+          "TestCases.test_negative_numbers": "PASS",
+          "TestCases.test_return_type": "PASS",
+          "TestCases.test_single_number_list": "PASS",
+          "TestCases.test_specific_case": "PASS"
+        },
+        "reprompt": "2 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import math\nfrom itertools import combinations\n\n\ndef task_func(numbers):\n    if any(n < 0 for n in numbers):\n        raise ValueError('Negative numbers are not allowed')\n    total = 0.0\n    for r in range(1, len(numbers) + 1):\n        for combo in combinations(numbers, r):\n            product = 1\n            for num in combo:\n                product *= num\n            if product <= 0:\n                continue\n            total += math.log(product)\n    return total\n",
+        "refacs": [
+          "refac_1,refac_3,refac_4"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_3,refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31531072561236445
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_list": "PASS",
+          "TestCases.test_large_list": "PASS",
+          "TestCases.test_negative_numbers": "PASS",
+          "TestCases.test_return_type": "PASS",
+          "TestCases.test_single_number_list": "PASS",
+          "TestCases.test_specific_case": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import math\nfrom typing import List\nfrom itertools import combinations\n\n\ndef task_func(numbers: List[int]) ->float:\n    if any(num < 0 for num in numbers):\n        raise ValueError('Input list must not contain negative numbers')\n    n = len(numbers)\n    if n == 0:\n        return 0.0\n    total_log_product = 0.0\n    for r in range(1, n + 1):\n        for combo in combinations(numbers, r):\n            product = math.prod(combo)\n            total_log_product += math.log(product)\n    return total_log_product\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.19621413736454504
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_list": "PASS",
+          "TestCases.test_large_list": "PASS",
+          "TestCases.test_negative_numbers": "PASS",
+          "TestCases.test_return_type": "PASS",
+          "TestCases.test_single_number_list": "PASS",
+          "TestCases.test_specific_case": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/135",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n\ndef task_func(df):\n    if not isinstance(df, pd.DataFrame):\n        raise ValueError('Input must be a pandas DataFrame')\n    if df.empty:\n        raise ValueError('DataFrame cannot be empty')\n    df = df.copy()\n    last_col = df.columns[-1]\n    if df[last_col].isna().any():\n        mean_value = df[last_col].mean()\n        df[last_col].fillna(mean_value, inplace=True)\n    fig, ax = plt.subplots(figsize=(8, 6))\n    ax.set_title('Boxplot of Last Column')\n    ax.set_xlabel(last_col)\n    ax.boxplot(df[last_col])\n    return df, ax\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35700366064525757
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_dataframe": "PASS",
+          "TestCases.test_imputation": "PASS",
+          "TestCases.test_invalid_input": "PASS",
+          "TestCases.test_plot_title_and_labels": "PASS",
+          "TestCases.test_return_types": "PASS"
+        },
+        "reprompt": "1 gemma3:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    if not isinstance(df, pd.DataFrame):\n        raise ValueError('Input must be a pandas DataFrame')\n    if df.empty:\n        raise ValueError('DataFrame is empty')\n    df = df.copy()\n    last_col = df.columns[-1]\n    if df[last_col].isna().any():\n        mean_value = df[last_col].mean()\n        df[last_col].fillna(mean_value, inplace=True)\n    fig, ax = plt.subplots(figsize=(8, 6))\n    ax.set_title('Boxplot of Last Column')\n    ax.set_xlabel(last_col)\n    ax.boxplot(df[last_col])\n    return df, ax\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3585921313853197
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_dataframe": "PASS",
+          "TestCases.test_imputation": "PASS",
+          "TestCases.test_invalid_input": "PASS",
+          "TestCases.test_plot_title_and_labels": "PASS",
+          "TestCases.test_return_types": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    if not isinstance(df, pd.DataFrame):\n        raise ValueError('Input must be a pandas DataFrame')\n    if df.empty:\n        raise ValueError('DataFrame is empty')\n    df = df.copy()\n    last_col = df.columns[-1]\n    if df[last_col].isna().any():\n        mean_value = df[last_col].mean()\n        df[last_col].fillna(mean_value, inplace=True)\n    fig, ax = plt.subplots(figsize=(8, 6))\n    ax.set_title('Boxplot of Last Column')\n    ax.set_xlabel(last_col)\n    ax.boxplot(df[last_col])\n    return df, ax\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3585921313853197
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_dataframe": "PASS",
+          "TestCases.test_imputation": "PASS",
+          "TestCases.test_invalid_input": "PASS",
+          "TestCases.test_plot_title_and_labels": "PASS",
+          "TestCases.test_return_types": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n\ndef task_func(df):\n    if not isinstance(df, pd.DataFrame):\n        raise ValueError('Input must be a pandas DataFrame')\n    if df.empty:\n        raise ValueError('DataFrame cannot be empty')\n    last_col = df.iloc[:, -1]\n    mean_val = last_col.mean()\n    df_imputed = df.copy()\n    df_imputed.iloc[:, -1].fillna(mean_val, inplace=True)\n    fig, ax = plt.subplots(figsize=(8, 6))\n    ax.boxplot(df_imputed.iloc[:, -1])\n    ax.set_title('Boxplot of Last Column')\n    ax.set_xlabel('D')\n    return df_imputed, ax\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2543232099625169
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_dataframe": "PASS",
+          "TestCases.test_imputation": "PASS",
+          "TestCases.test_invalid_input": "PASS",
+          "TestCases.test_plot_title_and_labels": "PASS",
+          "TestCases.test_return_types": "PASS"
+        },
+        "reprompt": "1 gemma3:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    if not isinstance(df, pd.DataFrame):\n        raise ValueError('Input must be a pandas DataFrame')\n    df = df.copy()\n    if df.empty:\n        raise ValueError('DataFrame is empty')\n    last_col = df.columns[-1]\n    if df[last_col].isna().any():\n        mean_val = df[last_col].mean()\n        df[last_col].fillna(mean_val, inplace=True)\n    fig, ax = plt.subplots()\n    df[last_col].plot.box(ax=ax)\n    ax.set_title('Boxplot of Last Column')\n    ax.set_xlabel('D')\n    return df, ax\n",
+        "refacs": [
+          "refac_3,refac_5,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_3,refac_5,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3656335805483842
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_dataframe": "PASS",
+          "TestCases.test_imputation": "PASS",
+          "TestCases.test_invalid_input": "PASS",
+          "TestCases.test_plot_title_and_labels": "PASS",
+          "TestCases.test_return_types": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df):\n    if not isinstance(df, pd.DataFrame):\n        raise ValueError('Input must be a pandas DataFrame')\n    if df.empty:\n        raise ValueError('DataFrame is empty')\n    df = df.copy()\n    df = df.astype(float)\n    last_col = df.columns[-1]\n    if pd.api.types.is_numeric_dtype(df[last_col]):\n        mean_val = df[last_col].mean()\n        df[last_col].fillna(mean_val, inplace=True)\n    else:\n        mode_val = df[last_col].mode()[0]\n        df[last_col].fillna(mode_val, inplace=True)\n    fig, ax = plt.subplots(figsize=(10, 6))\n    df[last_col].plot.box(ax=ax, fontsize='12', title='Boxplot of Last Column')\n    ax.set_xlabel('D')\n    return df, ax\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2771596778470496
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_dataframe": "PASS",
+          "TestCases.test_imputation": "PASS",
+          "TestCases.test_invalid_input": "PASS",
+          "TestCases.test_plot_title_and_labels": "PASS",
+          "TestCases.test_return_types": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/152",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom random import randint\nimport numpy as np\nSTUDENTS = ['Joe', 'Amy', 'Mark', 'Sara', 'John', 'Emily', 'Zoe', 'Matt']\nCOURSES = ['Math', 'Physics', 'Chemistry', 'Biology', 'English', 'History',\n    'Geography', 'Computer Science']\n\n\ndef task_func():\n    data = []\n    for student in STUDENTS:\n        grades = [randint(0, 100) for _ in range(len(COURSES))]\n        avg = sum(grades) / len(COURSES)\n        row = {'Name': student, **{course: grade for course, grade in zip(\n            COURSES, grades)}, 'Average Grade': round(avg, 1)}\n        data.append(row)\n    df = pd.DataFrame(data)\n    return df\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3486981139945909
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_students_included": "PASS",
+          "TestCases.test_average_grade_calculation": "PASS",
+          "TestCases.test_dataframe_columns": "PASS",
+          "TestCases.test_deterministic_grades": "PASS",
+          "TestCases.test_grade_range": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom random import randint\nimport numpy as np\nSTUDENTS = ['Joe', 'Amy', 'Mark', 'Sara', 'John', 'Emily', 'Zoe', 'Matt']\nCOURSES = ['Math', 'Physics', 'Chemistry', 'Biology', 'English', 'History',\n    'Geography', 'Computer Science']\n\n\ndef task_func():\n    data = []\n    for student in STUDENTS:\n        grades = [randint(0, 100) for _ in range(len(COURSES))]\n        avg = sum(grades) / len(COURSES)\n        row = {'Name': student, **{course: grade for course, grade in zip(\n            COURSES, grades)}, 'Average Grade': avg}\n        data.append(row)\n    df = pd.DataFrame(data)\n    return df\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35112817006747865
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_students_included": "PASS",
+          "TestCases.test_average_grade_calculation": "PASS",
+          "TestCases.test_dataframe_columns": "PASS",
+          "TestCases.test_deterministic_grades": "PASS",
+          "TestCases.test_grade_range": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nfrom random import randint\nimport numpy as np\nSTUDENTS = ['Joe', 'Amy', 'Mark', 'Sara', 'John', 'Emily', 'Zoe', 'Matt']\nCOURSES = ['Math', 'Physics', 'Chemistry', 'Biology', 'English', 'History',\n    'Geography', 'Computer Science']\n\n\ndef task_func():\n    data = []\n    for student in STUDENTS:\n        grades = [randint(0, 100) for _ in range(len(COURSES))]\n        avg = sum(grades) / len(COURSES)\n        row = {'Name': student, **{course: grade for course, grade in zip(\n            COURSES, grades)}, 'Average Grade': avg}\n        data.append(row)\n    df = pd.DataFrame(data)\n    return df\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.35112817006747865
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_students_included": "PASS",
+          "TestCases.test_average_grade_calculation": "PASS",
+          "TestCases.test_dataframe_columns": "PASS",
+          "TestCases.test_deterministic_grades": "PASS",
+          "TestCases.test_grade_range": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/284",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import mechanize\nfrom bs4 import BeautifulSoup\nfrom urllib.parse import urljoin\n\n\ndef task_func(url):\n    browser = mechanize.Browser()\n    try:\n        response = browser.open(url)\n        html_content = response.read()\n        soup = BeautifulSoup(html_content, 'html.parser')\n        links = []\n        for link in soup.find_all('a', href=True):\n            href = link['href']\n            full_url = urljoin(url, href)\n            links.append(full_url)\n        return links\n    except mechanize.URLError as e:\n        raise e\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.269974675944237
+          }
+        },
+        "test_results": {
+          "TestCases.test_extracted_links": "PASS",
+          "TestCases.test_html_content_with_nested_elements": "PASS",
+          "TestCases.test_https_and_http_urls": "PASS",
+          "TestCases.test_invalid_url": "PASS",
+          "TestCases.test_links_with_different_attributes": "PASS",
+          "TestCases.test_multiple_links_extraction": "PASS",
+          "TestCases.test_no_links": "PASS",
+          "TestCases.test_performance_with_large_html_content": "PASS",
+          "TestCases.test_relative_urls": "PASS",
+          "TestCases.test_return_type": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import mechanize\nfrom bs4 import BeautifulSoup\nfrom urllib.parse import urljoin\n\n\ndef task_func(url):\n    browser = mechanize.Browser()\n    response = browser.open(url)\n    html_content = response.read()\n    soup = BeautifulSoup(html_content, 'html.parser')\n    links = []\n    for link in soup.find_all('a', href=True):\n        links.append(urljoin(url, link['href']))\n    browser.close()\n    return links\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.37716849776550226
+          }
+        },
+        "test_results": {
+          "TestCases.test_extracted_links": "PASS",
+          "TestCases.test_html_content_with_nested_elements": "PASS",
+          "TestCases.test_https_and_http_urls": "PASS",
+          "TestCases.test_invalid_url": "PASS",
+          "TestCases.test_links_with_different_attributes": "PASS",
+          "TestCases.test_multiple_links_extraction": "PASS",
+          "TestCases.test_no_links": "PASS",
+          "TestCases.test_performance_with_large_html_content": "PASS",
+          "TestCases.test_relative_urls": "PASS",
+          "TestCases.test_return_type": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import mechanize\nfrom bs4 import BeautifulSoup\nfrom urllib.parse import urljoin\n\n\ndef task_func(url):\n    browser = mechanize.Browser()\n    try:\n        response = browser.open(url)\n        html_content = response.read()\n        soup = BeautifulSoup(html_content, 'html.parser')\n        links = []\n        for link in soup.find_all('a', href=True):\n            full_url = urljoin(url, link['href'])\n            links.append(full_url)\n        return links\n    except mechanize.URLError as e:\n        raise e\n",
+        "refacs": [
+          "refac_1,refac_3,refac_4"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_3,refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2916259255999736
+          }
+        },
+        "test_results": {
+          "TestCases.test_extracted_links": "PASS",
+          "TestCases.test_html_content_with_nested_elements": "PASS",
+          "TestCases.test_https_and_http_urls": "PASS",
+          "TestCases.test_invalid_url": "PASS",
+          "TestCases.test_links_with_different_attributes": "PASS",
+          "TestCases.test_multiple_links_extraction": "PASS",
+          "TestCases.test_no_links": "PASS",
+          "TestCases.test_performance_with_large_html_content": "PASS",
+          "TestCases.test_relative_urls": "PASS",
+          "TestCases.test_return_type": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/361",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport unittest\nimport os\n\n\ndef task_func(sheet_name, excel_file_location, csv_file_location):\n    df = pd.read_excel(excel_file_location, sheet_name=sheet_name)\n    df.to_csv(csv_file_location, index=False)\n    sum_dict = {}\n    for column in df.columns:\n        sum_dict[column] = df[column].sum()\n    return sum_dict\n\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.test_excel_file = 'dummy_test.xlsx'\n        self.test_csv_file = 'dummy_test.csv'\n        self.test_sheet_name = 'TestSheet'\n        data = {'A': [10, 20, 30], 'B': [40, 50, 60]}\n        df = pd.DataFrame(data)\n        df.to_excel(self.test_excel_file, sheet_name=self.test_sheet_name,\n            index=False)\n\n    def tearDown(self):\n        os.remove(self.test_excel_file)\n        if os.path.exists(self.test_csv_file):\n            os.remove(self.test_csv_file)\n\n    def test_normal_functionality(self):\n        result = task_func(self.test_sheet_name, self.test_excel_file, self\n            .test_csv_file)\n        self.assertEqual(result, {'A': 60, 'B': 150})\n\n    def test_file_not_found(self):\n        with self.assertRaises(FileNotFoundError):\n            task_func(self.test_sheet_name, 'nonexistent.xlsx', self.\n                test_csv_file)\n\n    def test_sheet_not_found(self):\n        with self.assertRaises(ValueError):\n            task_func('NonexistentSheet', self.test_excel_file, self.\n                test_csv_file)\n\n    def test_empty_excel_file(self):\n        empty_excel_file = 'empty_test.xlsx'\n        pd.DataFrame().to_excel(empty_excel_file, index=False)\n        with self.assertRaises(ValueError):\n            task_func(self.test_sheet_name, empty_excel_file, self.\n                test_csv_file)\n        os.remove(empty_excel_file)\n\n    def test_overwrite_existing_csv(self):\n        with open(self.test_csv_file, 'w') as file:\n            file.write('Old Data')\n        task_func(self.test_sheet_name, self.test_excel_file, self.\n            test_csv_file)\n        with open(self.test_csv_file, 'r') as file:\n            self.assertNotIn('Old Data', file.read())\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.17678105382548448
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_excel_file": "PASS",
+          "TestCases.test_file_not_found": "PASS",
+          "TestCases.test_normal_functionality": "PASS",
+          "TestCases.test_overwrite_existing_csv": "PASS",
+          "TestCases.test_sheet_not_found": "PASS"
+        },
+        "reprompt": "1 gemma3:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport os\n\n\ndef task_func(sheet_name, excel_file_location, csv_file_location):\n    try:\n        df = pd.read_excel(excel_file_location, sheet_name=sheet_name)\n        if df.empty:\n            raise ValueError('Excel file is empty')\n        sum_dict = {}\n        for column in df.columns:\n            sum_dict[column] = df[column].sum()\n        df.to_csv(csv_file_location, index=False)\n    except FileNotFoundError:\n        raise\n    except Exception as e:\n        raise\n    return sum_dict\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1662050023269749
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_excel_file": "PASS",
+          "TestCases.test_file_not_found": "PASS",
+          "TestCases.test_normal_functionality": "PASS",
+          "TestCases.test_overwrite_existing_csv": "PASS",
+          "TestCases.test_sheet_not_found": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport unittest\nimport os\n\n\ndef task_func(sheet_name, excel_file_location, csv_file_location):\n    df = pd.read_excel(excel_file_location, sheet_name=sheet_name)\n    df.to_csv(csv_file_location, index=False)\n    sum_dict = {}\n    for column in df.columns:\n        sum_dict[column] = df[column].sum()\n    return sum_dict\n\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.test_excel_file = 'dummy_test.xlsx'\n        self.test_csv_file = 'dummy_test.csv'\n        self.test_sheet_name = 'TestSheet'\n        data = {'A': [10, 20, 30], 'B': [40, 50, 60]}\n        df = pd.DataFrame(data)\n        df.to_excel(self.test_excel_file, sheet_name=self.test_sheet_name,\n            index=False)\n\n    def tearDown(self):\n        os.remove(self.test_excel_file)\n        if os.path.exists(self.test_csv_file):\n            os.remove(self.test_csv_file)\n\n    def test_normal_functionality(self):\n        result = task_func(self.test_sheet_name, self.test_excel_file, self\n            .test_csv_file)\n        self.assertEqual(result, {'A': 60, 'B': 150})\n\n    def test_file_not_found(self):\n        with self.assertRaises(FileNotFoundError):\n            task_func(self.test_sheet_name, 'nonexistent.xlsx', self.\n                test_csv_file)\n\n    def test_sheet_not_found(self):\n        with self.assertRaises(ValueError):\n            task_func('NonexistentSheet', self.test_excel_file, self.\n                test_csv_file)\n\n    def test_empty_excel_file(self):\n        empty_excel_file = 'empty_test.xlsx'\n        pd.DataFrame().to_excel(empty_excel_file, index=False)\n        with self.assertRaises(ValueError):\n            task_func(self.test_sheet_name, empty_excel_file, self.\n                test_csv_file)\n        os.remove(empty_excel_file)\n\n    def test_overwrite_existing_csv(self):\n        with open(self.test_csv_file, 'w') as file:\n            file.write('Old Data')\n        task_func(self.test_sheet_name, self.test_excel_file, self.\n            test_csv_file)\n        with open(self.test_csv_file, 'r') as file:\n            self.assertNotIn('Old Data', file.read())\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.17678105382548448
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_excel_file": "PASS",
+          "TestCases.test_file_not_found": "PASS",
+          "TestCases.test_normal_functionality": "PASS",
+          "TestCases.test_overwrite_existing_csv": "PASS",
+          "TestCases.test_sheet_not_found": "PASS"
+        },
+        "reprompt": "1 gemma3:latest"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport os\n\n\ndef task_func(sheet_name, excel_file_location, csv_file_location):\n    try:\n        df = pd.read_excel(excel_file_location, sheet_name=sheet_name)\n        if df.empty:\n            raise ValueError('Excel file is empty')\n        df.to_csv(csv_file_location, index=False)\n        result = df.sum().to_dict()\n        return result\n    except FileNotFoundError:\n        raise\n    except KeyError:\n        raise ValueError('Sheet not found in Excel file')\n    except Exception as e:\n        raise\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1749591305533613
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_excel_file": "PASS",
+          "TestCases.test_file_not_found": "PASS",
+          "TestCases.test_normal_functionality": "PASS",
+          "TestCases.test_overwrite_existing_csv": "PASS",
+          "TestCases.test_sheet_not_found": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      }
+    ]
+  }
+]
