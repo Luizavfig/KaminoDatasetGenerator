@@ -14,6 +14,7 @@ SAMPLE_1_PATH = "../dataset/sample1.json"
 SAMPLE_2_PATH = "../dataset/sample2.json"
 OUT_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones.json"
 FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json"
+FINAL_DATASET_RQ2 = f"../results/RQ2/{DATASET_NAME}_clone_dataset.json"
 
 # Normalization settings
 SAMPLE_SIZE = 50  # number of entries to sample for experiments
@@ -73,7 +74,7 @@ EFFICIENCY_RESULTS = "../results/RQ1/top_configs.json"
 # RQ2 specific overrides (uncomment for RQ2)
 # SAMPLE_1_PATH = SAMPLE_2_PATH
 # OUT_PATH = f"../results/RQ2/{DATASET_NAME}_llm_clones.json"
-# FINAL_DATASET = f"../results/RQ2/{DATASET_NAME}_clone_dataset.json"
+# FINAL_DATASET = FINAL_DATASET_RQ2
 # REPROMPT_PATH = f"../results/RQ2/{DATASET_NAME}_reprompt.json"
 # FAILED_REPROMPT_PATH = f"../results/RQ2/{DATASET_NAME}_failed_reprompt.json"
 # FILTERED_PATH_CODEBLEU = f"../results/RQ2/{DATASET_NAME}_filtered_codebleu.json"
@@ -82,9 +83,11 @@ EFFICIENCY_RESULTS = "../results/RQ1/top_configs.json"
 # End of RQ2 specific overrides
 
 # For finetuning (RQ3)
-MERGED_CLONE_DATASET = f"../results/{DATASET_NAME}_clones_merged.json"
+MERGED_CLONE_DATASET_TRAIN = f"../results/{DATASET_NAME}_clones_train.json"
+MERGED_CLONE_DATASET_VAL = f"../results/{DATASET_NAME}_clones_val.json"
 FINETUNE_DIR = f"../results/RQ3/finetuned_models"
 EPOCHS = 3
 BATCH_SIZE = 8
 MAX_NEGATIVES = 1  # max negative samples per positive sample during pair building
 DETECTION_THRESHOLD = 0.8  # similarity threshold for clone detection
+GPU_IDX = 0 # 0 for single GPU systems. Change it if you have multiple GPUs 
