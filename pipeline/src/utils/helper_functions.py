@@ -1,6 +1,6 @@
-import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re
+import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random
 from codebleu import calc_codebleu
-from src import config
+from src.config import MAX_NEGATIVES
 
 class TrackingTestResult(unittest.TextTestResult):
     def __init__(self, *args, **kwargs):
@@ -244,6 +244,24 @@ def calc_syntactic_codebleu(code1: str, code2: str, lang: str = "python") -> flo
     # Average them equally
     syntactic_score = sum(syntactic_components) / len(syntactic_components)
     return float(syntactic_score)
+
+# Helper function to build positive and negative pairs
+def _build_pairs(data, max_negatives=MAX_NEGATIVES):
+    pairs = []
+    for entry in data:
+        clones = entry.get("clones", [])
+        n = len(clones)
+        # positive pairs
+        for i in range(n):
+            for j in range(i + 1, n):
+                pairs.append((clones[i]["code"], clones[j]["code"], 1))
+        # negative pairs
+        for i in range(min(n, max_negatives)):
+            neg_entry = random.choice([e for e in data if e != entry and e.get("clones")])
+            neg_clone = random.choice(neg_entry["clones"])
+            pairs.append((clones[i]["code"], neg_clone["code"], 0))
+    random.shuffle(pairs)
+    return pairs
 
 
 def startup():

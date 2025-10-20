@@ -64,10 +64,6 @@ FILTERED_PATH_TESTS = f"../results/RQ1/{DATASET_NAME}_filtered_tests.json"
 # Clustering settings
 CLUSTER_DIR="../results/RQ1/clustering" # directory to save clustering scrips for data visualization
 
-# Embedding settings
-EPOCHS = 3
-BATCH_SIZE = 8
-
 # RQ2 specific settings
 EFFICIENCY_PATH = "../results/RQ1/efficiency_summary.csv"
 TOP_N = 30 # top-N configurations to select
@@ -84,3 +80,11 @@ FILTERED_PATH_CODEBLEU = f"../results/RQ2/{DATASET_NAME}_filtered_codebleu.json"
 FILTERED_PATH_TESTS = f"../results/RQ2/{DATASET_NAME}_filtered_tests.json"
 CLUSTER_DIR = "../results/RQ2/clustering"
 # End of RQ2 specific overrides
+
+# For finetuning (RQ3)
+MERGED_CLONE_DATASET = f"../results/{DATASET_NAME}_clones_merged.json"
+FINETUNE_DIR = f"../results/RQ3/finetuned_models"
+EPOCHS = 3
+BATCH_SIZE = 8
+MAX_NEGATIVES = 1  # max negative samples per positive sample during pair building
+DETECTION_THRESHOLD = 0.8  # similarity threshold for clone detection

@@ -637,6 +637,1947 @@
           "TestCases.test_sheet_not_found": "PASS"
         },
         "reprompt": "2 deepseek-r1:14b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport os\n\n\ndef task_func(sheet_name, excel_file_location, csv_file_location):\n    try:\n        df = pd.read_excel(excel_file_location, sheet_name=sheet_name)\n        if df.empty:\n            raise ValueError('Excel file is empty')\n        df.to_csv(csv_file_location, index=False)\n        result = df.sum().to_dict()\n        return result\n    except FileNotFoundError:\n        raise\n    except KeyError:\n        raise ValueError('Sheet not found in Excel file')\n    except Exception as e:\n        raise\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1749591305533613
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_excel_file": "PASS",
+          "TestCases.test_file_not_found": "PASS",
+          "TestCases.test_normal_functionality": "PASS",
+          "TestCases.test_overwrite_existing_csv": "PASS",
+          "TestCases.test_sheet_not_found": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/332",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import re\nfrom collections import defaultdict\nfrom nltk.corpus import stopwords\n\n\ndef task_func(text: str) ->dict:\n    words = re.findall('\\\\b\\\\w+\\\\b', text)\n    stop_words = set(stopwords.words('english'))\n    word_counts = defaultdict(int)\n    for word in words:\n        if word.lower() not in stop_words:\n            word_counts[word] += 1\n    return dict(word_counts)\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.27933183758697705
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/373",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(l, x_data, plot=False):\n    coeffs = np.polyfit(x_data, l, 2)\n    a, b, c = coeffs\n    fitted_values = a * x_data ** 2 + b * x_data + c\n    if plot:\n        fig, ax = plt.subplots()\n        ax.plot(x_data, fitted_values, 'b-')\n        return coeffs, fitted_values, ax\n    else:\n        return coeffs, fitted_values\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.196344591873014
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(l, x_data, plot=False):\n    coeffs = np.polyfit(x_data, l, 2)\n    fitted_values = np.polyval(coeffs, x_data)\n    if plot:\n        fig, ax = plt.subplots()\n        ax.plot(x_data, fitted_values, 'b-', label='Fitted')\n        ax.scatter(x_data, l, color='r', label='Data')\n        ax.legend()\n        return coeffs, fitted_values, ax\n    else:\n        return coeffs, fitted_values\n",
+        "refacs": [
+          "refac_3,refac_5,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_3,refac_5,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1960604153818959
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n\ndef task_func(l, x_data, plot=False):\n    coeffs = np.polyfit(x_data, l, 2)\n    a, b, c = coeffs\n    fitted_values = a * x_data ** 2 + b * x_data + c\n    if plot:\n        fig, ax = plt.subplots()\n        ax.plot(x_data, fitted_values)\n        return coeffs, fitted_values, ax\n    else:\n        return coeffs, fitted_values\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.17259832441951276
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/415",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\n\n\ndef task_func(dataframe: pd.DataFrame) ->pd.DataFrame:\n    if not isinstance(dataframe, pd.DataFrame):\n        raise TypeError\n    if 'UnicodeString' not in dataframe.columns:\n        raise KeyError\n    if not dataframe['UnicodeString'].apply(lambda v: isinstance(v, str)).all(\n        ):\n        raise Exception\n    dataframe = dataframe.copy()\n    dataframe['UnicodeString'] = dataframe['UnicodeString'].map(lambda x: x\n        .encode('utf-8').decode('unicode_escape'))\n    return dataframe\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.38605247645844437
+          }
+        },
+        "test_results": {
+          "TestCases.test_empty_dataframe": "PASS",
+          "TestCases.test_missing_column": "PASS",
+          "TestCases.test_non_dataframe_input": "PASS",
+          "TestCases.test_non_string_unicode_values": "PASS",
+          "TestCases.test_unicode_decoding": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/510",
+    "clones": [
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import gzip\nfrom difflib import Differ\n\n\ndef task_func(file_path1, file_path2):\n    try:\n        with gzip.open(file_path1, 'rt') as f1, gzip.open(file_path2, 'rt'\n            ) as f2:\n            content1 = f1.read()\n            content2 = f2.read()\n            d = Differ()\n            differences = d.compare(content1.splitlines(), content2.\n                splitlines())\n            return ''.join(line for line in differences if line.startswith(\n                '- ') or line.startswith('+ '))\n    except FileNotFoundError:\n        raise\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.333438061863286
+          }
+        },
+        "test_results": {
+          "TestCases.test_both_files_not_exist": "PASS",
+          "TestCases.test_different_files": "PASS",
+          "TestCases.test_first_file_not_exist": "PASS",
+          "TestCases.test_identical_files": "PASS",
+          "TestCases.test_second_file_not_exist": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import gzip\nfrom difflib import Differ\n\n\ndef task_func(file_path1, file_path2):\n    try:\n        with gzip.open(file_path1, 'rt') as f1, gzip.open(file_path2, 'rt'\n            ) as f2:\n            contents1 = f1.read()\n            contents2 = f2.read()\n        if contents1 == contents2:\n            return ''\n        d = Differ()\n        differences = d.compare(contents1.splitlines(), contents2.splitlines())\n        return ''.join(differences)\n    except FileNotFoundError:\n        raise\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.28572367974787044
+          }
+        },
+        "test_results": {
+          "TestCases.test_both_files_not_exist": "PASS",
+          "TestCases.test_different_files": "PASS",
+          "TestCases.test_first_file_not_exist": "PASS",
+          "TestCases.test_identical_files": "PASS",
+          "TestCases.test_second_file_not_exist": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/520",
+    "clones": [
+      {
+        "model": "llama3.1:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import unittest\nimport collections\nimport matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    total_sales = {}\n    for entry in data:\n        for fruit, quantity in entry.items():\n            if not isinstance(quantity, (int, float)):\n                raise TypeError('Sales quantities must be numeric')\n            if quantity < 0:\n                raise ValueError('Sales quantities must be non-negative')\n            total_sales[fruit] = total_sales.get(fruit, 0) + quantity\n    if not total_sales:\n        return {}, None\n    ax = plt.gca()\n    ax.bar(total_sales.keys(), total_sales.values())\n    plt.xlabel('Fruits')\n    plt.ylabel('Total Sales')\n    plt.title('Total Fruit Sales')\n    plt.show()\n    return total_sales, ax\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.17129413818737182
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_10": "PASS",
+          "TestCases.test_case_11": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_6": "PASS",
+          "TestCases.test_case_7": "PASS",
+          "TestCases.test_case_8": "PASS",
+          "TestCases.test_case_9": "PASS"
+        },
+        "reprompt": "1 gemma3:latest"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\n\n\ndef task_func(data):\n    if not data:\n        return {}, None\n    total_sales = {}\n    for entry in data:\n        for fruit, quantity in entry.items():\n            if not isinstance(fruit, str):\n                raise TypeError('Keys must be strings')\n            if not isinstance(quantity, (int, float)):\n                raise TypeError('Sales quantities must be numbers')\n            if quantity < 0:\n                raise ValueError('Sales quantities cannot be negative')\n            total_sales[fruit] = total_sales.get(fruit, 0) + quantity\n    colors = ['red', 'yellow', 'green', 'blue', 'purple']\n    labels = list(total_sales.keys())\n    sizes = list(total_sales.values())\n    fig, ax = plt.subplots()\n    container = ax.bar(labels, sizes, color=[colors[i % len(colors)] for i in\n        range(len(labels))])\n    return total_sales, container\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.20508228765660708
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_10": "PASS",
+          "TestCases.test_case_11": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_6": "PASS",
+          "TestCases.test_case_7": "PASS",
+          "TestCases.test_case_8": "PASS",
+          "TestCases.test_case_9": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/621",
+    "clones": [
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import matplotlib.pyplot as plt\nfrom sklearn.preprocessing import StandardScaler\n\n\ndef task_func(L):\n    data = [item for sublist in L for item in sublist]\n    scaler = StandardScaler()\n    standardized_data = scaler.fit_transform([[x] for x in data])\n    fig, ax = plt.subplots()\n    ax.plot(standardized_data[:, 0])\n    return ax\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.31392567311306196
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gemma3:latest"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nfrom sklearn.preprocessing import StandardScaler\n\n\ndef task_func(L):\n    flat_list = [item for sublist in L for item in sublist]\n    scaler = StandardScaler()\n    standardized_values = scaler.fit_transform([[val] for val in flat_list])\n    fig, ax = plt.subplots()\n    ax.plot(standardized_values.flatten())\n    return ax\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23562405120850438
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import matplotlib.pyplot as plt\nfrom sklearn.preprocessing import StandardScaler\n\n\ndef task_func(L):\n    flat_list = [item for sublist in L for item in sublist]\n    scaler = StandardScaler()\n    standardized_values = scaler.fit_transform([[val] for val in flat_list])\n    fig, ax = plt.subplots()\n    ax.plot(standardized_values.flatten())\n    return ax\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23562405120850438
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/651",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    df = pd.DataFrame(df)\n    if df.empty:\n        return pd.Series(), None\n    counts = df.apply(lambda col: (col.astype(str) == target_value).sum())\n    ax = None\n    if not counts.empty:\n        plt.figure(figsize=(10, 6))\n        ax = counts.plot(kind='bar', title=\n            f'Count of {target_value} per Column')\n        plt.xlabel('Columns')\n        plt.ylabel('Counts')\n        plt.xticks(rotation=45)\n    return counts, ax\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1967668496685462
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    df = pd.DataFrame(df)\n    if df.empty:\n        return pd.Series(), None\n    counts = df.apply(lambda col: (col.astype(str) == target_value).sum())\n    ax = None\n    if not counts.empty:\n        fig, ax = plt.subplots()\n        counts.plot(kind='bar', ax=ax)\n        plt.xticks(rotation=45)\n        plt.title(f'Count of {target_value} in each column')\n        plt.xlabel('Column')\n        plt.ylabel('Count')\n    return counts, ax\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.19757927874089742
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    dataframe = pd.DataFrame(df)\n    counts = dataframe.astype(str).eq(str(target_value)).sum(axis=0)\n    if not dataframe.empty:\n        ax = counts.plot(kind='bar')\n    else:\n        ax = None\n    return counts, ax\n",
+        "refacs": [
+          "refac_1,refac_3,refac_4"
+        ],
+        "clone_id": "cot llama3.1:latest-code 1 ['refac_1,refac_3,refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2781556504330131
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    if isinstance(df, dict):\n        df = pd.DataFrame(df)\n    if df.empty:\n        return pd.Series(dtype=int), None\n    df_str = df.astype(str)\n    counts = df_str.apply(lambda col: (col == target_value).sum())\n    fig, ax = plt.subplots()\n    counts.plot(kind='bar', ax=ax)\n    ax.set_ylabel('Count')\n    ax.set_title(f'Occurrences of \"{target_value}\"')\n    return counts, ax\n",
+        "refacs": [
+          "refac_3,refac_5,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_3,refac_5,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22527078116661117
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    dataframe = pd.DataFrame(df)\n    counts = dataframe.apply(lambda x: (x.astype(str) == target_value).sum())\n    ax = None\n    if not dataframe.empty:\n        fig, ax = plt.subplots()\n        counts.plot(kind='bar', ax=ax)\n    return counts, ax\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23007188851489013
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    df = pd.DataFrame(df)\n    if df.empty:\n        return pd.Series(), None\n    counts = df.apply(lambda col: (col.astype(str) == target_value).sum())\n    ax = None\n    if not counts.empty:\n        plt.figure(figsize=(10, 6))\n        ax = counts.plot(kind='bar', title=\n            f'Count of {target_value} per Column')\n        plt.xlabel('Columns')\n        plt.ylabel('Counts')\n    return counts, ax\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1965930279575984
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    if isinstance(df, dict):\n        df = pd.DataFrame(df)\n    if df.empty:\n        return pd.Series(dtype=int), None\n    str_df = df.astype(str)\n    counts = str_df.apply(lambda col: col.str.contains(target_value, case=\n        False, na=False).sum())\n    ax = counts.plot(kind='bar')\n    return counts, ax\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.18466855170558502
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    df = pd.DataFrame(df)\n    if df.empty:\n        return pd.Series(), None\n    counts = df.apply(lambda col: (col.astype(str) == str(target_value)).sum())\n    ax = None\n    if not counts.empty:\n        plt.figure(figsize=(10, 6))\n        ax = counts.plot(kind='bar', title=\n            f'Count of {target_value} per Column')\n        plt.xlabel('Columns')\n        plt.ylabel('Counts')\n    return counts, ax\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1955370698121519
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 llama3.1:latest"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    df = pd.DataFrame(df)\n    if df.empty:\n        return pd.Series(dtype=int), None\n    counts = df.astype(str).eq(target_value).sum()\n    ax = counts.plot(kind='bar') if not counts.empty else None\n    return counts, ax\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.17140944973322303
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    if isinstance(df, pd.DataFrame):\n        data = df\n    else:\n        data = pd.DataFrame(df)\n    if data.empty:\n        return pd.Series(), None\n    counts = data.apply(lambda col: (col.astype(str) == str(target_value)).\n        sum())\n    ax = None\n    if not counts.empty:\n        plt.figure(figsize=(10, 6))\n        ax = counts.plot(kind='bar', title=\n            f'Count of {target_value} per Column')\n        plt.xlabel('Columns')\n        plt.ylabel('Counts')\n    return counts, ax\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1970797890164214
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    if isinstance(df, dict):\n        df = pd.DataFrame(df)\n    elif not isinstance(df, pd.DataFrame):\n        df = pd.DataFrame(df)\n    if df.empty:\n        return pd.Series(dtype=int), None\n    counts = df.apply(lambda col: (col.astype(str) == target_value).sum())\n    fig, ax = plt.subplots()\n    counts.plot(kind='bar', ax=ax)\n    return counts, ax\n",
+        "refacs": [
+          "refac_3,refac_5,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_3,refac_5,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1712710854840285
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    dataframe = df if isinstance(df, pd.DataFrame) else pd.DataFrame(df)\n    counts = dataframe.apply(lambda x: (x.astype(str) == target_value).sum())\n    ax = None\n    if not dataframe.empty:\n        fig, ax = plt.subplots()\n        counts.plot(kind='bar', ax=ax)\n    return counts, ax\n",
+        "refacs": [
+          "refac_1,refac_3,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1,refac_3,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.20822887027758208
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport matplotlib.pyplot as plt\n\n\ndef task_func(df, target_value):\n    df = pd.DataFrame(df)\n    df_str = df.astype(str)\n    counts = df_str.eq(target_value).sum()\n    if not counts.empty:\n        ax = counts.plot(kind='bar')\n    else:\n        ax = None\n    return counts, ax\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2745243881345405
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/739",
+    "clones": [
+      {
+        "model": "gpt-oss:20b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import random\nimport struct\nKEYS = ['3f800000', '40000000', '40400000', '40800000', '40a00000',\n    '40c00000', '40e00000', '41000000', '41100000', '41200000']\n\n\ndef task_func(*args):\n    if args:\n        hex_key = args[0]\n        f = struct.unpack('!f', bytes.fromhex(hex_key))[0]\n        return round(f, 2)\n    else:\n        hex_list = ['3f800000', '40000000', '40400000', '40800000',\n            '40a00000', '40c00000', '40e00000', '41000000', '41100000',\n            '41200000']\n        random.seed()\n        hex_key = random.choice(hex_list)\n        f = struct.unpack('!f', bytes.fromhex(hex_key))[0]\n        return round(f, 2)\n",
+        "refacs": [
+          "refac_1,refac_3,refac_7"
+        ],
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2775937504550411
+          }
+        },
+        "test_results": {
+          "TestCases.test_no_seed": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_return_type": "PASS",
+          "TestCases.test_rounded_two_decimal": "PASS",
+          "TestCases.test_specific_hex_keys": "PASS"
+        },
+        "reprompt": "2 llama3.1:latest"
+      },
+      {
+        "model": "gpt-oss:20b",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import random\nimport struct\nKEYS = ['470FC614', '4A0FC614', '4B9FC614', '4C8FC614', '4D7FC614']\n\n\ndef task_func(hex_key=None):\n    if hex_key is not None:\n        chosen = round(struct.unpack('>f', bytes.fromhex(hex_key))[0], 2)\n    else:\n        floats = [round(struct.unpack('>f', bytes.fromhex(h))[0], 2) for h in\n            KEYS]\n        chosen = random.choice(floats)\n    return chosen\n",
+        "refacs": [
+          "refac_1,refac_3,refac_7"
+        ],
+        "clone_id": "cot gpt-oss:20b-code 1 ['refac_1,refac_3,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.25179053971570226
+          }
+        },
+        "test_results": {
+          "TestCases.test_no_seed": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_return_type": "PASS",
+          "TestCases.test_rounded_two_decimal": "PASS",
+          "TestCases.test_specific_hex_keys": "PASS"
+        },
+        "reprompt": "1 deepseek-r1:14b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/824",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "def task_func(text):\n    words = sum(1 for token in text.split() if any(c.isalpha() for c in token))\n    punctuation_count = sum(1 for c in text if not c.isalpha() and c != ' ')\n    return words, punctuation_count\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.08448152454151069
+          }
+        },
+        "test_results": {
+          "TestCases.test_basic_input": "PASS",
+          "TestCases.test_no_punctuation": "PASS",
+          "TestCases.test_with_empty_string": "PASS",
+          "TestCases.test_with_multiple_spaces": "PASS",
+          "TestCases.test_with_only_punctuation": "PASS",
+          "TestCases.test_with_single_punctuation": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import re\nimport string\n\n\ndef task_func(text):\n    words = re.findall('\\\\b[A-Za-z]+\\\\b', text)\n    punctuation_marks = [c for c in text if c in string.punctuation]\n    return len(words), len(punctuation_marks)\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1932705524256022
+          }
+        },
+        "test_results": {
+          "TestCases.test_basic_input": "PASS",
+          "TestCases.test_no_punctuation": "PASS",
+          "TestCases.test_with_empty_string": "PASS",
+          "TestCases.test_with_multiple_spaces": "PASS",
+          "TestCases.test_with_only_punctuation": "PASS",
+          "TestCases.test_with_single_punctuation": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import string\n\n\ndef task_func(text: str):\n    words = [token for token in text.split() if any(ch.isalpha() for ch in\n        token)]\n    word_count = len(words)\n    punctuation_count = sum(1 for ch in text if ch in string.punctuation)\n    return word_count, punctuation_count\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.13762246160440553
+          }
+        },
+        "test_results": {
+          "TestCases.test_basic_input": "PASS",
+          "TestCases.test_no_punctuation": "PASS",
+          "TestCases.test_with_empty_string": "PASS",
+          "TestCases.test_with_multiple_spaces": "PASS",
+          "TestCases.test_with_only_punctuation": "PASS",
+          "TestCases.test_with_single_punctuation": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import re\nimport string\n\n\ndef task_func(text):\n    words = re.findall('[A-Za-z]+', text)\n    word_count = len(words)\n    punctuation_count = sum(1 for c in text if c in string.punctuation)\n    return word_count, punctuation_count\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22516498796219298
+          }
+        },
+        "test_results": {
+          "TestCases.test_basic_input": "PASS",
+          "TestCases.test_no_punctuation": "PASS",
+          "TestCases.test_with_empty_string": "PASS",
+          "TestCases.test_with_multiple_spaces": "PASS",
+          "TestCases.test_with_only_punctuation": "PASS",
+          "TestCases.test_with_single_punctuation": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import string\n\n\ndef task_func(text):\n    words = sum(1 for token in text.split() if any(c.isalpha() for c in token))\n    punctuation_marks = sum(1 for char in text if char in string.punctuation)\n    return words, punctuation_marks\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1980728934004399
+          }
+        },
+        "test_results": {
+          "TestCases.test_basic_input": "PASS",
+          "TestCases.test_no_punctuation": "PASS",
+          "TestCases.test_with_empty_string": "PASS",
+          "TestCases.test_with_multiple_spaces": "PASS",
+          "TestCases.test_with_only_punctuation": "PASS",
+          "TestCases.test_with_single_punctuation": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "cot",
+        "code": "import string\n\n\ndef task_func(text):\n    words = [token for token in text.split() if any(c.isalpha() for c in token)\n        ]\n    punctuation_marks = sum(1 for char in text if char in string.punctuation)\n    return len(words), punctuation_marks\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2755054073942875
+          }
+        },
+        "test_results": {
+          "TestCases.test_basic_input": "PASS",
+          "TestCases.test_no_punctuation": "PASS",
+          "TestCases.test_with_empty_string": "PASS",
+          "TestCases.test_with_multiple_spaces": "PASS",
+          "TestCases.test_with_only_punctuation": "PASS",
+          "TestCases.test_with_single_punctuation": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "complete",
+        "strategy": "zero-shot",
+        "code": "import string\n\n\ndef task_func(text):\n    words = [w for w in text.split() if any(c.isalpha() for c in w)]\n    punctuation_marks = sum(1 for char in text if not char.isalpha() and \n        char != ' ')\n    return len(words), punctuation_marks\n",
+        "refacs": [
+          "refac_1,refac_3,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1,refac_3,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23912495296868497
+          }
+        },
+        "test_results": {
+          "TestCases.test_basic_input": "PASS",
+          "TestCases.test_no_punctuation": "PASS",
+          "TestCases.test_with_empty_string": "PASS",
+          "TestCases.test_with_multiple_spaces": "PASS",
+          "TestCases.test_with_only_punctuation": "PASS",
+          "TestCases.test_with_single_punctuation": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/843",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import random\n\n\ndef task_func(n_sentences):\n    if n_sentences == 0:\n        return ''\n    word_pool = ['apple', 'banana', 'cherry', 'date', 'elderberry', 'fig',\n        'grape', 'honeydew', 'kiwi', 'lemon', 'mango', 'nectarine',\n        'orange', 'papaya', 'quince', 'raspberry', 'strawberry',\n        'tangerine', 'ugli', 'vanilla', 'watermelon', 'xigua', 'yam',\n        'zucchini']\n    sentences = []\n    for _ in range(n_sentences):\n        num_words = random.randint(5, 10)\n        words = [random.choice(word_pool) for _ in range(num_words)]\n        sentence = ' '.join(words) + '.'\n        sentences.append(sentence)\n    return ' '.join(sentences)\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.26955112774859386
+          }
+        },
+        "test_results": {
+          "TestCases.test_multiple_sentences": "PASS",
+          "TestCases.test_no_sentences": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_sentence_length": "PASS",
+          "TestCases.test_single_sentence": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import random\nimport re\n\n\ndef task_func(n_sentences):\n    if n_sentences <= 0:\n        return ''\n    sentences = []\n    for _ in range(n_sentences):\n        sentence_length = random.randint(5, 10)\n        words = [str(random.randint(1, 100)) for _ in range(sentence_length)]\n        sentence = ' '.join(words) + '.'\n        sentences.append(sentence.lower())\n    result = ' '.join(sentences).lower()\n    result = re.sub('[^\\\\w\\\\s.]', '', result)\n    return result\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2640403298713875
+          }
+        },
+        "test_results": {
+          "TestCases.test_multiple_sentences": "PASS",
+          "TestCases.test_no_sentences": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_sentence_length": "PASS",
+          "TestCases.test_single_sentence": "PASS"
+        },
+        "reprompt": "2 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import random\nimport re\n\n\ndef task_func(n_sentences):\n    word_list = ['a', 'apple', 'banana', 'cherry', 'date', 'elderberry',\n        'fig', 'grape', 'honeydew', 'kiwi', 'lemon', 'mango', 'nectarine',\n        'orange', 'peach', 'plum', 'strawberry', 'tomato', 'ugli', 'very',\n        'well', 'done', 'now', 'then', 'because', 'so', 'therefore', 'thus',\n        'hence', 'consequently']\n    sentences = []\n    for _ in range(n_sentences):\n        sentence = []\n        while len(sentence) < 5:\n            word = random.choice(word_list)\n            sentence.append(word)\n        sentence_str = ' '.join(sentence).lower()\n        sentence_str = re.sub('[^\\\\w\\\\s.]', '', sentence_str)\n        sentences.append(sentence_str + '.')\n    return ' '.join(sentences).strip()\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23546154530196295
+          }
+        },
+        "test_results": {
+          "TestCases.test_multiple_sentences": "PASS",
+          "TestCases.test_no_sentences": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_sentence_length": "PASS",
+          "TestCases.test_single_sentence": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import random\n\n\ndef task_func(n_sentences: int) ->str:\n    if n_sentences <= 0:\n        return ''\n    words_pool = ['apple', 'banana', 'cherry', 'date', 'elderberry', 'fig',\n        'grape', 'honeydew', 'kiwi', 'lemon', 'mango', 'nectarine',\n        'orange', 'papaya', 'quince', 'raspberry', 'strawberry',\n        'tangerine', 'ugli', 'vanilla', 'watermelon', 'xigua', 'yam',\n        'zucchini', 'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta',\n        'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi',\n        'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi',\n        'psi', 'omega', 'lorem', 'ipsum', 'dolor', 'sit', 'amet',\n        'consectetur', 'adipiscing', 'elit', 'sed', 'do', 'eiusmod',\n        'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore', 'magna',\n        'aliqua', 'ut', 'enim', 'ad', 'minim', 'veniam', 'quis', 'nostrud',\n        'exercitation', 'ullamco', 'laboris', 'nisi', 'ut', 'aliquip', 'ex',\n        'ea', 'commodo', 'consequat', 'duis', 'aute', 'irure', 'dolor',\n        'in', 'reprehenderit', 'in', 'voluptate', 'velit', 'esse', 'cillum',\n        'dolore', 'eu', 'fugiat', 'nulla', 'pariatur']\n    sentences = []\n    for _ in range(n_sentences):\n        word_count = random.randint(5, 10)\n        sentence_words = [random.choice(words_pool) for _ in range(word_count)]\n        sentence = ' '.join(sentence_words) + '.'\n        sentences.append(sentence)\n    return ' '.join(sentences)\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2538521599284076
+          }
+        },
+        "test_results": {
+          "TestCases.test_multiple_sentences": "PASS",
+          "TestCases.test_no_sentences": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_sentence_length": "PASS",
+          "TestCases.test_single_sentence": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import random\nimport re\n\n\ndef task_func(n_sentences):\n    word_list = ['a', 'apple', 'banana', 'cherry', 'date', 'elderberry',\n        'fig', 'grape', 'honeydew', 'kiwi', 'lemon', 'mango']\n    if n_sentences == 0:\n        return ''\n    sentences = []\n    for _ in range(n_sentences):\n        sentence_words = []\n        while len(sentence_words) < 5:\n            sentence_words.append(random.choice(word_list))\n        sentences.append(' '.join(sentence_words).lower() + '.')\n    return ' '.join(sentences)\n",
+        "refacs": [
+          "refac_1,refac_3,refac_4"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_3,refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.21919175510368974
+          }
+        },
+        "test_results": {
+          "TestCases.test_multiple_sentences": "PASS",
+          "TestCases.test_no_sentences": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_sentence_length": "PASS",
+          "TestCases.test_single_sentence": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import random\nimport re\n\n\ndef task_func(n_sentences):\n    if n_sentences <= 0:\n        return ''\n    sentences = []\n    for _ in range(n_sentences):\n        sentence = 'This is a sentence ' + str(random.randint(5, 10)) + '.'\n        sentences.append(sentence)\n    result = ' '.join(sentences).lower()\n    result = re.sub('[^\\\\w\\\\s.]', '', result)\n    return result\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23664801063582133
+          }
+        },
+        "test_results": {
+          "TestCases.test_multiple_sentences": "PASS",
+          "TestCases.test_no_sentences": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_sentence_length": "PASS",
+          "TestCases.test_single_sentence": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import random\n\n\ndef task_func(n_sentences: int) ->str:\n    if n_sentences == 0:\n        return ''\n    word_pool = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta',\n        'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi',\n        'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi',\n        'psi', 'omega', 'apple', 'banana', 'cherry', 'date', 'fig', 'grape',\n        'kiwi', 'lemon', 'mango', 'nectarine', 'orange', 'peach', 'quince',\n        'raspberry', 'strawberry', 'tangerine', 'ugli', 'vanilla',\n        'watermelon', 'xigua', 'yam', 'zucchini']\n    sentences = []\n    for _ in range(n_sentences):\n        word_count = random.randint(5, 10)\n        words = [random.choice(word_pool) for _ in range(word_count)]\n        sentence = ' '.join(words) + '.'\n        sentences.append(sentence)\n    return ' '.join(sentences)\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2694514296212723
+          }
+        },
+        "test_results": {
+          "TestCases.test_multiple_sentences": "PASS",
+          "TestCases.test_no_sentences": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_sentence_length": "PASS",
+          "TestCases.test_single_sentence": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import random\n\n\ndef task_func(n_sentences: int) ->str:\n    if n_sentences == 0:\n        return ''\n    word_pool = ['the', 'quick', 'brown', 'fox', 'jumps', 'over', 'lazy',\n        'dog', 'and', 'is', 'happy', 'today', 'in', 'world', 'of', 'python',\n        'code', 'example', 'sample', 'test', 'random', 'sentence', 'generator']\n    sentences = []\n    for _ in range(n_sentences):\n        word_count = random.randint(5, 10)\n        words = [random.choice(word_pool) for _ in range(word_count)]\n        sentence = ' '.join(words) + '.'\n        sentences.append(sentence)\n    return ' '.join(sentences)\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2693606826653349
+          }
+        },
+        "test_results": {
+          "TestCases.test_multiple_sentences": "PASS",
+          "TestCases.test_no_sentences": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_sentence_length": "PASS",
+          "TestCases.test_single_sentence": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import random\nimport string\n\n\ndef task_func(n_sentences):\n    if n_sentences == 0:\n        return ''\n    sentences = []\n    for _ in range(n_sentences):\n        sentence_length = random.randint(5, 10)\n        words = [random.choice(string.ascii_lowercase) for _ in range(\n            sentence_length)]\n        sentence = ' '.join(words) + '.'\n        sentences.append(sentence)\n    result = ' '.join(sentences).lower()\n    return re.sub('[^\\\\w\\\\s\\\\.]', '', result)\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2723573559522801
+          }
+        },
+        "test_results": {
+          "TestCases.test_multiple_sentences": "PASS",
+          "TestCases.test_no_sentences": "PASS",
+          "TestCases.test_randomness": "PASS",
+          "TestCases.test_sentence_length": "PASS",
+          "TestCases.test_single_sentence": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/849",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import re\nfrom collections import Counter\n\n\ndef task_func(input_string):\n    words = re.findall('\\\\b\\\\w+\\\\b', input_string)\n    stop_words = {'is', 'a', 'only', 'this'}\n    filtered = [w for w in words if w not in stop_words]\n    return dict(Counter(filtered))\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1682412129511023
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/893",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "from datetime import time\n\n\ndef task_func(logs):\n    error_times = []\n    total_minutes = 0\n    for log in logs:\n        try:\n            parts = log.split()\n            if len(parts) < 3:\n                continue\n            timestamp = parts[1]\n            if not parts[2].startswith('ERROR'):\n                continue\n            hour_str, minute_str, _ = timestamp.split(':')\n            hour = int(hour_str)\n            minute = int(minute_str)\n            error_times.append(time(hour, minute))\n            total_minutes += hour * 60 + minute\n        except Exception:\n            continue\n    if not error_times:\n        return [], time(0, 0)\n    avg_minutes = total_minutes // len(error_times)\n    avg_hour = avg_minutes // 60\n    avg_minute = avg_minutes % 60\n    return error_times, time(avg_hour, avg_minute)\n",
+        "refacs": [
+          "refac_3,refac_5,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_3,refac_5,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.321649198920289
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_invalid_format": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "from datetime import time\n\n\ndef task_func(logs):\n    error_times = []\n    for log in logs:\n        parts = log.split()\n        if len(parts) < 3:\n            continue\n        date_part, time_part, level_part = parts[0], parts[1], parts[2]\n        level = level_part.rstrip(':')\n        if level != 'ERROR':\n            continue\n        try:\n            hour_str, minute_str, _ = time_part.split(':')\n            hour = int(hour_str)\n            minute = int(minute_str)\n            error_times.append(time(hour, minute))\n        except Exception:\n            continue\n    if not error_times:\n        return [], time(0, 0)\n    total_minutes = sum(t.hour * 60 + t.minute for t in error_times)\n    avg_minutes = total_minutes // len(error_times)\n    avg_hour = avg_minutes // 60\n    avg_minute = avg_minutes % 60\n    return error_times, time(avg_hour, avg_minute)\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22375842395310694
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_invalid_format": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import unittest\nfrom datetime import time\n\n\ndef task_func(logs):\n    error_times = []\n    for log in logs:\n        parts = log.split()\n        if len(parts) < 3 or not parts[2].startswith('ERROR'):\n            continue\n        time_str = parts[1]\n        try:\n            h, m, *rest = map(int, time_str.split(':'))\n            error_times.append(time(h, m))\n        except ValueError:\n            continue\n    if not error_times:\n        return [], time(0, 0)\n    total_minutes = sum(t.hour * 60 + t.minute for t in error_times)\n    avg_minutes = total_minutes // len(error_times)\n    avg_time = time(avg_minutes // 60, avg_minutes % 60)\n    return error_times, avg_time\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.21244344712232635
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_invalid_format": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import datetime\nfrom datetime import time\n\n\ndef task_func(logs):\n    error_times = []\n    for log in logs:\n        try:\n            date_str, time_str, message = log.split(' ', 2)\n            if 'ERROR' in message:\n                dt = datetime.datetime.strptime(date_str + ' ' + time_str,\n                    '%Y-%m-%d %H:%M:%S')\n                error_times.append(dt.time())\n        except ValueError:\n            continue\n    if not error_times:\n        return [], time(0, 0)\n    total_seconds = sum(t.hour * 3600 + t.minute * 60 + t.second for t in\n        error_times)\n    avg_seconds = total_seconds // len(error_times)\n    avg_hour = avg_seconds // 3600\n    avg_minute = avg_seconds % 3600 // 60\n    avg_second = avg_seconds % 60\n    return error_times, time(avg_hour, avg_minute, avg_second)\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.16506751689939345
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_invalid_format": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import unittest\nfrom datetime import time\n\n\ndef task_func(logs):\n    error_times = []\n    total_minutes = 0\n    for log in logs:\n        parts = log.split(' ', 2)\n        if len(parts) < 3:\n            continue\n        _, time_str, rest = parts\n        try:\n            hour, minute, _ = map(int, time_str.split(':'))\n        except ValueError:\n            continue\n        if 'ERROR' in rest:\n            t = time(hour, minute)\n            error_times.append(t)\n            total_minutes += hour * 60 + minute\n    if not error_times:\n        return [], time(0, 0)\n    avg_minutes = total_minutes // len(error_times)\n    avg_hour = avg_minutes // 60\n    avg_minute = avg_minutes % 60\n    return error_times, time(avg_hour, avg_minute)\n",
+        "refacs": [
+          "refac_1,refac_3,refac_4"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_3,refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3202978207407035
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_invalid_format": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import unittest\nfrom datetime import time\n\n\ndef task_func(logs):\n    error_times = []\n    for log in logs:\n        try:\n            parts = log.split(' ', 1)\n            if len(parts) != 2:\n                continue\n            _, rest = parts\n            time_part = rest.split(' ')[0]\n            h, m, s = time_part.split(':')\n            hours = int(h)\n            minutes = int(m)\n            time_obj = time(hours, minutes)\n            if 'ERROR' in rest:\n                error_times.append(time_obj)\n        except Exception:\n            continue\n    if not error_times:\n        return [], time(0, 0)\n    total_minutes = sum(t.hour * 60 + t.minute for t in error_times)\n    avg_total = total_minutes / len(error_times)\n    avg_hours = int(avg_total // 60)\n    avg_minutes = int(round(avg_total % 60))\n    if avg_minutes == 60:\n        avg_hours += 1\n        avg_minutes = 0\n    return error_times, time(avg_hours, avg_minutes)\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.19196810370407003
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_invalid_format": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import unittest\nfrom datetime import time\n\n\ndef task_func(logs):\n    error_times = []\n    for log in logs:\n        try:\n            date_part, rest = log.split(' ', 1)\n            time_str, message = rest.split(' ', 1)\n            hour, minute, _ = time_str.split(':')\n            t = time(int(hour), int(minute))\n            if 'ERROR' in message:\n                error_times.append(t)\n        except Exception:\n            continue\n    if not error_times:\n        return [], time(0, 0)\n    total_minutes = sum(t.hour * 60 + t.minute for t in error_times)\n    avg_minutes = total_minutes // len(error_times)\n    avg_hour = avg_minutes // 60\n    avg_minute = avg_minutes % 60\n    return error_times, time(avg_hour, avg_minute)\n",
+        "refacs": [
+          "refac_3,refac_5,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_3,refac_5,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.20809227960236332
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_invalid_format": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "from datetime import time, datetime\nimport re\n\n\ndef task_func(logs):\n    error_times = []\n    total_time = 0\n    count = 0\n    for log in logs:\n        match = re.search('(\\\\d{4}-\\\\d{2}-\\\\d{2} \\\\d{2}:\\\\d{2}:\\\\d{2}) ERROR:',\n            log)\n        if match:\n            dt = datetime.strptime(match.group(1), '%Y-%m-%d %H:%M:%S')\n            hour = dt.hour\n            minute = dt.minute\n            error_times.append(time(hour, minute))\n            total_time += hour + minute / 60\n            count += 1\n    if count > 0:\n        average_time = time(int(total_time // count), int(total_time %\n            count * 60 / count))\n    else:\n        average_time = time(0, 0)\n    return error_times, average_time\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3239338917994094
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_invalid_format": "PASS"
+        },
+        "reprompt": "2 llama3.1:latest"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "from datetime import time\n\n\ndef task_func(logs):\n    error_times = []\n    for log in logs:\n        try:\n            date_part, time_part, rest = log.split(' ', 2)\n            if 'ERROR:' not in rest:\n                continue\n            hour, minute, _ = map(int, time_part.split(':'))\n            error_times.append(time(hour, minute))\n        except Exception:\n            continue\n    if not error_times:\n        return [], time(0, 0)\n    total_minutes = sum(t.hour * 60 + t.minute for t in error_times)\n    avg_minutes = total_minutes // len(error_times)\n    avg_hour = avg_minutes // 60\n    avg_minute = avg_minutes % 60\n    return error_times, time(avg_hour, avg_minute)\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22532237893585227
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_invalid_format": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import datetime\n\n\ndef task_func(logs):\n    error_times = []\n    for log in logs:\n        try:\n            parts = log.split()\n            if len(parts) < 3:\n                continue\n            date_str, time_str, level = parts[0], parts[1], parts[2]\n            if not level.startswith('ERROR'):\n                continue\n            dt = datetime.datetime.strptime(f'{date_str} {time_str}',\n                '%Y-%m-%d %H:%M:%S')\n            error_times.append(dt.time())\n        except Exception:\n            continue\n    if not error_times:\n        return [], datetime.time(0, 0)\n    total_minutes = sum(t.hour * 60 + t.minute for t in error_times)\n    avg_minutes = total_minutes // len(error_times)\n    avg_time = datetime.time(avg_minutes // 60, avg_minutes % 60)\n    return error_times, avg_time\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.16729154394048473
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS",
+          "TestCases.test_case_invalid_format": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/923",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport random\n\n\ndef task_func(person_names, email_domains, num_records=5):\n    if not email_domains:\n        raise ValueError('email_domains list cannot be empty')\n    if num_records > len(person_names):\n        raise ValueError('num_records cannot exceed number of person_names')\n    data = []\n    for _ in range(num_records):\n        name = random.choice(person_names)\n        domain = random.choice(email_domains)\n        email = f'{name.split()[0]}[at]{domain}'\n        data.append({'Name': name, 'Email': email})\n    return pd.DataFrame(data)\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1835393932780409
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport random\n\n\ndef task_func(person_names, email_domains, num_records=5):\n    if len(person_names) < 1 or len(email_domains) < 1:\n        raise ValueError('Invalid input parameters')\n    data = []\n    for _ in range(num_records):\n        name = random.choice(person_names)\n        domain = random.choice(email_domains)\n        while '@' not in f'{name.split()[0]}[at]{domain}':\n            domain = random.choice(email_domains)\n        email = f'{name.split()[0]}[at]{domain}'\n        data.append({'Name': name, 'Email': email})\n    df = pd.DataFrame(data)\n    return df\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.20514988341049442
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "ERROR (timeout)",
+          "TestCases.test_case_2": "ERROR (timeout)",
+          "TestCases.test_case_3": "ERROR (timeout)",
+          "TestCases.test_case_4": "ERROR (timeout)",
+          "TestCases.test_case_5": "ERROR (timeout)"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import pandas as pd\nimport random\n\n\ndef task_func(person_names, email_domains, num_records):\n    if len(person_names) < num_records:\n        raise ValueError('num_records exceeds number of person_names')\n    if not email_domains:\n        raise ValueError('email_domains list is empty')\n    name_indices = [random.choice(range(len(person_names))) for _ in range(\n        num_records)]\n    domain_indices = [random.choice(range(len(email_domains))) for _ in\n        range(num_records)]\n    names = [person_names[i] for i in name_indices]\n    domains = [email_domains[j] for j in domain_indices]\n    emails = [f'{names[k]}@{domains[k]}' for k in range(num_records)]\n    cleaned_emails = [email.replace('@', '[at]') for email in emails]\n    data = {'Name': names, 'Email': cleaned_emails}\n    return pd.DataFrame(data)\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.1475251955326114
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport random\n\n\ndef task_func(person_names, email_domains, num_records=5):\n    records = []\n    if len(person_names) < num_records or len(email_domains) == 0:\n        raise ValueError('Insufficient data to create records')\n    for _ in range(num_records):\n        name = random.choice(person_names)\n        domain = random.choice(email_domains)\n        email = name.replace(' ', '[at]').lower() + '@' + domain\n        records.append({'Name': name, 'Email': email})\n    return pd.DataFrame(records)\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.30537427401777745
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import pandas as pd\nimport random\nfrom typing import List\n\n\ndef task_func(person_names: List[str], email_domains: List[str],\n    num_records: int) ->pd.DataFrame:\n    if len(person_names) < 1 or len(email_domains) < 1:\n        raise ValueError(\n            'Both person names and email domains must have at least one element'\n            )\n    result = []\n    for _ in range(num_records):\n        name = random.choice(person_names)\n        domain = random.choice(email_domains)\n        while not ('@' in name or '@' in domain):\n            name = random.choice(person_names)\n            domain = random.choice(email_domains)\n        email = (\n            f'{name.split()[0][0].lower()}{name.split()[1][0].lower()}@{domain}'\n            )\n        result.append({'Name': name, 'Email': email})\n    return pd.DataFrame(result)\n",
+        "refacs": [
+          "refac_1,refac_3,refac_4"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_3,refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.0
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "ERROR (timeout)",
+          "TestCases.test_case_2": "ERROR (timeout)",
+          "TestCases.test_case_3": "ERROR (timeout)",
+          "TestCases.test_case_4": "ERROR (timeout)",
+          "TestCases.test_case_5": "ERROR (timeout)"
+        },
+        "reprompt": "2 llama3.1:latest"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/1026",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\n\ndef task_func(kwargs):\n    group1 = kwargs['group1']\n    group2 = kwargs['group2']\n    group1_filtered = [x for x in group1 if not np.isnan(x)]\n    group2_filtered = [x for x in group2 if not np.isnan(x)]\n    if len(group1_filtered) < 1 or len(group2_filtered) < 1:\n        raise ValueError('One of the groups is empty.')\n    if len(group1_filtered) < 2 or len(group2_filtered) < 2:\n        raise ValueError(\n            'Insufficient group size (each group must have at least two non-NaN values).'\n            )\n    mean1 = np.mean(group1_filtered)\n    std1 = np.std(group1_filtered, ddof=1)\n    mean2 = np.mean(group2_filtered)\n    std2 = np.std(group2_filtered, ddof=1)\n    t_stat, p_value = stats.ttest_ind(group1_filtered, group2_filtered)\n    significant = p_value < 0.05\n    fig_box, ax_box = plt.subplots()\n    data_for_box = [group1_filtered, group2_filtered]\n    ax_box.set_title('Boxplot of Groups')\n    ax_box.set_xticklabels(['Group 1', 'Group 2'])\n    plt.boxplot(data_for_box)\n    fig_hist, ax_hist = plt.subplots()\n    ax_hist.hist(group1_filtered, bins=10, alpha=0.5, label='Group 1')\n    ax_hist.hist(group2_filtered, bins=10, alpha=0.5, label='Group 2')\n    ax_hist.set_title('Histograms of Groups')\n    ax_hist.legend()\n    if np.var(group1_filtered) < 1e-12 or np.var(group2_filtered) < 1e-12:\n        raise ValueError('One of the groups has extremely low variance.')\n    return {'significant': significant, 'group1_stats': {'mean': mean1,\n        'std': std1}, 'group2_stats': {'mean': mean2, 'std': std2},\n        'ax_boxplot': ax_box, 'ax_histogram': ax_hist}\n",
+        "refacs": [
+          "refac_3,refac_5,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_3,refac_5,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.24898582712310488
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_nan_values": "PASS",
+          "TestCases.test_different_means": "PASS",
+          "TestCases.test_empty_group": "PASS",
+          "TestCases.test_insufficient_group_size": "PASS",
+          "TestCases.test_low_variance": "PASS",
+          "TestCases.test_similar_means": "PASS",
+          "TestCases.test_with_nan_values": "PASS"
+        },
+        "reprompt": "1 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\n\ndef task_func(kwargs):\n    group1 = kwargs['group1']\n    group2 = kwargs['group2']\n    group1_filtered = [x for x in group1 if not np.isnan(x)]\n    group2_filtered = [x for x in group2 if not np.isnan(x)]\n    if len(group1_filtered) < 2 or len(group2_filtered) < 2:\n        raise ValueError('Insufficient group size.')\n    if len(group1_filtered) == 0 or len(group2_filtered) == 0:\n        raise ValueError('One of the groups is empty.')\n    mean1 = np.mean(group1_filtered)\n    std1 = np.std(group1_filtered, ddof=1)\n    mean2 = np.mean(group2_filtered)\n    std2 = np.std(group2_filtered, ddof=1)\n    t_stat, p_val = stats.ttest_ind(group1_filtered, group2_filtered)\n    significant = p_val < 0.05\n    fig, ax = plt.subplots()\n    data = [group1_filtered, group2_filtered]\n    ax.boxplot(data)\n    ax.set_title('Boxplot of Groups')\n    ax.set_xticklabels(['Group 1', 'Group 2'])\n    fig2, ax2 = plt.subplots()\n    ax2.hist(group1_filtered, bins=10, alpha=0.5, label='Group 1')\n    ax2.hist(group2_filtered, bins=10, alpha=0.5, label='Group 2')\n    ax2.set_title('Histograms of Groups')\n    ax2.legend()\n    if np.var(group1_filtered) < 1e-06 or np.var(group2_filtered) < 1e-06:\n        raise ValueError('One of the groups has extremely low variance.')\n    return {'significant': significant, 'group1_stats': {'mean': mean1,\n        'std': std1}, 'group2_stats': {'mean': mean2, 'std': std2},\n        'ax_boxplot': ax, 'ax_histogram': ax2}\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23153855403402934
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_nan_values": "PASS",
+          "TestCases.test_different_means": "PASS",
+          "TestCases.test_empty_group": "PASS",
+          "TestCases.test_insufficient_group_size": "PASS",
+          "TestCases.test_low_variance": "PASS",
+          "TestCases.test_similar_means": "PASS",
+          "TestCases.test_with_nan_values": "PASS"
+        },
+        "reprompt": "2 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\n\ndef task_func(kwargs):\n    group1 = kwargs['group1']\n    group2 = kwargs['group2']\n    group1_filtered = [x for x in group1 if not np.isnan(x)]\n    group2_filtered = [x for x in group2 if not np.isnan(x)]\n    if len(group1_filtered) < 1 or len(group2_filtered) < 1:\n        raise ValueError(\n            'One of the groups is empty after filtering NaN values.')\n    if len(group1_filtered) < 2 or len(group2_filtered) < 2:\n        raise ValueError(\n            'At least two non-NaN values are required in each group.')\n    mean1 = np.mean(group1_filtered)\n    std1 = np.std(group1_filtered, ddof=1)\n    mean2 = np.mean(group2_filtered)\n    std2 = np.std(group2_filtered, ddof=1)\n    t_stat, p_val = stats.ttest_ind(group1_filtered, group2_filtered)\n    significant = p_val < 0.05\n    fig, ax = plt.subplots()\n    data = [group1_filtered, group2_filtered]\n    plt.boxplot(data)\n    ax.set_title('Boxplot of Groups')\n    ax.set_xticklabels(['Group 1', 'Group 2'])\n    fig2, ax2 = plt.subplots()\n    n_bins = 5\n    ax2.hist(group1_filtered, bins=n_bins, alpha=0.5, label='Group 1')\n    ax2.hist(group2_filtered, bins=n_bins, alpha=0.5, label='Group 2')\n    ax2.set_title('Histograms of Groups')\n    ax2.legend()\n    var1 = np.var(group1_filtered)\n    if var1 < 1e-10:\n        raise ValueError('One of the groups has extremely low variance.')\n    return {'significant': significant, 'group1_stats': {'mean': mean1,\n        'std': std1}, 'group2_stats': {'mean': mean2, 'std': std2},\n        'ax_boxplot': ax, 'ax_histogram': ax2}\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22426378849489736
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_nan_values": "PASS",
+          "TestCases.test_different_means": "PASS",
+          "TestCases.test_empty_group": "PASS",
+          "TestCases.test_insufficient_group_size": "PASS",
+          "TestCases.test_low_variance": "PASS",
+          "TestCases.test_similar_means": "PASS",
+          "TestCases.test_with_nan_values": "PASS"
+        },
+        "reprompt": "2 llama3.1:latest"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\n\ndef task_func(kwargs):\n    group1 = kwargs['group1']\n    group2 = kwargs['group2']\n    group1_filtered = [x for x in group1 if not np.isnan(x)]\n    group2_filtered = [x for x in group2 if not np.isnan(x)]\n    if len(group1_filtered) < 2 or len(group2_filtered) < 2:\n        raise ValueError(\n            'Insufficient number of non-NaN values in one or both groups.')\n\n    def calculate_stats(data):\n        mean = np.mean(data)\n        std = np.std(data, ddof=1)\n        return {'mean': mean, 'std': std}\n    group1_stats = calculate_stats(group1_filtered)\n    group2_stats = calculate_stats(group2_filtered)\n    if group1_stats['std'] < 1e-06 or group2_stats['std'] < 1e-06:\n        raise ValueError('Low variance in one or both groups.')\n    t_stat, p_value = stats.ttest_ind(group1_filtered, group2_filtered)\n    significant = p_value < 0.05\n    fig, ax = plt.subplots()\n    ax.boxplot([group1_filtered, group2_filtered])\n    ax.set_xticklabels(['Group 1', 'Group 2'])\n    fig2, ax_hist = plt.subplots()\n    ax_hist.hist(group1_filtered, bins=10, alpha=0.5, label='Group 1')\n    ax_hist.hist(group2_filtered, bins=10, alpha=0.5, label='Group 2')\n    ax_hist.legend()\n    return {'significant': significant, 'group1_stats': group1_stats,\n        'group2_stats': group2_stats, 'ax_boxplot': ax, 'ax_histogram': ax_hist\n        }\n",
+        "refacs": [
+          "refac_1,refac_3,refac_4"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_3,refac_4']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.225591366717058
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_nan_values": "PASS",
+          "TestCases.test_different_means": "PASS",
+          "TestCases.test_empty_group": "PASS",
+          "TestCases.test_insufficient_group_size": "PASS",
+          "TestCases.test_low_variance": "PASS",
+          "TestCases.test_similar_means": "PASS",
+          "TestCases.test_with_nan_values": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\n\ndef task_func(kwargs):\n    group1 = kwargs['group1']\n    group2 = kwargs['group2']\n    group1 = [x for x in group1 if not np.isnan(x)]\n    group2 = [x for x in group2 if not np.isnan(x)]\n    if len(group1) < 2 or len(group2) < 2:\n        raise ValueError('Each group must have at least two non-NaN values')\n    group1_stats = {'mean': np.mean(group1), 'std': np.std(group1)}\n    group2_stats = {'mean': np.mean(group2), 'std': np.std(group2)}\n    if group1_stats['std'] < 1e-06 or group2_stats['std'] < 1e-06:\n        raise ValueError('One of the groups has extremely low variance')\n    t_stat, p_val = stats.ttest_ind(group1, group2)\n    significant = p_val < 0.05\n    fig, (ax_boxplot, ax_histogram) = plt.subplots(1, 2, figsize=(12, 6))\n    ax_boxplot.boxplot([group1, group2], labels=['Group 1', 'Group 2'])\n    ax_boxplot.set_title('Boxplot Comparison')\n    ax_histogram.hist(group1, alpha=0.5, label='Group 1')\n    ax_histogram.hist(group2, alpha=0.5, label='Group 2')\n    ax_histogram.legend()\n    return {'significant': significant, 'group1_stats': group1_stats,\n        'group2_stats': group2_stats, 'ax_boxplot': ax_boxplot,\n        'ax_histogram': ax_histogram}\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.310187379254628
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_nan_values": "PASS",
+          "TestCases.test_different_means": "PASS",
+          "TestCases.test_empty_group": "PASS",
+          "TestCases.test_insufficient_group_size": "PASS",
+          "TestCases.test_low_variance": "PASS",
+          "TestCases.test_similar_means": "PASS",
+          "TestCases.test_with_nan_values": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nimport scipy.stats\n\n\ndef task_func(kwargs):\n    group1 = kwargs['group1']\n    group2 = kwargs['group2']\n    g1 = np.array(group1, dtype=float)\n    g2 = np.array(group2, dtype=float)\n    g1_clean = g1[~np.isnan(g1)]\n    g2_clean = g2[~np.isnan(g2)]\n    if g1_clean.size == 0 or g2_clean.size == 0:\n        raise ValueError\n    if g1_clean.size < 2 or g2_clean.size < 2:\n        raise ValueError\n    var1 = np.var(g1_clean, ddof=1)\n    var2 = np.var(g2_clean, ddof=1)\n    if var1 < 1e-06 or var2 < 1e-06:\n        raise ValueError\n    mean1 = np.mean(g1_clean)\n    mean2 = np.mean(g2_clean)\n    std1 = np.std(g1_clean, ddof=1)\n    std2 = np.std(g2_clean, ddof=1)\n    _, p_val = scipy.stats.ttest_ind(g1_clean, g2_clean, equal_var=False,\n        nan_policy='omit')\n    significant = p_val < 0.05\n    fig1, ax_boxplot = plt.subplots()\n    ax_boxplot.boxplot([g1_clean, g2_clean], labels=['group1', 'group2'])\n    fig2, ax_histogram = plt.subplots()\n    ax_histogram.hist([g1_clean, g2_clean], label=['group1', 'group2'],\n        alpha=0.5)\n    ax_histogram.legend()\n    return {'significant': significant, 'group1_stats': {'mean': mean1,\n        'std': std1}, 'group2_stats': {'mean': mean2, 'std': std2},\n        'ax_boxplot': ax_boxplot, 'ax_histogram': ax_histogram}\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2026581057262887
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_nan_values": "PASS",
+          "TestCases.test_different_means": "PASS",
+          "TestCases.test_empty_group": "PASS",
+          "TestCases.test_insufficient_group_size": "PASS",
+          "TestCases.test_low_variance": "PASS",
+          "TestCases.test_similar_means": "PASS",
+          "TestCases.test_with_nan_values": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\n\ndef task_func(kwargs):\n    group1 = kwargs['group1']\n    group2 = kwargs['group2']\n    group1_filtered = [x for x in group1 if not np.isnan(x)]\n    group2_filtered = [x for x in group2 if not np.isnan(x)]\n    if len(group1_filtered) == 0 or len(group2_filtered) == 0:\n        raise ValueError('One of the groups is empty after removing NaNs.')\n    if len(group1_filtered) < 2 or len(group2_filtered) < 2:\n        raise ValueError(\n            'Insufficient number of samples in one or both groups.')\n    mean_group1 = np.mean(group1_filtered)\n    std_group1 = np.std(group1_filtered, ddof=1)\n    mean_group2 = np.mean(group2_filtered)\n    std_group2 = np.std(group2_filtered, ddof=1)\n    if std_group1 < 1e-06 or std_group2 < 1e-06:\n        raise ValueError('Low variance in one of the groups.')\n    t_stat, p_value = stats.ttest_ind(group1_filtered, group2_filtered)\n    fig_box, ax_boxplot = plt.subplots()\n    data_for_box = [group1_filtered, group2_filtered]\n    ax_boxplot.boxplot(data_for_box)\n    fig_hist, ax_histogram = plt.subplots()\n    ax_histogram.hist(group1_filtered, bins=5, alpha=0.5, label='Group 1')\n    ax_histogram.hist(group2_filtered, bins=5, alpha=0.5, label='Group 2')\n    ax_histogram.legend()\n    plt.close(fig_box)\n    plt.close(fig_hist)\n    return {'significant': p_value < 0.05, 'group1_stats': {'mean':\n        mean_group1, 'std': std_group1}, 'group2_stats': {'mean':\n        mean_group2, 'std': std_group2}, 'ax_boxplot': ax_boxplot,\n        'ax_histogram': ax_histogram}\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.22152683375496726
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_nan_values": "PASS",
+          "TestCases.test_different_means": "PASS",
+          "TestCases.test_empty_group": "PASS",
+          "TestCases.test_insufficient_group_size": "PASS",
+          "TestCases.test_low_variance": "PASS",
+          "TestCases.test_similar_means": "PASS",
+          "TestCases.test_with_nan_values": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom scipy import stats\n\n\ndef task_func(kwargs):\n    group1 = kwargs['group1']\n    group2 = kwargs['group2']\n    group1_filtered = [x for x in group1 if not np.isnan(x)]\n    group2_filtered = [x for x in group2 if not np.isnan(x)]\n    if len(group1_filtered) < 2 or len(group2_filtered) < 2:\n        raise ValueError('Insufficient non-NaN values in one or both groups')\n    mean1 = np.mean(group1_filtered)\n    std1 = np.std(group1_filtered, ddof=1)\n    mean2 = np.mean(group2_filtered)\n    std2 = np.std(group2_filtered, ddof=1)\n    if std1 < 1e-06 or std2 < 1e-06:\n        raise ValueError('Low variance in one or both groups')\n    t_stat, p_val = stats.ttest_ind(group1_filtered, group2_filtered)\n    fig, (ax_boxplot, ax_histogram) = plt.subplots(1, 2, figsize=(10, 5))\n    data = [group1_filtered, group2_filtered]\n    labels = ['Group 1', 'Group 2']\n    ax_boxplot.boxplot(data, labels=labels)\n    ax_boxplot.set_title('Boxplot of Groups')\n    ax_histogram.hist(group1_filtered, bins=10, alpha=0.5, label='Group 1')\n    ax_histogram.hist(group2_filtered, bins=10, alpha=0.5, label='Group 2')\n    ax_histogram.set_title('Histograms of Groups')\n    ax_histogram.legend()\n    plt.close(fig)\n    return {'significant': p_val < 0.05, 'group1_stats': {'mean': mean1,\n        'std': std1}, 'group2_stats': {'mean': mean2, 'std': std2},\n        'ax_boxplot': ax_boxplot, 'ax_histogram': ax_histogram}\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23912197157185333
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_nan_values": "PASS",
+          "TestCases.test_different_means": "PASS",
+          "TestCases.test_empty_group": "PASS",
+          "TestCases.test_insufficient_group_size": "PASS",
+          "TestCases.test_low_variance": "PASS",
+          "TestCases.test_similar_means": "PASS",
+          "TestCases.test_with_nan_values": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\n\ndef task_func(kwargs):\n    group1 = kwargs['group1']\n    group2 = kwargs['group2']\n    group1_filtered = [x for x in group1 if not np.isnan(x)]\n    group2_filtered = [x for x in group2 if not np.isnan(x)]\n    if len(group1_filtered) < 2 or len(group2_filtered) < 2:\n        raise ValueError('Insufficient number of non-NaN values')\n    mean1 = np.mean(group1_filtered)\n    std1 = np.std(group1_filtered, ddof=1)\n    mean2 = np.mean(group2_filtered)\n    std2 = np.std(group2_filtered, ddof=1)\n    if std1 < 1e-06 or std2 < 1e-06:\n        raise ValueError('Group has extremely low variance')\n    t_stat, p_val = stats.ttest_ind(group1_filtered, group2_filtered)\n    significant = p_val < 0.05\n    fig, ax = plt.subplots()\n    data = [group1_filtered, group2_filtered]\n    ax.boxplot(data)\n    ax.set_title('Boxplot of Groups')\n    ax.set_xticklabels(['Group 1', 'Group 2'])\n    fig2, ax2 = plt.subplots()\n    ax2.hist(group1_filtered, bins=10, alpha=0.5, label='Group 1')\n    ax2.hist(group2_filtered, bins=10, alpha=0.5, label='Group 2')\n    ax2.set_title('Histograms of Groups')\n    ax2.legend()\n    return {'significant': significant, 'group1_stats': {'mean': mean1,\n        'std': std1}, 'group2_stats': {'mean': mean2, 'std': std2},\n        'ax_boxplot': ax, 'ax_histogram': ax2}\n",
+        "refacs": [
+          "refac_3,refac_5,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_3,refac_5,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.218807647292136
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_nan_values": "PASS",
+          "TestCases.test_different_means": "PASS",
+          "TestCases.test_empty_group": "PASS",
+          "TestCases.test_insufficient_group_size": "PASS",
+          "TestCases.test_low_variance": "PASS",
+          "TestCases.test_similar_means": "PASS",
+          "TestCases.test_with_nan_values": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import numpy as np\nfrom scipy import stats\nimport matplotlib.pyplot as plt\n\n\ndef task_func(kwargs):\n    group1 = np.array(kwargs['group1'])\n    group2 = np.array(kwargs['group2'])\n    group1 = group1[~np.isnan(group1)]\n    group2 = group2[~np.isnan(group2)]\n    if len(group1) < 2 or len(group2) < 2:\n        raise ValueError('Each group must have at least two non-NaN values')\n    if np.std(group1) < 1e-06 or np.std(group2) < 1e-06:\n        raise ValueError('Group has too low variance')\n    group1_stats = {'mean': np.mean(group1), 'std': np.std(group1)}\n    group2_stats = {'mean': np.mean(group2), 'std': np.std(group2)}\n    t_stat, p_val = stats.ttest_ind(group1, group2)\n    significant = p_val < 0.05\n    fig, (ax_boxplot, ax_histogram) = plt.subplots(1, 2, figsize=(12, 6))\n    ax_boxplot.boxplot([group1, group2], labels=['Group 1', 'Group 2'])\n    ax_boxplot.set_title('Boxplot Comparison')\n    ax_histogram.hist(group1, alpha=0.5, label='Group 1')\n    ax_histogram.hist(group2, alpha=0.5, label='Group 2')\n    ax_histogram.legend()\n    return {'significant': significant, 'group1_stats': group1_stats,\n        'group2_stats': group2_stats, 'ax_boxplot': ax_boxplot,\n        'ax_histogram': ax_histogram}\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.32965668914981
+          }
+        },
+        "test_results": {
+          "TestCases.test_all_nan_values": "PASS",
+          "TestCases.test_different_means": "PASS",
+          "TestCases.test_empty_group": "PASS",
+          "TestCases.test_insufficient_group_size": "PASS",
+          "TestCases.test_low_variance": "PASS",
+          "TestCases.test_similar_means": "PASS",
+          "TestCases.test_with_nan_values": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      }
+    ]
+  },
+  {
+    "id": "BigCodeBench/1091",
+    "clones": [
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import os\nimport ast\n\n\ndef task_func(directory):\n    result = []\n    if not os.path.exists(directory) or not os.path.isdir(directory):\n        return []\n    for filename in os.listdir(directory):\n        file_path = os.path.join(directory, filename)\n        with open(file_path, 'r', encoding='utf-8') as f:\n            content = f.read().strip()\n            if not content:\n                continue\n            try:\n                lines = content.split('\\n')\n                for line in lines:\n                    line_content = line.strip()\n                    if not line_content:\n                        continue\n                    d = ast.literal_eval(line_content)\n                    result.append(d)\n            except (ValueError, SyntaxError):\n                raise ValueError(f'Invalid dictionary in file: {filename}')\n    return result\n",
+        "refacs": [
+          "refac_1,refac_4,refac_5"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.19313385643151257
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import os\nimport ast\n\n\ndef task_func(directory):\n    result = []\n    if not os.path.exists(directory):\n        return []\n    for filename in os.listdir(directory):\n        file_path = os.path.join(directory, filename)\n        if not os.path.isfile(file_path):\n            continue\n        with open(file_path, 'r', encoding='utf-8') as f:\n            content = f.read().strip()\n            if not content:\n                continue\n            if '\\n' in content:\n                entries = content.split('\\n')\n                for entry in entries:\n                    entry = entry.strip()\n                    if not entry:\n                        continue\n                    try:\n                        d = ast.literal_eval(entry)\n                    except (ValueError, SyntaxError):\n                        raise ValueError(f'Invalid content in file {file_path}'\n                            )\n                    result.append(d)\n            else:\n                try:\n                    d = ast.literal_eval(content)\n                except (ValueError, SyntaxError):\n                    raise ValueError(f'Invalid content in file {file_path}')\n                result.append(d)\n    return result\n",
+        "refacs": [
+          "refac_2,refac_4,refac_6"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.17478804233223397
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import os\nimport glob\nimport ast\n\n\ndef task_func(directory):\n    file_pattern = os.path.join(directory, '*.txt')\n    all_files = glob.glob(file_pattern)\n    extracted_data = []\n    for filename in all_files:\n        with open(filename, 'r') as f:\n            lines = f.readlines()\n            for line in lines:\n                stripped = line.strip()\n                if not stripped:\n                    continue\n                try:\n                    data = ast.literal_eval(stripped)\n                except Exception:\n                    raise ValueError(f'Invalid content in file {filename}')\n                extracted_data.append(data)\n    return extracted_data\n",
+        "refacs": [
+          "refac_3,refac_5,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_3,refac_5,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.29210793028840326
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "code",
+        "strategy": "zero-shot",
+        "code": "import os\nimport glob\nimport ast\n\n\ndef task_func(directory):\n    file_pattern = os.path.join(directory, '*.txt')\n    all_files = glob.glob(file_pattern)\n    extracted_data = []\n    for filename in all_files:\n        with open(filename, 'r') as f:\n            for line in f:\n                stripped = line.strip()\n                if not stripped:\n                    continue\n                try:\n                    data = ast.literal_eval(stripped)\n                except (ValueError, SyntaxError):\n                    raise ValueError(f'Invalid content in file {filename}')\n                if isinstance(data, dict):\n                    extracted_data.append(data)\n                elif isinstance(data, list):\n                    for item in data:\n                        if isinstance(item, dict):\n                            extracted_data.append(item)\n                        else:\n                            raise ValueError(\n                                f'Invalid item in list in file {filename}')\n                else:\n                    raise ValueError(f'Invalid data type in file {filename}')\n    return extracted_data\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.3909126065676228
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "gpt-oss:20b",
+        "context": "code",
+        "strategy": "cot",
+        "code": "import pathlib\nimport ast\n\n\ndef task_func(directory):\n    collected = []\n    for txt in pathlib.Path(directory).glob('*.txt'):\n        try:\n            with txt.open('r', encoding='utf-8') as f:\n                lines = f.readlines()\n                for line in lines:\n                    stripped_line = line.strip()\n                    if not stripped_line:\n                        continue\n                    try:\n                        parsed = ast.literal_eval(stripped_line)\n                        if isinstance(parsed, dict):\n                            collected.append(parsed)\n                    except (ValueError, SyntaxError):\n                        raise ValueError(f'Invalid dictionary in file {txt}')\n        except FileNotFoundError:\n            pass\n    return collected\n",
+        "refacs": [
+          "refac_1,refac_3,refac_7"
+        ],
+        "clone_id": "cot gpt-oss:20b-code 1 ['refac_1,refac_3,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.19245975999036538
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 deepseek-r1:14b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import os\nimport ast\n\n\ndef task_func(directory):\n    result = []\n    try:\n        for filename in os.listdir(directory):\n            if not filename.endswith('.txt'):\n                continue\n            filepath = os.path.join(directory, filename)\n            with open(filepath, 'r') as f:\n                content = f.read()\n                if not content.strip():\n                    continue\n                for line in content.splitlines():\n                    line = line.strip()\n                    if not line:\n                        continue\n                    try:\n                        data = ast.literal_eval(line)\n                        if not isinstance(data, dict):\n                            raise ValueError\n                        result.append(data)\n                    except Exception:\n                        raise ValueError(\n                            f'Invalid dictionary in file: {filename}')\n    except Exception as e:\n        raise ValueError(f'Error processing files: {e}')\n    return result\n",
+        "refacs": [
+          "refac_2,refac_5,refac_6"
+        ],
+        "clone_id": "cot llama3.1:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.24910314101162154
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "cot",
+        "code": "import os\nimport ast\nfrom typing import List, Dict\n\n\ndef task_func(directory: str) ->List[Dict]:\n    result = []\n    for filename in os.listdir(directory):\n        file_path = os.path.join(directory, filename)\n        if not os.path.isfile(file_path):\n            continue\n        with open(file_path, 'r') as f:\n            content = f.read()\n            entries = content.split('\\n')\n            for entry in entries:\n                stripped_entry = entry.strip()\n                if not stripped_entry:\n                    continue\n                try:\n                    d = ast.literal_eval(stripped_entry)\n                except (ValueError, SyntaxError):\n                    raise ValueError(f'Invalid dictionary in file: {filename}')\n                result.append(d)\n    return result\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.24973796887184851
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "1 gpt-oss:20b"
+      },
+      {
+        "model": "llama3.1:latest",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import os\nimport ast\n\n\ndef task_func(directory: str):\n    result = []\n    try:\n        files = [f for f in os.listdir(directory) if f.endswith('.txt')]\n    except FileNotFoundError:\n        return []\n    if not files:\n        return []\n    for filename in sorted(files):\n        path = os.path.join(directory, filename)\n        with open(path, 'r', encoding='utf-8') as f:\n            lines = f.readlines()\n        if not lines:\n            continue\n        for line in lines:\n            line = line.strip()\n            if not line:\n                continue\n            try:\n                parsed = ast.literal_eval(line)\n            except Exception:\n                raise ValueError(f'Invalid content in file {filename}')\n            if not isinstance(parsed, dict):\n                raise ValueError(f'Content is not a dict in file {filename}')\n            result.append(parsed)\n    return result\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.2011567134712057
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
+      },
+      {
+        "model": "deepseek-r1:14b",
+        "context": "test",
+        "strategy": "zero-shot",
+        "code": "import os\nimport ast\n\n\ndef task_func(directory):\n    result = []\n    if not os.path.isdir(directory):\n        raise ValueError('Invalid or missing file')\n    for filename in os.listdir(directory):\n        if not filename.endswith('.txt'):\n            continue\n        filepath = os.path.join(directory, filename)\n        with open(filepath, 'r') as f:\n            lines = f.readlines()\n        parsed = []\n        for line in lines:\n            line = line.strip()\n            if not line:\n                continue\n            try:\n                parsed.append(ast.literal_eval(line))\n            except Exception:\n                raise ValueError('Invalid or missing file')\n        if not parsed:\n            raise ValueError('Invalid or missing file')\n        result.extend(parsed)\n    return result\n",
+        "refacs": [
+          "refac_2,refac_6,refac_7"
+        ],
+        "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
+        "metrics": {
+          "codebleu": {
+            "originalcode": 0.23907761704891498
+          }
+        },
+        "test_results": {
+          "TestCases.test_case_1": "PASS",
+          "TestCases.test_case_2": "PASS",
+          "TestCases.test_case_3": "PASS",
+          "TestCases.test_case_4": "PASS",
+          "TestCases.test_case_5": "PASS"
+        },
+        "reprompt": "2 gpt-oss:20b"
       }
     ]
   }
