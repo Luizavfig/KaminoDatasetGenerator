@@ -1,5 +1,6 @@
 from src.config import *
 from src.steps import (normalization as nz, clone_gen as cg, filtering as fl, reprompt as rp,clustering as cl)
+from src.utils.efficiency import select_top_n_configs
 from src.utils.helper_functions import startup
 def main():
     startup()
@@ -30,6 +31,8 @@ def main():
     # Step 8: Clustering
     cl.run_clustering()
 
+    # Calculate top-N efficient configurations
+    select_top_n_configs()
     
 if __name__ == "__main__":
     main()

@@ -6,7 +6,7 @@ def main():
     startup()
     # Step 1: Normalization (not needed)
 
-    # Calculate top-N efficient configurations
+    # Retrieve top-N efficient configurations
     top_configs = select_top_n_configs()
 
     # Step 2: Clone Generation with only top-N efficient configurations

@@ -70,7 +70,7 @@ BATCH_SIZE = 8
 
 # RQ2 specific settings
 EFFICIENCY_PATH = "../results/RQ1/efficiency_summary.csv"
-TOP_N = 10 # top-N configurations to select
+TOP_N = 30 # top-N configurations to select
 EFFICIENCY_RESULTS = "../results/RQ1/top_configs.json"
 
 #----------------------------------------------#
