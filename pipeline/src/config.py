@@ -66,7 +66,7 @@ CLUSTER_DIR="../results/RQ1/clustering" # directory to save clustering scrips fo
 
 # RQ2 specific settings
 EFFICIENCY_PATH = "../results/RQ1/efficiency_summary.csv"
-TOP_N = 30 # top-N configurations to select
+TOP_N = 50 # top-N configurations to select
 EFFICIENCY_RESULTS = "../results/RQ1/top_configs.json"
 
 #----------------------------------------------#

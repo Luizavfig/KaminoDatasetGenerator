@@ -2,7 +2,7 @@ import json, os
 import pandas as pd
 from src.config import *
 
-def select_top_n_configs(n= TOP_N):
+def select_top_n_configs(n = TOP_N):
     print("Selecting top-N efficient configurations...")
     # Try to load cached results
     if os.path.exists(EFFICIENCY_RESULTS):

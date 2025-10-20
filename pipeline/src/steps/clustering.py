@@ -1,6 +1,7 @@
 import warnings, os, re, json
 warnings.filterwarnings("ignore") 
 import numpy as np
+import pandas as pd
 from sklearn.manifold import MDS
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -41,6 +42,8 @@ def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1
 
         # Cluster clones
         labels = _agglomerative_cluster(affinity_matrix, CODEBLEU_THRESHOLD)
+        # save_cluster_csv_from_labels( entry, labels, output_csv_path=os.path.join(CLUSTER_DIR, "all_clusters.csv"))
+
         if len(set(labels)) == 0:
             labels = [0] * len(clones)
 
@@ -311,3 +314,40 @@ def _np_converter(obj):
         return obj.tolist()
     else:
         raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
+
+def save_cluster_csv_from_labels(entry, labels, output_csv_path):
+    """
+    Save cluster information for a single entry (all clones) into a CSV.
+    This uses the already computed `labels`.
+    """
+    clones = entry.get("clones", [])
+    if not clones:
+        return
+
+    clusters = {}
+    clone_ids = [c["clone_id"] for c in clones]
+
+    # Group clone IDs by cluster
+    for cid, label in zip(clone_ids, labels):
+        clusters.setdefault(label, []).append(cid)
+
+    # Prepare rows
+    rows = []
+    for cluster_label, ids in clusters.items():
+        rows.append({
+            "entry_id": entry["id"],
+            "cluster_id": cluster_label,
+            "num_clones": len(ids),
+            "clone_ids": ";".join(ids)
+        })
+
+    # Save CSV
+    os.makedirs(os.path.dirname(output_csv_path), exist_ok=True)
+    df = pd.DataFrame(rows)
+    if os.path.exists(output_csv_path):
+        # append
+        df.to_csv(output_csv_path, mode="a", header=False, index=False)
+    else:
+        df.to_csv(output_csv_path, index=False)
+
+    print(f"✅ Saved clusters for entry {entry['id']} to {output_csv_path}")

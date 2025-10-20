@@ -116,6 +116,51 @@
         "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1,refac_3,refac_7']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -241,6 +286,61 @@
         "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -330,6 +430,31 @@
       {
         "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2,refac_6,refac_7']",
         "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -454,6 +579,26 @@
       },
       {
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
@@ -581,6 +726,76 @@
         "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_2,refac_6,refac_7']",
         "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -706,6 +921,76 @@
         "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_2,refac_6,refac_7']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -715,6 +1000,21 @@
       {
         "clone_id": "cot gpt-oss:20b-code 1 ['refac_1,refac_3,refac_7']",
         "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -816,6 +1116,66 @@
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -845,6 +1205,21 @@
       {
         "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -914,6 +1289,36 @@
       },
       {
         "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
       }
@@ -995,6 +1400,31 @@
       {
         "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
         "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -1136,6 +1566,96 @@
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -1249,6 +1769,56 @@
       },
       {
         "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
       }
@@ -1381,6 +1951,106 @@
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -1496,6 +2166,96 @@
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -1556,6 +2316,46 @@
         "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -1610,6 +2410,21 @@
       {
         "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
         "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -1726,6 +2541,36 @@
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -1776,6 +2621,46 @@
         "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_4,refac_5']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -1799,6 +2684,21 @@
       },
       {
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
@@ -1884,6 +2784,41 @@
       },
       {
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
@@ -1996,6 +2931,41 @@
         "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1,refac_4,refac_5']",
         "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -2100,6 +3070,66 @@
       {
         "clone_id": "cot deepseek-r1:14b-test 1 ['refac_1,refac_4,refac_5']",
         "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -2251,6 +3281,81 @@
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -2374,6 +3479,36 @@
       },
       {
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
@@ -2511,6 +3646,66 @@
         "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_4,refac_5']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -2599,6 +3794,66 @@
       },
       {
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
@@ -2716,6 +3971,76 @@
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -2794,6 +4119,81 @@
       },
       {
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
@@ -2919,6 +4319,61 @@
       },
       {
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
@@ -3071,6 +4526,86 @@
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -3191,6 +4726,46 @@
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -3269,6 +4844,41 @@
       },
       {
         "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
         "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
       }
@@ -3355,6 +4965,51 @@
       {
         "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1,refac_3,refac_7']",
         "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -3460,6 +5115,61 @@
       {
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -3581,6 +5291,61 @@
         "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -3660,6 +5425,76 @@
       {
         "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1,refac_3,refac_7']",
         "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -3741,6 +5576,51 @@
         "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_1,refac_3,refac_4']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -3799,6 +5679,16 @@
       },
       {
         "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
       }
@@ -3881,6 +5771,56 @@
         "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1,refac_4,refac_5']",
         "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -3945,6 +5885,21 @@
       {
         "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -4091,6 +6046,46 @@
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -4115,6 +6110,41 @@
       {
         "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
         "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -4231,6 +6261,66 @@
         "clone_id": "cot deepseek-r1:14b-complete 1 ['refac_2,refac_5,refac_6']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -4305,6 +6395,41 @@
       {
         "clone_id": "zero-shot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
         "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -4390,6 +6515,71 @@
       {
         "clone_id": "cot deepseek-r1:14b-test 1 ['refac_2,refac_4,refac_6']",
         "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -4519,6 +6709,76 @@
       },
       {
         "clone_id": "zero-shot llama3.1:latest-test 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
         "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
       }
@@ -4656,6 +6916,86 @@
         "clone_id": "zero-shot deepseek-r1:14b-complete 1 ['refac_1,refac_3,refac_7']",
         "model": "deepseek-r1:14b",
         "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_4,refac_5']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-complete 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-complete 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot llama3.1:latest-ast 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-ast 1 ['refac_2,refac_4,refac_6']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
       }
     ]
   },
@@ -4745,6 +7085,36 @@
       {
         "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_6,refac_7']",
         "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-ast 1 ['refac_2,refac_5,refac_6']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_3,refac_5,refac_7']",
+        "model": "llama3.1:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot llama3.1:latest-code 1 ['refac_1,refac_4,refac_5']",
+        "model": "llama3.1:latest",
         "reason": "did_not_meet_criteria"
       }
     ]
@@ -4849,6 +7219,51 @@
       },
       {
         "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot deepseek-r1:14b-code 1 ['refac_1,refac_3,refac_4']",
+        "model": "deepseek-r1:14b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gemma3:latest-test 1 ['refac_1,refac_3,refac_4']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gemma3:latest-test 1 ['refac_3,refac_5,refac_7']",
+        "model": "gemma3:latest",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_1,refac_3,refac_4']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_1,refac_3,refac_7']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-complete 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "zero-shot gpt-oss:20b-test 1 ['refac_2,refac_5,refac_6']",
+        "model": "gpt-oss:20b",
+        "reason": "did_not_meet_criteria"
+      },
+      {
+        "clone_id": "cot gpt-oss:20b-test 1 ['refac_2,refac_4,refac_6']",
         "model": "gpt-oss:20b",
         "reason": "did_not_meet_criteria"
       }
