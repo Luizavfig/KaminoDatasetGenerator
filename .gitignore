@@ -1,6 +1,5 @@
 notebooks/.env
 notebooks/src/__pycache__/__init__.cpython-313.pyc
 notebooks/src/__pycache__/clone_gen.cpython-313.pyc
-results/RQ3/finetuned_models/codet5-base/model.safetensors
-results/RQ3/finetuned_models/codebert-base/model.safetensors
 .env
+*.safetensors

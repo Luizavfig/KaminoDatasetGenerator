@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
@@ -29,8 +30,8 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=MERGED_CLONE_
 
     precision, recall, f1, sims = _evaluate_model(model, pairs, threshold=threshold)
     print(f"✅ Evaluation complete (threshold={threshold}):")
-    print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1-score: {f1:.4f}")
-
+    print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1-score: {f1:.4f}") 
+    _save_evaluation_to_csv(full_model_name, precision, recall, f1)
     return precision, recall, f1, sims
 
 def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
@@ -57,6 +58,28 @@ def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
     # Calculate metrics safely
     precision = TP / (TP + FP) if (TP + FP) > 0 else 0.0
     recall = TP / (TP + FN) if (TP + FN) > 0 else 0.0
-    f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
+    f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0 
 
     return precision, recall, f1, similarities
+
+def _save_evaluation_to_csv(full_model_name, precision, recall, f1, csv_path=CLONE_DETECTION_RESULTS):
+    csv_path = Path(csv_path)
+    
+    # Prepare metrics row
+    metrics_row = {
+        "model": full_model_name,
+        "precision": precision,
+        "recall": recall,
+        "f1": f1, 
+    }
+ 
+
+    # If file exists, append; otherwise, create new
+    if csv_path.exists():
+        df = pd.read_csv(csv_path)
+        df = pd.concat([df, pd.DataFrame([metrics_row])], ignore_index=True)
+    else:
+        df = pd.DataFrame([metrics_row])
+
+    df.to_csv(csv_path, index=False)
+    print(f"✅ Saved evaluation results to {csv_path}")
