@@ -62,22 +62,28 @@ def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
 
     return precision, recall, f1, similarities
 
-def _save_evaluation_to_csv(full_model_name, precision, recall, f1, csv_path=CLONE_DETECTION_RESULTS):
+def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold=DETECTION_THRESHOLD, csv_path=CLONE_DETECTION_RESULTS):
     csv_path = Path(csv_path)
     
     # Prepare metrics row
     metrics_row = {
         "model": full_model_name,
+        "threshold": threshold,
         "precision": precision,
         "recall": recall,
-        "f1": f1, 
+        "f1": f1,
     }
- 
 
-    # If file exists, append; otherwise, create new
     if csv_path.exists():
         df = pd.read_csv(csv_path)
-        df = pd.concat([df, pd.DataFrame([metrics_row])], ignore_index=True)
+        # Check if this model + threshold already exists
+        mask = (df["model"] == full_model_name) & (df["threshold"] == threshold)
+        if mask.any():
+            # Update existing row
+            df.loc[mask, ["precision", "recall", "f1"]] = [precision, recall, f1]
+        else:
+            # Append new row
+            df = pd.concat([df, pd.DataFrame([metrics_row])], ignore_index=True)
     else:
         df = pd.DataFrame([metrics_row])
 

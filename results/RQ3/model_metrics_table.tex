@@ -1,0 +1,24 @@
+\begin{table}[tb]
+\centering
+\footnotesize
+\caption{Performance metrics per model and threshold.}
+\begin{tabular}{lccrrr}
+\hline
+\textbf{Model} & \textbf{$\theta$} & \textbf{Type} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\hline
+\multirow{6}{*}{codebert} & 0.7 & \textit{d} & 0.509 & \textbf{0.987} & 0.672 \\
+& & \textit{f} & \textbf{0.986} & 0.819 & \textbf{0.895} \\
+ & 0.8 & \textit{d} & 0.509 & \textbf{0.980} & 0.670 \\
+& & \textit{f} & \textbf{0.986} & 0.726 & \textbf{0.836} \\
+ & 0.9 & \textit{d} & 0.505 & \textbf{0.965} & 0.663 \\
+& & \textit{f} & \textbf{0.988} & 0.528 & \textbf{0.688} \\
+\multirow{6}{*}{codet5} & 0.7 & \textit{d} & 0.581 & \textbf{0.872} & 0.698 \\
+& & \textit{f} & \textbf{0.992} & 0.782 & \textbf{0.875} \\
+ & 0.8 & \textit{d} & 0.820 & \textbf{0.718} & 0.765 \\
+& & \textit{f} & \textbf{0.990} & 0.678 & \textbf{0.805} \\
+ & 0.9 & \textit{d} & 0.993 & 0.249 & 0.398 \\
+& & \textit{f} & \textbf{0.995} & \textbf{0.304} & \textbf{0.466} \\
+\hline
+\end{tabular}
+\label{tab:RQ3}
+\end{table}
