@@ -3,7 +3,7 @@ from pathlib import Path
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from sentence_transformers import SentenceTransformer, InputExample, losses, evaluation, models
-from src.utils.helper_functions import _build_pairs
+from src.utils.helper_functions import build_pairs, hf_login
 from src.config import *
 
 def run_finetuning(
@@ -17,8 +17,8 @@ def run_finetuning(
 ):
     """Fine-tunes a code embedding model (e.g., CodeBERT, CodeT5) for semantic clone detection on a specific GPU."""
     warnings.filterwarnings("ignore")
+    hf_login()
     print(f"🚀 Fine-tuning model: {model_name}")
-
     # Force PyTorch to use the selected GPU
     if torch.cuda.is_available():
         device = torch.device(f"cuda:{gpu_id}")
@@ -35,7 +35,7 @@ def run_finetuning(
     # Load dataset and create train/val splits
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    pairs = _build_pairs(data)
+    pairs = build_pairs(data)
     train_pairs, val_pairs = train_test_split(pairs, test_size=0.2, random_state=42)
 
     train_samples = [InputExample(texts=[a, b], label=float(label)) for a, b, label in train_pairs]
@@ -75,9 +75,9 @@ def run_finetuning(
         evaluator=evaluator,
         epochs=epochs,
         warmup_steps=int(len(train_samples) * 0.1),
-        output_path=str(model_output_dir),
+        output_path=str(model_output_dir),  # SentenceTransformer will create folder
         show_progress_bar=True,
-        use_amp=True,  # mixed precision on GPU
+        use_amp=True,
     )
 
     # Save model only after fine-tuning

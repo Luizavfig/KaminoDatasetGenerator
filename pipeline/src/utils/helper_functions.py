@@ -1,4 +1,7 @@
-import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random
+import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os
+from huggingface_hub import login
+from pathlib import Path
+from dotenv import load_dotenv
 from codebleu import calc_codebleu
 from src.config import MAX_NEGATIVES
 
@@ -246,22 +249,46 @@ def calc_syntactic_codebleu(code1: str, code2: str, lang: str = "python") -> flo
     return float(syntactic_score)
 
 # Helper function to build positive and negative pairs
-def _build_pairs(data, max_negatives=MAX_NEGATIVES):
+import random
+
+def build_pairs(data, max_negatives=MAX_NEGATIVES, seed=42):
+    rng = random.Random(seed)  # deterministic random generator
     pairs = []
+
     for entry in data:
         clones = entry.get("clones", [])
         n = len(clones)
+
         # positive pairs
         for i in range(n):
             for j in range(i + 1, n):
                 pairs.append((clones[i]["code"], clones[j]["code"], 1))
+
         # negative pairs
         for i in range(min(n, max_negatives)):
-            neg_entry = random.choice([e for e in data if e != entry and e.get("clones")])
-            neg_clone = random.choice(neg_entry["clones"])
+            neg_candidates = [e for e in data if e != entry and e.get("clones")]
+            neg_entry = rng.choice(neg_candidates)
+            neg_clone = rng.choice(neg_entry["clones"])
             pairs.append((clones[i]["code"], neg_clone["code"], 0))
-    random.shuffle(pairs)
+
+    rng.shuffle(pairs)
     return pairs
+
+
+def hf_login():
+    # Load .env from the root of your project
+    root_env = Path(__file__).resolve().parents[3] / ".env"
+    if not root_env.exists():
+        raise FileNotFoundError(f".env file not found at {root_env}")
+    
+    load_dotenv(dotenv_path=root_env)
+    
+    token = os.getenv("HF_TOKEN")
+    if not token:
+        raise ValueError("HF_TOKEN not found in .env")
+    
+    login(token=token)
+    print("✅ Hugging Face login successful!")
 
 
 def startup():

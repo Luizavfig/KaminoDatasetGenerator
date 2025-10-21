@@ -1,11 +1,12 @@
 from datasets import (load_dataset, DatasetDict, IterableDatasetDict, Dataset, IterableDataset)
 import json, os, re, random, ast
 from typing import Union
-from ..utils.helper_functions import (validate_with_unittest, install_package)
+from ..utils.helper_functions import (validate_with_unittest, install_package, hf_login)
 from src.config import *
 
 def pre_process_data():
     print("Starting normalization process...")
+    hf_login()
     if(DATASET=="bigcode/bigcodebench"):
         normalized_data = _mark_hard_easy(DATASET,f"{DATASET}-hard")
     else:
