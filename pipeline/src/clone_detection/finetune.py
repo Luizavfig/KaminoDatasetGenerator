@@ -87,18 +87,15 @@ def run_finetuning(
     return str(model_output_dir)
 
 
-def merge_datasets(
-    dataset1_path=FINAL_DATASET,
-    dataset2_path=FINAL_DATASET_RQ2,
-    train_output_path=MERGED_CLONE_DATASET_TRAIN,
-    val_output_path=MERGED_CLONE_DATASET_VAL,
-    split_ratio=0.8,
-):
+def merge_datasets(dataset1_path=FINAL_DATASET, dataset2_path=FINAL_DATASET_RQ2, train_output_path=MERGED_CLONE_DATASET_TRAIN,
+    val_output_path=MERGED_CLONE_DATASET_VAL, split_ratio=0.8):
     """Merge two JSON datasets and split into train/val sets (default 80/20)."""
     merged = []
     for path in [dataset1_path, dataset2_path]:
         with open(path, "r", encoding="utf-8") as f:
-            merged.extend(json.load(f))
+            data = json.load(f)
+            valid_entries = [entry for entry in data if len(entry.get("clones", [])) > 1] # entries we only one clone are ignored
+            merged.extend(valid_entries)
 
     train_data, val_data = train_test_split(merged, test_size=1 - split_ratio, random_state=42)
 

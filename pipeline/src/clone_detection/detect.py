@@ -8,7 +8,7 @@ from src.config import *
 
 EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
 
-def run_clone_evaluation(model_path, full_model_name, dataset_path=MERGED_CLONE_DATASET_VAL,                          max_negatives=MAX_NEGATIVES, threshold=DETECTION_THRESHOLD):
+def run_clone_evaluation(model_path, full_model_name, dataset_path=MERGED_CLONE_DATASET_VAL, threshold=DETECTION_THRESHOLD):
     model_dir = Path(model_path)
     model_folder_name = model_dir.name
     print(f"Checking fine-tuned model: {model_folder_name}")
@@ -25,8 +25,7 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=MERGED_CLONE_
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    pairs = build_pairs(data, max_negatives=max_negatives)
-    print(f"Built {len(pairs)} code pairs for evaluation")
+    pairs = build_pairs(data)
 
     precision, recall, f1, sims = _evaluate_model(model, pairs, threshold=threshold)
     print(f"✅ Evaluation complete (threshold={threshold}):")

@@ -1,9 +1,8 @@
-import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os
+import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os, math
 from huggingface_hub import login
 from pathlib import Path
 from dotenv import load_dotenv
-from codebleu import calc_codebleu
-from src.config import MAX_NEGATIVES
+from codebleu import calc_codebleu 
 
 class TrackingTestResult(unittest.TextTestResult):
     def __init__(self, *args, **kwargs):
@@ -251,29 +250,80 @@ def calc_syntactic_codebleu(code1: str, code2: str, lang: str = "python") -> flo
 # Helper function to build positive and negative pairs
 import random
 
-def build_pairs(data, max_negatives=MAX_NEGATIVES, seed=42):
-    rng = random.Random(seed)  # deterministic random generator
+def build_pairs(data, seed=42, target_ratio=1.0):
+    """
+    Build positive and negative code pairs using _calculate_max_negatives for balancing.
+    """
+    rng = random.Random(seed)
     pairs = []
 
+    #  Positive pairs 
+    clones_per_entry = []
     for entry in data:
         clones = entry.get("clones", [])
         n = len(clones)
+        if n < 2:
+            clones_per_entry.append([]) # ignore entries with less than 2 clones
+            continue
 
-        # positive pairs
         for i in range(n):
             for j in range(i + 1, n):
-                pairs.append((clones[i]["code"], clones[j]["code"], 1))
+                pairs.append((
+                    remove_function_signature(clones[i]["code"]),
+                    remove_function_signature(clones[j]["code"]), 
+                    1
+                ))
+        clones_per_entry.append(clones)
 
-        # negative pairs
-        for i in range(min(n, max_negatives)):
-            neg_candidates = [e for e in data if e != entry and e.get("clones")]
-            neg_entry = rng.choice(neg_candidates)
-            neg_clone = rng.choice(neg_entry["clones"])
-            pairs.append((clones[i]["code"], neg_clone["code"], 0))
+    #  Compute total negatives needed 
+    total_negatives_needed = _calculate_max_negatives(data, target_ratio=target_ratio)
+
+    #  generate negatives 
+    generated_negatives = 0
+    total_entries = len(data)
+    while generated_negatives < total_negatives_needed:
+        entry_idx = rng.randrange(total_entries)
+        clones = clones_per_entry[entry_idx]
+        if not clones:
+            continue
+
+        pos_clone = rng.choice(clones)
+
+        neg_candidates = [e for i, e in enumerate(clones_per_entry) if i != entry_idx and e]
+        if not neg_candidates:
+            continue
+
+        neg_entry = rng.choice(neg_candidates)
+        neg_clone = rng.choice(neg_entry)
+
+        pairs.append((
+            remove_function_signature(pos_clone["code"]),
+            remove_function_signature(neg_clone["code"]),
+            0
+        ))
+        generated_negatives += 1
 
     rng.shuffle(pairs)
+    positives = sum(1 for _, _, l in pairs if l == 1)
+    negatives = sum(1 for _, _, l in pairs if l == 0)
+    print(f"Built {len(pairs)} code pairs (Positives: {positives}, Negatives: {negatives})")
     return pairs
 
+
+def _calculate_max_negatives(data, target_ratio=1.0):
+    """
+    Compute the total number of negative pairs needed to roughly balance positives. 
+    """
+    total_positives = 0
+    for entry in data:
+        clones = entry.get("clones", [])
+        n = len(clones)
+        if n < 2:
+            continue
+        total_positives += n * (n - 1) // 2  # n choose 2
+
+    total_negatives = math.ceil(total_positives * target_ratio) 
+    return total_negatives
 
 def hf_login():
     # Load .env from the root of your project
