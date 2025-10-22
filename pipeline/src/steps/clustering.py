@@ -1,11 +1,7 @@
-import warnings, os, re, json
+import warnings, os, json
 warnings.filterwarnings("ignore") 
 import numpy as np
-import pandas as pd
-from sklearn.manifold import MDS
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-from matplotlib.colors import Normalize
+import pandas as pd    
 from scipy.cluster.hierarchy import linkage, fcluster
 from scipy.spatial.distance import squareform
 from statistics import mean, stdev
@@ -37,7 +33,7 @@ def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1
 
         # Cluster clones
         labels = _agglomerative_cluster(affinity_matrix, CODEBLEU_THRESHOLD)
-        save_cluster_csv_from_labels( entry, labels, output_csv_path=os.path.join(CLUSTER_DIR, "all_clusters.csv"))
+        _save_cluster_csv_from_labels( entry, labels, output_csv_path=os.path.join(CLUSTER_DIR, "all_clusters.csv"))
 
         if len(set(labels)) == 0:
             labels = [0] * len(clones)
@@ -113,67 +109,7 @@ def _agglomerative_cluster(affinity_matrix, similarity_threshold):
     labels = fcluster(Z, t=1-similarity_threshold, criterion='distance')
     labels -= 1  # convert to 0-based labels
     return labels
-
-
-def cluster_and_plot(entry, similarity_threshold=CODEBLEU_THRESHOLD, output_dir=CLUSTER_DIR): 
-    """Cluster and plot clones for visualization"""
-    affinity_matrix, clone_ids = _build_affinity_matrix(entry)  
-    labels = _agglomerative_cluster(affinity_matrix, similarity_threshold)
-    _save_clusters_as_files(entry, labels, output_dir) 
-    _save_representatives(entry, labels, output_dir)   
-    dissimilarity = 1 - affinity_matrix
-    mds = MDS(n_components=2, dissimilarity='precomputed', random_state=42, n_init=1, max_iter=100)
-    points_2d = mds.fit_transform(dissimilarity)
-
-    _plot_clusters_mds(points_2d, labels, entry['id'])
-
-
-def _plot_clusters_mds(points_2d, labels, entry_id):
-    n_clusters = len(np.unique(labels))
-    colormap = cm.get_cmap('viridis')
-
-    # Map labels to gradient
-    colors = [colormap(label / max(1, n_clusters - 1)) for label in labels]
-
-    fig, ax = plt.subplots(figsize=(8,6))
-    scatter = ax.scatter(points_2d[:,0], points_2d[:,1], c=colors, s=100)
-    
-    ax.set_title(f"Clone Clusters for Entry: {entry_id} (n_clusters={n_clusters})")
-    ax.set_xlabel("MDS dim 1")
-    ax.set_ylabel("MDS dim 2")
-
-    # Create colorbar explicitly
-    sm = plt.cm.ScalarMappable(cmap=colormap, norm=Normalize(vmin=0, vmax=n_clusters-1))
-    sm.set_array([]) 
-    cbar = fig.colorbar(sm, ax=ax, ticks=range(n_clusters))
-    cbar.set_label('Cluster')
-
-    plt.show()
-
-def _save_clusters_as_files(entry, labels, output_dir=CLUSTER_DIR):
-    """
-    Saves all clones from each cluster into a single file.
-    """
-    
-    clones = entry["clones"]
-    clone_ids = [clone["clone_id"] for clone in clones]
-    unique_labels = np.unique(labels)
-
-    entry_dir = os.path.join(f"{output_dir}/clusters", entry["id"])
-    os.makedirs(entry_dir, exist_ok=True)
-
-    for cluster_label in unique_labels:
-        cluster_indices = [i for i, label in enumerate(labels) if label == cluster_label]
-        cluster_file_path = os.path.join(entry_dir, f"cluster_{cluster_label}.py")
-
-        with open(cluster_file_path, "w", encoding="utf-8") as f:
-            for i in cluster_indices:
-                clone_code = clones[i].get("code", "")
-                f.write(f"# Clone {clone_ids[i]}\n")
-                f.write(clone_code.strip() + "\n\n")
-
-    print(f"Saved clusters for entry {entry['id']} in {entry_dir}")
-
+ 
 def _select_representative_clones(entry, labels):
     """
     Select one representative clone per cluster (the medoid), based on highest average CodeBLEU similarity to other clones in the cluster.
@@ -208,27 +144,6 @@ def _select_representative_clones(entry, labels):
 
     return representatives
 
-def _sanitize_id(entry_id: str) -> str:
-    """Replaces any non-alphanumeric or separator character with underscore"""
-    return re.sub(r"[^\w\-]", "_", entry_id) 
-
-def _save_representatives(entry, labels, output_dir=CLUSTER_DIR):
-    reps = _select_representative_clones(entry, labels)
-
-    safe_id = _sanitize_id(entry["id"])
-    entry_dir = os.path.join(output_dir, "representatives", safe_id)
-    os.makedirs(entry_dir, exist_ok=True)
-
-    file_path = os.path.join(entry_dir, f"{safe_id}_representatives.py")
-    with open(file_path, "w", encoding="utf-8") as f:
-        for cluster_label, cid, code in reps:
-            f.write(f"# Cluster {cluster_label} - Representative clone {cid}\n")
-            f.write(code.strip() + "\n\n")
-
-    print(f"Saved all representatives for entry {entry['id']} in {file_path}")
-
-
-
 def _build_affinity_matrix(entry):
     """
     Build the CodeBLEU-based affinity (similarity) matrix for clones in an entry
@@ -257,7 +172,7 @@ def _np_converter(obj):
     else:
         raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
-def save_cluster_csv_from_labels(entry, labels, output_csv_path):
+def _save_cluster_csv_from_labels(entry, labels, output_csv_path):
     """ 
     Save cluster information for a single entry (all clones) into a CSV. This uses the already computed `labels`.
     """
@@ -291,3 +206,59 @@ def save_cluster_csv_from_labels(entry, labels, output_csv_path):
         df.to_csv(output_csv_path, index=False)
 
     print(f"✅ Saved clusters for entry {entry['id']} to {output_csv_path}")
+ 
+
+def process_clusters_for_entry(entry, clusters_dir = CLUSTER_DIR, representatives_json=FINAL_DATASET):
+    """
+    Process and saves files of clusters and representatives for a single entry. 
+    """
+    entry_id = entry["id"]
+    os.makedirs(clusters_dir, exist_ok=True) 
+    # Load clusters CSV with proper quoting
+    df = pd.read_csv(f"{clusters_dir}/all_clusters.csv", dtype=str, quotechar='"', engine='python')
+    
+    # Filter only clusters for this entry
+    df_entry = df[df["entry_id"] == entry_id]
+    if df_entry.empty:
+        print(f"No clusters found for entry {entry_id}")
+        return
+    
+    # Build clone lookup: clone_id -> code
+    clone_lookup = {c["clone_id"]: c["code"] for c in entry.get("clones", [])}
+
+    # Generate Python files per cluster
+    clusters_dir = os.path.join(clusters_dir, "clusters", entry_id.replace("/", "_"))
+    os.makedirs(clusters_dir, exist_ok=True)
+
+    for _, row in df_entry.iterrows():
+        cluster_id = row["cluster_id"]
+        clone_ids_str = row["clone_ids"]
+        # Take full clone_id strings
+        clone_ids = [c.strip() for c in clone_ids_str.split(";")]
+        
+        cluster_file = os.path.join(clusters_dir, f"cluster_{cluster_id}.py")
+        with open(cluster_file, "w", encoding="utf-8") as f:
+            for cid in clone_ids:
+                code = clone_lookup.get(cid, "")
+                f.write(f"# Clone {cid}\n")
+                f.write(code.strip() + "\n\n")
+        print(f"Saved cluster {cluster_id} for {entry_id} -> {cluster_file}")
+
+    # Load representatives JSON
+    with open(representatives_json, "r", encoding="utf-8") as f:
+        reps_data = json.load(f)
+    
+    rep_entry = next((e for e in reps_data if e["id"] == entry_id), None)
+    if rep_entry:
+        reps_dir = os.path.join(clusters_dir, "representatives")
+        os.makedirs(reps_dir, exist_ok=True)
+        reps_file = os.path.join(reps_dir, f"{entry_id.replace('/', '_')}_representatives.py")
+        with open(reps_file, "w", encoding="utf-8") as f:
+            for clone in rep_entry.get("clones", []):
+                cluster = clone.get("cluster")
+                cid = clone.get("clone_id")
+                code = clone.get("code", "")
+                f.write(f"# Cluster {cluster} - Representative clone {cid}\n")
+                f.write(code.strip() + "\n\n")
+        print(f"Saved representatives for {entry_id} -> {reps_file}")
+
