@@ -2,7 +2,7 @@ from src.config import *
 from src.steps import (normalization as nz, clone_gen as cg, filtering as fl, reprompt as rp,clustering as cl)
 from src.utils.efficiency import select_top_n_configs
 from src.utils.helper_functions import startup
-def main():
+def main(): # RQ2 evaluation
     startup()
     # Step 1: Normalization (not needed)
 

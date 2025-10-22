@@ -3,9 +3,7 @@ from pathlib import Path
 from src.clone_detection.finetune import merge_datasets
 from src.clone_detection.detect import run_clone_evaluation
 from src.config import *
-
-# Files that must exist for a trained SentenceTransformer model
-EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
+ # RQ3 evaluation 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate fine-tuned clone detection models")

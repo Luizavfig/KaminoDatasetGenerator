@@ -20,7 +20,7 @@ def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH
     results = _load_existing_results(filtered_path_codebleu)
     sample_entries = results[:N_ENTRIES] if N_ENTRIES else results
 
-    # Load previously reprompted clones (skip them)
+    # Load previously reprompted clones
     if os.path.exists(reprompt_path):
         with open(reprompt_path, "r", encoding="utf-8") as f:
             reprompted_data = json.load(f)
@@ -28,7 +28,7 @@ def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH
     else:
         reprompted_map = set()
 
-    # Load previously failed/skipped clones (skip them too)
+    # Load previously failed/skipped clones  
     if os.path.exists(failed_reprompt_path):
         with open(failed_reprompt_path, "r", encoding="utf-8") as f:
             failed_data = json.load(f)
@@ -75,7 +75,7 @@ def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH
 
     print(f"Considering {total_candidates} candidate clones (including skipped ones)")
 
-    #  Process with a proper progress bar 
+   
     pbar = tqdm(total=total_candidates, desc="Processing clones")
     futures = []
 
@@ -110,13 +110,12 @@ def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH
             future.add_done_callback(lambda _: pbar.update(1))
             futures.append(future)
 
-        # Wait for all tasks to finish (and propagate exceptions)
+        # Wait for all tasks to finish (propagate exceptions)
         for f in as_completed(futures):
             f.result()
 
     pbar.close()
     print("✅✅ Reprompting completed.")
-
 
 
 def _calc_test_percent(test_results: dict) -> float:
@@ -193,8 +192,7 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
     params = entry.get("metadata", {}).get("params", [])
     return_text = entry.get("metadata", {}).get("return_text", [])
     tests_snippet = "\n".join(tests_list) if tests_list else ""
-
-    # Select model
+ 
     available_models = [m for m in models if m != original_model and m not in used_models]
     if not available_models:
         raise RuntimeError(f"No alternative model available for {clone_id}.")
@@ -248,9 +246,7 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
     except Exception as e:
         print(f"❌ Error reprompting {clone_id}: {e}")
         clone["reprompt"] = f"{n} error, {reprompt_model}"
-        return clone, ["ERROR"], 1.0
-
-
+        return clone, ["ERROR"], 1.0 
 
 
 def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_path, failed_reprompt_path=FAILED_REPROMPT_PATH):
@@ -275,7 +271,7 @@ def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_pat
                 entry=entry,
                 tests_list=tests_list,
                 models=models,
-                used_models=[],  # don't track used inside _reprompt_clone here
+                used_models=[], 
                 original_model=original_model,
                 LLM_OPTS=LLM_OPTS,
                 n=n,
@@ -284,7 +280,7 @@ def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_pat
             final_codebleu = codebleu
             final_failing_tests = failing_tests
 
-            # Success: save and return
+            # Save and return
             if not failing_tests and codebleu <= CODEBLEU_THRESHOLD:
                 _update_results(entry_id, clone, out_path)
                 return
@@ -296,19 +292,14 @@ def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_pat
             # failing tests
             if failing_tests:
                 print(f"❌ Clone still failing {len(failing_tests)} tests (retry {n}/{MAX_RETRIES})")
-    # All retries and models exhausted → log
+    # All retries and models exhausted
     print(f"❌ Clone discarded — tests={'fail' if final_failing_tests else 'pass'} CodeBLEU={final_codebleu:.4f}")
     _log_skipped_clone(entry_id, clone, failed_reprompt_path)
 
 def _update_results(entry_id, clone, out_path):
     """
-    Update the results file with a single clone.
-    - If the file doesn't exist, create it.
-    - If the entry exists, update the clone by clone_id.
-    - Otherwise, append the entry with this clone.
-    """ 
-
-    # Load existing results or start empty
+    Update the results file with a single clone. If the file doesn't exist, create it. If the entry exists, update the clone by clone_id. Otherwise, append the entry with this clone.
+    """  
     if os.path.exists(out_path):
         with open(out_path, "r", encoding="utf-8") as f:
             saved_results = json.load(f)
@@ -332,8 +323,7 @@ def _update_results(entry_id, clone, out_path):
             "id": entry_id,
             "clones": [clone]
         })
-
-    # Save back to file
+ 
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(saved_results, f, indent=2)

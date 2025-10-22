@@ -26,21 +26,16 @@ def _normalize(dataset_split):
             doc_struct = json.loads(doc_struct_raw)
         except json.JSONDecodeError:
             doc_struct = {}
-
-        # Extract description
+ 
         description_list = doc_struct.get("description", [])
         description_text = " ".join(description_list)
 
-        # Extract return
         returns_list = doc_struct.get("returns", [])
         return_text = " ".join(returns_list)
-
-        
-        # Extract params
+ 
         params_list = doc_struct.get("params", [])
         params = " ".join(params_list)
-
-        # Original code
+ 
         original_code = entry.get("canonical_solution", "")
 
         # Append part of complete_prompt until """ or '''
@@ -68,8 +63,7 @@ def _normalize(dataset_split):
 
 
 def _normalize_dataset(dataset):
-    ds = load_dataset(dataset)
-
+    ds = load_dataset(dataset) 
     # Explicitly narrow types before accessing `.keys()`
     if isinstance(ds, (DatasetDict, IterableDatasetDict)):
         split_name = list(ds.keys())[-1]
@@ -92,21 +86,19 @@ def _normalize_dataset(dataset):
 def _mark_hard_easy(dataset_1: str, dataset_2: str):
     _normalize_dataset(dataset_1)
 
-    ds_hard: Union[DatasetDict, IterableDatasetDict, Dataset, IterableDataset] = load_dataset(dataset_2)
-
+    ds_hard: Union[DatasetDict, IterableDatasetDict, Dataset, IterableDataset] = load_dataset(dataset_2) 
     # Narrow the type before using `.keys()` / indexing
     if isinstance(ds_hard, (DatasetDict, IterableDatasetDict)):
         # get a NamedSplit or str from the keys() view, then cast to str
         split_key = list(ds_hard.keys())[-1]
-        split_name_hard: str = str(split_key)               # <- explicit str narrow
-        dataset_hard_split = ds_hard[split_name_hard]      # now __getitem__ receives str
-    elif isinstance(ds_hard, (Dataset, IterableDataset)):
-        # single-split dataset
+        split_name_hard: str = str(split_key)               
+        dataset_hard_split = ds_hard[split_name_hard]       
+    elif isinstance(ds_hard, (Dataset, IterableDataset)): 
         dataset_hard_split = ds_hard
     else:
         raise TypeError(f"Unexpected dataset type: {type(ds_hard)}")
 
-    # Load normalized_data that was written by _normalize_dataset
+    # Load normalized_data 
     with open(DATASET_PATH, "r", encoding="utf-8") as f:
         normalized_data = json.load(f)
 
@@ -119,34 +111,28 @@ def _mark_hard_easy(dataset_1: str, dataset_2: str):
     else:
         raise KeyError("Neither 'task_id' nor 'id' column found in dataset_2")
 
-
-    # dataset_hard_split[id_col] returns the whole column (list-like) — ensure we treat them as strings
     hard_ids = set(str(x) for x in dataset_hard_split[id_col])
 
     for entry in normalized_data:
         entry_id = entry.get("id", "")
-        # Normalize id to the numeric suffix if format like "BigCodeBench/25"
+        # Normalize id to the numeric suffix if format like "BigCodeBench/number"
         numeric_id = entry_id.split("/")[-1] if "/" in entry_id else entry_id
-
-        # Compare using strings only (both numeric_id and entry_id cast to str)
         if str(numeric_id) in hard_ids or str(entry_id) in hard_ids:
             split_value = "hard"
         else:
             split_value = "easy"
 
-        # Ensure metadata exists
         if "metadata" not in entry or not isinstance(entry["metadata"], dict):
             entry["metadata"] = {}
         entry["metadata"]["split"] = split_value
 
-    # Save updated JSON file
     with open(DATASET_PATH, "w", encoding="utf-8") as f:
         json.dump(normalized_data, f, indent=2, ensure_ascii=False)
 
     return normalized_data
      
 
-def _install_missing_packages():    # installing missing packages 
+def _install_missing_packages():  
     with open(DATASET_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
     packages = extract_required_packages(data)
@@ -168,8 +154,7 @@ def extract_required_packages(dataset):
     """
     packages = set()
     for entry in dataset:
-        libs_val = entry.get("metadata", {}).get("libs", [])
-        # Convert string representation of a list to an actual list
+        libs_val = entry.get("metadata", {}).get("libs", []) 
         if isinstance(libs_val, str):
             try:
                 libs_val = ast.literal_eval(libs_val)
@@ -179,8 +164,9 @@ def extract_required_packages(dataset):
             packages.update(libs_val)
     return packages 
 
-# to run the original tests
+
 def _run_original_tests(normalized_data):  
+    """Runs the tests from BigCodeBench on the original_code"""
     if os.path.exists(TESTS_PATH):
         with open(TESTS_PATH, "r", encoding="utf-8") as f:
             try:
@@ -232,6 +218,7 @@ def _analyze_test_results(data):
     return summary
  
 def _filter_dataset_easy(original_dataset_file, output_file): 
+    """Filter dataset based on split and on passing tests"""
     with open(original_dataset_file, "r", encoding="utf-8") as f:
         dataset = json.load(f)
 
@@ -245,10 +232,10 @@ def _filter_dataset_easy(original_dataset_file, output_file):
 
         results = test_results[entry_id].values()
 
-        # Condition 1: all tests passed
+        # All tests passed
         all_tests_passed = all(r == "PASS" for r in results)
 
-        # Condition 2: "split" field in metadata equals "easy"
+        # "split" field in metadata equals "easy"
         is_easy_split = entry.get("metadata", {}).get("split") == "easy"
 
         # Keep only if both conditions hold
@@ -270,19 +257,9 @@ def _print_test_summary():
     print(json.dumps(summary, indent=2))
 
 
-
-
-
 def _sample_random_entries(input_file, experiment_output_file, extension_output_file, sample_size, seed=42):
     """
-    Extracts two disjoint random samples of equal size from the dataset.
-    Sampling is reproducible with the given seed.
-    Args:
-        input_file (str): Path to the input JSON file.
-        experiment_output_file (str): Path to save the first sampled dataset.
-        extension_output_file (str): Path to save the second sampled dataset.
-        sample_size (int): Number of entries in each sample.
-        seed (int): Random seed for reproducibility.
+    Extracts two disjoint random samples of equal size from the dataset. Sampling is reproducible with the given seed.
     """
     with open(input_file, "r", encoding="utf-8") as f:
         dataset = json.load(f)
@@ -311,8 +288,7 @@ def _sample_random_entries(input_file, experiment_output_file, extension_output_
 
 def _id_numeric_key(id_str: str):
     """
-    Return a tuple (prefix, number) to sort naturally by numeric suffix.
-    If no trailing number can be found, return (id_str, +inf) so those appear after numeric ones.
+    Return a tuple (prefix, number) to sort naturally by numeric suffix. 
     """
     if not id_str:
         return ("", float("inf"))

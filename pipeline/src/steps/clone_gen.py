@@ -33,7 +33,7 @@ def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGI
     for model in all_models:
         for strategy in strategies:
             for context in contexts:
-                for _, refac_tuple in enumerate(subset_combinations, 1):  # _ ignores the index
+                for _, refac_tuple in enumerate(subset_combinations, 1): 
                     selected_refacs = list(refac_tuple)
                     combo_key = (model, strategy, context, tuple(sorted(selected_refacs)))
                     if combo_key in used_combinations:
@@ -56,16 +56,14 @@ def run_efficient_generation(top_configs, out_path=OUT_PATH, sample_path=SAMPLE_
     """
     Run clone generation only for the most efficient configurations (RQ2).
     Expects a JSON file with entries containing:
-        model, context, refac, strategy
-    Saves results to ../results/RQ2/
+        model, context, refac, strategy 
     """
     print(f"Starting efficient generation with {TOP_N} Top configurations.")
     if(out_path.__contains__("RQ1")):
         print("⚠️ Config error: RQ2 generation requires RQ2 paths. Please check your config.py settings. ABORTING. ⚠️")
         sys.exit(1) 
     
-    test_LLM_connection()
-    # Prepare dataset
+    test_LLM_connection() 
     if not _has_ast_field(dataset_path=sample_path):
         _add_generated_fields(dataset_path=sample_path, n_entries=N_ENTRIES)
 
@@ -79,7 +77,7 @@ def run_efficient_generation(top_configs, out_path=OUT_PATH, sample_path=SAMPLE_
         strategy = cfg["strategy"]
         refacs = cfg["refac"]
 
-        # Convert stringified lists back to Python lists if needed
+        
         if isinstance(refacs, str):
             try:
                 refacs = ast.literal_eval(refacs)
@@ -109,10 +107,7 @@ def run_efficient_generation(top_configs, out_path=OUT_PATH, sample_path=SAMPLE_
 
 def call_ollama_chat(messages, model, options):
     """
-    Call Ollama-native models using the URL from the correct config file.
-       
-    Returns:
-    - str: assistant content
+    Call Ollama-native models using the URL from the correct config file. 
     """
 
     # Pick the right config file
@@ -143,12 +138,7 @@ def call_ollama_chat(messages, model, options):
 
     raise ValueError(f"Unexpected response format: {data}") 
 
-def _extract_python_code(text: str) -> str:
-    """
-    Extract the first ```python ... ``` fenced block;
-    if none found, return the whole text up to the first ```...```.
-    If extra text follows after the code block, it will be ignored.
-    """
+def _extract_python_code(text: str) -> str: 
     # Case 1: explicit python fence
     m = re.search(r"```python\s*(.*?)```", text, flags=re.S)
     if m:
@@ -175,8 +165,7 @@ def _force_function_name(code: str, expected=FUNCTION_NAME):
     """
     Ensure the function is named `expected`.
     If the model wrote a different name, rename the top-level function.
-    """
-    
+    """  
     try:
         tree = ast.parse(textwrap.dedent(code))
         for node in tree.body:
@@ -192,16 +181,13 @@ def _generate_clones(messages, model, options, expected_func_name):
     """
     Call Ollama chat with the given messages, extract Python code, 
     and ensure the function has the expected name.
-    """
-    
-    raw = call_ollama_chat(messages, model, options)
-
-    # Extract Python code
+    """ 
+    raw = call_ollama_chat(messages, model, options) 
     code = _extract_python_code(raw)
     if code:
         code = _force_function_name(code, expected_func_name)
         code = re.sub(r"```python\s*$", "", code) # Gpt sometimes omits the closing ```
-        return code  # only return if we actually got code
+        return code 
     # If all retries fail, return None explicitly
     return "None"
 
@@ -234,17 +220,14 @@ def _code_to_ast(code):
     try:
         code_str = code.encode().decode("unicode_escape")
         tree = ast.parse(code_str)
-        return ast.dump(tree, indent=2, annotate_fields=True, include_attributes=False)
-    
+        return ast.dump(tree, indent=2, annotate_fields=True, include_attributes=False)    
     except SyntaxError as e:
         return f"Invalid Python code: {e}" 
 
 
 def _add_generated_fields(dataset_path, n_entries):
     """
-    Loads dataset, generates, 'uml', and 'ast' fields
-    for each entry, stores them inside a 'generated_data' sub-dictionary,
-    and saves the updated dataset to the same file.
+    Loads dataset, generates fields for each entry, stores them inside a 'metadata' sub-dictionary, and saves the updated dataset to the same file.
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -255,46 +238,21 @@ def _add_generated_fields(dataset_path, n_entries):
         try:
             # Generate fields 
             ast = _code_to_ast(code) 
-            entry["metadata"]["ast"] = ast.strip()
-
-
+            entry["metadata"]["ast"] = ast.strip() 
         except Exception as e:
             print(f"  Error generating for {entry['id']}: {e}")
             entry["metadata"] = {
                 "ast": "",  
             }
-
     # Save back to file
     with open(dataset_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
-
     print(f"\n✅ Updated dataset with 'metadata' fields in {dataset_path}") 
 
-def _run_clone_generation(
-    dataset_path,
-    out_path,
-    n_entries,
-    clones_per_entry,
-    ollama_model,
-    llm_opts,
-    context,  
-    refacs,
-    strategy="zero-shot",
-    context_builders=context_builders # pass as parameter to change them
-):
+def _run_clone_generation(dataset_path, out_path, n_entries, clones_per_entry, ollama_model, llm_opts, context, refacs,
+    strategy="zero-shot", context_builders=context_builders):
     """
     Run clone generation for dataset entries.
-
-    Args:
-        dataset_path: Path to dataset JSON.
-        out_path: Where to save results.
-        n_entries: Number of entries to process.
-        clones_per_entry: Number of clones per entry.
-        ollama_model: Model name.
-        llm_opts: Dict of LLM options.
-        context: changes prompt strategy. 
-        strategy: prompt strategy (default: "zero-shot")
-        context_builders: dict mapping context -> callable returning (system_prompt, user_prompt)
     """
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -412,12 +370,6 @@ def _load_used_combinations(out_path):
     """
     Loads existing dataset and extracts all unique combinations of
     (model, strategy, context, refacs).
-
-    Args:
-        out_path (str): Path to the output JSON file.
-
-    Returns:
-        set: A set of tuples (model, strategy, context, tuple(sorted(refacs))).
     """
     used_combinations = set()
 

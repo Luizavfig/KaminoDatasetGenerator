@@ -56,27 +56,7 @@ REFACTORING = {
  )
 }
 
-def build_user_prompt_test(
- strategy: str, 
- description: str,
- tests_snippet: str,
- params: str,
- return_text: str, 
- refacs: list[str],
-) -> str:
- """
- 
- Build a user prompt to generate type 4 clones.
-
- Args:
- original_body: The body of the original function (without 'def' line).
- description: Short textual description of the function's behavior.
- libs: List of allowed/expected libraries.
- tests_snippet: Excerpt of unit tests for the function.
-
- Returns:
- A formatted string prompt for the LLM.
- """
+def build_user_prompt_test(strategy: str, description: str, tests_snippet: str, params: str, return_text: str, refacs: list[str]) -> str:
  return f"""
 
 You will be shown:
@@ -101,28 +81,7 @@ Your task:
 {STRATEGIES[strategy]}
 """
 
-
-
-def build_user_prompt_complete(
- strategy: str,
- original_body: str,
- description: str, 
- tests_snippet: str, 
- refacs: list[str],
-) -> str:
- """
- 
- Build a user prompt to generate type 4 clones.
-
- Args:
- original_body: The body of the original function (without 'def' line).
- description: Short textual description of the function's behavior.
- libs: List of allowed/expected libraries.
- tests_snippet: Excerpt of unit tests for the function.
-
- Returns:
- A formatted string prompt for the LLM.
- """
+def build_user_prompt_complete( strategy: str, original_body: str, description: str, tests_snippet: str, refacs: list[str]) -> str:
  return f"""
 
 You will be shown:
@@ -148,20 +107,7 @@ Your task:
 {STRATEGIES[strategy]}
 """
 
-def build_user_prompt_code(
- strategy: str,
- original_body: str,
- description: str,
- params: str,
- return_text: str,
- refacs: list[str],
-) -> str:
- """
- Build a user prompt to generate type 4 clones.
- Returns:
- A formatted string prompt for the LLM.
- """
-
+def build_user_prompt_code(strategy: str, original_body: str, description: str, params: str, return_text: str, refacs: list[str]) -> str:
  return f"""
 
 You will be shown:
@@ -186,15 +132,7 @@ Your task:
 {STRATEGIES[strategy]}
 """
 
-
 def build_user_prompt_ast(strategy: str, gen_ast: str, description: str, params: str, return_text: str,refacs: list[str])-> str:
- """
- Build a user prompt for the refactoring LLM with AST.
- Args:
- the description of the task
- Returns:
- A formatted string prompt for the LLM.
- """
  return f"""
  You will be shown:
 1) A short description.
@@ -216,97 +154,33 @@ Your task:
 {STRATEGIES[strategy]} 
  """
 
+def build_user_prompt_reprompt( clone_code: str, params: str, return_text: str, tests_snippet: str, failing_tests: list[str]) -> str:
+  return f"""
+  You will be shown:
+  1) A solution for a task that does not pass all tests.
+  2) An excerpt of the unit tests.
 
-def build_user_prompt_reprompt( 
- clone_code: str,
- params: str, 
- return_text: str, 
- tests_snippet: str, 
- failing_tests: list[str],
-) -> str:
- """
+  Your task:
+  - Generate a new solution based on the given one that passes all the tests.
+  - Generate a solution named `{FUNCTION_NAME}` with the following arguments: {params}. 
+  - The solution must return something based on this text: {return_text}.
+  - This is the current solution (modify as little as possible):
+  ```
+  {textwrap.dedent(clone_code).strip()}
+  ```
+  - Your solution must PASS all these unit tests:
+  ```
+  {textwrap.dedent(tests_snippet).strip()}
+  ```
+  Currently, these tests fail for this solution:
+  {failing_tests}
 
- """
- return f"""
-
-You will be shown:
-1) A solution for a task that does not pass all tests.
-2) An excerpt of the unit tests.
-
-Your task:
-- Generate a new solution based on the given one that passes all the tests.
-- Generate a solution named `{FUNCTION_NAME}` with the following arguments: {params}. 
-- The solution must return something based on this text: {return_text}.
-- This is the current solution (modify as little as possible):
-```
-{textwrap.dedent(clone_code).strip()}
-```
-- Your solution must PASS all these unit tests:
-```
-{textwrap.dedent(tests_snippet).strip()}
-```
-Currently, these tests fail for this solution:
-{failing_tests}
-
-- In addition, make sure that:
- {MANDATORY_HINTS} 
-"""
+  - In addition, make sure that:
+  {MANDATORY_HINTS} 
+  """
 
 STRATEGIES = {
- "zero-shot": """""",
- "few-shot": """
-Here are some examples of how to create alternative solutions in Python. 
-Each example shows a description and two different semantically equivalent solutions.
----
-
-Example 1: Compute the factorial of a number
-```
-# solution A:
-def task_func(n):
- if n == 0 or n == 1:
- return 1
- return n * task_func(n - 1)
-
-# solution B:
-def task_func(n):
- result = 1
- for i in range(2, n + 1):
- result *= i
- return result
-``` 
-Example 2: Check if a string is a palindrome
-```
-# solution A:
-def task_func(s):
- return s == s[::-1]
-
-# solution B:
-def task_func(s):
- left, right = 0, len(s) - 1
- while left < right:
- if s[left] != s[right]:
- return False
- left += 1
- right -= 1
- return True
-``` 
-
-Example 3: Find the maximum element in a list
-```
-# solution A:
-def task_func(lst):
- return max(lst)
-# solution B:
-def task_func(lst):
- if not lst:
- raise ValueError("Empty list")
- maximum = lst[0]
- for item in lst[1:]:
- if item > maximum:
- maximum = item
- return maximum
-``` 
-""",
+"zero-shot": """""",
 "cot": """
 Here are some examples of how to create alternative solutions in Python. 
 Example:
@@ -373,7 +247,6 @@ context_builders = { # add more builders to extend the supported contexts
  )
  
 } 
-
 def get_combined_refacs(refacs: list[str]) -> str:
  combined_refacs = "\n".join([f"- {REFACTORING[key]}" for key in refacs if key in REFACTORING])
  return combined_refacs

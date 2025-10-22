@@ -30,13 +30,12 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH, out_path=OUT_PATH):
 
     data_by_id = {entry["id"]: entry for entry in data}
 
-    #  Iterate entries 
     for i, clone_entry in enumerate(clone_data, 1):
         entry_id = clone_entry["id"]
         print(f"\nEvaluating Entry {i}/{len(clone_data)} | id={entry_id}")
 
         if entry_id not in data_by_id:
-            print(f"  ⚠️ No matching entry found for {entry_id}, skipping.")
+            print(f"⚠️ No matching entry found for {entry_id}, skipping.")
             continue
 
         entry = data_by_id[entry_id]
@@ -65,7 +64,7 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH, out_path=OUT_PATH):
             except Exception as e:
                 print(f"  ❌ Error computing CodeBLEU for clone {idx + 1}: {e}")
 
-    #  Save results once at the end 
+     
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(clone_data, f, indent=2)
 
@@ -74,9 +73,7 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH, out_path=OUT_PATH):
 
 def run_codebleu_filtering(out_path=OUT_PATH ,filtered_path=FILTERED_PATH_CODEBLEU):
     """
-    Merges new clones from OUT_PATH into an existing filtered dataset,
-    keeping only those with CodeBLEU <= CODEBLEU_THRESHOLD and avoiding duplicates.
-    The merged dataset is saved to FILTERED_PATH_CODEBLEU.
+    Merges new clones from out_path into an existing filtered dataset, keeping only those with CodeBLEU <= CODEBLEU_THRESHOLD. The merged dataset is saved to filtered_path.
     """
     print("Starting codebleu agains original code process...")
     _compute_codebleu_scores()
@@ -100,13 +97,13 @@ def run_codebleu_filtering(out_path=OUT_PATH ,filtered_path=FILTERED_PATH_CODEBL
         if not clones:
             continue
 
-        # Track clone_ids **within this entry only**
+        # Track clone_ids
         if entry["id"] in existing_by_id:
             seen_clone_ids = {c["clone_id"] for c in existing_by_id[entry["id"]].get("clones", []) if "clone_id" in c}
         else:
             seen_clone_ids = set()
 
-        # Keep only new clones below threshold and not repeated within the same entry
+        # Keep only new clones below threshold
         new_valid_clones = []
         for clone in clones:
             clone_id = clone.get("clone_id", "")
@@ -195,7 +192,7 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
 
 def _install_missing_packages(filtered_path=FILTERED_PATH_CODEBLEU):    
     with open(filtered_path, "r", encoding="utf-8") as f:
-        clone_data = json.load(f)  # dataset with clones
+        clone_data = json.load(f)  
     packages = extract_required_packages_clones(clone_data)
     print(f"Required packages: {packages}")
 
@@ -219,8 +216,7 @@ def _install_missing_packages(filtered_path=FILTERED_PATH_CODEBLEU):
 def run_test_filtering(filtered_path=FILTERED_PATH_CODEBLEU, reprompt_path=REPROMPT_PATH, filtered_path_tests=FILTERED_PATH_TESTS):
     with open(filtered_path, "r", encoding="utf-8") as f:
         original_data = json.load(f)
-
-    # Try loading reprompt dataset (optional) 
+ 
     reprompt_data = []
     if os.path.exists(reprompt_path) and os.path.getsize(reprompt_path) > 0:
         with open(reprompt_path, "r", encoding="utf-8") as f:
@@ -228,16 +224,12 @@ def run_test_filtering(filtered_path=FILTERED_PATH_CODEBLEU, reprompt_path=REPRO
     else:
         print(f"Warning: REPROMPT_PATH missing or empty, using only original dataset")
 
-
     orig_dict = _to_dict_by_id(original_data)
     reprompt_dict = _to_dict_by_id(reprompt_data)
-
-
     merged_data = []
     all_entry_ids = set(orig_dict.keys()) | set(reprompt_dict.keys())
 
-    for entry_id in all_entry_ids:
-        # Prefer the reprompt entry if available
+    for entry_id in all_entry_ids: 
         base_entry = (reprompt_dict.get(entry_id) or orig_dict.get(entry_id) or {}).copy()
 
         # Collect all clones from both sources
@@ -261,10 +253,12 @@ def run_test_filtering(filtered_path=FILTERED_PATH_CODEBLEU, reprompt_path=REPRO
     print(f"Filtered dataset saved to {filtered_path_tests}, entries: {len(merged_data)}")
 
 
-#  Convert to dict keyed by entry ID (assuming each entry has a unique 'id') 
+ 
 def _to_dict_by_id(data):
+    """
+    Convert to dict keyed by entry ID (each entry has a unique 'id')
+    """
     return {entry["id"]: entry for entry in data}
-
 
 def compute_codebleu_for_all(filtered_path_tests=FILTERED_PATH_TESTS): 
     print("Starting codebleu for all process...")

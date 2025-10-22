@@ -11,7 +11,7 @@ def select_top_n_configs(n = TOP_N):
         print(f"✅ Loaded {len(top_configs)} cached configurations from {EFFICIENCY_RESULTS}")
         return top_configs[:n] if n else top_configs
 
-    # If efficiency CSV does not exist, compute it
+    # If efficiency CSV does not exist, create it
     if not os.path.exists(EFFICIENCY_PATH):
         print(f"⚠️ Efficiency file not found at {EFFICIENCY_PATH}. Recomputing...")
         _calc_efficient_prompts()
@@ -31,8 +31,7 @@ def _calc_efficient_prompts(top_n=TOP_N):
     df1 = _load_clones(FILTERED_PATH_CODEBLEU)
     df2 = _load_clones(FILTERED_PATH_TESTS)
     df3 = _load_clones(REPROMPT_PATH)
-    df5 = _load_clones(FINAL_DATASET)
-
+    df5 = _load_clones(FINAL_DATASET) 
     # Note: df4 (clones that pass all tests) is implicitly represented inside df2 and df3
 
     counts = [

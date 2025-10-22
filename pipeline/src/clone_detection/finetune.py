@@ -6,16 +6,8 @@ from sentence_transformers import SentenceTransformer, InputExample, losses, eva
 from src.utils.helper_functions import build_pairs, hf_login
 from src.config import *
 
-def run_finetuning(
-    model_name,
-    dataset_path=MERGED_CLONE_DATASET_TRAIN,
-    output_dir=FINETUNE_DIR,
-    epochs=EPOCHS,
-    batch_size=BATCH_SIZE,
-    max_seq_length=256,
-    gpu_id=GPU_IDX 
-):
-    """Fine-tunes a code embedding model (e.g., CodeBERT, CodeT5) for semantic clone detection on a specific GPU."""
+def run_finetuning(model_name, dataset_path=MERGED_CLONE_DATASET_TRAIN, output_dir=FINETUNE_DIR, epochs=EPOCHS,
+    batch_size=BATCH_SIZE, max_seq_length=256, gpu_id=GPU_IDX): 
     warnings.filterwarnings("ignore")
     hf_login()
     # Force PyTorch to use the selected GPU
@@ -66,22 +58,19 @@ def run_finetuning(
             pin_memory=True,  # speeds up GPU transfer
         )
 
-        # Loss and evaluator
         train_loss = losses.CosineSimilarityLoss(model)
         evaluator = evaluation.EmbeddingSimilarityEvaluator.from_input_examples(val_samples, name="val-sim")
-        
-        # Fine-tune
         model.fit(
             train_objectives=[(train_dataloader, train_loss)],
             evaluator=evaluator,
             epochs=epochs,
             warmup_steps=int(len(train_samples) * 0.1),
-            output_path=str(model_output_dir),  # SentenceTransformer will create folder
+            output_path=str(model_output_dir),  
             show_progress_bar=True,
             use_amp=True,
         )
 
-    # Save model only after fine-tuning
+    # Save model
     model.save(str(model_output_dir))
     print(f"✅ Model saved to: {model_output_dir}")
 
@@ -89,13 +78,12 @@ def run_finetuning(
 
 
 def merge_datasets(dataset1_path=FINAL_DATASET, dataset2_path=FINAL_DATASET_RQ2, train_output_path=MERGED_CLONE_DATASET_TRAIN,
-    test_output_path=MERGED_CLONE_DATASET_TEST, split_ratio=0.8):
-    """Merge two JSON datasets and split into train/val sets (default 80/20)."""
+    test_output_path=MERGED_CLONE_DATASET_TEST, split_ratio=0.8): 
     merged = []
     for path in [dataset1_path, dataset2_path]:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-            valid_entries = [entry for entry in data if len(entry.get("clones", [])) > 1] # entries we only one clone are ignored
+            valid_entries = [entry for entry in data if len(entry.get("clones", [])) > 1] # entries with only one clone are ignored
             merged.extend(valid_entries)
 
     train_data, test_data = train_test_split(merged, test_size=1 - split_ratio, random_state=42)

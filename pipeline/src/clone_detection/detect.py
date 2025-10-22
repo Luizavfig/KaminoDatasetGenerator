@@ -14,12 +14,12 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=MERGED_CLONE_
     model_folder_name = model_dir.name
     print(f"Checking model: {model_folder_name}")
 
-    # If folder missing or incomplete, run fine-tuning
+    # Fine-tuning is executed if mode is still not on local folder
     if not model_dir.exists() or not all((model_dir / f).exists() for f in EXPECTED_MODEL_FILES):
         print(f"Model not found or incomplete at {model_dir}")
         run_finetuning(model_name=full_model_name)
 
-    # Load the fine-tuned model
+   
     print(f"Loading model from: {model_dir}")
     model = SentenceTransformer(str(model_dir))
 
@@ -55,7 +55,7 @@ def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
             FN += 1
         # pred==0 and label==0 is TN, not needed for Precision/Recall/F1
 
-    # Calculate metrics safely
+    # Calculate metrics
     precision = TP / (TP + FP) if (TP + FP) > 0 else 0.0
     recall = TP / (TP + FN) if (TP + FN) > 0 else 0.0
     f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0 
@@ -65,7 +65,7 @@ def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
 def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold=DETECTION_THRESHOLD, csv_path=CLONE_DETECTION_RESULTS):
     csv_path = Path(csv_path)
     
-    # Prepare metrics row
+    
     metrics_row = {
         "model": full_model_name,
         "threshold": threshold,
