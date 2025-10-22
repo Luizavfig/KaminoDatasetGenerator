@@ -1,0 +1,101 @@
+{
+  "citation": "",
+  "description": "",
+  "features": {
+    "id": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "language": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "original_code": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "test": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "List"
+    },
+    "description": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "metadata": {
+      "ast": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "libs": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "params": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "return_text": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "split": {
+        "dtype": "string",
+        "_type": "Value"
+      }
+    },
+    "clones": {
+      "feature": {
+        "clone_id": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "cluster": {
+          "dtype": "int64",
+          "_type": "Value"
+        },
+        "code": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "context": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "metrics": {
+          "codebleu": {
+            "originalcode": {
+              "dtype": "float64",
+              "_type": "Value"
+            }
+          }
+        },
+        "model": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "refacs": {
+          "feature": {
+            "dtype": "string",
+            "_type": "Value"
+          },
+          "_type": "List"
+        },
+        "reprompt": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "strategy": {
+          "dtype": "string",
+          "_type": "Value"
+        }
+      },
+      "_type": "List"
+    }
+  },
+  "homepage": "",
+  "license": ""
+}
