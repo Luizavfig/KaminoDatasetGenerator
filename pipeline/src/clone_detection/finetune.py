@@ -18,7 +18,6 @@ def run_finetuning(
     """Fine-tunes a code embedding model (e.g., CodeBERT, CodeT5) for semantic clone detection on a specific GPU."""
     warnings.filterwarnings("ignore")
     hf_login()
-    print(f"🚀 Fine-tuning model: {model_name}")
     # Force PyTorch to use the selected GPU
     if torch.cuda.is_available():
         device = torch.device(f"cuda:{gpu_id}")
@@ -30,20 +29,12 @@ def run_finetuning(
     
     # Only use last part of model name for folder
     model_folder_name = model_name.split("/")[-1]
-    model_output_dir = Path(output_dir) / model_folder_name
-
-    # Load dataset and create train/val splits
-    with open(dataset_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    pairs = build_pairs(data)
-    train_pairs, val_pairs = train_test_split(pairs, test_size=0.2, random_state=42)
-
-    train_samples = [InputExample(texts=[a, b], label=float(label)) for a, b, label in train_pairs]
-    val_samples = [InputExample(texts=[a, b], label=float(label)) for a, b, label in val_pairs]
-
-    # Transformer encoder for code models
+    model_output_dir = Path(output_dir) / model_folder_name 
     print(f"Loading {model_name} as transformer encoder...")
-    word_emb = models.Transformer(model_name, max_seq_length=max_seq_length)
+
+    # If the model_name has '-default', remove it for Hugging Face loading
+    hf_model_name = model_name.replace("-default", "") if model_name.endswith("-default") else model_name 
+    word_emb = models.Transformer(hf_model_name, max_seq_length=max_seq_length)
     pooler = models.Pooling(word_emb.get_word_embedding_dimension())
     model = SentenceTransformer(modules=[word_emb, pooler])
 
@@ -56,39 +47,49 @@ def run_finetuning(
         def __len__(self): return len(self.examples)
         def __getitem__(self, idx): return self.examples[idx]
 
-    train_dataset = InputExampleDataset(train_samples)
-    train_dataloader = DataLoader(
-        train_dataset,
-        shuffle=True,
-        batch_size=batch_size,
-        collate_fn=model.smart_batching_collate,
-        pin_memory=True,  # speeds up GPU transfer
-    )
+    if(not model_name.__contains__("-default")): # Train only if no -default 
+        print(f"🚀 Fine-tuning model: {model_name}")
+         # Load dataset and create train/val splits
+        with open(dataset_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        pairs = build_pairs(data)
+        train_pairs, val_pairs = train_test_split(pairs, test_size=0.2, random_state=42)
 
-    # Loss and evaluator
-    train_loss = losses.CosineSimilarityLoss(model)
-    evaluator = evaluation.EmbeddingSimilarityEvaluator.from_input_examples(val_samples, name="val-sim")
+        train_samples = [InputExample(texts=[a, b], label=float(label)) for a, b, label in train_pairs]
+        val_samples = [InputExample(texts=[a, b], label=float(label)) for a, b, label in val_pairs]
+        train_dataset = InputExampleDataset(train_samples)
+        train_dataloader = DataLoader(
+            train_dataset,
+            shuffle=True,
+            batch_size=batch_size,
+            collate_fn=model.smart_batching_collate,
+            pin_memory=True,  # speeds up GPU transfer
+        )
 
-    # Fine-tune
-    model.fit(
-        train_objectives=[(train_dataloader, train_loss)],
-        evaluator=evaluator,
-        epochs=epochs,
-        warmup_steps=int(len(train_samples) * 0.1),
-        output_path=str(model_output_dir),  # SentenceTransformer will create folder
-        show_progress_bar=True,
-        use_amp=True,
-    )
+        # Loss and evaluator
+        train_loss = losses.CosineSimilarityLoss(model)
+        evaluator = evaluation.EmbeddingSimilarityEvaluator.from_input_examples(val_samples, name="val-sim")
+        
+        # Fine-tune
+        model.fit(
+            train_objectives=[(train_dataloader, train_loss)],
+            evaluator=evaluator,
+            epochs=epochs,
+            warmup_steps=int(len(train_samples) * 0.1),
+            output_path=str(model_output_dir),  # SentenceTransformer will create folder
+            show_progress_bar=True,
+            use_amp=True,
+        )
 
     # Save model only after fine-tuning
     model.save(str(model_output_dir))
-    print(f"✅ Fine-tuned model saved to: {model_output_dir}")
+    print(f"✅ Model saved to: {model_output_dir}")
 
     return str(model_output_dir)
 
 
 def merge_datasets(dataset1_path=FINAL_DATASET, dataset2_path=FINAL_DATASET_RQ2, train_output_path=MERGED_CLONE_DATASET_TRAIN,
-    val_output_path=MERGED_CLONE_DATASET_VAL, split_ratio=0.8):
+    test_output_path=MERGED_CLONE_DATASET_TEST, split_ratio=0.8):
     """Merge two JSON datasets and split into train/val sets (default 80/20)."""
     merged = []
     for path in [dataset1_path, dataset2_path]:
@@ -97,11 +98,11 @@ def merge_datasets(dataset1_path=FINAL_DATASET, dataset2_path=FINAL_DATASET_RQ2,
             valid_entries = [entry for entry in data if len(entry.get("clones", [])) > 1] # entries we only one clone are ignored
             merged.extend(valid_entries)
 
-    train_data, val_data = train_test_split(merged, test_size=1 - split_ratio, random_state=42)
+    train_data, test_data = train_test_split(merged, test_size=1 - split_ratio, random_state=42)
 
     with open(train_output_path, "w", encoding="utf-8") as f:
         json.dump(train_data, f, indent=2)
-    with open(val_output_path, "w", encoding="utf-8") as f:
-        json.dump(val_data, f, indent=2)
+    with open(test_output_path, "w", encoding="utf-8") as f:
+        json.dump(test_data, f, indent=2)
 
-    print(f"✅ Created merged datasets:\nTrain: {len(train_data)} | Val: {len(val_data)}")
+    print(f"✅ Created merged datasets:\nTrain: {len(train_data)} | Test: {len(test_data)}")

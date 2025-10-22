@@ -9,18 +9,18 @@ from src.config import *
 
 EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
 
-def run_clone_evaluation(model_path, full_model_name, dataset_path=MERGED_CLONE_DATASET_VAL, threshold=DETECTION_THRESHOLD):
+def run_clone_evaluation(model_path, full_model_name, dataset_path=MERGED_CLONE_DATASET_TEST, threshold=DETECTION_THRESHOLD):
     model_dir = Path(model_path)
     model_folder_name = model_dir.name
-    print(f"Checking fine-tuned model: {model_folder_name}")
+    print(f"Checking model: {model_folder_name}")
 
     # If folder missing or incomplete, run fine-tuning
     if not model_dir.exists() or not all((model_dir / f).exists() for f in EXPECTED_MODEL_FILES):
-        print(f"Fine-tuned model not found or incomplete at {model_dir}")
+        print(f"Model not found or incomplete at {model_dir}")
         run_finetuning(model_name=full_model_name)
 
     # Load the fine-tuned model
-    print(f"Loading fine-tuned model from: {model_dir}")
+    print(f"Loading model from: {model_dir}")
     model = SentenceTransformer(str(model_dir))
 
     with open(dataset_path, "r", encoding="utf-8") as f:

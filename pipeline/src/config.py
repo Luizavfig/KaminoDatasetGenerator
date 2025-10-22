@@ -84,8 +84,8 @@ EFFICIENCY_RESULTS = "../results/RQ1/top_configs.json"
 
 # For finetuning (RQ3)
 MERGED_CLONE_DATASET_TRAIN = f"../results/{DATASET_NAME}_clones_train.json"
-MERGED_CLONE_DATASET_VAL = f"../results/{DATASET_NAME}_clones_val.json"
-FINETUNE_DIR = f"../results/RQ3/finetuned_models"
+MERGED_CLONE_DATASET_TEST = f"../results/{DATASET_NAME}_clones_test.json"
+FINETUNE_DIR = f"../results/RQ3/models"
 CLONE_DETECTION_RESULTS = f"../results/RQ3/clone_detection.csv"
 EPOCHS = 3
 BATCH_SIZE = 8 

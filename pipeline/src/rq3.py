@@ -22,7 +22,7 @@ if __name__ == "__main__":
     model_output_dir = Path(FINETUNE_DIR) / model_folder_name
 
     # Ensure merged dataset exists
-    if not Path(MERGED_CLONE_DATASET_TRAIN).exists() or not Path(MERGED_CLONE_DATASET_VAL).exists():
+    if not Path(MERGED_CLONE_DATASET_TRAIN).exists() or not Path(MERGED_CLONE_DATASET_TEST).exists():
         print("Merged dataset not found — creating it...")
         merge_datasets()
     else:
