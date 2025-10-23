@@ -1,6 +1,9 @@
 # KaminoDatasetGenerator
 A pipeline to generate type 4 clones using LLMs and deterministic validation.
 
+<img src="pipeline/resources/approach.png" alt="Approach workflow" width="500"/>
+
+
 ## Requirements 
 * A hugging face token must be placed in a .env file in the root.
     * ```HF_TOKEN=token_here```
