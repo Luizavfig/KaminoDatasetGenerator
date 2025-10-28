@@ -1,8 +1,0 @@
-refac,efficiency
-"refac_1,refac_3,refac_4",0.043750000000000004
-"refac_1,refac_4,refac_5",0.043125000000000004
-"refac_2,refac_5,refac_6",0.04125
-"refac_3,refac_5,refac_7",0.040625
-"refac_2,refac_6,refac_7",0.03625
-"refac_2,refac_4,refac_6",0.030625
-"refac_1,refac_3,refac_7",0.026875

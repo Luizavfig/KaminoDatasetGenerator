@@ -10,7 +10,8 @@ DATASET_NAME = "bigcodebench"
 DATASET_PATH = f"../dataset/{DATASET_NAME}_normalized.json"
 FILTERED_DATASET_PATH = f"../dataset/{DATASET_NAME}_normalized_filtered.json"
 TESTS_PATH = "../results/original_test_results.json"
-SAMPLE_1_PATH = "../dataset/sample1.json"
+#SAMPLE_1_PATH = "../dataset/sample1.json"
+SAMPLE_1_PATH = FILTERED_DATASET_PATH
 SAMPLE_2_PATH = "../dataset/sample2.json"
 OUT_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones.json"
 FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json"
@@ -35,7 +36,7 @@ LLM_OPTS = {
     "num_predict": 1500,       # max output tokens
 }
 REMOTE_OLLAMA = True # change to False to use local ollama server
-N_ENTRIES = 50 # number of dataset entries to use as inputs for generation
+N_ENTRIES = 927 # number of dataset entries to use as inputs for generation
 CLONES_PER_ENTRY = 1 # number of clones to generate per dataset entry per prompt configuration
 OLLAMA_CONFIG_FILE_REMOTE = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")), "resources", "ollama_config_remote.json")
 OLLAMA_CONFIG_FILE_LOCAL = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")), "resources", "ollama_config_local.json")
