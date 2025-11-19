@@ -140,11 +140,10 @@ def run_codebleu_filtering(out_path=OUT_PATH ,filtered_path=FILTERED_PATH_CODEBL
 
 def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
     print("Starting testing process...")
-    _install_missing_packages()
     with open(dataset_path, "r", encoding="utf-8") as f:
-        data = json.load(f)  # original dataset with tests
+        data = json.load(f)
     with open(filtered_path, "r", encoding="utf-8") as f:
-        clone_data = json.load(f)  # dataset with clones
+        clone_data = json.load(f)
 
     data_by_id = {entry["id"]: entry for entry in data}
 
@@ -161,7 +160,6 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
 
         for k, clone in enumerate(clone_entry.get("clones", []), 1):
             try:
-                # Skip when it was already tested 
                 if "test_results" in clone and clone["test_results"]:
                     print(f"  Clone {k}: already has test results, skipping.")
                     continue
@@ -184,11 +182,13 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
                     test_name = match.group(1) if match else f"unknown_test_{len(error_results)+1}"
                     error_results[test_name] = "ERROR"
                 clone["test_results"] = error_results
-    
-            with open(filtered_path, "w", encoding="utf-8") as f:
-                json.dump(clone_data, f, indent=2)
 
-    print(f"\n✅ Done. Saved dataset with test results to {filtered_path}")    
+        
+        with open(filtered_path, "w", encoding="utf-8") as f:
+            json.dump(clone_data, f, indent=2)
+
+    print(f"\n✅ Done. Saved dataset with test results to {filtered_path}")
+
 
 def _install_missing_packages(filtered_path=FILTERED_PATH_CODEBLEU):    
     with open(filtered_path, "r", encoding="utf-8") as f:
