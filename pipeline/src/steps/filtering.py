@@ -147,8 +147,20 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
 
     data_by_id = {entry["id"]: entry for entry in data}
 
+    # flag to begin processing only once start_id is found
+    start_id = "BigCodeBench/825"
+    start_processing = (start_id is None)
+
     for i, clone_entry in enumerate(clone_data, 1):
         entry_id = clone_entry["id"]
+
+        # Skip until we find the start_id
+        if not start_processing:
+            if entry_id == start_id:
+                start_processing = True
+            else:
+                continue  # skip this entry
+
         print(f"\nTesting Entry {i}/{len(clone_data)} | id={entry_id}")
 
         if entry_id not in data_by_id:
@@ -183,11 +195,12 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
                     error_results[test_name] = "ERROR"
                 clone["test_results"] = error_results
 
-        
+        # Save progress
         with open(filtered_path, "w", encoding="utf-8") as f:
             json.dump(clone_data, f, indent=2)
 
     print(f"\n✅ Done. Saved dataset with test results to {filtered_path}")
+
 
 
 def _install_missing_packages(filtered_path=FILTERED_PATH_CODEBLEU):    
