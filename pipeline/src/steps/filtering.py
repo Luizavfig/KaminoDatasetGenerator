@@ -148,7 +148,7 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
     data_by_id = {entry["id"]: entry for entry in data}
 
     # flag to begin processing only once start_id is found
-    start_id = "BigCodeBench/869"
+    start_id = "BigCodeBench/901"
     start_processing = (start_id is None)
 
     for i, clone_entry in enumerate(clone_data, 1):
