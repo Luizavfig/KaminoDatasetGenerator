@@ -17,10 +17,10 @@ def main(): # RQ1 evaluation
     # fl.run_codebleu_filtering()
 
     # Step 4: Run tests on filtered clones
-    fl.run_tests()
+#    fl.run_tests()
     
     # Step 5: Reprompting for clones passing at least 50% of tests but not 100%
-    rp.run_reprompt()
+ #   rp.run_reprompt()
     
     # Step 6: Filering based on tests
     fl.run_test_filtering()
