@@ -77,20 +77,58 @@ def run_finetuning(model_name, dataset_path=MERGED_CLONE_DATASET_TRAIN, output_d
     return str(model_output_dir)
 
 
-def merge_datasets(dataset1_path=FINAL_DATASET, dataset2_path=FINAL_DATASET_RQ2, train_output_path=MERGED_CLONE_DATASET_TRAIN,
-    test_output_path=MERGED_CLONE_DATASET_TEST, split_ratio=0.8): 
+def merge_datasets(
+    dataset1_path=FINAL_DATASET,
+    dataset2_path=FINAL_DATASET_RQ2,
+    train_output_path=MERGED_CLONE_DATASET_TRAIN,
+    test_output_path=MERGED_CLONE_DATASET_TEST,
+    split_ratio=0.8
+):
     merged = []
-    for path in [dataset1_path, dataset2_path]:
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            valid_entries = [entry for entry in data if len(entry.get("clones", [])) > 1] # entries with only one clone are ignored
-            merged.extend(valid_entries)
 
-    train_data, test_data = train_test_split(merged, test_size=1 - split_ratio, random_state=42)
+    #  Load dataset 1 (always required) 
+    with open(dataset1_path, "r", encoding="utf-8") as f:
+        data1 = json.load(f)
+        merged.extend(
+            entry for entry in data1
+            if len(entry.get("clones", [])) > 1
+        )
+
+    #  Load dataset 2 only if it exists and is non-empty 
+    if dataset2_path and os.path.exists(dataset2_path):
+        with open(dataset2_path, "r", encoding="utf-8") as f:
+            try:
+                data2 = json.load(f)
+            except json.JSONDecodeError:
+                data2 = []
+
+        if data2:  # only merge if dataset2 is not empty
+            merged.extend(
+                entry for entry in data2
+                if len(entry.get("clones", [])) > 1
+            )
+        else:
+            print("⚠️ dataset2 is empty — using only dataset1")
+    else:
+        print("⚠️ dataset2 not found — using only dataset1")
+
+    if not merged:
+        raise ValueError("Merged dataset is empty after filtering.")
+
+    train_data, test_data = train_test_split(
+        merged,
+        test_size=1 - split_ratio,
+        random_state=42
+    )
 
     with open(train_output_path, "w", encoding="utf-8") as f:
         json.dump(train_data, f, indent=2)
+
     with open(test_output_path, "w", encoding="utf-8") as f:
         json.dump(test_data, f, indent=2)
 
-    print(f"✅ Created merged datasets:\nTrain: {len(train_data)} | Test: {len(test_data)}")
+    print(
+        f"✅ Created datasets:\n"
+        f"Train: {len(train_data)} | Test: {len(test_data)} | Total: {len(merged)}"
+    )
+
