@@ -3,6 +3,8 @@ from huggingface_hub import login
 from pathlib import Path
 from dotenv import load_dotenv
 from codebleu import calc_codebleu
+import parso
+import parso
 from src.config import GPTCLONEBENCH_POS_CLONES_DIR,  GPTCLONEBENCH_PAIRS
 
 class TrackingTestResult(unittest.TextTestResult):
@@ -236,9 +238,7 @@ def build_pairs_from_folders(pos_folder=GPTCLONEBENCH_POS_CLONES_DIR, output_fil
     
     for filename in all_files:
         path = os.path.join(pos_folder, filename)
-        with open(path, "r", encoding="utf-8") as f:
-            code = f.read()
-        funcs = [fn.strip() for fn in code.split("\n\n") if fn.strip()]
+        funcs = _extract_functions_from_file(path)
         if len(funcs) >= 2:
             # Add positive pair (first two functions)
             pairs.append((remove_function_signature(funcs[0]),
@@ -338,6 +338,24 @@ def _get_function_signature(code):
         return code.splitlines()[0].strip()
     return None
 
+def _extract_functions_from_file(path):
+    """
+    Returns a list of function code strings from a Python file using parso.
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        code = f.read()
+
+    funcs = []
+    try:
+        module = parso.parse(code)
+        for node in module.iter_funcdefs():
+            func_code = node.get_code().strip()
+            if func_code:
+                funcs.append(func_code)
+    except Exception as e:
+        print(f"Failed to parse {path} with parso: {e}")
+    return funcs
+
 def startup():
     banner = r"""
 ╔══════════════════════════════════════════════════════════════════╗
@@ -349,3 +367,4 @@ def startup():
     print("Starting Kamino pipeline...\n")
     print("Check the README.md for setup and usage instructions.")
     print("Make sure to run `pip install -r required_packages.txt` if you haven't already.")
+
