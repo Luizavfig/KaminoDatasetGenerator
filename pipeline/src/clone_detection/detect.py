@@ -3,17 +3,16 @@ import pandas as pd
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
-from src.utils.helper_functions import build_pairs
+from src.utils.helper_functions import build_pairs, build_pairs_from_folders
 from src.clone_detection.finetune import run_finetuning
 from src.config import *
 
 EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
 
-def run_clone_evaluation(model_path, full_model_name, dataset_path=MERGED_CLONE_DATASET_TEST, threshold=DETECTION_THRESHOLD):
+def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=DETECTION_THRESHOLD, own_dataset=True, reults_csv=CLONE_DETECTION_RESULTS):
     model_dir = Path(model_path)
     model_folder_name = model_dir.name
-    print(f"Checking model: {model_folder_name}")
-
+    print(f"Checking model: {model_folder_name}") 
     # Fine-tuning is executed if mode is still not on local folder
     if not model_dir.exists() or not all((model_dir / f).exists() for f in EXPECTED_MODEL_FILES):
         print(f"Model not found or incomplete at {model_dir}")
@@ -22,16 +21,20 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=MERGED_CLONE_
    
     print(f"Loading model from: {model_dir}")
     model = SentenceTransformer(str(model_dir))
-
-    with open(dataset_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    pairs = build_pairs(data)
+    
+    if(own_dataset): # use our own dataset
+        with open(dataset_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        pairs = build_pairs(data)
+        dataset_name = 'kamino'
+    else: # use GPCloneBench dataset
+        pairs = build_pairs_from_folders()
+        dataset_name = 'GPTCloneBench'
 
     precision, recall, f1, sims = _evaluate_model(model, pairs, threshold=threshold)
     print(f"✅ Evaluation complete (threshold={threshold}):")
     print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1-score: {f1:.4f}") 
-    _save_evaluation_to_csv(full_model_name, precision, recall, f1)
+    _save_evaluation_to_csv(full_model_name, precision, recall, f1, csv_path=reults_csv, dataset_name=dataset_name)
     return precision, recall, f1, sims
 
 def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
@@ -62,12 +65,13 @@ def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
 
     return precision, recall, f1, similarities
 
-def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold=DETECTION_THRESHOLD, csv_path=CLONE_DETECTION_RESULTS):
+def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold=DETECTION_THRESHOLD, csv_path=CLONE_DETECTION_RESULTS, dataset_name=None):
     csv_path = Path(csv_path)
     
     
     metrics_row = {
         "model": full_model_name,
+        "dataset": dataset_name,
         "threshold": threshold,
         "precision": precision,
         "recall": recall,

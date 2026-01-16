@@ -17,6 +17,10 @@ OUT_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones.json"
 FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json"
 FINAL_DATASET_RQ2 = f"../results/RQ2/{DATASET_NAME}_clone_dataset.json"
 
+#GPTCloneBench settings
+GPTCLONEBENCH_POS_CLONES_DIR = "../dataset/GPTCloneBench/true/T4/"
+GPTCLONEBENCH_NEG_CLONES_DIR =  "../dataset/GPTCloneBench/false/"
+
 # Normalization settings
 SAMPLE_SIZE = 50  # number of entries to sample for experiments
 SAMPLE_SEED = 0   # random seed for sampling
@@ -83,12 +87,15 @@ EFFICIENCY_RESULTS = "../results/RQ1/top_configs.json"
 # CLUSTER_DIR = "../results/RQ2/clustering"
 # End of RQ2 specific overrides
 
-# For finetuning (RQ3)
-MERGED_CLONE_DATASET_TRAIN = f"../results/{DATASET_NAME}_clones_train.json"
-MERGED_CLONE_DATASET_TEST = f"../results/{DATASET_NAME}_clones_test.json"
-FINETUNE_DIR = f"../results/RQ3/models"
-CLONE_DETECTION_RESULTS = f"../results/RQ3/clone_detection.csv"
+# For finetuning (RQ2)
+CLONE_DATASET_TRAIN = f"../results/{DATASET_NAME}_clones_train.json"
+CLONE_DATASET_TEST = f"../results/{DATASET_NAME}_clones_test.json"
+FINETUNE_DIR = f"../results/RQ2/models"
+CLONE_DETECTION_RESULTS = f"../results/RQ2/clone_detection.csv"
 EPOCHS = 3
 BATCH_SIZE = 8 
 DETECTION_THRESHOLD = 0.7  # similarity classification threshold for clone detection
-GPU_IDX = 3 # 0 for single GPU systems. Change it if you have multiple GPUs 
+GPU_IDX = 0 # 0 for single GPU systems. Change it if you have multiple GPUs 
+
+# For clone detection evaluation with GPTCloneBench (RQ3)
+CLONE_DETECTION_RQ3_RESULTS = f"../results/RQ3/clone_detection.csv"

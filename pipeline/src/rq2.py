@@ -1,35 +1,30 @@
+import argparse
+from pathlib import Path
+from src.clone_detection.finetune import merge_datasets
+from src.clone_detection.detect import run_clone_evaluation
 from src.config import *
-from src.steps import (normalization as nz, clone_gen as cg, filtering as fl, reprompt as rp,clustering as cl)
-from src.utils.efficiency import select_top_n_configs
-from src.utils.helper_functions import startup
-def main(): # RQ2 evaluation
-    startup()
-    # Step 1: Normalization (not needed)
+ # RQ2 evaluation 
 
-    # Retrieve top-N efficient configurations
-    top_configs = select_top_n_configs()
-
-    # Step 2: Clone Generation with only top-N efficient configurations
-    cg.run_efficient_generation(top_configs=top_configs)
-        
-    # Step 3: Filtering based on codebleu
-    fl.run_codebleu_filtering()
-
-    # Step 4: Run tests on filtered clones
-    fl.run_tests()
-    
-    # Step 5: Reprompting for clones passing at least 25% of tests but not 100%
-    rp.run_reprompt()
-    
-    # Step 6: Filering based on tests
-    fl.run_test_filtering()
-
-    # Step 7: Codebleu between all clones (similarity matrix)
-    fl.compute_codebleu_for_all()
-
-    # Step 8: Clustering
-    cl.run_clustering()
-
-    
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Evaluate fine-tuned clone detection models")
+    parser.add_argument(
+        "--model_name",
+        type=str,
+        required=True,
+        help="Full Hugging Face model name, e.g., 'microsoft/codebert-base'",
+    )
+    args = parser.parse_args()
+
+    full_model_name = args.model_name
+    model_folder_name = full_model_name.split("/")[-1]
+    model_output_dir = Path(FINETUNE_DIR) / model_folder_name
+
+    # Ensure dataset exists
+    if not Path(CLONE_DATASET_TRAIN).exists() or not Path(CLONE_DATASET_TEST).exists():
+        print("Dataset not found — creating it...")
+        merge_datasets()
+    else:
+        print("✅ Using existing dataset.")
+
+    # Evaluate (run_finetuning will use full Hugging Face model name)
+    run_clone_evaluation(str(model_output_dir), full_model_name)

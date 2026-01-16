@@ -1,6 +1,5 @@
 import argparse
-from pathlib import Path
-from src.clone_detection.finetune import merge_datasets
+from pathlib import Path 
 from src.clone_detection.detect import run_clone_evaluation
 from src.config import *
  # RQ3 evaluation 
@@ -19,12 +18,5 @@ if __name__ == "__main__":
     model_folder_name = full_model_name.split("/")[-1]
     model_output_dir = Path(FINETUNE_DIR) / model_folder_name
 
-    # Ensure merged dataset exists
-    if not Path(MERGED_CLONE_DATASET_TRAIN).exists() or not Path(MERGED_CLONE_DATASET_TEST).exists():
-        print("Merged dataset not found — creating it...")
-        merge_datasets()
-    else:
-        print("✅ Using existing merged dataset.")
-
     # Evaluate (run_finetuning will use full Hugging Face model name)
-    run_clone_evaluation(str(model_output_dir), full_model_name)
+    run_clone_evaluation(str(model_output_dir), full_model_name, own_dataset=False, reults_csv=CLONE_DETECTION_RQ3_RESULTS)

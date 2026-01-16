@@ -6,7 +6,7 @@ from sentence_transformers import SentenceTransformer, InputExample, losses, eva
 from src.utils.helper_functions import build_pairs, hf_login
 from src.config import *
 
-def run_finetuning(model_name, dataset_path=MERGED_CLONE_DATASET_TRAIN, output_dir=FINETUNE_DIR, epochs=EPOCHS,
+def run_finetuning(model_name, dataset_path=CLONE_DATASET_TRAIN, output_dir=FINETUNE_DIR, epochs=EPOCHS,
     batch_size=BATCH_SIZE, max_seq_length=256, gpu_id=GPU_IDX): 
     warnings.filterwarnings("ignore")
     hf_login()
@@ -80,8 +80,8 @@ def run_finetuning(model_name, dataset_path=MERGED_CLONE_DATASET_TRAIN, output_d
 def merge_datasets(
     dataset1_path=FINAL_DATASET,
     dataset2_path=FINAL_DATASET_RQ2,
-    train_output_path=MERGED_CLONE_DATASET_TRAIN,
-    test_output_path=MERGED_CLONE_DATASET_TEST,
+    train_output_path=CLONE_DATASET_TRAIN,
+    test_output_path=CLONE_DATASET_TEST,
     split_ratio=0.8
 ):
     merged = []

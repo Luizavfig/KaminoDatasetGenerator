@@ -2,7 +2,8 @@ import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, m
 from huggingface_hub import login
 from pathlib import Path
 from dotenv import load_dotenv
-from codebleu import calc_codebleu 
+from codebleu import calc_codebleu
+from src.config import GPTCLONEBENCH_POS_CLONES_DIR,  GPTCLONEBENCH_NEG_CLONES_DIR
 
 class TrackingTestResult(unittest.TextTestResult):
     def __init__(self, *args, **kwargs):
@@ -217,6 +218,48 @@ def build_pairs(data, seed=42, target_ratio=1.0):
     print(f"Built {len(pairs)} code pairs (Positives: {positives}, Negatives: {negatives})")
     return pairs
 
+def build_pairs_from_folders(pos_folder=GPTCLONEBENCH_POS_CLONES_DIR, neg_folder=GPTCLONEBENCH_NEG_CLONES_DIR):
+    """
+    Build code pairs from two folders:
+    - pos_folder: contains .py files with positive pairs
+    - neg_folder: contains .py files with negative pairs
+
+    Returns:
+        List of tuples: (code1, code2, label)
+    """
+    pairs = []
+
+    def read_functions_from_file(path):
+        """Read all functions in a file, separated by at least one blank line."""
+        with open(path, "r", encoding="utf-8") as f:
+            code = f.read()
+        # Split by two or more newlines (robust against extra blank lines)
+        funcs = [remove_function_signature(fn.strip()) for fn in code.split("\n\n") if fn.strip()]
+        return funcs
+
+    # Process positive pairs
+    for filename in os.listdir(pos_folder):
+        if filename.endswith(".py"):
+            path = os.path.join(pos_folder, filename)
+            funcs = read_functions_from_file(path)
+            if len(funcs) >= 2:
+                pairs.append((funcs[0], funcs[1], 1))
+
+    # Process negative pairs
+    for filename in os.listdir(neg_folder):
+        if filename.endswith(".py"):
+            path = os.path.join(neg_folder, filename)
+            funcs = read_functions_from_file(path)
+            if len(funcs) >= 2:
+                pairs.append((funcs[0], funcs[1], 0))
+
+    # Shuffle the resulting list
+    random.shuffle(pairs)
+
+    positives = sum(1 for _, _, l in pairs if l == 1)
+    negatives = sum(1 for _, _, l in pairs if l == 0)
+    print(f"Built {len(pairs)} code pairs (Positives: {positives}, Negatives: {negatives})")
+    return pairs
 
 def _calculate_max_negatives(data, target_ratio=1.0):
     """
