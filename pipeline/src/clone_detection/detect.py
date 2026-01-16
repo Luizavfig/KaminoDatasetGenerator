@@ -28,7 +28,13 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
         pairs = build_pairs(data)
         dataset_name = 'kamino'
     else: # use GPCloneBench dataset
-        pairs = build_pairs_from_folders()
+        if os.path.exists(GPTCLONEBENCH_PAIRS):
+            print(f"Loading pairs from {GPTCLONEBENCH_PAIRS}...")
+            with open(GPTCLONEBENCH_PAIRS, "r", encoding="utf-8") as f:
+                pairs = json.load(f)
+        else:
+            print("Pairs file not found. Building pairs...")
+            pairs = build_pairs_from_folders()
         dataset_name = 'GPTCloneBench'
 
     precision, recall, f1, sims = _evaluate_model(model, pairs, threshold=threshold)

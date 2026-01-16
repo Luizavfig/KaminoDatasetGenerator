@@ -1,9 +1,9 @@
-import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os, math
+import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os, math, json
 from huggingface_hub import login
 from pathlib import Path
 from dotenv import load_dotenv
 from codebleu import calc_codebleu
-from src.config import GPTCLONEBENCH_POS_CLONES_DIR,  GPTCLONEBENCH_NEG_CLONES_DIR
+from src.config import GPTCLONEBENCH_POS_CLONES_DIR,  GPTCLONEBENCH_PAIRS
 
 class TrackingTestResult(unittest.TextTestResult):
     def __init__(self, *args, **kwargs):
@@ -218,47 +218,78 @@ def build_pairs(data, seed=42, target_ratio=1.0):
     print(f"Built {len(pairs)} code pairs (Positives: {positives}, Negatives: {negatives})")
     return pairs
 
-def build_pairs_from_folders(pos_folder=GPTCLONEBENCH_POS_CLONES_DIR, neg_folder=GPTCLONEBENCH_NEG_CLONES_DIR):
+def build_pairs_from_folders(pos_folder=GPTCLONEBENCH_POS_CLONES_DIR, output_file=GPTCLONEBENCH_PAIRS, seed=42):
     """
-    Build code pairs from two folders:
-    - pos_folder: contains .py files with positive pairs
-    - neg_folder: contains .py files with negative pairs
+    Build positive and negative pairs from a folder containing .py files with positive pairs.
+    - Positive pairs come from within each file.
+    - Negative pairs are formed by combining functions from different files with different signatures.
 
     Returns:
         List of tuples: (code1, code2, label)
     """
+    rng = random.Random(seed)
     pairs = []
 
-    def read_functions_from_file(path):
-        """Read all functions in a file, separated by at least one blank line."""
+    # Step 1: Read all functions from all files
+    file_functions = []  # List of lists of functions
+    all_files = [f for f in os.listdir(pos_folder) if f.endswith(".py")]
+    
+    for filename in all_files:
+        path = os.path.join(pos_folder, filename)
         with open(path, "r", encoding="utf-8") as f:
             code = f.read()
-        # Split by two or more newlines (robust against extra blank lines)
-        funcs = [remove_function_signature(fn.strip()) for fn in code.split("\n\n") if fn.strip()]
-        return funcs
+        funcs = [fn.strip() for fn in code.split("\n\n") if fn.strip()]
+        if len(funcs) >= 2:
+            # Add positive pair (first two functions)
+            pairs.append((remove_function_signature(funcs[0]),
+                          remove_function_signature(funcs[1]),
+                          1))
+        if funcs:
+            file_functions.append(funcs)
 
-    # Process positive pairs
-    for filename in os.listdir(pos_folder):
-        if filename.endswith(".py"):
-            path = os.path.join(pos_folder, filename)
-            funcs = read_functions_from_file(path)
-            if len(funcs) >= 2:
-                pairs.append((funcs[0], funcs[1], 1))
+    total_positives = sum(1 for _, _, l in pairs if l == 1)
 
-    # Process negative pairs
-    for filename in os.listdir(neg_folder):
-        if filename.endswith(".py"):
-            path = os.path.join(neg_folder, filename)
-            funcs = read_functions_from_file(path)
-            if len(funcs) >= 2:
-                pairs.append((funcs[0], funcs[1], 0))
+    # Step 2: Generate the same number of negative pairs
+    negatives = []
+    total_files = len(file_functions)
+    if total_files < 2:
+        print("Not enough files to generate negative pairs.")
+    else:
+        attempts = 0
+        while len(negatives) < total_positives and attempts < total_positives * 10:
+            # pick two different files
+            i, j = rng.sample(range(total_files), 2)
+            funcs_i = file_functions[i]
+            funcs_j = file_functions[j]
 
-    # Shuffle the resulting list
-    random.shuffle(pairs)
+            func_a = rng.choice(funcs_i)
+            sig_a = _get_function_signature(func_a)
+
+            # pick a function from j with a different signature
+            func_b_candidates = [f for f in funcs_j if _get_function_signature(f) != sig_a]
+            if not func_b_candidates:
+                attempts += 1
+                continue
+            func_b = rng.choice(func_b_candidates)
+
+            negatives.append((remove_function_signature(func_a),
+                              remove_function_signature(func_b),
+                              0))
+            attempts += 1
+
+    # Combine and shuffle
+    pairs.extend(negatives)
+    rng.shuffle(pairs)
 
     positives = sum(1 for _, _, l in pairs if l == 1)
-    negatives = sum(1 for _, _, l in pairs if l == 0)
-    print(f"Built {len(pairs)} code pairs (Positives: {positives}, Negatives: {negatives})")
+    negatives_count = sum(1 for _, _, l in pairs if l == 0)
+    print(f"Built {len(pairs)} code pairs (Positives: {positives}, Negatives: {negatives_count})")
+
+    # Step 3: Save to JSON file
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(pairs, f, indent=2)
+
+    print(f"Saved pairs to {output_file}")
     return pairs
 
 def _calculate_max_negatives(data, target_ratio=1.0):
@@ -291,6 +322,21 @@ def hf_login():
     login(token=token)
     print("✅ Hugging Face login successful!")
 
+def _get_function_signature(code):
+    """
+    Extracts the function signature from a function code string.
+    Returns: a string like 'def func_name(arg1, arg2):'
+    """
+    try:
+        tree = ast.parse(code)
+        for node in tree.body:
+            if isinstance(node, ast.FunctionDef):
+                args = [a.arg for a in node.args.args]
+                return f"{node.name}({', '.join(args)})"
+    except Exception as e:
+        # Fallback if parsing fails: use first line
+        return code.splitlines()[0].strip()
+    return None
 
 def startup():
     banner = r"""
