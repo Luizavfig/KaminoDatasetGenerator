@@ -28,7 +28,7 @@ This is a [sentence-transformers](https://www.SBERT.net) model finetuned from [m
 ### Model Sources
 
 - **Documentation:** [Sentence Transformers Documentation](https://sbert.net)
-- **Repository:** [Sentence Transformers on GitHub](https://github.com/UKPLab/sentence-transformers)
+- **Repository:** [Sentence Transformers on GitHub](https://github.com/huggingface/sentence-transformers)
 - **Hugging Face:** [Sentence Transformers on Hugging Face](https://huggingface.co/models?library=sentence-transformers)
 
 ### Full Model Architecture
@@ -113,12 +113,12 @@ You can finetune this model on your own dataset.
 ## Training Details
 
 ### Framework Versions
-- Python: 3.13.5
-- Sentence Transformers: 5.1.1
-- Transformers: 4.57.1
-- PyTorch: 2.9.0+cu130
-- Accelerate: 1.10.1
-- Datasets: 4.2.0
+- Python: 3.13.9
+- Sentence Transformers: 5.2.0
+- Transformers: 4.57.3
+- PyTorch: 2.9.1+cu128
+- Accelerate: 1.12.0
+- Datasets: 4.4.1
 - Tokenizers: 0.22.1
 
 ## Citation
