@@ -1,1 +1,3 @@
 model,dataset,threshold,precision,recall,f1
+microsoft/codebert-base-default,GPTCloneBench,0.7,0.5,1.0,0.6666666666666666
+microsoft/codebert-base,GPTCloneBench,0.7,0.9810017271157168,0.8056737588652483,0.8847352024922118
