@@ -5,116 +5,138 @@ tags:
 - feature-extraction
 - dense
 - generated_from_trainer
-- dataset_size:4259
+- dataset_size:55745
 - loss:CosineSimilarityLoss
 base_model: Salesforce/codet5-base
 widget:
-- source_sentence: "sales_data = []\n    for product in products_list:\n        monthly_sales\
-    \ = [random.randint(100, 500) for _ in range(12)]\n        avg = stats.mean(monthly_sales)\n\
-    \        data_row = {'Product': product, **{f'Month {i + 1}': sale for i,\n  \
-    \          sale in enumerate(monthly_sales)}, 'Average Sales': avg}\n        sales_data.append(data_row)\n\
-    \    df = pd.DataFrame(sales_data)\n    return df"
+- source_sentence: "def extract_matches(row):\n        return re.findall('([a-fA-F\\\
+    \\d]{32})', row)\n    matches = df[column].apply(extract_matches)\n    flattened_matches\
+    \ = [match for sublist in matches.values for match in\n        sublist]\n    try:\n\
+    \        counts = {}\n        for match in flattened_matches:\n            if\
+    \ match not in counts:\n                counts[match] = 1\n            else:\n\
+    \                counts[match] += 1\n        return pd.Series(counts)\n    except\
+    \ Exception as e:\n        print(f'An error occurred: {e}')\n        return pd.Series()"
   sentences:
-  - "\"\"\"Reads log file and formats lines containing specified keywords.\"\"\"\n\
-    \    if not os.path.isfile(log_file_path):\n        raise FileNotFoundError(f'Log\
-    \ file {log_file_path} does not exist.')\n\n    def format_line(line: str, kwds:\
-    \ list) ->str:\n        for keyword in kwds:\n            if keyword in line:\n\
-    \                parts = line.strip().split(maxsplit=2)\n                if len(parts)\
-    \ >= 3:\n                    return (\n                        f'{keyword:>{20}}\
-    \ : {parts[1]:>{20}} : {parts[2]:>{20}}'\n                        )\n        return\
-    \ f'Line format unexpected: {line.strip()}'\n    with open(log_file_path, 'r')\
-    \ as log_file:\n        lines = [format_line(line, keywords) for line in log_file]\n\
-    \    return [line for line in lines if any(kw in line for kw in keywords)]"
-  - "if not features:\n        return df\n    scaler = StandardScaler()\n    df[features]\
-    \ = scaler.fit_transform(df[features])\n    return df"
-  - "if hex_key is not None:\n        chosen = round(struct.unpack('>f', bytes.fromhex(hex_key))[0],\
-    \ 2)\n    else:\n        floats = [round(struct.unpack('>f', bytes.fromhex(h))[0],\
-    \ 2) for h in\n            KEYS]\n        chosen = random.choice(floats)\n   \
-    \ return chosen"
-- source_sentence: "if len(args) == 0:\n        url = 'https://example.com/data.csv'\n\
-    \        out_path = 'data.json'\n    elif len(args) == 2:\n        url, out_path\
-    \ = args\n    else:\n        raise TypeError('task_func expects 0 or 2 arguments')\n\
-    \    response = requests.get(url)\n    csv_text = response.text\n    reader =\
-    \ csv.DictReader(StringIO(csv_text))\n    data = [row for row in reader]\n   \
-    \ with open(out_path, 'w', encoding='utf-8') as f:\n        json.dump(data, f)\n\
-    \    return out_path"
+  - "try:\n        bytes_value = bytes.fromhex(hex_string)\n        float_value =\
+    \ struct.unpack('>f', bytes_value)[0]\n        buffer = BytesIO()\n        buffer.write(struct.pack('>f',\
+    \ float_value))\n        return buffer.getvalue()\n    except ValueError as e:\n\
+    \        raise e"
+  - ''
+  - "\"\"\"Return Series of counts of each unique 32‑character hex match in df[column].\"\
+    \"\"\n    pattern = '([a-fA-F\\\\d]{32})'\n    return df[column].astype(str).str.findall(pattern).explode().value_counts()"
+- source_sentence: "\"\"\"Return mean, median, and mode of sums of all subsets of\
+    \ given size.\"\"\"\n    sums = []\n\n    def backtrack(start, comb):\n      \
+    \  if len(comb) == subset_size:\n            sums.append(sum(comb))\n        \
+    \    return\n        for i in range(start, len(elements)):\n            backtrack(i\
+    \ + 1, comb + (elements[i],))\n    backtrack(0, ())\n    n = len(sums)\n    mean_val\
+    \ = sum(sums) / n if n else 0\n    sorted_sums = sorted(sums)\n    if n % 2:\n\
+    \        median_val = sorted_sums[n // 2]\n    else:\n        median_val = (sorted_sums[n\
+    \ // 2 - 1] + sorted_sums[n // 2]) / 2\n    freq = {}\n    for s in sums:\n  \
+    \      freq[s] = freq.get(s, 0) + 1\n    mode_val = max(freq, key=lambda k: freq[k])\n\
+    \    return {'mean': mean_val, 'median': median_val, 'mode': mode_val}"
   sentences:
-  - "key = hashlib.sha256(password.encode()).digest()\n    encrypted_bytes = bytes([(b\
-    \ ^ key[i % len(key)]) for i, b in enumerate(\n        data.encode())])\n    encrypted_str\
-    \ = base64.b64encode(encrypted_bytes).decode()\n    os.makedirs(os.path.dirname(file_path),\
-    \ exist_ok=True)\n    with open(file_path, 'w') as f:\n        f.write(encrypted_str)\n\
-    \    return encrypted_str"
-  - "try:\n        df = pd.read_excel(excel_file_location, sheet_name=sheet_name)\n\
-    \        df.to_csv(csv_file_location, index=False)\n        column_sum = df.sum(numeric_only=True)\n\
-    \        return column_sum.to_dict()\n    except FileNotFoundError:\n        raise\
-    \ FileNotFoundError(\n            f'Excel file not found at {excel_file_location}')\n\
-    \    except ValueError as e:\n        raise ValueError(f'Error in processing Excel\
-    \ file: {e}')"
-  - "if not d:\n        return pd.DataFrame(columns=['x', 'y', 'z'])\n    features\
-    \ = ['x', 'y', 'z']\n    data_frame = pd.DataFrame(d)\n    scaler = MinMaxScaler()\n\
-    \    scaled_values = scaler.fit_transform(data_frame[features])\n    result =\
-    \ pd.DataFrame(scaled_values, columns=features)\n    return result"
-- source_sentence: "lines = input_string.splitlines()\n    cleaned_lines = [line.strip()\
-    \ for line in lines if line.strip()]\n    processed_lines = [re.sub('\\\\t', '\
-    \ ', line) for line in cleaned_lines]\n    df = pd.DataFrame(processed_lines,\
-    \ columns=['Text'])\n    return df"
+  - "subsets = list(itertools.combinations(elements, subset_size))\n    sums = [sum(subset)\
+    \ for subset in subsets]\n    return {'mean': mean(sums), 'median': median(sorted(sums)),\
+    \ 'mode':\n        mode(sums)}"
+  - "if not isinstance(df, pd.DataFrame):\n        raise ValueError('Input must be\
+    \ a DataFrame')\n    for col in cols:\n        if col not in df.columns:\n   \
+    \         raise ValueError(f\"Column '{col}' does not exist in the DataFrame\"\
+    )\n    scaler = StandardScaler()\n    standardized_df = df.copy()\n    standardized_df[cols]\
+    \ = scaler.fit_transform(df[cols])\n    return standardized_df"
+  - "\"\"\"\n    Extract URLs from a JSON string and return a dictionary mapping each\
+    \ URL\n    to the number of times it appears. If a second argument is supplied,\n\
+    \    it specifies the maximum number of top URLs to return.\n    \"\"\"\n    pattern\
+    \ = 'https?://[^\\\\s]+|www\\\\.[^\\\\s]+'\n    data = json.loads(json_str)\n\
+    \    urls = []\n    stack = [data]\n    while stack:\n        current = stack.pop()\n\
+    \        for value in current.values():\n            if isinstance(value, dict):\n\
+    \                stack.append(value)\n            elif isinstance(value, str)\
+    \ and re.fullmatch(pattern, value):\n                urls.append(value)\n    if\
+    \ not urls:\n        return {}\n    counter = Counter(urls)\n    top_n = args[0]\
+    \ if args else None\n    if top_n is None or len(counter) <= top_n:\n        return\
+    \ dict(counter)\n    return dict(counter.most_common(top_n))"
+- source_sentence: "parsed = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')\n  \
+    \  now = datetime.now()\n    diff = now - parsed\n    seconds = diff.total_seconds()\n\
+    \    leap_count = np.sum(LEAP_SECONDS >= parsed.year)\n    return int(seconds\
+    \ + leap_count)"
   sentences:
-  - "result = {}\n    for _ in range(n_samples):\n        index = random.choices(range(len(values)),\
-    \ weights=weights)[0]\n        value = values[index]\n        if value not in\
-    \ result:\n            result[value] = 1\n        else:\n            result[value]\
-    \ += 1\n    return result"
-  - "sales_data = {product: [randint(100, 500) for _ in range(12)] for\n        product\
-    \ in products_list}\n\n    def calculate_average_sales(sales):\n        return\
-    \ sum(sales) / len(sales)\n    average_sales = {product: calculate_average_sales(sales)\
-    \ for product,\n        sales in sales_data.items()}\n    sales_df = pd.DataFrame({'Product':\
-    \ list(sales_data.keys()), **{\n        f'Month {i + 1}': [sales[i] for sales\
-    \ in sales_data.values()] for i in\n        range(12)}, 'Average Sales': list(average_sales.values())})\n\
-    \    return sales_df"
-  - "if not isinstance(df, pd.DataFrame):\n        raise TypeError('df should be a\
-    \ DataFrame.')\n\n    def count_brackets(x: Union[str, float]) ->int:\n      \
-    \  return sum(1 for c in str(x) if c in '(){}[]')\n    result = df.applymap(count_brackets).sum().sum()\n\
-    \    return result"
-- source_sentence: ''
+  - ''
+  - "files = os.listdir(directory)\n    file_groups = {}\n    for filename in files:\n\
+    \        match = re.search('\\\\.(.*?)$', filename)\n        if match:\n     \
+    \       ext = match.group(1)\n            dest_dir = os.path.join(directory, ext)\n\
+    \            if not os.path.exists(dest_dir):\n                os.makedirs(dest_dir)\n\
+    \            src_path = os.path.join(directory, filename)\n            shutil.move(src_path,\
+    \ dest_dir)"
+  - "df = df[columns]\n    missing_cols = [col for col in columns if col not in df.columns]\n\
+    \    if len(missing_cols) > 0:\n        raise Exception('Columns not found: '\
+    \ + ', '.join(missing_cols))\n    try:\n        filtered_df = df[df[columns[1]]\
+    \ > larger]\n        filtered_df = filtered_df[filtered_df[columns[2]] == equal]\n\
+    \        contingency_table = pd.crosstab(filtered_df[columns[0]],\n          \
+    \  filtered_df[columns[1]])\n        chi2, p_value, _, _ = chi2_contingency(contingency_table)\n\
+    \        return p_value\n    except Exception as e:\n        raise Exception('Error\
+    \ processing DataFrame: ' + str(e))"
+- source_sentence: "\"\"\"\n    Generates a normal distribution, plots its histogram\
+    \ and PDF, and returns the distribution and the plot.\n\n    Args:\n        length\
+    \ (int): The length of the distribution to be generated.\n\n    Returns:\n   \
+    \     tuple: A tuple containing: 1. numpy array with the normal distribution.\
+    \ 2. matplotlib Axes object representing the plot.\n    \"\"\"\n    distribution\
+    \ = np.random.normal(0, 1, length)\n    fig, ax = plt.subplots()\n    ax.hist(distribution,\
+    \ density=True, bins=30)\n    x = np.linspace(0, 1, 100)\n    pdf = np.random.normal(0,\
+    \ 1, 100)\n    ax.plot(x, pdf, linewidth=2, color='r', label='PDF')\n    ax.legend()\n\
+    \    return distribution, ax"
   sentences:
-  - "try:\n        data = [float(x) for x in data_str.split(separator)]\n    except\
-    \ ValueError:\n        raise ValueError('Invalid data')\n    if not data:\n  \
-    \      raise ValueError('Data is empty')\n    series = pd.Series(data)\n    n,\
-    \ bins, patches = plt.hist(series, bins=bins, rwidth=0.9, color='#607c8e')\n \
-    \   return series.astype(np.int64), plt.gca()"
-  - "if subset_size > len(elements):\n        return Counter()\n    subsets = list(combinations(elements,\
-    \ subset_size))\n    sums = [sum(subset) for subset in subsets]\n    return Counter(sums)"
-  - "def flatten(nested_list):\n        for item in nested_list:\n            if isinstance(item,\
-    \ (list, tuple)):\n                yield from flatten(item)\n            else:\n\
-    \                yield item\n    elements = list(flatten(L))\n    if not elements:\n\
-    \        raise ValueError('List is empty')\n    sorted_elements = np.sort(elements)\n\
-    \    length = len(sorted_elements)\n    middle = length // 2\n    if length %\
-    \ 2 == 1:\n        return float(sorted_elements[middle])\n    else:\n        return\
-    \ float((sorted_elements[middle - 1] + sorted_elements[middle]\n            )\
-    \ / 2)"
-- source_sentence: "invalid_keys = [key for key in data_keys if key not in data_dict]\n\
-    \    if len(invalid_keys) > 0:\n        raise ValueError(f'Invalid keys: {invalid_keys}')\n\
-    \    if not data_keys:\n        raise ValueError('No keys specified')\n    normalized_data\
-    \ = {}\n    for key in data_keys:\n        data = data_dict[key]\n        min_val\
-    \ = min(data)\n        max_val = max(data)\n        normalized = [((x - min_val)\
-    \ / (max_val - min_val) if max_val !=\n            min_val else 0.5) for x in\
-    \ data]\n        normalized_data[key] = normalized\n    df = pd.DataFrame(normalized_data)\n\
-    \    fig, ax = plt.subplots()\n    df.plot(ax=ax)\n    return df, ax"
+  - "\"\"\"Count frequency of each letter after repeating the list.\"\"\"\n    if\
+    \ not letters or repetitions <= 0:\n        return {}\n    freq = {}\n    for\
+    \ letter in (letters * repetitions):\n        if letter in freq:\n           \
+    \ freq[letter] += 1\n        else:\n            freq[letter] = 1\n    return freq"
+  - "try:\n        combined = a + b\n        if items is not None:\n            counter\
+    \ = {item: combined.count(item) for item in items}\n        else:\n          \
+    \  counter = {}\n        df = pd.DataFrame(list(counter.items()), columns=['Item',\
+    \ 'Frequency'])\n        plt.bar(df['Item'], df['Frequency'])\n        plt.xlabel('Items')\n\
+    \        plt.ylabel('Frequency')\n        plt.title('Item Frequency in Combined\
+    \ List')\n        plt.xticks(rotation=45)\n        plt.tight_layout()\n      \
+    \  return plt.gca()\n    except Exception as e:\n        print(f'An error occurred:\
+    \ {e}')\n        return None\n\n\na = ['apple', 'banana', 'orange']\nb = ['banana',\
+    \ 'orange', 'grape']\nitems = ['apple', 'banana']\nresult = task_func(a, b, items)"
+  - "\"\"\"Generate a normal distribution and plot its histogram with PDF.\"\"\"\n\
+    \    dist = np.random.standard_normal(length)\n    fig, ax = plt.subplots()\n\
+    \    ax.hist(dist, bins=30, density=True, alpha=0.6, color='g')\n    x_vals =\
+    \ np.linspace(dist.min() - 1, dist.max() + 1, 200)\n    pdf_vals = 1 / np.sqrt(2\
+    \ * np.pi) * np.exp(-x_vals ** 2 / 2)\n    ax.plot(x_vals, pdf_vals, color='r')\n\
+    \    return dist, ax"
+- source_sentence: "df = pd.read_csv(file_name)\n    if df.empty:\n        raise ValueError('DataFrame\
+    \ is empty')\n    numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()\n\
+    \    if not numeric_cols:\n        raise ValueError('No numeric columns to normalize')\n\
+    \    for col in numeric_cols:\n        col_min = df[col].min()\n        col_max\
+    \ = df[col].max()\n        if col_max == col_min:\n            df[col] = 0.0\n\
+    \        else:\n            df[col] = (df[col] - col_min) / (col_max - col_min)\n\
+    \    for col in numeric_cols:\n        pass\n    return df"
   sentences:
-  - "\"\"\"\n    Test the normality of a DataFrame column using Shapiro-Wilk test.\n\
-    \    Implements an artificial step to demonstrate use of numpy functions.\n\n\
-    \    Args:\n        df: pandas DataFrame containing data\n        column: str,\
-    \ name of the column to test\n        alpha: float, significance level\n\n   \
-    \ Returns:\n        bool indicating whether p-value is greater than alpha\n  \
-    \  \"\"\"\n    data = np.array(df[column])\n    centered_data = data - np.mean(data)\n\
-    \    stat, p = shapiro(centered_data)\n    return p > alpha"
-  - "if seed is not None:\n        random.seed(seed)\n    punctuation_re = re.compile('[%s]'\
-    \ % re.escape(string.punctuation))\n    text = punctuation_re.sub('', text)\n\
-    \    whitespace_map = {' ': '_', '\\t': '__', '\\n': '___'}\n    text = ''.join(whitespace_map.get(c,\
-    \ c) for c in text)\n    text_list = list(text)\n    for i, char in enumerate(text_list):\n\
-    \        if random.random() < 0.5:\n            text_list[i] = char.upper()\n\
-    \    return ''.join(text_list)"
-  - "words = re.findall('\\\\b\\\\w+\\\\b', text)\n    punctuation_marks = [c for\
-    \ c in text if c in string.punctuation]\n    return len(words), len(punctuation_marks)"
+  - "\"\"\"\n    Reads CSV file and processes date column to generate year histogram.\n\
+    \n    Args:\n        csv_path (str): Path to the CSV file\n        date_column\
+    \ (str): Name of the date column in the CSV\n\n    Returns:\n        matplotlib\
+    \ axes object containing the histogram plot\n\n    Raises:\n        FileNotFoundError:\
+    \ If the CSV file does not exist\n        ValueError: If the CSV is empty or contains\
+    \ invalid dates\n    \"\"\"\n    if not os.path.exists(csv_path):\n        raise\
+    \ FileNotFoundError(f'CSV file at {csv_path} does not exist')\n    try:\n    \
+    \    df = pd.read_csv(csv_path)\n        if date_column not in df.columns:\n \
+    \           raise ValueError(f'Date column {date_column} not found in CSV')\n\
+    \        years = []\n        for date_str in df[date_column]:\n            try:\n\
+    \                parsed_date = parse(date_str)\n                years.append(parsed_date.year)\n\
+    \            except ValueError:\n                raise ValueError(f'Invalid date\
+    \ format in column: {date_str}')\n        plt.figure()\n        plt.hist(years,\
+    \ bins=range(1900, 2030), edgecolor='black')\n        plt.title('Year Distribution')\n\
+    \        plt.xlabel('Year')\n        plt.ylabel('Count')\n        return plt.gca()\n\
+    \    except pd.errors.EmptyDataError:\n        raise ValueError('CSV file is empty')"
+  - "item_lengths = [len(row) for row in df.values]\n    if len(set(item_lengths))\
+    \ != 1:\n        raise ValueError('All rows must have the same number of items')\n\
+    \    all_combinations = set()\n    for row in df.values:\n        all_combinations.update(combinations(row,\
+    \ len(row)))\n    freq_dict = defaultdict(int)\n    for row in df.values:\n  \
+    \      combination = tuple(sorted(row))\n        freq_dict[combination] += 1\n\
+    \    return dict(freq_dict)"
+  - "\"\"\"Perform DBSCAN clustering on the data and add cluster labels to DataFrame.\"\
+    \"\"\n    df = pd.DataFrame([dict(zip(cols, row)) for row in data])\n    dbscan_model\
+    \ = DBSCAN(eps=3, min_samples=2)\n    cluster_labels = dbscan_model.fit_predict(df)\n\
+    \    df['Cluster'] = cluster_labels\n    return df"
 pipeline_tag: sentence-similarity
 library_name: sentence-transformers
 metrics:
@@ -131,10 +153,10 @@ model-index:
       type: val-sim
     metrics:
     - type: pearson_cosine
-      value: 0.9703892888746217
+      value: 0.9709622651157053
       name: Pearson Cosine
     - type: spearman_cosine
-      value: 0.8584694065284882
+      value: 0.8583390571191828
       name: Spearman Cosine
 ---
 
@@ -157,7 +179,7 @@ This is a [sentence-transformers](https://www.SBERT.net) model finetuned from [S
 ### Model Sources
 
 - **Documentation:** [Sentence Transformers Documentation](https://sbert.net)
-- **Repository:** [Sentence Transformers on GitHub](https://github.com/UKPLab/sentence-transformers)
+- **Repository:** [Sentence Transformers on GitHub](https://github.com/huggingface/sentence-transformers)
 - **Hugging Face:** [Sentence Transformers on Hugging Face](https://huggingface.co/models?library=sentence-transformers)
 
 ### Full Model Architecture
@@ -187,9 +209,9 @@ from sentence_transformers import SentenceTransformer
 model = SentenceTransformer("sentence_transformers_model_id")
 # Run inference
 sentences = [
-    "invalid_keys = [key for key in data_keys if key not in data_dict]\n    if len(invalid_keys) > 0:\n        raise ValueError(f'Invalid keys: {invalid_keys}')\n    if not data_keys:\n        raise ValueError('No keys specified')\n    normalized_data = {}\n    for key in data_keys:\n        data = data_dict[key]\n        min_val = min(data)\n        max_val = max(data)\n        normalized = [((x - min_val) / (max_val - min_val) if max_val !=\n            min_val else 0.5) for x in data]\n        normalized_data[key] = normalized\n    df = pd.DataFrame(normalized_data)\n    fig, ax = plt.subplots()\n    df.plot(ax=ax)\n    return df, ax",
-    "if seed is not None:\n        random.seed(seed)\n    punctuation_re = re.compile('[%s]' % re.escape(string.punctuation))\n    text = punctuation_re.sub('', text)\n    whitespace_map = {' ': '_', '\\t': '__', '\\n': '___'}\n    text = ''.join(whitespace_map.get(c, c) for c in text)\n    text_list = list(text)\n    for i, char in enumerate(text_list):\n        if random.random() < 0.5:\n            text_list[i] = char.upper()\n    return ''.join(text_list)",
-    '"""\n    Test the normality of a DataFrame column using Shapiro-Wilk test.\n    Implements an artificial step to demonstrate use of numpy functions.\n\n    Args:\n        df: pandas DataFrame containing data\n        column: str, name of the column to test\n        alpha: float, significance level\n\n    Returns:\n        bool indicating whether p-value is greater than alpha\n    """\n    data = np.array(df[column])\n    centered_data = data - np.mean(data)\n    stat, p = shapiro(centered_data)\n    return p > alpha',
+    "df = pd.read_csv(file_name)\n    if df.empty:\n        raise ValueError('DataFrame is empty')\n    numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()\n    if not numeric_cols:\n        raise ValueError('No numeric columns to normalize')\n    for col in numeric_cols:\n        col_min = df[col].min()\n        col_max = df[col].max()\n        if col_max == col_min:\n            df[col] = 0.0\n        else:\n            df[col] = (df[col] - col_min) / (col_max - col_min)\n    for col in numeric_cols:\n        pass\n    return df",
+    '"""Perform DBSCAN clustering on the data and add cluster labels to DataFrame."""\n    df = pd.DataFrame([dict(zip(cols, row)) for row in data])\n    dbscan_model = DBSCAN(eps=3, min_samples=2)\n    cluster_labels = dbscan_model.fit_predict(df)\n    df[\'Cluster\'] = cluster_labels\n    return df',
+    "item_lengths = [len(row) for row in df.values]\n    if len(set(item_lengths)) != 1:\n        raise ValueError('All rows must have the same number of items')\n    all_combinations = set()\n    for row in df.values:\n        all_combinations.update(combinations(row, len(row)))\n    freq_dict = defaultdict(int)\n    for row in df.values:\n        combination = tuple(sorted(row))\n        freq_dict[combination] += 1\n    return dict(freq_dict)",
 ]
 embeddings = model.encode(sentences)
 print(embeddings.shape)
@@ -198,9 +220,9 @@ print(embeddings.shape)
 # Get the similarity scores for the embeddings
 similarities = model.similarity(embeddings, embeddings)
 print(similarities)
-# tensor([[ 1.0000,  0.0714,  0.2361],
-#         [ 0.0714,  1.0000, -0.0179],
-#         [ 0.2361, -0.0179,  1.0000]])
+# tensor([[ 1.0000, -0.0192,  0.0453],
+#         [-0.0192,  1.0000, -0.0322],
+#         [ 0.0453, -0.0322,  1.0000]])
 ```
 
 <!--
@@ -238,8 +260,8 @@ You can finetune this model on your own dataset.
 
 | Metric              | Value      |
 |:--------------------|:-----------|
-| pearson_cosine      | 0.9704     |
-| **spearman_cosine** | **0.8585** |
+| pearson_cosine      | 0.971      |
+| **spearman_cosine** | **0.8583** |
 
 <!--
 ## Bias, Risks and Limitations
@@ -259,19 +281,19 @@ You can finetune this model on your own dataset.
 
 #### Unnamed Dataset
 
-* Size: 4,259 training samples
+* Size: 55,745 training samples
 * Columns: <code>sentence_0</code>, <code>sentence_1</code>, and <code>label</code>
 * Approximate statistics based on the first 1000 samples:
-  |         | sentence_0                                                                         | sentence_1                                                                          | label                                                          |
-  |:--------|:-----------------------------------------------------------------------------------|:------------------------------------------------------------------------------------|:---------------------------------------------------------------|
-  | type    | string                                                                             | string                                                                              | float                                                          |
-  | details | <ul><li>min: 2 tokens</li><li>mean: 147.2 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 2 tokens</li><li>mean: 149.66 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 0.0</li><li>mean: 0.49</li><li>max: 1.0</li></ul> |
+  |         | sentence_0                                                                          | sentence_1                                                                          | label                                                         |
+  |:--------|:------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------|:--------------------------------------------------------------|
+  | type    | string                                                                              | string                                                                              | float                                                         |
+  | details | <ul><li>min: 2 tokens</li><li>mean: 153.68 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 2 tokens</li><li>mean: 152.26 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 0.0</li><li>mean: 0.5</li><li>max: 1.0</li></ul> |
 * Samples:
-  | sentence_0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | sentence_1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | label            |
-  |:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------|
-  | <code>X = np.vstack([x_data ** 2, np.ones(len(x_data))]).T<br>    params, residuals, rank, singular_values = np.linalg.lstsq(X, l, rcond=None<br>        )<br>    fitted_values = np.dot(X, params)<br>    if plot:<br>        plt.figure()<br>        ax = plt.gca()<br>        ax.plot(x_data, l, 'bo', label='Original data')<br>        ax.plot(x_data, fitted_values, 'r-', label='Fitted quadratic curve')<br>        ax.set_xlabel('x')<br>        ax.set_ylabel('y')<br>        ax.legend()<br>        return params, fitted_values, ax<br>    else:<br>        return params, fitted_values</code>                                                                                                                                                                                                                                                                          | <code>RANGE = args[0] if args else 100<br>    total = sum(int(num) for tup in T1 for num in tup)<br>    numbers = [random.randint(0, RANGE) for _ in range(total)]<br>    return Counter(numbers)</code>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | <code>0.0</code> |
-  | <code></code>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | <code>words = re.findall('\\b\\w+\\b', text)<br>    stop_words = set(stopwords.words('english'))<br>    word_counts = defaultdict(int)<br>    for word in words:<br>        if word.lower() not in stop_words:<br>            word_counts[word] += 1<br>    return dict(word_counts)</code>                                                                                                                                                                                                                                                                                                                                                                                                                                      | <code>0.0</code> |
-  | <code>error_times = []<br>    for log in logs:<br>        parts = log.split()<br>        if len(parts) < 3:<br>            continue<br>        level_part = parts[2]<br>        if not level_part.endswith(':'):<br>            continue<br>        level = level_part.rstrip(':')<br>        if level != 'ERROR':<br>            continue<br>        time_str = parts[1]<br>        try:<br>            h, m, _ = time_str.split(':')<br>            error_times.append(time(int(h), int(m)))<br>        except Exception:<br>            continue<br>    if not error_times:<br>        return [], time(0, 0)<br>    total_minutes = sum(t.hour * 60 + t.minute for t in error_times)<br>    avg_minutes = total_minutes // len(error_times)<br>    avg_hour = avg_minutes // 60<br>    avg_minute = avg_minutes % 60<br>    return error_times, time(avg_hour, avg_minute)</code> | <code>error_times = []<br>    total_time = 0<br>    count = 0<br>    for log in logs:<br>        match = re.search('(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) ERROR:',<br>            log)<br>        if match:<br>            dt = datetime.strptime(match.group(1), '%Y-%m-%d %H:%M:%S')<br>            hour = dt.hour<br>            minute = dt.minute<br>            error_times.append(time(hour, minute))<br>            total_time += hour + minute / 60<br>            count += 1<br>    if count > 0:<br>        average_time = time(int(total_time // count), int(total_time %<br>            count * 60 / count))<br>    else:<br>        average_time = time(0, 0)<br>    return error_times, average_time</code> | <code>1.0</code> |
+  | sentence_0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | sentence_1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | label            |
+  |:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------|
+  | <code>with open(csv_file, 'r') as f:<br>        content = f.read()<br>    content = content.replace(csv_delimiter, '\n')<br>    words = content.splitlines()<br>    freq = {}<br>    for w in words:<br>        if w in freq:<br>            freq[w] += 1<br>        else:<br>            freq[w] = 1<br>    dummy = {}<br>    for w in words:<br>        dummy[w] = dummy.get(w, 0) + 1<br><br>    def unused_helper():<br>        return None<br>    result = []<br>    for k, v in freq.items():<br>        result.append((k, v))<br>    result.sort(key=lambda x: x[1], reverse=True)<br>    return result</code> | <code>"""<br>    Reads a CSV file and counts the most common words in the file.<br><br>    Args:<br>        csv_file (str): The path to the CSV file.<br>        csv_delimiter (str): The delimiter used in the CSV file.<br><br>    Returns:<br>        list: A list of tuples, each containing a word and its frequency,<br>              sorted by frequency in descending order.<br>    """<br>    try:<br>        with open(csv_file, 'r') as f:<br>            content = f.read()<br>    except FileNotFoundError:<br>        return []<br>    words = re.findall('\\b\\w+\\b', content.lower())<br>    word_counts = defaultdict(int)<br>    for word in words:<br>        word_counts[word] += 1<br>    most_common_words = sorted(word_counts.items(), key=lambda x: x[1],<br>        reverse=True)<br>    return most_common_words</code> | <code>1.0</code> |
+  | <code>if not isinstance(t, tuple) or not all(isinstance(x, int) for x in t):<br>        raise ValueError('Input must be a tuple of integers')<br>    if n < 0:<br>        raise ValueError('n cannot be negative')<br>    if n == 0:<br>        return ()<br>    valid_combinations = list(it_combinations(t, n))<br>    if not valid_combinations:<br>        return ()<br>    return random.choice(valid_combinations)</code>                                                                                                                                                                                       | <code>"""<br>    Generates a random combination of length n from a tuple.<br>    """<br>    import random<br>    combinations = random.sample(t, n)<br>    return combinations</code>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | <code>1.0</code> |
+  | <code>merged = [elem for sub in list_of_lists for elem in sub]<br>    if not merged:<br>        return np.array([]), 0<br>    freq = Counter(merged)<br>    mode_val, mode_cnt = freq.most_common(1)[0]<br>    return np.array(mode_val), mode_cnt</code>                                                                                                                                                                                                                                                                                                                                                             | <code>merged = []<br>    for lst in list_of_lists:<br>        merged.extend(lst)<br>    counts = defaultdict(int)<br>    for num in merged:<br>        counts[num] += 1<br>    max_count = -1<br>    mode = None<br>    for num, cnt in counts.items():<br>        if cnt > max_count or cnt == max_count and num < mode:<br>            max_count = cnt<br>            mode = num<br>    return mode, max_count</code>                                                                                                                                                                                                                                                                                                                                                                                                                             | <code>1.0</code> |
 * Loss: [<code>CosineSimilarityLoss</code>](https://sbert.net/docs/package_reference/sentence_transformer/losses.html#cosinesimilarityloss) with these parameters:
   ```json
   {
@@ -411,23 +433,61 @@ You can finetune this model on your own dataset.
 </details>
 
 ### Training Logs
-| Epoch  | Step | Training Loss | val-sim_spearman_cosine |
-|:------:|:----:|:-------------:|:-----------------------:|
-| 0.9381 | 500  | 0.1092        | -                       |
-| 1.0    | 533  | -             | 0.8558                  |
-| 1.8762 | 1000 | 0.0218        | -                       |
-| 2.0    | 1066 | -             | 0.8584                  |
-| 2.8143 | 1500 | 0.0109        | -                       |
-| 3.0    | 1599 | -             | 0.8585                  |
+| Epoch  | Step  | Training Loss | val-sim_spearman_cosine |
+|:------:|:-----:|:-------------:|:-----------------------:|
+| 0.0717 | 500   | 0.2342        | -                       |
+| 0.1435 | 1000  | 0.105         | -                       |
+| 0.2152 | 1500  | 0.0653        | -                       |
+| 0.2870 | 2000  | 0.0557        | -                       |
+| 0.3587 | 2500  | 0.0472        | -                       |
+| 0.4305 | 3000  | 0.0433        | -                       |
+| 0.5022 | 3500  | 0.0369        | -                       |
+| 0.5740 | 4000  | 0.0325        | -                       |
+| 0.6457 | 4500  | 0.0314        | -                       |
+| 0.7175 | 5000  | 0.0281        | -                       |
+| 0.7892 | 5500  | 0.0264        | -                       |
+| 0.8610 | 6000  | 0.0267        | -                       |
+| 0.9327 | 6500  | 0.0255        | -                       |
+| 1.0    | 6969  | -             | 0.8542                  |
+| 1.0044 | 7000  | 0.0223        | -                       |
+| 1.0762 | 7500  | 0.0179        | -                       |
+| 1.1479 | 8000  | 0.0182        | -                       |
+| 1.2197 | 8500  | 0.0198        | -                       |
+| 1.2914 | 9000  | 0.0188        | -                       |
+| 1.3632 | 9500  | 0.0156        | -                       |
+| 1.4349 | 10000 | 0.0167        | -                       |
+| 1.5067 | 10500 | 0.0177        | -                       |
+| 1.5784 | 11000 | 0.0167        | -                       |
+| 1.6502 | 11500 | 0.0146        | -                       |
+| 1.7219 | 12000 | 0.0161        | -                       |
+| 1.7937 | 12500 | 0.0146        | -                       |
+| 1.8654 | 13000 | 0.0145        | -                       |
+| 1.9372 | 13500 | 0.0144        | -                       |
+| 2.0    | 13938 | -             | 0.8571                  |
+| 2.0089 | 14000 | 0.0144        | -                       |
+| 2.0806 | 14500 | 0.0125        | -                       |
+| 2.1524 | 15000 | 0.0101        | -                       |
+| 2.2241 | 15500 | 0.0123        | -                       |
+| 2.2959 | 16000 | 0.0127        | -                       |
+| 2.3676 | 16500 | 0.0109        | -                       |
+| 2.4394 | 17000 | 0.0116        | -                       |
+| 2.5111 | 17500 | 0.0112        | -                       |
+| 2.5829 | 18000 | 0.0103        | -                       |
+| 2.6546 | 18500 | 0.0105        | -                       |
+| 2.7264 | 19000 | 0.0099        | -                       |
+| 2.7981 | 19500 | 0.0096        | -                       |
+| 2.8699 | 20000 | 0.0111        | -                       |
+| 2.9416 | 20500 | 0.01          | -                       |
+| 3.0    | 20907 | -             | 0.8583                  |
 
 
 ### Framework Versions
-- Python: 3.13.5
-- Sentence Transformers: 5.1.1
-- Transformers: 4.57.0
-- PyTorch: 2.9.0+cu130
-- Accelerate: 1.10.1
-- Datasets: 4.2.0
+- Python: 3.13.9
+- Sentence Transformers: 5.2.0
+- Transformers: 4.57.3
+- PyTorch: 2.9.1+cu128
+- Accelerate: 1.12.0
+- Datasets: 4.4.1
 - Tokenizers: 0.22.1
 
 ## Citation
