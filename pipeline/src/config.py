@@ -94,7 +94,7 @@ FINETUNE_DIR = f"../results/RQ2/models"
 CLONE_DETECTION_RESULTS = f"../results/RQ2/clone_detection.csv"
 EPOCHS = 3
 BATCH_SIZE = 8 
-DETECTION_THRESHOLD = 0.9  # similarity classification threshold for clone detection
+DETECTION_THRESHOLD = 0.7  # similarity classification threshold for clone detection
 GPU_IDX = 0 # 0 for single GPU systems. Change it if you have multiple GPUs 
 
 # For clone detection evaluation with GPTCloneBench (RQ3)
