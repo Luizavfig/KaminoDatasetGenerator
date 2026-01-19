@@ -9,7 +9,7 @@ from src.config import *
 
 EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
 
-def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=DETECTION_THRESHOLD, own_dataset=True, reults_csv=CLONE_DETECTION_RESULTS, language=None):
+def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=DETECTION_THRESHOLD, own_dataset=True, reults_csv=CLONE_DETECTION_RESULTS, language="python"):
     model_dir = Path(model_path)
     model_folder_name = model_dir.name
     print(f"Checking model: {model_folder_name}") 
@@ -28,19 +28,13 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
         pairs = build_pairs(data)
         dataset_name = 'kamino'
     else: # use GPCloneBench dataset
-        if os.path.exists(GPTCLONEBENCH_PAIRS):
-            print(f"Loading pairs from {GPTCLONEBENCH_PAIRS}...")
-            with open(GPTCLONEBENCH_PAIRS, "r", encoding="utf-8") as f:
-                pairs = json.load(f)
-        else:
-            print("Pairs file not found. Building pairs...")
-            pairs = build_pairs_from_folders(pos_folder=GPTCLONEBENCH_JAVA_POS_CLONES_DIR)
+        pairs = build_pairs_from_folders(language=language)
         dataset_name = 'GPTCloneBench'
 
     precision, recall, f1, sims = _evaluate_model(model, pairs, threshold=threshold)
     print(f"✅ Evaluation complete (threshold={threshold}):")
     print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1-score: {f1:.4f}") 
-    _save_evaluation_to_csv(full_model_name, precision, recall, f1, csv_path=reults_csv, dataset_name=dataset_name)
+    _save_evaluation_to_csv(full_model_name, precision, recall, f1, csv_path=reults_csv, dataset_name=dataset_name, language=language)
     return precision, recall, f1, sims
 
 def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
@@ -71,14 +65,13 @@ def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
 
     return precision, recall, f1, similarities
 
-def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold=DETECTION_THRESHOLD, csv_path=CLONE_DETECTION_RESULTS, dataset_name=None):
+def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold=DETECTION_THRESHOLD, csv_path=CLONE_DETECTION_RESULTS, dataset_name=None, language="python"):
     csv_path = Path(csv_path)
-    
     
     metrics_row = {
         "model": full_model_name,
         "dataset": dataset_name,
-        "lan": "java",
+        "lan": language,
         "threshold": threshold,
         "precision": precision,
         "recall": recall,
@@ -88,7 +81,7 @@ def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold=DE
     if csv_path.exists():
         df = pd.read_csv(csv_path)
         # Check if this model + threshold already exists
-        mask = (df["model"] == full_model_name) & (df["threshold"] == threshold)
+        mask = (df["model"] == full_model_name) & (df["threshold"] == threshold) & (df["dataset"] == dataset_name) & (df["lan"] == language)
         if mask.any():
             # Update existing row
             df.loc[mask, ["precision", "recall", "f1"]] = [precision, recall, f1]

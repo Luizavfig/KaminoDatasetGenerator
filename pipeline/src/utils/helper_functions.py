@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from codebleu import calc_codebleu
 import parso
 import parso
-from src.config import GPTCLONEBENCH_POS_CLONES_DIR,  GPTCLONEBENCH_PAIRS
+from src.config import *
 
 class TrackingTestResult(unittest.TextTestResult):
     def __init__(self, *args, **kwargs):
@@ -220,77 +220,104 @@ def build_pairs(data, seed=42, target_ratio=1.0):
     print(f"Built {len(pairs)} code pairs (Positives: {positives}, Negatives: {negatives})")
     return pairs
 
-def build_pairs_from_folders(pos_folder=GPTCLONEBENCH_POS_CLONES_DIR, output_file=GPTCLONEBENCH_PAIRS, seed=42):
+def build_pairs_from_folders(seed=42,language="python"
+):
     """
-    Build positive and negative pairs from a folder containing .py files with positive pairs.
-    - Positive pairs come from within each file.
-    - Negative pairs are formed by combining functions from different files with different signatures.
+    Build positive and negative pairs from a folder containing source files.
+    Logic for number of positives and negatives is unchanged.
+    """
 
-    Returns:
-        List of tuples: (code1, code2, label)
-    """
+    if language not in LANGUAGE_ADAPTERS:
+        raise ValueError(f"Unsupported language: {language}")
+
+    adapter = LANGUAGE_ADAPTERS[language]
+    pos_folder = adapter["pairs_folder"]
+    output_file = adapter["output_file"]
+    extension = adapter["extension"]
+    extract = adapter["extract"]
+    remove_sig = adapter["remove_signature"]
+    get_sig = adapter["get_signature"]
+
+    if os.path.exists(output_file):
+            print(f"Loading pairs from {output_file}...")
+            with open(output_file, "r", encoding="utf-8") as f:
+                pairs = json.load(f)
+            return pairs
+    else:
+        print("Pairs file not found. Building pairs...")
+        
     rng = random.Random(seed)
     pairs = []
 
-    # Step 1: Read all functions from all files
-    file_functions = []  # List of lists of functions
-    all_files = [f for f in os.listdir(pos_folder) if f.endswith(".java")]
-    
+    # Step 1: Read all functions from all files 
+    file_functions = []
+    all_files = [f for f in os.listdir(pos_folder) if f.endswith(extension)]
+
     for filename in all_files:
         path = os.path.join(pos_folder, filename)
-        funcs = _extract_java_methods_from_file(path)
+        funcs = extract(path)
+
         if len(funcs) >= 2:
-            # Add positive pair (first two functions)
-            pairs.append((_remove_java_method_signature(funcs[0]),
-                          _remove_java_method_signature(funcs[1]),
-                          1))
+            # POSITIVE PAIR
+            pairs.append((
+                remove_sig(funcs[0]),
+                remove_sig(funcs[1]),
+                1
+            ))
+
         if funcs:
             file_functions.append(funcs)
 
     total_positives = sum(1 for _, _, l in pairs if l == 1)
 
-    # Step 2: Generate the same number of negative pairs
+    # Step 2: Generate the same number of negative pairs 
     negatives = []
     total_files = len(file_functions)
+
     if total_files < 2:
         print("Not enough files to generate negative pairs.")
     else:
         attempts = 0
         while len(negatives) < total_positives and attempts < total_positives * 10:
-            # pick two different files
             i, j = rng.sample(range(total_files), 2)
             funcs_i = file_functions[i]
             funcs_j = file_functions[j]
 
             func_a = rng.choice(funcs_i)
-            sig_a = _get_java_method_signature(func_a)
+            sig_a = get_sig(func_a)
 
-            # pick a function from j with a different signature
-            func_b_candidates = [f for f in funcs_j if _get_java_method_signature(f) != sig_a]
+            func_b_candidates = [
+                f for f in funcs_j
+                if get_sig(f) != sig_a
+            ]
+
             if not func_b_candidates:
                 attempts += 1
                 continue
+
             func_b = rng.choice(func_b_candidates)
 
-            negatives.append((_remove_java_method_signature(func_a),
-                              _remove_java_method_signature(func_b),
-                              0))
+            negatives.append((
+                remove_sig(func_a),
+                remove_sig(func_b),
+                0
+            ))
             attempts += 1
 
-    # Combine and shuffle
+    # Combine and shuffle (UNCHANGED)
     pairs.extend(negatives)
     rng.shuffle(pairs)
 
     positives = sum(1 for _, _, l in pairs if l == 1)
     negatives_count = sum(1 for _, _, l in pairs if l == 0)
-    print(f"Built {len(pairs)} code pairs (Positives: {positives}, Negatives: {negatives_count})")
 
-    # Step 3: Save to JSON file
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(pairs, f, indent=2)
+    print(
+        f"Built {len(pairs)} code pairs "
+        f"(Positives: {positives}, Negatives: {negatives_count})"
+    )
 
-    print(f"Saved pairs to {output_file}")
     return pairs
+
 
 def _calculate_max_negatives(data, target_ratio=1.0):
     """
@@ -471,3 +498,23 @@ def _get_java_method_signature(code: str):
     params = match.group("params").strip()
 
     return f"{name}({params})"
+
+
+LANGUAGE_ADAPTERS = {
+    "python": {
+        "extension": ".py",
+        "pairs_folder": GPTCLONEBENCH_PY_POS_CLONES_DIR,
+        "output_file": GPTCLONEBENCH_PY_PAIRS,
+        "extract": _extract_functions_from_file,
+        "remove_signature": remove_function_signature,
+        "get_signature": _get_function_signature,
+    },
+    "java": {
+        "extension": ".java",
+        "pairs_folder": GPTCLONEBENCH_JAVA_POS_CLONES_DIR,
+        "output_file": GPTCLONEBENCH_JAVA_PAIRS,
+        "extract": _extract_java_methods_from_file,
+        "remove_signature": _remove_java_method_signature,
+        "get_signature": _get_java_method_signature,
+    }
+}

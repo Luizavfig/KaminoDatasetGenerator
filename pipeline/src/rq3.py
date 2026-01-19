@@ -12,11 +12,18 @@ if __name__ == "__main__":
         required=True,
         help="Full Hugging Face model name, e.g., 'microsoft/codebert-base'",
     )
+    parser.add_argument(
+        "--lan",
+        type=str,
+        required=True,
+        help="Language of the pairs, e.g., 'python' or 'java'",
+    )
     args = parser.parse_args()
 
     full_model_name = args.model_name
+    language = args.lan
     model_folder_name = full_model_name.split("/")[-1]
     model_output_dir = Path(FINETUNE_DIR) / model_folder_name
 
     # Evaluate (run_finetuning will use full Hugging Face model name)
-    run_clone_evaluation(str(model_output_dir), full_model_name, own_dataset=False, reults_csv=CLONE_DETECTION_RQ3_RESULTS)
+    run_clone_evaluation(str(model_output_dir), full_model_name, own_dataset=False, reults_csv=CLONE_DETECTION_RQ3_RESULTS, language=language)

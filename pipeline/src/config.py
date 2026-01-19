@@ -18,9 +18,10 @@ FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json"
 FINAL_DATASET_RQ2 = f"../results/RQ2/{DATASET_NAME}_clone_dataset.json"
 
 #GPTCloneBench settings
-GPTCLONEBENCH_POS_CLONES_DIR = "../dataset/GPTCloneBench/python/"
+GPTCLONEBENCH_PY_POS_CLONES_DIR = "../dataset/GPTCloneBench/python/"
+GPTCLONEBENCH_PY_PAIRS =  "../dataset/GPTCloneBench/pairs_py.json"
 GPTCLONEBENCH_JAVA_POS_CLONES_DIR = "../dataset/GPTCloneBench/java/"
-GPTCLONEBENCH_PAIRS =  "../dataset/GPTCloneBench/pairs.json"
+GPTCLONEBENCH_JAVA_PAIRS =  "../dataset/GPTCloneBench/pairs_java.json"
 
 # Normalization settings
 SAMPLE_SIZE = 50  # number of entries to sample for experiments
