@@ -220,8 +220,7 @@ def build_pairs(data, seed=42, target_ratio=1.0):
     print(f"Built {len(pairs)} code pairs (Positives: {positives}, Negatives: {negatives})")
     return pairs
 
-def build_pairs_from_folders(seed=42,language="python"
-):
+def build_pairs_from_folders(seed=42,language="python"):
     """
     Build positive and negative pairs from a folder containing source files.
     Logic for number of positives and negatives is unchanged.
@@ -316,6 +315,11 @@ def build_pairs_from_folders(seed=42,language="python"
         f"(Positives: {positives}, Negatives: {negatives_count})"
     )
 
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(pairs, f, indent=2)
+
+    print(f"Saved {language} pairs to {output_file}")
     return pairs
 
 
