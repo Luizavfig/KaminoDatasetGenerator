@@ -95,7 +95,7 @@ def install_package(package):
     """Install a Python package using pip."""
     subprocess.check_call([sys.executable, "-m", "pip", "install", package]) 
 
-def extract_required_packages_clones(dataset):
+def _extract_required_packages_clones(dataset):
     """
     Extract a set of unique Python package names from dataset entries.  Scans the 'code' field of each clone to detect imports.
     """
@@ -499,7 +499,7 @@ def _get_java_method_signature(code: str):
 
     return f"{name}({params})"
 
-def extract_csharp_methods_from_file(path):
+def _extract_csharp_methods_from_file(path):
     """
     Extracts C# method code blocks from a .cs file.
     Returns a list of full method strings (signature + body).
@@ -540,7 +540,7 @@ def extract_csharp_methods_from_file(path):
     return methods
 
 
-def remove_csharp_method_signature(code: str) -> str:
+def _remove_csharp_method_signature(code: str) -> str:
     """
     Removes C# method signature and outer braces.
     Returns only the method body.
@@ -571,7 +571,7 @@ def remove_csharp_method_signature(code: str) -> str:
 
     return "\n".join(line[min_indent:] for line in lines)
 
-def get_csharp_method_signature(code: str):
+def _get_csharp_method_signature(code: str):
     """
     Extracts C# method signature.
     Returns: 'MethodName(type1 arg1, type2 arg2)'
@@ -583,6 +583,106 @@ def get_csharp_method_signature(code: str):
         (public|private|protected|internal)?\s*
         (static\s+|virtual\s+|override\s+|async\s+)*
         ([\w\<\>\[\],]+\s+)+
+        (?P<name>\w+)\s*
+        \((?P<params>[^\)]*)\)
+        ''',
+        re.VERBOSE
+    )
+
+    match = pattern.search(code)
+    if not match:
+        return None
+
+    return f"{match.group('name')}({match.group('params').strip()})"
+
+def _extract_c_functions_from_file(path):
+    """
+    Extracts C function definitions from a .c file.
+    Returns a list of full function strings (signature + body).
+    """
+    with open(path, "r", encoding="utf-8", errors="ignore") as f:
+        code = f.read()
+
+    functions = []
+
+    signature_pattern = re.compile(
+        r'''
+        (?P<ret_type>
+            (?:static\s+)?                # static
+            (?:inline\s+)?                # inline
+            (?:const\s+)?                 # const
+            [\w\s\*\(\)]+?               # return type
+        )
+        \s+
+        (?P<name>\w+)\s*                 # function name
+        \(
+            (?P<params>[^;]*?)
+        \)
+        \s*
+        \{
+        ''',
+        re.VERBOSE | re.MULTILINE
+    )
+
+    for match in signature_pattern.finditer(code):
+        start = match.start()
+        brace_count = 0
+        i = match.end() - 1
+
+        while i < len(code):
+            if code[i] == "{":
+                brace_count += 1
+            elif code[i] == "}":
+                brace_count -= 1
+                if brace_count == 0:
+                    functions.append(code[start:i + 1].strip())
+                    break
+            i += 1
+
+    return functions
+
+def _remove_c_function_signature(code: str) -> str:
+    """
+    Removes C function signature and outer braces.
+    Returns only the function body.
+    """
+    code = code.strip()
+
+    first_brace = code.find("{")
+    last_brace = code.rfind("}")
+
+    if first_brace == -1 or last_brace == -1:
+        return ""
+
+    body = code[first_brace + 1:last_brace]
+
+    lines = body.splitlines()
+
+    while lines and not lines[0].strip():
+        lines.pop(0)
+    while lines and not lines[-1].strip():
+        lines.pop()
+
+    indents = [
+        len(line) - len(line.lstrip())
+        for line in lines
+        if line.strip()
+    ]
+    min_indent = min(indents) if indents else 0
+
+    return "\n".join(line[min_indent:] for line in lines)
+
+def _get_c_function_signature(code: str):
+    """
+    Extracts C function signature.
+    Returns: 'funcName(type1 arg1, type2 arg2)'
+    """
+    code = code.strip().replace("\n", " ")
+
+    pattern = re.compile(
+        r'''
+        (?:static\s+)?(?:inline\s+)?(?:const\s+)?   # modifiers
+        [\w\s\*\(\)]+?                             # return type
         (?P<name>\w+)\s*
         \((?P<params>[^\)]*)\)
         ''',
@@ -617,8 +717,16 @@ LANGUAGE_ADAPTERS = {
         "extension": ".cs",
         "pairs_folder": GPTCLONEBENCH_CS_POS_CLONES_DIR,
         "output_file": GPTCLONEBENCH_CS_PAIRS,
-        "extract": extract_csharp_methods_from_file,
-        "remove_signature": remove_csharp_method_signature,
-        "get_signature": get_csharp_method_signature,
+        "extract": _extract_csharp_methods_from_file,
+        "remove_signature": _remove_csharp_method_signature,
+        "get_signature": _get_csharp_method_signature,
+    },
+    "c": {
+        "extension": ".c",
+        "pairs_folder": GPTCLONEBENCH_C_POS_CLONES_DIR,
+        "output_file": GPTCLONEBENCH_C_PAIRS,
+        "extract": _extract_c_functions_from_file,
+        "remove_signature": _remove_c_function_signature,
+        "get_signature": _get_c_function_signature,
     },
 }
