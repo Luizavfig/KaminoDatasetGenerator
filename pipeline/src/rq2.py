@@ -27,4 +27,6 @@ if __name__ == "__main__":
         print("✅ Using existing dataset.")
 
     # Evaluate (run_finetuning will use full Hugging Face model name)
-    run_clone_evaluation(str(model_output_dir), full_model_name)
+    threshold = [0.7, 0.8, 0.9] # similarity classification threshold for clone detection
+    for th in threshold:
+        run_clone_evaluation(str(model_output_dir), full_model_name, threshold=th)

@@ -9,7 +9,7 @@ from src.config import *
 
 EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
 
-def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=DETECTION_THRESHOLD, own_dataset=True, reults_csv=CLONE_DETECTION_RESULTS, language="python"):
+def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=None, own_dataset=True, reults_csv=CLONE_DETECTION_RESULTS, language="python"):
     model_dir = Path(model_path)
     model_folder_name = model_dir.name
     print(f"Checking model: {model_folder_name}") 
@@ -34,10 +34,10 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
     precision, recall, f1, sims = _evaluate_model(model, pairs, threshold=threshold)
     print(f"✅ Evaluation complete (threshold={threshold}):")
     print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1-score: {f1:.4f}") 
-    _save_evaluation_to_csv(full_model_name, precision, recall, f1, csv_path=reults_csv, dataset_name=dataset_name, language=language)
+    _save_evaluation_to_csv(full_model_name, precision, recall, f1, csv_path=reults_csv, dataset_name=dataset_name, language=language , threshold=threshold)
     return precision, recall, f1, sims
 
-def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
+def _evaluate_model(model, pairs, threshold):
     TP = 0  
     FP = 0  
     FN = 0  
@@ -65,7 +65,7 @@ def _evaluate_model(model, pairs, threshold=DETECTION_THRESHOLD):
 
     return precision, recall, f1, similarities
 
-def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold=DETECTION_THRESHOLD, csv_path=CLONE_DETECTION_RESULTS, dataset_name=None, language="python"):
+def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold, csv_path=CLONE_DETECTION_RESULTS, dataset_name=None, language="python"):
     csv_path = Path(csv_path)
     
     metrics_row = {
