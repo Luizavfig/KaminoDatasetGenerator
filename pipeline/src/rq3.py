@@ -26,7 +26,7 @@ if __name__ == "__main__":
     else:
         print("Using existing dataset.")
 
-    threshold = [0.7, 0.8, 0.9] # similarity classification threshold for clone detection
+    threshold = [0.7] # similarity classification threshold for clone detection
     languages = ["python", "java", "csharp", "c"] # supported languages in GPTCloneBench
     #languages = ["java", "csharp", "c"] # supported languages in GPTCloneBench
     for th in threshold:    
