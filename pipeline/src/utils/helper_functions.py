@@ -717,7 +717,7 @@ LANGUAGE_ADAPTERS = {
         "remove_signature": _remove_java_method_signature,
         "get_signature": _get_java_method_signature,
     },
-    "cs": {
+    "csharp": {
         "extension": ".cs",
         "pairs_folder": GPTCLONEBENCH_CS_POS_CLONES_DIR,
         "output_file": GPTCLONEBENCH_CS_PAIRS,

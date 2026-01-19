@@ -21,7 +21,8 @@ if __name__ == "__main__":
     # Evaluate (run_finetuning will use full Hugging Face model name)
 
     threshold = [0.7, 0.8, 0.9] # similarity classification threshold for clone detection
-    languages = ["python", "java", "csharp", "c"] # supported languages in GPTCloneBench
+    #languages = ["python", "java", "csharp", "c"] # supported languages in GPTCloneBench
+    languages = ["java", "csharp", "c"] # supported languages in GPTCloneBench
     for th in threshold:
         for language in languages:
             run_clone_evaluation(str(model_output_dir), full_model_name, own_dataset=False, reults_csv=CLONE_DETECTION_RQ3_RESULTS, language=language, threshold=th)
