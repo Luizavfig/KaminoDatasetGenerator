@@ -22,6 +22,8 @@ GPTCLONEBENCH_PY_POS_CLONES_DIR = "../dataset/GPTCloneBench/python/"
 GPTCLONEBENCH_PY_PAIRS =  "../dataset/GPTCloneBench/pairs_py.json"
 GPTCLONEBENCH_JAVA_POS_CLONES_DIR = "../dataset/GPTCloneBench/java/"
 GPTCLONEBENCH_JAVA_PAIRS =  "../dataset/GPTCloneBench/pairs_java.json"
+GPTCLONEBENCH_CS_POS_CLONES_DIR = "../dataset/GPTCloneBench/cd/"
+GPTCLONEBENCH_CS_PAIRS =  "../dataset/GPTCloneBench/pairs_cd.json"
 
 # Normalization settings
 SAMPLE_SIZE = 50  # number of entries to sample for experiments

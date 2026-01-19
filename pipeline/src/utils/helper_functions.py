@@ -499,6 +499,102 @@ def _get_java_method_signature(code: str):
 
     return f"{name}({params})"
 
+def extract_csharp_methods_from_file(path):
+    """
+    Extracts C# method code blocks from a .cs file.
+    Returns a list of full method strings (signature + body).
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        code = f.read()
+
+    methods = []
+
+    signature_pattern = re.compile(
+        r'''
+        (public|private|protected|internal)?\s*
+        (static\s+|virtual\s+|override\s+|async\s+)*   # modifiers
+        ([\w\<\>\[\],]+\s+)+                           # return type
+        (?P<name>\w+)\s*
+        \((?P<params>[^\)]*)\)\s*
+        (where\s+[\w\s,:<>]+)?\s*                      # generic constraints
+        \{
+        ''',
+        re.VERBOSE | re.MULTILINE
+    )
+
+    for match in signature_pattern.finditer(code):
+        start = match.start()
+        brace_count = 0
+        i = match.end() - 1
+
+        while i < len(code):
+            if code[i] == "{":
+                brace_count += 1
+            elif code[i] == "}":
+                brace_count -= 1
+                if brace_count == 0:
+                    methods.append(code[start:i + 1].strip())
+                    break
+            i += 1
+
+    return methods
+
+
+def remove_csharp_method_signature(code: str) -> str:
+    """
+    Removes C# method signature and outer braces.
+    Returns only the method body.
+    """
+    code = code.strip()
+
+    first_brace = code.find("{")
+    last_brace = code.rfind("}")
+
+    if first_brace == -1 or last_brace == -1:
+        return ""
+
+    body = code[first_brace + 1:last_brace]
+
+    lines = body.splitlines()
+
+    while lines and not lines[0].strip():
+        lines.pop(0)
+    while lines and not lines[-1].strip():
+        lines.pop()
+
+    indents = [
+        len(line) - len(line.lstrip())
+        for line in lines
+        if line.strip()
+    ]
+    min_indent = min(indents) if indents else 0
+
+    return "\n".join(line[min_indent:] for line in lines)
+
+def get_csharp_method_signature(code: str):
+    """
+    Extracts C# method signature.
+    Returns: 'MethodName(type1 arg1, type2 arg2)'
+    """
+    code = code.strip().replace("\n", " ")
+
+    pattern = re.compile(
+        r'''
+        (public|private|protected|internal)?\s*
+        (static\s+|virtual\s+|override\s+|async\s+)*
+        ([\w\<\>\[\],]+\s+)+
+        (?P<name>\w+)\s*
+        \((?P<params>[^\)]*)\)
+        ''',
+        re.VERBOSE
+    )
+
+    match = pattern.search(code)
+    if not match:
+        return None
+
+    return f"{match.group('name')}({match.group('params').strip()})"
+
 
 LANGUAGE_ADAPTERS = {
     "python": {
@@ -516,5 +612,13 @@ LANGUAGE_ADAPTERS = {
         "extract": _extract_java_methods_from_file,
         "remove_signature": _remove_java_method_signature,
         "get_signature": _get_java_method_signature,
-    }
+    },
+    "cs": {
+        "extension": ".cs",
+        "pairs_folder": GPTCLONEBENCH_CS_POS_CLONES_DIR,
+        "output_file": GPTCLONEBENCH_CS_PAIRS,
+        "extract": extract_csharp_methods_from_file,
+        "remove_signature": remove_csharp_method_signature,
+        "get_signature": get_csharp_method_signature,
+    },
 }
