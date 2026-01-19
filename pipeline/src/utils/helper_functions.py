@@ -234,15 +234,15 @@ def build_pairs_from_folders(pos_folder=GPTCLONEBENCH_POS_CLONES_DIR, output_fil
 
     # Step 1: Read all functions from all files
     file_functions = []  # List of lists of functions
-    all_files = [f for f in os.listdir(pos_folder) if f.endswith(".py")]
+    all_files = [f for f in os.listdir(pos_folder) if f.endswith(".java")]
     
     for filename in all_files:
         path = os.path.join(pos_folder, filename)
-        funcs = _extract_functions_from_file(path)
+        funcs = _extract_java_methods_from_file(path)
         if len(funcs) >= 2:
             # Add positive pair (first two functions)
-            pairs.append((remove_function_signature(funcs[0]),
-                          remove_function_signature(funcs[1]),
+            pairs.append((_remove_java_method_signature(funcs[0]),
+                          _remove_java_method_signature(funcs[1]),
                           1))
         if funcs:
             file_functions.append(funcs)
@@ -368,3 +368,79 @@ def startup():
     print("Check the README.md for setup and usage instructions.")
     print("Make sure to run `pip install -r required_packages.txt` if you haven't already.")
 
+def _extract_java_methods_from_file(path):
+    """
+    Extracts Java method code blocks from a .java file.
+    Returns a list of full method strings (signature + body).
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        code = f.read()
+
+    methods = []
+
+    # Rough matcher for method signatures (not constructors)
+    signature_pattern = re.compile(
+        r'''
+        (public|protected|private)?\s*          # visibility
+        (static\s+)?                            # static
+        ([\w\<\>\[\]]+\s+)+                    # return type
+        (\w+)\s*                                # method name
+        \([^)]*\)\s*                            # parameters
+        (throws\s+[\w,\s]+)?\s*                # throws clause
+        \{                                      # method body start
+        ''',
+        re.VERBOSE | re.MULTILINE
+    )
+
+    for match in signature_pattern.finditer(code):
+        start = match.start()
+        brace_count = 0
+        i = match.end() - 1
+
+        while i < len(code):
+            if code[i] == "{":
+                brace_count += 1
+            elif code[i] == "}":
+                brace_count -= 1
+                if brace_count == 0:
+                    methods.append(code[start:i+1].strip())
+                    break
+            i += 1
+
+    return methods
+
+def _remove_java_method_signature(code: str) -> str:
+    """
+    Removes Java method signature and outer braces.
+    Returns only the method body.
+    """
+    code = code.strip()
+
+    # Find first opening brace of the method
+    first_brace = code.find("{")
+    last_brace = code.rfind("}")
+
+    if first_brace == -1 or last_brace == -1:
+        return ""
+
+    body = code[first_brace + 1:last_brace]
+
+    # Normalize indentation
+    lines = body.splitlines()
+
+    # Remove empty leading/trailing lines
+    while lines and not lines[0].strip():
+        lines.pop(0)
+    while lines and not lines[-1].strip():
+        lines.pop()
+
+    # Compute minimum indentation
+    indents = [
+        len(line) - len(line.lstrip())
+        for line in lines
+        if line.strip()
+    ]
+    min_indent = min(indents) if indents else 0
+
+    cleaned = [line[min_indent:] for line in lines]
+    return "\n".join(cleaned)

@@ -9,7 +9,7 @@ from src.config import *
 
 EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
 
-def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=DETECTION_THRESHOLD, own_dataset=True, reults_csv=CLONE_DETECTION_RESULTS):
+def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=DETECTION_THRESHOLD, own_dataset=True, reults_csv=CLONE_DETECTION_RESULTS, language=None):
     model_dir = Path(model_path)
     model_folder_name = model_dir.name
     print(f"Checking model: {model_folder_name}") 
@@ -34,7 +34,7 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
                 pairs = json.load(f)
         else:
             print("Pairs file not found. Building pairs...")
-            pairs = build_pairs_from_folders()
+            pairs = build_pairs_from_folders(pos_folder=GPTCLONEBENCH_JAVA_POS_CLONES_DIR)
         dataset_name = 'GPTCloneBench'
 
     precision, recall, f1, sims = _evaluate_model(model, pairs, threshold=threshold)
@@ -78,6 +78,7 @@ def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold=DE
     metrics_row = {
         "model": full_model_name,
         "dataset": dataset_name,
+        "lan": "java",
         "threshold": threshold,
         "precision": precision,
         "recall": recall,

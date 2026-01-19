@@ -18,7 +18,8 @@ FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json"
 FINAL_DATASET_RQ2 = f"../results/RQ2/{DATASET_NAME}_clone_dataset.json"
 
 #GPTCloneBench settings
-GPTCLONEBENCH_POS_CLONES_DIR = "../dataset/GPTCloneBench/true/T4/"
+GPTCLONEBENCH_POS_CLONES_DIR = "../dataset/GPTCloneBench/python/"
+GPTCLONEBENCH_JAVA_POS_CLONES_DIR = "../dataset/GPTCloneBench/java/"
 GPTCLONEBENCH_PAIRS =  "../dataset/GPTCloneBench/pairs.json"
 
 # Normalization settings
@@ -94,7 +95,7 @@ FINETUNE_DIR = f"../results/RQ2/models"
 CLONE_DETECTION_RESULTS = f"../results/RQ2/clone_detection.csv"
 EPOCHS = 3
 BATCH_SIZE = 8 
-DETECTION_THRESHOLD = 0.9  # similarity classification threshold for clone detection
+DETECTION_THRESHOLD = 0.7  # similarity classification threshold for clone detection
 GPU_IDX = 0 # 0 for single GPU systems. Change it if you have multiple GPUs 
 
 # For clone detection evaluation with GPTCloneBench (RQ3)
