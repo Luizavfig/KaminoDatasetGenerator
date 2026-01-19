@@ -34,7 +34,7 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
     precision, recall, f1, sims = _evaluate_model(model, pairs, threshold=threshold)
     print(f"✅ Evaluation complete (threshold={threshold}):")
     print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1-score: {f1:.4f}") 
-    _save_evaluation_to_csv(full_model_name, precision, recall, f1, csv_path=reults_csv, dataset_name=dataset_name, language=language , threshold=threshold)
+    _save_evaluation_to_csv(full_model_name, precision, recall, f1, csv_path=reults_csv, dataset_name=dataset_name, language=language , threshold=threshold, num_pairs=len(pairs))
     return precision, recall, f1, sims
 
 def _evaluate_model(model, pairs, threshold):
@@ -65,13 +65,14 @@ def _evaluate_model(model, pairs, threshold):
 
     return precision, recall, f1, similarities
 
-def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold, csv_path=CLONE_DETECTION_RESULTS, dataset_name=None, language="python"):
+def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold, csv_path=CLONE_DETECTION_RESULTS, dataset_name=None, language="python", num_pairs=None):
     csv_path = Path(csv_path)
     
     metrics_row = {
         "model": full_model_name,
         "dataset": dataset_name,
         "lan": language,
+        "pairs": num_pairs,
         "threshold": threshold,
         "precision": precision,
         "recall": recall,
