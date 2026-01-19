@@ -239,12 +239,12 @@ def build_pairs_from_folders(seed=42,language="python"
     get_sig = adapter["get_signature"]
 
     if os.path.exists(output_file):
-            print(f"Loading pairs from {output_file}...")
+            print(f"Loading {language} pairs from {output_file}...")
             with open(output_file, "r", encoding="utf-8") as f:
                 pairs = json.load(f)
             return pairs
     else:
-        print("Pairs file not found. Building pairs...")
+        print(f"Pairs file not found. Building {language} pairs...")
         
     rng = random.Random(seed)
     pairs = []
@@ -312,7 +312,7 @@ def build_pairs_from_folders(seed=42,language="python"
     negatives_count = sum(1 for _, _, l in pairs if l == 0)
 
     print(
-        f"Built {len(pairs)} code pairs "
+        f"Built {len(pairs)} {language} code pairs "
         f"(Positives: {positives}, Negatives: {negatives_count})"
     )
 
