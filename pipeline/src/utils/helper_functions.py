@@ -263,17 +263,17 @@ def build_pairs_from_folders(pos_folder=GPTCLONEBENCH_POS_CLONES_DIR, output_fil
             funcs_j = file_functions[j]
 
             func_a = rng.choice(funcs_i)
-            sig_a = _get_function_signature(func_a)
+            sig_a = _get_java_method_signature(func_a)
 
             # pick a function from j with a different signature
-            func_b_candidates = [f for f in funcs_j if _get_function_signature(f) != sig_a]
+            func_b_candidates = [f for f in funcs_j if _get_java_method_signature(f) != sig_a]
             if not func_b_candidates:
                 attempts += 1
                 continue
             func_b = rng.choice(func_b_candidates)
 
-            negatives.append((remove_function_signature(func_a),
-                              remove_function_signature(func_b),
+            negatives.append((_remove_java_method_signature(func_a),
+                              _remove_java_method_signature(func_b),
                               0))
             attempts += 1
 
@@ -444,3 +444,30 @@ def _remove_java_method_signature(code: str) -> str:
 
     cleaned = [line[min_indent:] for line in lines]
     return "\n".join(cleaned)
+ 
+def _get_java_method_signature(code: str):
+    """
+    Extracts Java method signature from method code.
+    Returns: 'methodName(type1 arg1, type2 arg2)'
+    """
+    code = code.strip().replace("\n", " ")
+
+    pattern = re.compile(
+        r'''
+        (public|protected|private)?\s*
+        (static\s+)?(final\s+)?(synchronized\s+)?   # modifiers
+        ([\w\<\>\[\]]+\s+)+                          # return type
+        (?P<name>\w+)\s*
+        \((?P<params>[^)]*)\)
+        ''',
+        re.VERBOSE
+    )
+
+    match = pattern.search(code)
+    if not match:
+        return None
+
+    name = match.group("name")
+    params = match.group("params").strip()
+
+    return f"{name}({params})"
