@@ -3,13 +3,13 @@ import pandas as pd
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
-from src.utils.helper_functions import build_pairs, build_pairs_from_folders
+from src.utils.helper_functions import build_pairs, build_pairs_from_folders, build_pairs_bigclonebench
 from src.clone_detection.finetune import run_finetuning
 from src.config import *
 
 EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
 
-def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=None, own_dataset=True, reults_csv=CLONE_DETECTION_RESULTS, language="python"):
+def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=None, dataset_name="Kamino", reults_csv=CLONE_DETECTION_RESULTS, language="python"):
     model_dir = Path(model_path)
     model_folder_name = model_dir.name
     print(f"Checking model: {model_folder_name}") 
@@ -22,14 +22,14 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
     print(f"Loading model from: {model_dir}")
     model = SentenceTransformer(str(model_dir))
     
-    if(own_dataset): # use our own dataset
+    if(dataset_name == "Kamino"): # use our own dataset
         with open(dataset_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        pairs = build_pairs(data)
-        dataset_name = 'kamino'
+        pairs = build_pairs(data) 
+    elif(dataset_name == "BigCloneBench"): # use BigCloneBench dataset
+        pairs = build_pairs_bigclonebench()
     else: # use GPCloneBench dataset
-        pairs = build_pairs_from_folders(language=language)
-        dataset_name = 'GPTCloneBench'
+        pairs = build_pairs_from_folders(language=language) 
 
     precision, recall, f1, sims = _evaluate_model(model, pairs, threshold=threshold)
     print(f"✅ Evaluation complete (threshold={threshold}):")

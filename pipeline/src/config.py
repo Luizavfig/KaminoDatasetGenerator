@@ -27,6 +27,9 @@ GPTCLONEBENCH_CS_PAIRS =  "../dataset/GPTCloneBench/pairs_cs.json"
 GPTCLONEBENCH_C_POS_CLONES_DIR = "../dataset/GPTCloneBench/c/"
 GPTCLONEBENCH_C_PAIRS =  "../dataset/GPTCloneBench/pairs_c.json"
 
+# BigCloneBench settings 
+BIGCLONEBENCH_PAIRS = "../dataset/BigCloneBench/pairs.json"
+
 # Normalization settings
 SAMPLE_SIZE = 50  # number of entries to sample for experiments
 SAMPLE_SEED = 0   # random seed for sampling
@@ -81,26 +84,14 @@ EFFICIENCY_PATH = "../results/RQ1/efficiency_summary.csv"
 TOP_N = 50 # top-N configurations to select
 EFFICIENCY_RESULTS = "../results/RQ1/top_configs.json"
 
-#----------------------------------------------#
-# RQ2 specific overrides (uncomment for RQ2)
-# SAMPLE_1_PATH = SAMPLE_2_PATH
-# OUT_PATH = f"../results/RQ2/{DATASET_NAME}_llm_clones.json"
-# FINAL_DATASET = FINAL_DATASET_RQ2
-# REPROMPT_PATH = f"../results/RQ2/{DATASET_NAME}_reprompt.json"
-# FAILED_REPROMPT_PATH = f"../results/RQ2/{DATASET_NAME}_failed_reprompt.json"
-# FILTERED_PATH_CODEBLEU = f"../results/RQ2/{DATASET_NAME}_filtered_codebleu.json"
-# FILTERED_PATH_TESTS = f"../results/RQ2/{DATASET_NAME}_filtered_tests.json"
-# CLUSTER_DIR = "../results/RQ2/clustering"
-# End of RQ2 specific overrides
+# For type4 check (RQ2)
+TYPE4_RESULTS = f"../results/RQ2/type4_results.csv"
 
-# For finetuning (RQ2)
+# For finetuning and clone detection evaluation with GPTCloneBench (RQ3)
 CLONE_DATASET_TRAIN = f"../results/{DATASET_NAME}_clones_train.json"
 CLONE_DATASET_TEST = f"../results/{DATASET_NAME}_clones_test.json"
-FINETUNE_DIR = f"../results/RQ2/models"
-CLONE_DETECTION_RESULTS = f"../results/RQ2/clone_detection.csv"
 EPOCHS = 3
 BATCH_SIZE = 8  
 GPU_IDX = 0 # 0 for single GPU systems. Change it if you have multiple GPUs 
-
-# For clone detection evaluation with GPTCloneBench (RQ3)
-CLONE_DETECTION_RQ3_RESULTS = f"../results/RQ3/clone_detection.csv"
+FINETUNE_DIR = f"../results/RQ3/models"
+CLONE_DETECTION_RESULTS = f"../results/RQ3/clone_detection.csv"

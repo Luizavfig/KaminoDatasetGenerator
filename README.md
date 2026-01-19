@@ -20,7 +20,7 @@ To change the configuration, modify [config.py](pipeline/src/config.py)
 Inside *pipeline* folder, run ```python -m src.main```
 
 ## Replicating experiments
-Inside the ```pipeline``` folder, there is a Jupyter Notebook for each RQ follow the instructions there. 
+Inside the ```pipeline``` folder, there is a Jupyter Notebook for each RQ **follow the instructions there**. 
 
 Results are saved in ```results``` folder per RQ.
 

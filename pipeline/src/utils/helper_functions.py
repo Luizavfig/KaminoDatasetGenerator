@@ -1,10 +1,9 @@
-import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os, math, json
+import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os, math, json, parso
 from huggingface_hub import login
 from pathlib import Path
 from dotenv import load_dotenv
 from codebleu import calc_codebleu
-import parso
-import parso
+from datasets import load_dataset
 from src.config import *
 
 class TrackingTestResult(unittest.TextTestResult):
@@ -698,6 +697,46 @@ def _get_c_function_signature(code: str):
         return None
 
     return f"{match.group('name')}({match.group('params').strip()})"
+
+
+def build_pairs_bigclonebench(output_file=BIGCLONEBENCH_PAIRS, split="test"):
+    """
+    Converts BigCloneBench (CodeXGLUE) dataset to JSON pairs.
+    Output format: [code1, code2, label]
+    """
+    if os.path.exists(output_file):
+        print(f"Loading BigCloneBench pairs from {output_file}...")
+        with open(output_file, "r", encoding="utf-8") as f:
+            pairs = json.load(f)
+        return pairs
+
+    print("Pairs file not found. Building BigCloneBench pairs...")
+    hf_login()
+    dataset = load_dataset("google/code_x_glue_cc_clone_detection_big_clone_bench",  split=split)
+    
+    pairs = []
+
+    for example in dataset:
+        code1 = example["func1"]
+        code2 = example["func2"]
+        label = int(example["label"])
+        code1_body = _remove_java_method_signature(code1)
+        code2_body = _remove_java_method_signature(code2)
+
+        pairs.append((code1_body, code2_body, label))
+
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(pairs, f, indent=2)
+
+    positives = sum(1 for _, _, l in pairs if l == 1)
+    negatives = sum(1 for _, _, l in pairs if l == 0)
+
+    print(
+        f"Saved {len(pairs)} pairs to {output_file} "
+        f"(Positives: {positives}, Negatives: {negatives})"
+    )
+    return pairs
 
 
 LANGUAGE_ADAPTERS = {
