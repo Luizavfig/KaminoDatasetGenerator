@@ -1,0 +1,47 @@
+<clones>
+    <clone>
+        <source file="selected/1966294.java" startline="10" endline="15" />
+        <code>
+            //clone fragment 1
+            public int add(int a, int b) {
+                return a + b;
+            }
+        </code>
+
+        <source file="selected/1966294.java" startline="50" endline="55" />
+        <code>
+            //clone fragment 2
+            public int sum(int x, int y) {
+                return x + y;
+            }
+        </code>
+    </clone>
+
+    <clone>
+        <source file="selected/1966294.java" startline="20" endline="25" />
+        <code>
+            //clone fragment 1
+            public boolean isEven(int n) {
+                return n % 2 == 0;
+            }
+        </code>
+
+        <source file="selected/1966294.java" startline="60" endline="65" />
+        <code>
+            //clone fragment 2
+            public boolean checkEven(int number) {
+                return number % 2 == 0;
+            }
+        </code>
+    </clone>
+
+    <clone>
+        <source file="selected/1966294.java" startline="30" endline="35" />
+        <code>
+            //different fragment
+            public int multiply(int a, int b) {
+                return a * b;
+            }
+        </code>
+    </clone>
+</clones>
