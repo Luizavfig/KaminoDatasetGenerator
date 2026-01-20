@@ -15,7 +15,7 @@ SAMPLE_1_PATH = FILTERED_DATASET_PATH
 SAMPLE_2_PATH = "../dataset/sample2.json"
 OUT_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones.json"
 FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json"
-FINAL_DATASET_RQ2 = f"../results/RQ2/{DATASET_NAME}_clone_dataset.json"
+FINAL_DATASET_RQ2 = f"../results/RQ2/{DATASET_NAME}_clone_dataset.xml"
 
 #GPTCloneBench settings
 GPTCLONEBENCH_PY_POS_CLONES_DIR = "../dataset/GPTCloneBench/python/"
