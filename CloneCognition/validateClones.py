@@ -55,8 +55,12 @@ def app_code_clone_execTxl(txlFilePath, sourceCode, lang, saveOutputFile=False):
 	# txlPath = '/home/ubuntu/Webpage/txl_features/txl_features/java/PrettyPrint.txl'
 
 	# do the feature extraction by txl
-	p = subprocess.Popen(['/usr/local/bin/txl', '-Dapply', txlFilePath, sourceFile], stdout=subprocess.PIPE,
-						 stderr=subprocess.PIPE)
+	txl_executable = "/Tmp/marchezl/KaminoDatasetGenerator/CloneCognition/txl10.8b.linux64/bin/txl"
+
+	p = subprocess.Popen([txl_executable, '-Dapply', txlFilePath, sourceFile],
+                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	
+	#p = subprocess.Popen(['/usr/local/bin/txl', '-Dapply', txlFilePath, sourceFile], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	out, err = p.communicate()
 
 	# convert to utf-8 format for easier readibility
