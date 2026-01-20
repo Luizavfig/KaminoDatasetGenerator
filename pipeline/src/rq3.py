@@ -30,7 +30,6 @@ if __name__ == "__main__":
     languages = ["python", "java", "csharp", "c"] # supported languages in GPTCloneBench
     #languages = ["java", "csharp", "c"] # supported languages in GPTCloneBench
     for th in threshold:    
-        #run_clone_evaluation(str(model_output_dir), full_model_name, threshold=th, dataset_name="Kamino", language="python") # for our own dataset
-        run_clone_evaluation(str(model_output_dir), full_model_name, threshold=th, dataset_name="BigCloneBench", language="java") # for BigCloneBench
-        #for language in languages: # for GPTCloneBench
-         #   run_clone_evaluation(str(model_output_dir), full_model_name, dataset_name="GPTCloneBench",language=language, threshold=th)
+        run_clone_evaluation(str(model_output_dir), full_model_name, threshold=th, dataset_name="Kamino", language="python") # for our own dataset
+        for language in languages: # for GPTCloneBench
+            run_clone_evaluation(str(model_output_dir), full_model_name, dataset_name="GPTCloneBench",language=language, threshold=th)

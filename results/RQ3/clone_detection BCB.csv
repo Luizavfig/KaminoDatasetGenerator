@@ -1,0 +1,3 @@
+model,dataset,lan,pairs,threshold,precision,recall,f1
+microsoft/codebert-base-default,BigCloneBench,java,415416,0.7,0.1367785545092148,1.0,0.2406423906690722
+microsoft/codebert-base,BigCloneBench,java,415416,0.7,0.44397779043280183,0.10976768743400211,0.17601738443303044
