@@ -174,34 +174,24 @@ def app_code_clone_similaritiesNormalizedByToken(sourceCode1, sourceCode2, lang)
 
 
 def get_next_clone_pair_for_validation(cloneFile, theValidationFile, validationFileExt='.validated'):
-    tree2 = ET.parse(cloneFile)
-    root = tree2.getroot()
+	# getting the example program name
+	theCloneFile = cloneFile
+	#theValidationFile = theCloneFile + validationFileExt
 
-    nextCloneIndex = 0
-    if os.path.exists(theValidationFile):
-        nextCloneIndex = sum(1 for line in open(theValidationFile))
-    else:
-        open(theValidationFile, "w").close()
+	tree2 = ET.parse(cloneFile)
+	root = tree2.getroot()
 
-    clone_elem = root[nextCloneIndex]
+	nextCloneIndex = 0
 
-    if len(clone_elem) < 4:
-        raise ValueError("Clone element does not have 2 source/code pairs: index {}".format(nextCloneIndex))
+	if os.path.exists(theValidationFile) == True:
+		#response_code = 'FILE_ALREADY_EXIST'
+		nextCloneIndex = sum(1 for line in open(theValidationFile))
+	else:
+		new_file = open(theValidationFile, "w")
+		new_file.close()
 
-    fragment_1_source = clone_elem[0].attrib['file']
-    fragment_1_start = clone_elem[0].attrib['startline']
-    fragment_1_end = clone_elem[0].attrib['endline']
-    fragment_1_code = clone_elem[1].text
-
-    fragment_2_source = clone_elem[2].attrib['file']
-    fragment_2_start = clone_elem[2].attrib['startline']
-    fragment_2_end = clone_elem[2].attrib['endline']
-    fragment_2_code = clone_elem[3].text
-
-    return fragment_1_source, fragment_1_start, fragment_1_end, fragment_1_code, \
-           fragment_2_source, fragment_2_start, fragment_2_end, fragment_2_code, \
-           nextCloneIndex + 1, len(root)
-
+	#fragment_1_path, fragment_1_startline, fragment_1_endline, fragment_1_clone, fragment_2_path, fragment_2_startline, fragment_2_endline, fragment_2_clone, number_of_validated_clones, total_clones
+	return root[nextCloneIndex][0].attrib['file'], root[nextCloneIndex][0].attrib['startline'], root[nextCloneIndex][0].attrib['endline'], root[nextCloneIndex][1].text, root[nextCloneIndex][2].attrib['file'], root[nextCloneIndex][2].attrib['startline'], root[nextCloneIndex][2].attrib['endline'],root[nextCloneIndex][3].text, nextCloneIndex+1, len(root)
 
 
 
