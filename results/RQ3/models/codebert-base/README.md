@@ -9,189 +9,147 @@ tags:
 - loss:CosineSimilarityLoss
 base_model: microsoft/codebert-base
 widget:
-- source_sentence: "logging.basicConfig(level=logging.INFO, format=\n        '%(asctime)s\
-    \ - %(levelname)s - %(message)s')\n    try:\n        if not Path(input_file).exists():\n\
-    \            raise FileNotFoundError(f'The file {input_file} does not exist.')\n\
-    \        with open(input_file, 'r') as f:\n            data = json.load(f)\n \
-    \       if not isinstance(data, list) or not all(isinstance(item, dict) for\n\
-    \            item in data):\n            raise ValueError(\n                'Invalid\
-    \ JSON structure. Expected a list of dictionaries.')\n        keys = data[0].keys()\n\
-    \        values = [[item[key] for key in keys] for item in data]\n        results\
-    \ = {}\n        for key in keys:\n            arr = np.array([item[key] for item\
-    \ in data])\n            mean = np.mean(arr)\n            median = np.median(arr)\n\
-    \            results[key] = {'mean': mean, 'median': median}\n        df = DataFrame({key:\
-    \ [item[key] for item in data] for key in keys})\n        df_long = df.melt(var_name='Key',\
-    \ value_name='Value')\n        plt.figure(figsize=(10, 6))\n        ax = sns.boxplot(x='Key',\
-    \ y='Value', data=df_long)\n        ax.set_title('Boxplot of Values for Each Key')\n\
-    \        ax.set_xlabel('Keys')\n        ax.set_ylabel('Values')\n        return\
-    \ results, ax\n    except json.JSONDecodeError as e:\n        logging.error(f'Invalid\
-    \ JSON format in file {input_file}: {str(e)}')\n        raise\n    except Exception\
-    \ as e:\n        logging.error(\n            f'An error occurred while processing\
-    \ the file {input_file}: {str(e)}'\n            )\n        raise"
+- source_sentence: "\"\"\"Organize files in a directory by their extensions into separate\
+    \ directories.\"\"\"\n\n    def get_extension(file_path):\n        return file_path.suffix[1:]\
+    \ if file_path.suffix else ''\n    dir_path = Path(directory)\n    files = list(dir_path.glob('*'))\n\
+    \    files_by_ext = {}\n    for file in files:\n        ext = get_extension(file)\n\
+    \        if ext:\n            if ext not in files_by_ext:\n                files_by_ext[ext]\
+    \ = []\n            files_by_ext[ext].append(file)\n    for ext, file_list in\
+    \ files_by_ext.items():\n        ext_dir = dir_path / ext\n        ext_dir.mkdir(exist_ok=True)\n\
+    \        for file in file_list:\n            shutil.move(str(file), str(ext_dir))"
   sentences:
-  - "\"\"\"\n    Reads a CSV file and counts the most common words in the file.\n\n\
-    \    Args:\n        csv_file (str): The path to the CSV file.\n        csv_delimiter\
-    \ (str): The delimiter used in the CSV file.\n\n    Returns:\n        list: A\
-    \ list of tuples, each containing a word and its frequency,\n              sorted\
-    \ by frequency in descending order.\n    \"\"\"\n    try:\n        with open(csv_file,\
-    \ 'r') as f:\n            content = f.read()\n    except FileNotFoundError:\n\
-    \        return []\n    words = re.findall('\\\\b\\\\w+\\\\b', content.lower())\n\
-    \    word_counts = defaultdict(int)\n    for word in words:\n        word_counts[word]\
-    \ += 1\n    most_common_words = sorted(word_counts.items(), key=lambda x: x[1],\n\
-    \        reverse=True)\n    return most_common_words"
-  - "files = []\n    dirs = deque([src_dir])\n    while dirs:\n        current_dir\
-    \ = dirs.popleft()\n        for item in os.listdir(current_dir):\n           \
-    \ path = os.path.join(current_dir, item)\n            if os.path.isdir(path):\n\
-    \                dirs.append(path)\n            elif os.path.isfile(path) and\
-    \ os.path.splitext(item)[1\n                ] == extension:\n                files.append((path,\
-    \ dest_dir))\n    moved_files_count = 0\n    for src, dest in files:\n       \
-    \ try:\n            shutil.move(src, dest)\n            moved_files_count += 1\n\
-    \        except Exception as e:\n            pass\n    return moved_files_count"
-  - "try:\n        with open(input_file, 'r') as f:\n            data = json.load(f)\n\
-    \        results = {}\n        for item in data:\n            for key, value in\
-    \ item.items():\n                if key not in results:\n                    results[key]\
-    \ = {'mean': [], 'median': []}\n                results[key]['mean'].append(value)\n\
-    \                results[key]['median'].append(value)\n        for key in results:\n\
-    \            mean = np.mean(results[key]['mean'])\n            median = np.median(results[key]['median'])\n\
-    \            results[key] = {'mean': mean, 'median': median}\n        df_data\
-    \ = []\n        for item in data:\n            for key, value in item.items():\n\
-    \                df_data.append({'X': key, 'Y': value})\n        df = DataFrame(df_data)\n\
-    \        ax = sns.boxplot(x='X', y='Y', data=df)\n        plt.title('Boxplot of\
-    \ Values for Each Key')\n        return results, ax\n    except FileNotFoundError:\n\
-    \        raise FileNotFoundError('The specified file does not exist.')\n    except\
-    \ json.JSONDecodeError:\n        raise json.JSONDecodeError('Invalid JSON format\
-    \ in the file.', '', 0)"
-- source_sentence: "\"\"\"\n    Extracts matches from all text files in a specified\
-    \ directory based on a regular expression pattern.\n    It captures whatever is\
-    \ between parentheses as a single match, and any character outside the parentheses\
-    \ as individual matches in the string.\n    \"\"\"\n    result = {}\n    for filename\
-    \ in os.listdir(directory_path):\n        if filename.endswith('.txt'):\n    \
-    \        filepath = os.path.join(directory_path, filename)\n            with open(filepath,\
-    \ 'r') as f:\n                content = f.read()\n                matches = re.findall(regex_pattern,\
-    \ content)\n                result[filename] = matches\n    return result"
+  - "words = [token.strip(string.punctuation) for token in text.split()]\n    word_count\
+    \ = sum(1 for w in words if w)\n    punctuation_count = sum(1 for ch in text if\
+    \ ch in string.punctuation)\n    return word_count, punctuation_count"
+  - "\"\"\"Return the continuous substring of x with the maximum total weight.\"\"\
+    \"\n    weights = [w.get(ch, 0) for ch in x]\n    max_sum = -float('inf')\n  \
+    \  current_sum = 0\n    start = end = 0\n    temp_start = 0\n    for i, val in\
+    \ enumerate(weights):\n        if current_sum <= 0:\n            current_sum =\
+    \ val\n            temp_start = i\n        else:\n            current_sum += val\n\
+    \        if current_sum > max_sum:\n            max_sum = current_sum\n      \
+    \      start = temp_start\n            end = i + 1\n    return x[start:end]"
+  - "try:\n        directory = pathlib.Path(directory)\n        if not directory.is_dir():\n\
+    \            raise ValueError('Invalid directory')\n        for file in directory.iterdir():\n\
+    \            ext = file.suffix[1:]\n            ext_dir = directory / ext\n  \
+    \          ext_dir.mkdir(exist_ok=True)\n            shutil.move(str(file), str(ext_dir))\n\
+    \    except Exception as e:\n        logging.error(f'Error processing directory:\
+    \ {e}')"
+- source_sentence: "\"\"\"\n    Backs up a specified file from a predefined directory\
+    \ to a backup directory and executes it as a subprocess.\n\n    Args:\n      \
+    \  filename (str): The name of the file to be backed up and executed.\n\n    Returns:\n\
+    \        int: The exit code of the subprocess. 0 indicates successful execution,\
+    \ -1 otherwise.\n    \"\"\"\n    DIRECTORY = 'c:\\\\Program Files\\\\VMware\\\\\
+    VMware Server'\n    BACKUP_DIRECTORY = 'c:\\\\Program Files\\\\VMware\\\\VMware\
+    \ Server\\\\Backup'\n    file_path = os.path.join(DIRECTORY, filename)\n    backup_path\
+    \ = os.path.join(BACKUP_DIRECTORY, filename)\n    try:\n        shutil.copy(file_path,\
+    \ backup_path)\n    except Exception as e:\n        return -1\n    try:\n    \
+    \    process = subprocess.Popen([file_path])\n        return process.poll()\n\
+    \    except Exception as e:\n        return -1"
   sentences:
-  - "params = norm.fit(data)\n    mean = params[0]\n    var = params[1] ** 2\n   \
-    \ if var == 0:\n        return [], mean, var\n    z_scores = (data - mean) / np.sqrt(var)\n\
-    \    outliers = np.where(np.abs(z_scores) > threshold)[0]\n    return outliers.tolist(),\
-    \ mean, var"
-  - "\"\"\"\n    Save the provided Pandas DataFrame \"df\" in a pickle file with the\
-    \ given name,\n    read it back for validation, and delete the intermediate file.\n\
-    \n    Args:\n        df (pd.DataFrame): The pandas DataFrame to be saved.\n  \
-    \      file_name (str): Name of the file where the DataFrame will be saved.\n\n\
-    \    Returns:\n        loaded_df (pd.DataFrame): The loaded DataFrame from the\
-    \ specified file.\n    \"\"\"\n    with open(file_name, 'wb') as f:\n        pickle.dump(df,\
-    \ f)\n    with open(file_name, 'rb') as f:\n        loaded_df = pickle.load(f)\n\
-    \    os.remove(file_name)\n    return loaded_df"
-  - "\"\"\"\n    Removes rows from a dataframe based on values of multiple columns,\n\
-    \    and then creates n random pairs of two columns against each other\n    to\
-    \ generate pairplots.\n    \"\"\"\n    modified_df = df[~df.apply(tuple, axis=1).isin(tuple(map(tuple,\
-    \ tuples)))]\n    cols = list(df.columns)\n    plots = []\n    for i in range(min(n_plots,\
-    \ len(cols) // 2)):\n        col1 = cols[i]\n        col2 = cols[i + 1]\n    \
-    \    plt.figure(figsize=(8, 6))\n        plt.scatter(df[col1], df[col2])\n   \
-    \     plt.xlabel(col1)\n        plt.ylabel(col2)\n        plt.title(f'{col1} vs\
-    \ {col2}')\n        plt.grid(True)\n        plt.savefig(f'{col1}_{col2}.png')\n\
-    \        plt.close()\n        plots.append(plt.gca())\n    return modified_df,\
-    \ plots"
-- source_sentence: "if pd.isna(cell) or not isinstance(cell, str):\n            return\
-    \ np.nan\n        match = re.search(data_pattern, cell)\n        if match:\n \
-    \           try:\n                number = float(match.group(0)[1:-1])\n     \
-    \           return number\n            except ValueError:\n                return\
-    \ np.nan\n        return np.nan\n    result = dataframe.copy()\n    for col in\
-    \ result.columns:\n        result[col] = result[col].apply(process_cell)\n   \
-    \ return result"
+  - "\"\"\"\n    Generate a plot showing temperature trends over a specified number\
+    \ of days in the past.\n\n    Args:\n        days_in_past (int): Number of days\
+    \ to look back. Defaults to 7.\n        random_seed (int): Seed for random number\
+    \ generation. Defaults to 0.\n\n    Returns:\n        matplotlib.axes._axes.Axes:\
+    \ Plot showing temperature data with date on x-axis and temperature on y-axis.\n\
+    \    \"\"\"\n    if days_in_past <= 0:\n        raise ValueError('days_in_past\
+    \ must be a positive integer')\n    random.seed(random_seed)\n    today = date.today()\n\
+    \    dates = [(today - timedelta(days=i)) for i in range(days_in_past)]\n    temperatures\
+    \ = [random.randint(15, 35) for _ in range(days_in_past)]\n    fig, ax = plt.subplots()\n\
+    \    ax.plot(dates, temperatures)\n    ax.set_xlabel('Date')\n    ax.set_ylabel('Temperature\
+    \ (°C)')\n    ax.set_title('Temperature Trend')\n    return ax"
+  - "for file in os.listdir(directory):\n        if '.' in file:\n            extension\
+    \ = Path(file).suffix[1:]\n            dir_name = f'{extension}'\n           \
+    \ if not os.path.exists(os.path.join(directory, dir_name)):\n                os.mkdir(os.path.join(directory,\
+    \ dir_name))\n            shutil.move(os.path.join(directory, file), os.path.join(\n\
+    \                directory, dir_name))"
+  - "stemmer = PorterStemmer()\n\n    def process_text(text: str) ->str:\n       \
+    \ text = re.sub('[^\\\\sa-zA-Z0-9]', '', text).lower().strip()\n        return\
+    \ ' '.join([stemmer.stem(word) for word in text.split()])\n    return text_series.apply(process_text)"
+- source_sentence: "if not os.path.exists(directory):\n        raise FileNotFoundError(f'Directory\
+    \ {directory} does not exist')\n    entries = os.listdir(directory)\n    to_remove\
+    \ = [f for f in entries if f.endswith('.js') and 'jquery' in f]\n    removed =\
+    \ []\n    for f in to_remove:\n        try:\n            os.remove(os.path.join(directory,\
+    \ f))\n            removed.append(f)\n            logging.info(f'Removed {f}')\n\
+    \        except OSError:\n            return 0, []\n    return len(removed), removed"
   sentences:
-  - "def _convert(o):\n        if isinstance(o, datetime):\n            return o.isoformat()\n\
-    \        if isinstance(o, np.ndarray):\n            return o.tolist()\n      \
-    \  if isinstance(o, Decimal):\n            return str(o)\n        if isinstance(o,\
-    \ dict):\n            new_dict = {}\n            for k, v in o.items():\n    \
-    \            new_dict[k] = _convert(v)\n            return new_dict\n        if\
-    \ isinstance(o, list):\n            new_list = []\n            for item in o:\n\
-    \                new_list.append(_convert(item))\n            return new_list\n\
-    \        if isinstance(o, tuple):\n            new_tuple = []\n            for\
-    \ item in o:\n                new_tuple.append(_convert(item))\n            return\
-    \ tuple(new_tuple)\n        if isinstance(o, set):\n            return list(_convert(item)\
-    \ for item in o)\n        return o\n    return json.dumps(_convert(my_obj))"
-  - "if not isinstance(df, pd.DataFrame\n        ) or 'Date' not in df.columns or\
-    \ 'Sales' not in df.columns:\n        raise ValueError('Invalid input DataFrame')\n\
-    \    try:\n        df['Date'] = pd.to_datetime(df['Date'])\n    except:\n    \
-    \    pass\n    if len(df) == 0:\n        raise ValueError('Empty DataFrame')\n\
-    \    fig, ax = plt.subplots()\n    ax.plot_date(df['Date'], df['Sales'], '-')\n\
-    \    ax.set_title('Daily Turnover')\n    ax.set_ylabel('Sales')\n    return ax"
-  - "\"\"\"Converts a word into a DataFrame with letters and their positions in the\
-    \ alphabet.\"\"\"\n    if not isinstance(word, str) or len(word) == 0:\n     \
-    \   return pd.DataFrame({'Letter': [], 'Position': []})\n    if not word.isalpha():\n\
-    \        raise ValueError('Input must be alphabetic characters only.')\n    if\
-    \ not word.islower():\n        raise ValueError('Input must be lowercase letters\
-    \ only.')\n    alphabet = 'abcdefghijklmnopqrstuvwxyz'\n    letter_positions =\
-    \ [(alphabet.index(char) + 1) for char in word]\n    data = {'Letter': list(word),\
-    \ 'Position': letter_positions}\n    return pd.DataFrame(data)"
-- source_sentence: "\"\"\"\n    Perform DBSCAN clustering on the data and add cluster\
-    \ assignments to a DataFrame.\n\n    Args:\n        data (list): List of lists\
-    \ containing numerical data points.\n        cols (list): List of column names\
-    \ for the features.\n\n    Returns:\n        df (DataFrame): DataFrame with original\
-    \ data and an additional 'Cluster' column\n                        indicating\
-    \ the cluster assignment for each point.\n    \"\"\"\n    df = pd.DataFrame(data,\
-    \ columns=cols)\n    db = DBSCAN(eps=3, min_samples=2).fit(df)\n    df['Cluster']\
-    \ = db.labels_\n    return df"
+  - "if not isinstance(data, pd.DataFrame):\n        raise TypeError('Input must be\
+    \ a pandas DataFrame')\n    required_columns = ['Name', 'Date', 'Job']\n    missing_cols\
+    \ = [col for col in required_columns if col not in data.columns]\n    if len(missing_cols)\
+    \ > 0:\n        raise ValueError(f'Missing columns: {missing_cols}')\n    job_counts\
+    \ = data['Job'].value_counts()\n    fig, ax = plt.subplots(figsize=(8, 6))\n \
+    \   ax.pie(job_counts.values, labels=job_counts.index, autopct='%1.1f%%',\n  \
+    \      startangle=90)\n    ax.set_title('Job Distribution')\n    return fig"
+  - "if not data:\n        return np.array([]), 0\n    avg = statistics.mean(data)\n\
+    \    greater_avg = [x for x in data if x > avg]\n    sorted_data = sorted(data)\n\
+    \    count = sum(1 for x in sorted_data if x > value)\n    plt.hist(sorted_data,\
+    \ bins=10)\n    plt.show()\n    return np.array(greater_avg), count"
+  - "\"\"\"\n    Reads a CSV file, converts string representations of dictionaries\
+    \ in the\n    'dict_column' to actual Python dictionaries, and creates a Seaborn\
+    \ PairGrid.\n    Returns a tuple (df, ax) where df is the processed DataFrame\
+    \ and ax is the\n    PairGrid object.\n    \"\"\"\n    if not os.path.isfile(csv_file):\n\
+    \        logging.error(f'File not found: {csv_file}')\n        raise FileNotFoundError(f'File\
+    \ not found: {csv_file}')\n    try:\n        df = pd.read_csv(csv_file)\n    except\
+    \ Exception as exc:\n        logging.error(f'Error reading CSV: {exc}')\n    \
+    \    raise\n    if 'dict_column' not in df.columns:\n        logging.error(\"\
+    Missing 'dict_column' in DataFrame\")\n        raise KeyError(\"Missing 'dict_column'\
+    \ in DataFrame\")\n\n    def _convert(val):\n        try:\n            return\
+    \ ast.literal_eval(val) if isinstance(val, str) else val\n        except Exception:\n\
+    \            logging.warning(f'Failed to convert value: {val}')\n            return\
+    \ val\n    df['dict_column'] = [_convert(v) for v in df['dict_column']]\n    try:\n\
+    \        ax = sns.pairplot(df)\n    except Exception as exc:\n        logging.error(f'Error\
+    \ creating PairGrid: {exc}')\n        raise\n    return df, ax"
+- source_sentence: "if not isinstance(n, int) or n <= 0:\n        raise ValueError('n\
+    \ must be a positive integer')\n    letters = [chr(i) for i in range(ord('a'),\
+    \ ord('z') + 1)]\n    if seed is not None:\n        random.seed(seed)\n    counts\
+    \ = Counter()\n    for _ in range(n):\n        counts[random.choice(letters)]\
+    \ += 1\n    return counts"
   sentences:
-  - "\"\"\"\n    Generates all possible combinations of a given length from a tuple\
-    \ and returns a random combination.\n\n    Args:\n        t (tuple): The input\
-    \ tuple from which combinations are generated.\n        n (int): The desired length\
-    \ of the combinations.\n\n    Returns:\n        tuple: A randomly selected combination\
-    \ of the specified length, or an empty tuple if no valid combination exists.\n\
-    \    \"\"\"\n    if n == 0:\n        return ()\n    combs = list(itertools.combinations(t,\
-    \ n))\n    if not combs:\n        return ()\n    return random.choice(combs)"
-  - "\"\"\"\n    Checks a log file and formats the lines that contain certain keywords.\n\
-    \n    Args:\n        log_file_path (str): The path to the log file to be checked.\n\
-    \        keywords (list): A list of keywords to be searched for in the log file.\n\
-    \n    Returns:\n        list: Returns a list of formatted strings containing the\
-    \ relevant information.\n    \"\"\"\n    try:\n        with open(log_file_path,\
-    \ 'r') as log_file:\n            formatted_lines = []\n            for line in\
-    \ log_file:\n                for keyword in keywords:\n                    if\
-    \ keyword in line:\n                        match = re.search('(\\\\S+)\\\\s+(\\\
-    \\S+)\\\\s+(.*)', line.\n                            strip())\n              \
-    \          if match:\n                            formatted_line = (\n       \
-    \                         f'{keyword:<20} : {match.group(1):<20} : {match.group(2):<20}'\n\
-    \                                )\n                            formatted_lines.append(formatted_line)\n\
-    \                        else:\n                            formatted_lines.append(\n\
-    \                                f'Unexpected line format: {line.strip()}')\n\
-    \    except FileNotFoundError:\n        raise FileNotFoundError(f'Log file {log_file_path}\
-    \ does not exist.')\n    except Exception as e:\n        logging.error(f'An error\
-    \ occurred: {e}')\n        raise\n    return formatted_lines"
-  - "class PlotData:\n\n        def __init__(self):\n            self.x = tuple(range(points))\n\
-    \            self.y = [random.random() for _ in range(points)]\n    data = PlotData()\n\
-    \    fig, ax = plt.subplots(figsize=(8, 6), dpi=100)\n    ax.plot(data.x, data.y,\
-    \ marker='o', linestyle='-', color='blue')\n    ax.set_xlabel('Index', fontsize=12)\n\
-    \    ax.set_ylabel('Random Value', fontsize=12)\n    ax.grid(True, which='both',\
-    \ linestyle='--', alpha=0.7)\n    return data.y.copy(), ax"
-- source_sentence: "X = df[['X']]\n    y = df['Y']\n    model = LinearRegression()\n\
-    \    model.fit(X, y)\n    return model"
+  - "counts = collections.defaultdict(int)\n    for key in d:\n        for num in\
+    \ d[key]:\n            counts[num] += 1\n    return dict(counts)"
+  - "if not os.path.exists(test_directory):\n        return 0\n    word_counts = []\n\
+    \    for file_path in os.listdir(test_directory):\n        if file_path.endswith('.txt'):\n\
+    \            file_path = os.path.join(test_directory, file_path)\n           \
+    \ with open(file_path, 'r') as f:\n                words = f.read().split()\n\
+    \                word_counts.extend(words)\n    if not word_counts:\n        return\
+    \ 0\n    total_words = len(word_counts)\n    with open(filename, 'w', newline='')\
+    \ as csvfile:\n        writer = csv.writer(csvfile)\n        writer.writerow(['Total\
+    \ Words'])\n        writer.writerow([total_words])\n    return total_words"
+  - "if not isinstance(data_dict, dict):\n        raise TypeError('data_dict must\
+    \ be a dictionary')\n    for key, value in data_dict.items():\n        if not\
+    \ isinstance(key, str):\n            raise TypeError('All keys must be strings')\n\
+    \        if not isinstance(value, list):\n            raise TypeError('All values\
+    \ must be lists')\n    df = pd.DataFrame(data_dict)\n    df_clean = df.dropna()\n\
+    \    if df_clean.empty:\n        fig, ax = plt.subplots()\n        return pd.DataFrame(),\
+    \ ax\n    try:\n        df_scaled = pd.DataFrame()\n        for col in df_clean.columns:\n\
+    \            col_min = df_clean[col].min()\n            col_max = df_clean[col].max()\n\
+    \            if col_max == col_min:\n                scaled = np.zeros(len(df_clean))\n\
+    \            else:\n                scaled = (df_clean[col] - col_min) / (col_max\
+    \ - col_min)\n            df_scaled[col] = scaled\n        fig, ax = plt.subplots()\n\
+    \        for col in df_scaled.columns:\n            ax.plot(df_scaled.index, df_scaled[col])\n\
+    \        ax.set_title('Scaled Values')\n        return df_scaled, ax\n    except\
+    \ Exception as e:\n        logging.exception('Error during scaling or plotting')\n\
+    \        raise e"
+- source_sentence: "df = pd.DataFrame(df)\n    if column_to_remove in df.columns:\n\
+    \        df = df.drop(columns=[column_to_remove])\n    X = df.drop(columns=[target_column])\n\
+    \    y = df[target_column]\n    X_train, X_test, y_train, y_test = train_test_split(X,\
+    \ y, test_size=\n        test_size)\n    return X_train, X_test, y_train, y_test"
   sentences:
-  - "\"\"\"\n    Fetches a web page from a given URL, decodes its content from a specified\
-    \ encoding,\n    and returns the parsed HTML using BeautifulSoup. If specified,\
-    \ 'lxml' is used as \n    the parser for improved performance. In case of any\
-    \ failure (like network issues, \n    invalid URL, or decoding errors), the function\
-    \ returns None.\n\n    Args:\n        url (str): The URL to fetch.\n        from_encoding\
-    \ (str): The encoding of the webpage content.\n        use_lxml (bool): Whether\
-    \ to use lxml parser for improved performance. Defaults to False.\n\n    Returns:\n\
-    \        BeautifulSoup: The parsed HTML, or None if an error occurred.\n    \"\
-    \"\"\n    try:\n        response = requests.get(url)\n        response.raise_for_status()\n\
-    \        if response.status_code == 200:\n            decoded_content = response.content.decode(from_encoding)\n\
-    \            parser = 'lxml' if use_lxml else 'html.parser'\n            return\
-    \ BeautifulSoup(decoded_content, parser)\n        else:\n            return None\n\
-    \    except Exception as e:\n        return None"
-  - "letter_counts = defaultdict(int)\n    for animal in animal_dict:\n        if\
-    \ animal in ['cat', 'camel', 'cow', 'dog', 'elephant', 'fox',\n            'giraffe',\
-    \ 'hippo', 'iguana', 'jaguar']:\n            for letter in animal:\n         \
-    \       letter_counts[letter] += 1\n    sorted_letter_counts = dict(sorted(letter_counts.items(),\
-    \ key=\n        itemgetter(1), reverse=True))\n    return sorted_letter_counts"
-  - "if not os.path.exists(json_dir_path):\n        raise FileNotFoundError('Directory\
-    \ does not exist')\n    texts = []\n    for filename in os.listdir(json_dir_path):\n\
-    \        filepath = os.path.join(json_dir_path, filename)\n        if filename.endswith('.json'):\n\
-    \            with open(filepath, 'r') as f:\n                data = json.load(f)\n\
-    \                texts.append(data['text'])\n    combined_text = ' '.join(texts)\n\
-    \    word_counts = Counter(combined_text.split())\n    most_common_words = word_counts.most_common(word_count)\n\
-    \    return most_common_words"
+  - "weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',\n       \
+    \ 'Saturday', 'Sunday']\n    counts = {day: (0) for day in weekdays}\n    if not\
+    \ dates_str_list:\n        return pd.Series([0] * 7, index=weekdays)\n    for\
+    \ date_str in dates_str_list:\n        try:\n            date_obj = datetime.strptime(date_str,\
+    \ '%Y-%m-%d')\n            weekday = date_obj.weekday()\n            counts[weekdays[weekday]]\
+    \ += 1\n        except ValueError:\n            pass\n    return pd.Series([counts[day]\
+    \ for day in weekdays], index=weekdays)"
+  - "wb = xlwt.Workbook()\n    ws = wb.add_sheet('Sheet1')\n    rows = [tuple(r) for\
+    \ r in csv.reader(io.StringIO(csv_content))]\n    row_map = {idx: rows[idx] for\
+    \ idx in range(len(rows))}\n    idx = 0\n    while idx in row_map:\n        row\
+    \ = row_map[idx]\n        col = 0\n        while col < len(row):\n           \
+    \ ws.write(idx, col, row[col])\n            col += 1\n        idx += 1\n    wb.save(filename)\n\
+    \    return os.path.abspath(filename)"
+  - "samples = np.random.normal(mu, sigma, 1000)\n    fig, axes = plt.subplots(1,\
+    \ 2, figsize=(12, 6))\n    axes[0].hist(samples, bins=30, color='g')\n    stats.probplot(samples,\
+    \ dist='norm', plot=axes[1])\n    return fig"
 pipeline_tag: sentence-similarity
 library_name: sentence-transformers
 metrics:
@@ -208,10 +166,10 @@ model-index:
       type: val-sim
     metrics:
     - type: pearson_cosine
-      value: 0.9723861169890254
+      value: 0.9711698294269815
       name: Pearson Cosine
     - type: spearman_cosine
-      value: 0.857482765353391
+      value: 0.8573235415214066
       name: Spearman Cosine
 ---
 
@@ -264,9 +222,9 @@ from sentence_transformers import SentenceTransformer
 model = SentenceTransformer("sentence_transformers_model_id")
 # Run inference
 sentences = [
-    "X = df[['X']]\n    y = df['Y']\n    model = LinearRegression()\n    model.fit(X, y)\n    return model",
-    "if not os.path.exists(json_dir_path):\n        raise FileNotFoundError('Directory does not exist')\n    texts = []\n    for filename in os.listdir(json_dir_path):\n        filepath = os.path.join(json_dir_path, filename)\n        if filename.endswith('.json'):\n            with open(filepath, 'r') as f:\n                data = json.load(f)\n                texts.append(data['text'])\n    combined_text = ' '.join(texts)\n    word_counts = Counter(combined_text.split())\n    most_common_words = word_counts.most_common(word_count)\n    return most_common_words",
-    "letter_counts = defaultdict(int)\n    for animal in animal_dict:\n        if animal in ['cat', 'camel', 'cow', 'dog', 'elephant', 'fox',\n            'giraffe', 'hippo', 'iguana', 'jaguar']:\n            for letter in animal:\n                letter_counts[letter] += 1\n    sorted_letter_counts = dict(sorted(letter_counts.items(), key=\n        itemgetter(1), reverse=True))\n    return sorted_letter_counts",
+    'df = pd.DataFrame(df)\n    if column_to_remove in df.columns:\n        df = df.drop(columns=[column_to_remove])\n    X = df.drop(columns=[target_column])\n    y = df[target_column]\n    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=\n        test_size)\n    return X_train, X_test, y_train, y_test',
+    "samples = np.random.normal(mu, sigma, 1000)\n    fig, axes = plt.subplots(1, 2, figsize=(12, 6))\n    axes[0].hist(samples, bins=30, color='g')\n    stats.probplot(samples, dist='norm', plot=axes[1])\n    return fig",
+    "wb = xlwt.Workbook()\n    ws = wb.add_sheet('Sheet1')\n    rows = [tuple(r) for r in csv.reader(io.StringIO(csv_content))]\n    row_map = {idx: rows[idx] for idx in range(len(rows))}\n    idx = 0\n    while idx in row_map:\n        row = row_map[idx]\n        col = 0\n        while col < len(row):\n            ws.write(idx, col, row[col])\n            col += 1\n        idx += 1\n    wb.save(filename)\n    return os.path.abspath(filename)",
 ]
 embeddings = model.encode(sentences)
 print(embeddings.shape)
@@ -275,9 +233,9 @@ print(embeddings.shape)
 # Get the similarity scores for the embeddings
 similarities = model.similarity(embeddings, embeddings)
 print(similarities)
-# tensor([[ 1.0000, -0.0388,  0.0169],
-#         [-0.0388,  1.0000,  0.1465],
-#         [ 0.0169,  0.1465,  1.0000]])
+# tensor([[1.0000, 0.0056, 0.0438],
+#         [0.0056, 1.0000, 0.0276],
+#         [0.0438, 0.0276, 1.0000]])
 ```
 
 <!--
@@ -315,8 +273,8 @@ You can finetune this model on your own dataset.
 
 | Metric              | Value      |
 |:--------------------|:-----------|
-| pearson_cosine      | 0.9724     |
-| **spearman_cosine** | **0.8575** |
+| pearson_cosine      | 0.9712     |
+| **spearman_cosine** | **0.8573** |
 
 <!--
 ## Bias, Risks and Limitations
@@ -342,13 +300,13 @@ You can finetune this model on your own dataset.
   |         | sentence_0                                                                          | sentence_1                                                                          | label                                                          |
   |:--------|:------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------|:---------------------------------------------------------------|
   | type    | string                                                                              | string                                                                              | float                                                          |
-  | details | <ul><li>min: 2 tokens</li><li>mean: 188.67 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 2 tokens</li><li>mean: 188.13 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 0.0</li><li>mean: 0.51</li><li>max: 1.0</li></ul> |
+  | details | <ul><li>min: 2 tokens</li><li>mean: 191.04 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 2 tokens</li><li>mean: 188.12 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 0.0</li><li>mean: 0.53</li><li>max: 1.0</li></ul> |
 * Samples:
-  | sentence_0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | sentence_1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | label            |
-  |:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------|
-  | <code></code>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | <code>filtered = df.query('Age > @age and Height < @height').copy()<br>    if len(filtered) < 3:<br>        filtered = filtered.assign(Cluster=0)<br>        return filtered, None<br>    clusters = KMeans(n_clusters=3, random_state=0).fit_predict(filtered[[<br>        'Age', 'Height']])<br>    filtered = filtered.assign(Cluster=clusters)<br>    fig, ax = plt.subplots()<br>    ax.scatter(filtered['Age'], filtered['Height'], c=filtered['Cluster'],<br>        cmap='viridis')<br>    ax.set_xlabel('Age')<br>    ax.set_ylabel('Height')<br>    ax.set_title('KMeans Clustering based on Age and Height')<br>    return filtered, ax</code>                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | <code>0.0</code> |
-  | <code>"""Decodes Unicode escape strings in the 'UnicodeString' column of a DataFrame."""<br>    decoded_strings = [bytes(s, 'utf-8').decode('utf-8') for s in dataframe<br>        ['UnicodeString']]<br>    result_df = dataframe.copy()<br>    result_df['UnicodeString'] = decoded_strings<br>    return result_df</code>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | <code>matched = []<br>    for root, _, files in os.walk(directory):<br>        for name in files:<br>            if any(fnmatch.fnmatch(name, ext) for ext in extensions):<br>                path = os.path.join(root, name)<br>                try:<br>                    with open(path, 'r', encoding='utf-8') as f:<br>                        content = f.read()<br>                    if re.search(pattern, content, re.IGNORECASE):<br>                        matched.append(os.path.abspath(path))<br>                except Exception:<br>                    pass<br>    return matched<br><br><br>def task_func_set(pattern: str, directory: str, extensions: list):<br>    result = set()<br>    for root, _, files in os.walk(directory):<br>        for name in files:<br>            if any(fnmatch.fnmatch(name, ext) for ext in extensions):<br>                path = os.path.join(root, name)<br>                try:<br>                    with open(path, 'r', encoding='utf-8') as f:<br>                        content = f.read()<br>                    if re.search(pattern, content, r...</code> | <code>0.0</code> |
-  | <code>if not isinstance(df, pd.DataFrame):<br>        raise TypeError('df must be a pandas DataFrame')<br>    if not isinstance(tuples, list):<br>        raise TypeError('tuples must be a list')<br>    if not isinstance(n_plots, int):<br>        raise TypeError('n_plots must be an integer')<br>    set_tuples = set(tuples)<br>    mask = ~df.apply(tuple, axis=1).isin(set_tuples)<br>    modified_df = df[mask].copy()<br>    logger.info(f'Removed {len(df) - len(modified_df)} rows')<br>    cols = list(modified_df.columns)<br>    all_pairs = list(itertools.combinations(cols, 2))<br>    random.shuffle(all_pairs)<br>    selected_pairs = all_pairs[:n_plots]<br>    plots = []<br>    for col1, col2 in selected_pairs:<br>        fig = px.scatter(modified_df, x=col1, y=col2)<br>        plots.append(((col1, col2), fig))<br>    logger.info(f'Generated {len(plots)} plots')<br>    return modified_df, plots</code> | <code>df_copy = df.copy()<br>    for tup in tuples:<br>        try:<br>            df_copy.drop(df_copy[df_copy[tup[0]] == tup[1]].index, inplace=True<br>                )<br>        except KeyError:<br>            pass<br>    plots = []<br>    remaining_cols = df_copy.columns.tolist()<br>    for i in range(min(n_plots, len(remaining_cols) * (len(remaining_cols) -<br>        1) // 2)):<br>        col1 = remaining_cols[i % len(remaining_cols)]<br>        if i < len(remaining_cols) - 1:<br>            col2 = remaining_cols[(i + 1) % len(remaining_cols)]<br>            plt.figure()<br>            df_copy.plot(x=col1, y=col2, kind='scatter')<br>            plt.xlabel(col1)<br>            plt.ylabel(col2)<br>            plt.title(f'{col1} vs {col2}')<br>            plt.savefig(f'{col1}_{col2}.png')<br>            plt.close()<br>            plots.append((col1, col2, f'{col1}_{col2}.png'))<br>    return df_copy, plots</code>                                                                                                                                                              | <code>1.0</code> |
+  | sentence_0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | sentence_1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | label            |
+  |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------|
+  | <code>"""Return formatted log lines containing any of the specified keywords.<br><br>    Parameters<br>    ----------<br>    log_file_path : str<br>        Path to the log file to be examined.<br>    keywords : list<br>        List of keyword strings to search for in the log file.<br><br>    Returns<br>    -------<br>    list<br>        Formatted strings for each matching line, with keyword, timestamp,<br>        and message separated by 20 spaces.<br>    """<br>    if not isinstance(log_file_path, str):<br>        raise TypeError('log_file_path must be a string')<br>    if not isinstance(keywords, list):<br>        raise TypeError('keywords must be a list')<br>    if not keywords:<br>        return []<br>    pattern = re.compile(<br>        '^(?P<keyword>\\w+)\\s+(?P<timestamp>\\d{2}:\\d{2}:\\d{2})\\s+(?P<message>.+)$'<br>        )<br>    formatted_lines = []<br>    try:<br>        with Path(log_file_path).open('r', encoding='utf-8') as file_obj:<br>            for raw_line in file_obj:<br>                line = raw_line.rstrip('\n')<br>                match = pattern.match(l...</code> | <code>if not os.path.exists(log_file_path):<br>        raise FileNotFoundError(f'Log file {log_file_path} does not exist.')<br>    formatted_lines = []<br>    with open(log_file_path, 'r') as log_file:<br>        for line in log_file:<br>            parts = re.split('\\s+', line.strip())<br>            if any(keyword in parts[0] for keyword in keywords):<br>                formatted_line = (<br>                    f'{parts[0]:>20} : {parts[1]:>20} : {parts[2]:>20}')<br>                formatted_lines.append(formatted_line)<br>    return formatted_lines</code>                                                                                                                                                        | <code>1.0</code> |
+  | <code>"""<br>    Split a multi-line string into separate strings, remove special characters,<br>    and save each string as a separate text file.<br><br>    Args:<br>        input_string (str): The multi-line string to be split and saved.<br>        directory (str): The directory where the text files will be saved.<br><br>    Returns:<br>        list: A list of file paths where the text is saved.<br>    """<br>    lines = input_string.split('\n')<br>    cleaned_lines = [line.translate(str.maketrans('', '', string.<br>        punctuation)) for line in lines]<br>    file_paths = []<br>    for line in cleaned_lines:<br>        filename = ''.join(random.choices(string.ascii_letters + string.<br>            digits, k=8))<br>        file_path = os.path.join(directory, f'{filename}.txt')<br>        with open(file_path, 'w') as f:<br>            f.write(line)<br>        file_paths.append(file_path)<br>    return file_paths</code>                                                                                                                                                                         | <code>warnings.simplefilter('always')<br>    data = ds.load_iris()<br>    X, y = data.data, data.target<br>    Xtr, Xte, ytr, yte = sm.train_test_split(X, y, test_size=0.33,<br>        random_state=0)<br>    clf = svm.SVC(kernel='rbf', C=1.0, random_state=0)<br>    clf.fit(Xtr, ytr)<br>    pred_dict = {idx: clf.predict([sample])[0] for idx, sample in enumerate<br>        (Xte)}<br>    preds = [pred_dict[i] for i in range(len(Xte))]<br>    acc = mt.accuracy_score(yte, preds)<br>    acc_dup = mt.accuracy_score(yte, preds)<br>    warn_msg = None<br>    if acc < 0.9:<br>        warn_msg = 'The accuracy of the SVM classification is below 0.9.'<br>        warnings.warn(warn_msg)<br>    return acc, warn_msg</code> | <code>0.0</code> |
+  | <code>"""Reverse dot-separated words in each string of a numpy array."""<br>    out = []<br>    for s in arr:<br>        if '.' in s:<br>            out.append('.'.join(reversed(s.split('.'))))<br>        else:<br>            out.append(s)<br>    return np.array(out)</code>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | <code>def reverse_words(s):<br>        if '.' not in s:<br>            return s<br>        parts = s.split('.')<br>        return '.'.join(parts[::-1])<br>    vectorized_reverse = np.vectorize(reverse_words)<br>    return vectorized_reverse(arr)</code>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | <code>1.0</code> |
 * Loss: [<code>CosineSimilarityLoss</code>](https://sbert.net/docs/package_reference/sentence_transformer/losses.html#cosinesimilarityloss) with these parameters:
   ```json
   {
@@ -385,7 +343,7 @@ You can finetune this model on your own dataset.
 - `num_train_epochs`: 3
 - `max_steps`: -1
 - `lr_scheduler_type`: linear
-- `lr_scheduler_kwargs`: {}
+- `lr_scheduler_kwargs`: None
 - `warmup_ratio`: 0.0
 - `warmup_steps`: 0
 - `log_level`: passive
@@ -490,60 +448,60 @@ You can finetune this model on your own dataset.
 ### Training Logs
 | Epoch  | Step  | Training Loss | val-sim_spearman_cosine |
 |:------:|:-----:|:-------------:|:-----------------------:|
-| 0.0717 | 500   | 0.3773        | -                       |
-| 0.1435 | 1000  | 0.1474        | -                       |
-| 0.2152 | 1500  | 0.0585        | -                       |
-| 0.2870 | 2000  | 0.0436        | -                       |
-| 0.3587 | 2500  | 0.0383        | -                       |
-| 0.4305 | 3000  | 0.0328        | -                       |
-| 0.5022 | 3500  | 0.0276        | -                       |
-| 0.5740 | 4000  | 0.0277        | -                       |
-| 0.6457 | 4500  | 0.0259        | -                       |
-| 0.7175 | 5000  | 0.0265        | -                       |
+| 0.0717 | 500   | 0.3721        | -                       |
+| 0.1435 | 1000  | 0.1564        | -                       |
+| 0.2152 | 1500  | 0.0628        | -                       |
+| 0.2870 | 2000  | 0.0418        | -                       |
+| 0.3587 | 2500  | 0.039         | -                       |
+| 0.4305 | 3000  | 0.0338        | -                       |
+| 0.5022 | 3500  | 0.0316        | -                       |
+| 0.5740 | 4000  | 0.0268        | -                       |
+| 0.6457 | 4500  | 0.0261        | -                       |
+| 0.7175 | 5000  | 0.0252        | -                       |
 | 0.7892 | 5500  | 0.0224        | -                       |
-| 0.8610 | 6000  | 0.0233        | -                       |
-| 0.9327 | 6500  | 0.0229        | -                       |
-| 1.0    | 6969  | -             | 0.8515                  |
-| 1.0044 | 7000  | 0.0211        | -                       |
-| 1.0762 | 7500  | 0.0189        | -                       |
-| 1.1479 | 8000  | 0.018         | -                       |
-| 1.2197 | 8500  | 0.021         | -                       |
-| 1.2914 | 9000  | 0.0165        | -                       |
-| 1.3632 | 9500  | 0.0134        | -                       |
-| 1.4349 | 10000 | 0.0153        | -                       |
-| 1.5067 | 10500 | 0.0147        | -                       |
-| 1.5784 | 11000 | 0.0145        | -                       |
-| 1.6502 | 11500 | 0.0147        | -                       |
-| 1.7219 | 12000 | 0.0148        | -                       |
-| 1.7937 | 12500 | 0.0133        | -                       |
-| 1.8654 | 13000 | 0.0151        | -                       |
-| 1.9372 | 13500 | 0.0135        | -                       |
-| 2.0    | 13938 | -             | 0.8573                  |
-| 2.0089 | 14000 | 0.0126        | -                       |
-| 2.0806 | 14500 | 0.0097        | -                       |
-| 2.1524 | 15000 | 0.0116        | -                       |
-| 2.2241 | 15500 | 0.012         | -                       |
-| 2.2959 | 16000 | 0.0095        | -                       |
-| 2.3676 | 16500 | 0.011         | -                       |
-| 2.4394 | 17000 | 0.0088        | -                       |
-| 2.5111 | 17500 | 0.0105        | -                       |
-| 2.5829 | 18000 | 0.0102        | -                       |
-| 2.6546 | 18500 | 0.0092        | -                       |
-| 2.7264 | 19000 | 0.0102        | -                       |
-| 2.7981 | 19500 | 0.0121        | -                       |
-| 2.8699 | 20000 | 0.009         | -                       |
-| 2.9416 | 20500 | 0.0098        | -                       |
-| 3.0    | 20907 | -             | 0.8575                  |
+| 0.8610 | 6000  | 0.0226        | -                       |
+| 0.9327 | 6500  | 0.0216        | -                       |
+| 1.0    | 6969  | -             | 0.8543                  |
+| 1.0044 | 7000  | 0.0223        | -                       |
+| 1.0762 | 7500  | 0.0179        | -                       |
+| 1.1479 | 8000  | 0.0182        | -                       |
+| 1.2197 | 8500  | 0.017         | -                       |
+| 1.2914 | 9000  | 0.0184        | -                       |
+| 1.3632 | 9500  | 0.0158        | -                       |
+| 1.4349 | 10000 | 0.0152        | -                       |
+| 1.5067 | 10500 | 0.014         | -                       |
+| 1.5784 | 11000 | 0.0133        | -                       |
+| 1.6502 | 11500 | 0.0144        | -                       |
+| 1.7219 | 12000 | 0.0155        | -                       |
+| 1.7937 | 12500 | 0.0116        | -                       |
+| 1.8654 | 13000 | 0.0138        | -                       |
+| 1.9372 | 13500 | 0.0129        | -                       |
+| 2.0    | 13938 | -             | 0.8564                  |
+| 2.0089 | 14000 | 0.0131        | -                       |
+| 2.0806 | 14500 | 0.0088        | -                       |
+| 2.1524 | 15000 | 0.0117        | -                       |
+| 2.2241 | 15500 | 0.0091        | -                       |
+| 2.2959 | 16000 | 0.0101        | -                       |
+| 2.3676 | 16500 | 0.013         | -                       |
+| 2.4394 | 17000 | 0.0087        | -                       |
+| 2.5111 | 17500 | 0.0088        | -                       |
+| 2.5829 | 18000 | 0.0093        | -                       |
+| 2.6546 | 18500 | 0.0104        | -                       |
+| 2.7264 | 19000 | 0.0103        | -                       |
+| 2.7981 | 19500 | 0.0102        | -                       |
+| 2.8699 | 20000 | 0.0094        | -                       |
+| 2.9416 | 20500 | 0.0099        | -                       |
+| 3.0    | 20907 | -             | 0.8573                  |
 
 
 ### Framework Versions
 - Python: 3.13.9
 - Sentence Transformers: 5.2.0
-- Transformers: 4.57.3
+- Transformers: 4.57.6
 - PyTorch: 2.9.1+cu128
 - Accelerate: 1.12.0
-- Datasets: 4.4.1
-- Tokenizers: 0.22.1
+- Datasets: 4.5.0
+- Tokenizers: 0.22.2
 
 ## Citation
 
