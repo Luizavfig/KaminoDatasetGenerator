@@ -43,5 +43,12 @@
                 return a * b;
             }
         </code>
+        <source file="selected/1966294.java" startline="30" endline="35" />
+        <code>
+            //different fragment
+            public int divide(int a, int b) {
+                return a / b;
+            }
+        </code>
     </clone>
 </clones>
