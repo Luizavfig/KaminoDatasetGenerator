@@ -94,7 +94,7 @@ def install_package(package):
     """Install a Python package using pip."""
     subprocess.check_call([sys.executable, "-m", "pip", "install", package]) 
 
-def _extract_required_packages_clones(dataset):
+def extract_required_packages_clones(dataset):
     """
     Extract a set of unique Python package names from dataset entries.  Scans the 'code' field of each clone to detect imports.
     """
