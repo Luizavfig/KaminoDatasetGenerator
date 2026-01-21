@@ -1,4 +1,4 @@
-import json
+import json, math
 import pandas as pd
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
@@ -31,16 +31,17 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
     else: # use GPCloneBench dataset
         pairs = build_pairs_from_folders(language=language) 
 
-    precision, recall, f1, sims = _evaluate_model(model, pairs, threshold=threshold)
+    precision, recall, f1, sims, mcc, TP, TN, FP, FN = _evaluate_model(model, pairs, threshold=threshold)
     print(f"✅ Evaluation complete (threshold={threshold}):")
     print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1-score: {f1:.4f}") 
-    _save_evaluation_to_csv(full_model_name, precision, recall, f1, csv_path=reults_csv, dataset_name=dataset_name, language=language , threshold=threshold, num_pairs=len(pairs))
+    _save_evaluation_to_csv(full_model_name, precision, recall, f1, mcc, TP, TN, FP, FN, threshold=threshold, csv_path=reults_csv, dataset_name=dataset_name, language=language , num_pairs=len(pairs))
     return precision, recall, f1, sims
 
 def _evaluate_model(model, pairs, threshold):
     TP = 0  
     FP = 0  
     FN = 0  
+    TN = 0  
     similarities = []
 
     for code1, code2, label in pairs:
@@ -56,16 +57,22 @@ def _evaluate_model(model, pairs, threshold):
             FP += 1
         elif pred == 0 and label == 1:
             FN += 1
-        # pred==0 and label==0 is TN, not needed for Precision/Recall/F1
+        else:
+            TN += 1 
 
-    # Calculate metrics
+   
+    precision, recall, f1, mcc = _compute_metrics(TP, TN, FP, FN) 
+    return precision, recall, f1, similarities, mcc, TP, TN, FP, FN
+
+def _compute_metrics(TP, TN, FP, FN):  # Calculate metrics
     precision = TP / (TP + FP) if (TP + FP) > 0 else 0.0
     recall = TP / (TP + FN) if (TP + FN) > 0 else 0.0
     f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0 
+    denom = math.sqrt((TP + FP)*(TP + FN)*(TN + FP)*(TN + FN))
+    mcc = ((TP * TN) - (FP * FN)) / denom if denom else 0.0
+    return precision, recall, f1, mcc
 
-    return precision, recall, f1, similarities
-
-def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold, csv_path=CLONE_DETECTION_RESULTS, dataset_name=None, language="python", num_pairs=None):
+def _save_evaluation_to_csv(full_model_name, precision, recall, f1, mcc, TP, TN, FP, FN, threshold, csv_path=CLONE_DETECTION_RESULTS, dataset_name=None, language="python", num_pairs=None):
     csv_path = Path(csv_path)
     
     metrics_row = {
@@ -77,6 +84,11 @@ def _save_evaluation_to_csv(full_model_name, precision, recall, f1, threshold, c
         "precision": precision,
         "recall": recall,
         "f1": f1,
+        "mcc": mcc,
+        "TP": TP,
+        "TN": TN,
+        "FP": FP,
+        "FN": FN,
     }
 
     if csv_path.exists():
