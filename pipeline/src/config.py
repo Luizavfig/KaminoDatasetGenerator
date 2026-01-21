@@ -48,7 +48,7 @@ LLM_OPTS = {
     "repeat_penalty": 1.1,     # discourages repetition
     "num_predict": 1500,       # max output tokens
 }
-REMOTE_OLLAMA = True # change to False to use local ollama server
+REMOTE_OLLAMA = False # change to False to use local ollama server
 N_ENTRIES = 927 # number of dataset entries to use as inputs for generation
 CLONES_PER_ENTRY = 1 # number of clones to generate per dataset entry per prompt configuration
 OLLAMA_CONFIG_FILE_REMOTE = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")), "resources", "ollama_config_remote.json")

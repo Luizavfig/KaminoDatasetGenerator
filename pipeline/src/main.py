@@ -23,16 +23,16 @@ def main(): # RQ1 evaluation
     rp.run_reprompt()
     
     # Step 6: Filering based on tests
-    # fl.run_test_filtering()
+    fl.run_test_filtering()
 
     # Step 7: Codebleu between all clones (similarity matrix)
-    # fl.compute_codebleu_for_all()
+    fl.compute_codebleu_for_all()
 
     # Step 8: Clustering
-    # cl.run_clustering()
+    cl.run_clustering()
 
     # Calculate top-N efficient configurations
-    # select_top_n_configs()
+    select_top_n_configs()
     
 if __name__ == "__main__":
     main()
