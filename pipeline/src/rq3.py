@@ -10,14 +10,18 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model_name",
         type=str,
-        required=True,
+        required=False,
         help="Full Hugging Face model name, e.g., 'microsoft/codebert-base'",
     ) 
     args = parser.parse_args()
 
     full_model_name = args.model_name 
-    model_folder_name = full_model_name.split("/")[-1]
-    model_output_dir = Path(FINETUNE_DIR) / model_folder_name
+    if (full_model_name is None):
+        print("No model name provided. Using default models.")
+        models = ['microsoft/codebert-base-default','Salesforce/codet5-base-default','microsoft/codebert-base', 'Salesforce/codet5-base']
+    else:
+        models = [full_model_name]
+    
 
    # Ensure dataset exists for finetuning
     if not Path(CLONE_DATASET_TRAIN).exists() or not Path(CLONE_DATASET_TEST).exists():
@@ -26,10 +30,12 @@ if __name__ == "__main__":
     else:
         print("Using existing dataset.")
 
-    threshold = [0.7] # similarity classification threshold for clone detection
-    languages = ["python", "java", "csharp", "c"] # supported languages in GPTCloneBench
-    #languages = ["java", "csharp", "c"] # supported languages in GPTCloneBench
-    for th in threshold:    
-        run_clone_evaluation(str(model_output_dir), full_model_name, threshold=th, dataset_name="Kamino", language="python") # for our own dataset
+    threshold = SIMILARITY_THRESHOLD # similarity classification threshold for clone detection
+    languages = ["python", "java", "csharp", "c"] # supported languages in GPTCloneBench 
+    
+    for model in models:    
+        model_folder_name = model.split("/")[-1]
+        model_output_dir = Path(FINETUNE_DIR) / model_folder_name
+        run_clone_evaluation(str(model_output_dir), model, threshold=threshold, dataset_name="Kamino", language="python") # for our own dataset
         for language in languages: # for GPTCloneBench
-            run_clone_evaluation(str(model_output_dir), full_model_name, dataset_name="GPTCloneBench",language=language, threshold=th)
+            run_clone_evaluation(str(model_output_dir), model, dataset_name="GPTCloneBench",language=language, threshold=threshold)

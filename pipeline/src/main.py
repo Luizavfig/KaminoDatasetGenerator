@@ -19,7 +19,7 @@ def main(): # RQ1 evaluation
     # Step 4: Run tests on filtered clones
     #fl.run_tests()
     
-    # Step 5: Reprompting for clones passing at least 50% of tests but not 100%
+    # Step 5: Repairing for clones passing at least 75% of tests but not 100%
     rp.run_reprompt()
     
     # Step 6: Filering based on tests

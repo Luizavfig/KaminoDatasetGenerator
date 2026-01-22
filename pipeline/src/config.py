@@ -88,6 +88,7 @@ EFFICIENCY_RESULTS = "../results/RQ1/top_configs.json"
 TYPE4_RESULTS = f"../results/RQ2/type4_results.csv"
 
 # For finetuning and clone detection evaluation with GPTCloneBench (RQ3)
+SIMILARITY_THRESHOLD = 0.7 # threshold for similarity classification
 CLONE_DATASET_TRAIN = f"../results/{DATASET_NAME}_clones_train.json"
 CLONE_DATASET_TEST = f"../results/{DATASET_NAME}_clones_test.json"
 EPOCHS = 3
