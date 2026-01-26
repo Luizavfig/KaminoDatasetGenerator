@@ -113,13 +113,13 @@ You can finetune this model on your own dataset.
 ## Training Details
 
 ### Framework Versions
-- Python: 3.13.9
+- Python: 3.13.11
 - Sentence Transformers: 5.2.0
-- Transformers: 4.57.3
+- Transformers: 4.57.6
 - PyTorch: 2.9.1+cu128
 - Accelerate: 1.12.0
-- Datasets: 4.4.1
-- Tokenizers: 0.22.1
+- Datasets: 4.5.0
+- Tokenizers: 0.22.2
 
 ## Citation
 

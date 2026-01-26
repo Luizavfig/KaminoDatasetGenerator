@@ -113,7 +113,7 @@ You can finetune this model on your own dataset.
 ## Training Details
 
 ### Framework Versions
-- Python: 3.13.9
+- Python: 3.13.11
 - Sentence Transformers: 5.2.0
 - Transformers: 4.57.6
 - PyTorch: 2.9.1+cu128

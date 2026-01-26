@@ -5,138 +5,181 @@ tags:
 - feature-extraction
 - dense
 - generated_from_trainer
-- dataset_size:55745
+- dataset_size:73241
 - loss:CosineSimilarityLoss
 base_model: Salesforce/codet5-base
 widget:
-- source_sentence: "def extract_matches(row):\n        return re.findall('([a-fA-F\\\
-    \\d]{32})', row)\n    matches = df[column].apply(extract_matches)\n    flattened_matches\
-    \ = [match for sublist in matches.values for match in\n        sublist]\n    try:\n\
-    \        counts = {}\n        for match in flattened_matches:\n            if\
-    \ match not in counts:\n                counts[match] = 1\n            else:\n\
-    \                counts[match] += 1\n        return pd.Series(counts)\n    except\
-    \ Exception as e:\n        print(f'An error occurred: {e}')\n        return pd.Series()"
-  sentences:
-  - "try:\n        bytes_value = bytes.fromhex(hex_string)\n        float_value =\
-    \ struct.unpack('>f', bytes_value)[0]\n        buffer = BytesIO()\n        buffer.write(struct.pack('>f',\
-    \ float_value))\n        return buffer.getvalue()\n    except ValueError as e:\n\
-    \        raise e"
-  - ''
-  - "\"\"\"Return Series of counts of each unique 32‑character hex match in df[column].\"\
-    \"\"\n    pattern = '([a-fA-F\\\\d]{32})'\n    return df[column].astype(str).str.findall(pattern).explode().value_counts()"
-- source_sentence: "\"\"\"Return mean, median, and mode of sums of all subsets of\
-    \ given size.\"\"\"\n    sums = []\n\n    def backtrack(start, comb):\n      \
-    \  if len(comb) == subset_size:\n            sums.append(sum(comb))\n        \
-    \    return\n        for i in range(start, len(elements)):\n            backtrack(i\
-    \ + 1, comb + (elements[i],))\n    backtrack(0, ())\n    n = len(sums)\n    mean_val\
-    \ = sum(sums) / n if n else 0\n    sorted_sums = sorted(sums)\n    if n % 2:\n\
-    \        median_val = sorted_sums[n // 2]\n    else:\n        median_val = (sorted_sums[n\
-    \ // 2 - 1] + sorted_sums[n // 2]) / 2\n    freq = {}\n    for s in sums:\n  \
-    \      freq[s] = freq.get(s, 0) + 1\n    mode_val = max(freq, key=lambda k: freq[k])\n\
-    \    return {'mean': mean_val, 'median': median_val, 'mode': mode_val}"
-  sentences:
-  - "subsets = list(itertools.combinations(elements, subset_size))\n    sums = [sum(subset)\
-    \ for subset in subsets]\n    return {'mean': mean(sums), 'median': median(sorted(sums)),\
-    \ 'mode':\n        mode(sums)}"
-  - "if not isinstance(df, pd.DataFrame):\n        raise ValueError('Input must be\
-    \ a DataFrame')\n    for col in cols:\n        if col not in df.columns:\n   \
-    \         raise ValueError(f\"Column '{col}' does not exist in the DataFrame\"\
-    )\n    scaler = StandardScaler()\n    standardized_df = df.copy()\n    standardized_df[cols]\
-    \ = scaler.fit_transform(df[cols])\n    return standardized_df"
-  - "\"\"\"\n    Extract URLs from a JSON string and return a dictionary mapping each\
-    \ URL\n    to the number of times it appears. If a second argument is supplied,\n\
-    \    it specifies the maximum number of top URLs to return.\n    \"\"\"\n    pattern\
-    \ = 'https?://[^\\\\s]+|www\\\\.[^\\\\s]+'\n    data = json.loads(json_str)\n\
-    \    urls = []\n    stack = [data]\n    while stack:\n        current = stack.pop()\n\
-    \        for value in current.values():\n            if isinstance(value, dict):\n\
-    \                stack.append(value)\n            elif isinstance(value, str)\
-    \ and re.fullmatch(pattern, value):\n                urls.append(value)\n    if\
-    \ not urls:\n        return {}\n    counter = Counter(urls)\n    top_n = args[0]\
-    \ if args else None\n    if top_n is None or len(counter) <= top_n:\n        return\
-    \ dict(counter)\n    return dict(counter.most_common(top_n))"
-- source_sentence: "parsed = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')\n  \
-    \  now = datetime.now()\n    diff = now - parsed\n    seconds = diff.total_seconds()\n\
-    \    leap_count = np.sum(LEAP_SECONDS >= parsed.year)\n    return int(seconds\
-    \ + leap_count)"
+- source_sentence: "salt = os.urandom(salt_size)\n    b64_salt = base64.b64encode(salt).decode('utf-8')\n\
+    \    sha256_hash = hashlib.sha256()\n    sha256_hash.update(hex_str.encode('utf-8'))\n\
+    \    hash_value = sha256_hash.hexdigest()\n    return b64_salt, hash_value"
   sentences:
   - ''
-  - "files = os.listdir(directory)\n    file_groups = {}\n    for filename in files:\n\
-    \        match = re.search('\\\\.(.*?)$', filename)\n        if match:\n     \
-    \       ext = match.group(1)\n            dest_dir = os.path.join(directory, ext)\n\
-    \            if not os.path.exists(dest_dir):\n                os.makedirs(dest_dir)\n\
-    \            src_path = os.path.join(directory, filename)\n            shutil.move(src_path,\
-    \ dest_dir)"
-  - "df = df[columns]\n    missing_cols = [col for col in columns if col not in df.columns]\n\
-    \    if len(missing_cols) > 0:\n        raise Exception('Columns not found: '\
-    \ + ', '.join(missing_cols))\n    try:\n        filtered_df = df[df[columns[1]]\
-    \ > larger]\n        filtered_df = filtered_df[filtered_df[columns[2]] == equal]\n\
-    \        contingency_table = pd.crosstab(filtered_df[columns[0]],\n          \
-    \  filtered_df[columns[1]])\n        chi2, p_value, _, _ = chi2_contingency(contingency_table)\n\
-    \        return p_value\n    except Exception as e:\n        raise Exception('Error\
-    \ processing DataFrame: ' + str(e))"
-- source_sentence: "\"\"\"\n    Generates a normal distribution, plots its histogram\
-    \ and PDF, and returns the distribution and the plot.\n\n    Args:\n        length\
-    \ (int): The length of the distribution to be generated.\n\n    Returns:\n   \
-    \     tuple: A tuple containing: 1. numpy array with the normal distribution.\
-    \ 2. matplotlib Axes object representing the plot.\n    \"\"\"\n    distribution\
-    \ = np.random.normal(0, 1, length)\n    fig, ax = plt.subplots()\n    ax.hist(distribution,\
-    \ density=True, bins=30)\n    x = np.linspace(0, 1, 100)\n    pdf = np.random.normal(0,\
-    \ 1, 100)\n    ax.plot(x, pdf, linewidth=2, color='r', label='PDF')\n    ax.legend()\n\
-    \    return distribution, ax"
+  - "salt = os.urandom(salt_size)\n    hash_value = hashlib.sha256((hex_str + str(salt)).encode()).hexdigest()\n\
+    \    return base64.b64encode(salt).decode(), hash_value"
+  - "scale_factors = [0.5, 0.75, 1.5, 2.0]\n    if not os.path.exists(img_path):\n\
+    \        raise FileNotFoundError(f'No file found at {img_path}')\n    images =\
+    \ []\n    figs = []\n    try:\n        img = Image.open(img_path)\n        original_arr\
+    \ = np.array(img)\n        for scale in scale_factors:\n            new_height\
+    \ = int(img.height * scale)\n            new_width = int(img.width * scale)\n\
+    \            scaled_arr = np.zeros((new_height, new_width, 3), dtype=np.uint8)\n\
+    \            if scale < 1:\n                step_x = img.width // new_width\n\
+    \                step_y = img.height // new_height\n                for i in range(new_height):\n\
+    \                    for j in range(new_width):\n                        x = i\
+    \ * step_y\n                        y = j * step_x\n                        scaled_arr[i,\
+    \ j] = original_arr[x, y]\n            else:\n                for i in range(img.height):\n\
+    \                    for j in range(img.width):\n                        step_x\
+    \ = int(i * (new_width / img.width))\n                        step_y = int(j *\
+    \ (new_height / img.height))\n                        scaled_arr[step_y, step_x]\
+    \ = original_arr[i, j]\n            fig, ax = plt.subplots()\n            ax.imshow(scaled_arr)\n\
+    \            ax.set_title(f'Scale factor: {scale}')\n            images.append((ax,\
+    \ scaled_arr))\n            figs.append(fig)\n        return images\n    finally:\n\
+    \        for fig in figs:\n            plt.close(fig)"
+- source_sentence: "max_weight = -10 ** 9\n    max_substr = ''\n    substr_set = {x[i:j]\
+    \ for i in range(len(x)) for j in range(i + 1, len(x\n        ) + 1)}\n\n    def\
+    \ compute_weight(sub):\n        total = 0\n        for ch in sub:\n          \
+    \  total += w.get(ch, 0)\n        return total\n    for sub in substr_set:\n \
+    \       weight = 0\n        for ch in sub:\n            weight += w.get(ch, 0)\n\
+    \        if weight > max_weight:\n            max_weight = weight\n          \
+    \  max_substr = sub\n    return max_substr"
   sentences:
-  - "\"\"\"Count frequency of each letter after repeating the list.\"\"\"\n    if\
-    \ not letters or repetitions <= 0:\n        return {}\n    freq = {}\n    for\
-    \ letter in (letters * repetitions):\n        if letter in freq:\n           \
-    \ freq[letter] += 1\n        else:\n            freq[letter] = 1\n    return freq"
-  - "try:\n        combined = a + b\n        if items is not None:\n            counter\
-    \ = {item: combined.count(item) for item in items}\n        else:\n          \
-    \  counter = {}\n        df = pd.DataFrame(list(counter.items()), columns=['Item',\
-    \ 'Frequency'])\n        plt.bar(df['Item'], df['Frequency'])\n        plt.xlabel('Items')\n\
-    \        plt.ylabel('Frequency')\n        plt.title('Item Frequency in Combined\
-    \ List')\n        plt.xticks(rotation=45)\n        plt.tight_layout()\n      \
-    \  return plt.gca()\n    except Exception as e:\n        print(f'An error occurred:\
-    \ {e}')\n        return None\n\n\na = ['apple', 'banana', 'orange']\nb = ['banana',\
-    \ 'orange', 'grape']\nitems = ['apple', 'banana']\nresult = task_func(a, b, items)"
-  - "\"\"\"Generate a normal distribution and plot its histogram with PDF.\"\"\"\n\
-    \    dist = np.random.standard_normal(length)\n    fig, ax = plt.subplots()\n\
-    \    ax.hist(dist, bins=30, density=True, alpha=0.6, color='g')\n    x_vals =\
-    \ np.linspace(dist.min() - 1, dist.max() + 1, 200)\n    pdf_vals = 1 / np.sqrt(2\
-    \ * np.pi) * np.exp(-x_vals ** 2 / 2)\n    ax.plot(x_vals, pdf_vals, color='r')\n\
-    \    return dist, ax"
-- source_sentence: "df = pd.read_csv(file_name)\n    if df.empty:\n        raise ValueError('DataFrame\
-    \ is empty')\n    numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()\n\
-    \    if not numeric_cols:\n        raise ValueError('No numeric columns to normalize')\n\
-    \    for col in numeric_cols:\n        col_min = df[col].min()\n        col_max\
-    \ = df[col].max()\n        if col_max == col_min:\n            df[col] = 0.0\n\
-    \        else:\n            df[col] = (df[col] - col_min) / (col_max - col_min)\n\
-    \    for col in numeric_cols:\n        pass\n    return df"
+  - "cleaned = []\n    for text in texts:\n        temp = re.sub('[\\\\W_]', ' ',\
+    \ text)\n        temp = temp.lower()\n        tokens = temp.split()\n        filtered_tokens\
+    \ = [word for word in tokens if word not in nltk.\n            corpus.stopwords.words('english')]\n\
+    \        cleaned.append(' '.join(filtered_tokens))\n    vectorizer = CountVectorizer()\n\
+    \    dtm = vectorizer.fit_transform(cleaned)\n    feature_names = vectorizer.get_feature_names_out()\
+    \ if hasattr(vectorizer,\n        'get_feature_names_out') else vectorizer.get_feature_names()\n\
+    \    dtm_df = pd.DataFrame(dtm.toarray(), index=list(range(len(texts))),\n   \
+    \     columns=feature_names)\n    return dtm_df"
+  - "max_weight = -float('inf')\n    max_substr = ''\n    for i in range(len(x)):\n\
+    \        current_weight = 0\n        for j in range(i, len(x)):\n            char\
+    \ = x[j]\n            if char not in w:\n                continue\n          \
+    \  current_weight += w[char]\n            if (current_weight > max_weight or current_weight\
+    \ == max_weight and\n                x[i:j + 1] < max_substr):\n             \
+    \   max_weight = current_weight\n                max_substr = x[i:j + 1]\n   \
+    \ return max_substr\n\n\ndef task_func(x, w):\n    max_substring = ''\n    max_sum\
+    \ = -float('inf')\n    for i in range(len(x)):\n        current_sum = 0\n    \
+    \    for j in range(i, len(x)):\n            char = x[j]\n            if char\
+    \ not in w:\n                continue\n            current_sum += w[char]\n  \
+    \          if current_sum > max_sum or current_sum == max_sum and x[i:j + 1\n\
+    \                ] < max_substring:\n                max_sum = current_sum\n \
+    \               max_substring = x[i:j + 1]\n    return max_substring\n\n\ndef\
+    \ task_func(x, w):\n    if not isinstance(x, str) or not isinstance(w, dict):\n\
+    \        raise TypeError('Invalid input types')\n    max_weight = -float('inf')\n\
+    \    max_substr = ''\n    for i in range(len(x)):\n        current_weight = 0\n\
+    \        for j in range(i, len(x)):\n            char = x[j]\n            if char\
+    \ not in w:\n                continue\n            current_weight += w[char]\n\
+    \            if (current_weight > max_weight or current_weight == max_weight and\n\
+    \                x[i:j + 1] < max_substr):\n                max_weight = current_weight\n\
+    \                max_substr = x[i:j + 1]\n    return max_substr"
+  - "if not isinstance(s1, pd.Series) or not isinstance(s2, pd.Series):\n        raise\
+    \ TypeError('Both arguments must be pandas Series objects')\n    missing_categories\
+    \ = set(CATEGORIES).difference(set(s1.index).union(set\n        (s2.index)))\n\
+    \    if len(missing_categories) > 0:\n        print(\n            f'Warning: Some\
+    \ categories are not present in the input data: {missing_categories}'\n      \
+    \      )\n    try:\n        mask_s1 = s1 > 200\n        mask_s2 = s2 > 200\n \
+    \       high_sales_categories = s1.index[mask_s1 & mask_s2]\n        if len(high_sales_categories)\
+    \ == 0:\n            return None, 0.0\n        df_data = {'Store 1': s1[high_sales_categories],\
+    \ 'Store 2': s2[\n            high_sales_categories]}\n        df = pd.DataFrame(df_data)\n\
+    \        edit_distance = np.linalg.norm(df['Store 1'].values - df['Store 2']\n\
+    \            .values)\n        fig, ax = plt.subplots()\n        df.plot(kind='bar',\
+    \ title=\n            'Sales Comparison Above Threshold in Categories', ax=ax)\n\
+    \        plt.xticks(rotation=45)\n        plt.tight_layout()\n        return ax,\
+    \ edit_distance\n    except Exception as e:\n        print(f'Error occurred: {e}')\n\
+    \        return None, 0.0"
+- source_sentence: "random_state = 42\n    length = 10\n    lower_bound = 0\n    upper_bound\
+    \ = 10\n    arr = np.random.RandomState(random_state).randint(lower_bound,\n \
+    \       upper_bound, (length,))\n    arr_reshaped = arr.reshape(-1, 1)\n    scaler\
+    \ = MinMaxScaler()\n    normalized_data = scaler.fit_transform(arr_reshaped)\n\
+    \    return normalized_data"
   sentences:
-  - "\"\"\"\n    Reads CSV file and processes date column to generate year histogram.\n\
-    \n    Args:\n        csv_path (str): Path to the CSV file\n        date_column\
-    \ (str): Name of the date column in the CSV\n\n    Returns:\n        matplotlib\
-    \ axes object containing the histogram plot\n\n    Raises:\n        FileNotFoundError:\
-    \ If the CSV file does not exist\n        ValueError: If the CSV is empty or contains\
-    \ invalid dates\n    \"\"\"\n    if not os.path.exists(csv_path):\n        raise\
-    \ FileNotFoundError(f'CSV file at {csv_path} does not exist')\n    try:\n    \
-    \    df = pd.read_csv(csv_path)\n        if date_column not in df.columns:\n \
-    \           raise ValueError(f'Date column {date_column} not found in CSV')\n\
-    \        years = []\n        for date_str in df[date_column]:\n            try:\n\
-    \                parsed_date = parse(date_str)\n                years.append(parsed_date.year)\n\
-    \            except ValueError:\n                raise ValueError(f'Invalid date\
-    \ format in column: {date_str}')\n        plt.figure()\n        plt.hist(years,\
-    \ bins=range(1900, 2030), edgecolor='black')\n        plt.title('Year Distribution')\n\
-    \        plt.xlabel('Year')\n        plt.ylabel('Count')\n        return plt.gca()\n\
-    \    except pd.errors.EmptyDataError:\n        raise ValueError('CSV file is empty')"
-  - "item_lengths = [len(row) for row in df.values]\n    if len(set(item_lengths))\
-    \ != 1:\n        raise ValueError('All rows must have the same number of items')\n\
-    \    all_combinations = set()\n    for row in df.values:\n        all_combinations.update(combinations(row,\
-    \ len(row)))\n    freq_dict = defaultdict(int)\n    for row in df.values:\n  \
-    \      combination = tuple(sorted(row))\n        freq_dict[combination] += 1\n\
-    \    return dict(freq_dict)"
-  - "\"\"\"Perform DBSCAN clustering on the data and add cluster labels to DataFrame.\"\
-    \"\"\n    df = pd.DataFrame([dict(zip(cols, row)) for row in data])\n    dbscan_model\
-    \ = DBSCAN(eps=3, min_samples=2)\n    cluster_labels = dbscan_model.fit_predict(df)\n\
-    \    df['Cluster'] = cluster_labels\n    return df"
+  - "\"\"\"Generate random array and apply min-max normalization.\"\"\"\n    np.random.seed(42)\n\
+    \    array = np.array([np.random.randint(0, 10) for _ in range(10)])\n    reshaped_array\
+    \ = array.reshape(-1, 1)\n    min_val = reshaped_array.min()\n    max_val = reshaped_array.max()\n\
+    \    scaled_array = (reshaped_array - min_val) / (max_val - min_val)\n    return\
+    \ scaled_array"
+  - "if df.empty:\n        raise ValueError('Input DataFrame cannot be empty')\n \
+    \   cumsum_df = df.cumsum()\n    fig, ax = plt.subplots(figsize=(10, 6))\n   \
+    \ cumsum_df.plot(kind='bar', ax=ax, color=['#2ecc71', '#e74c3c'])\n    ax.set_title('Cumulative\
+    \ Sum per Column', fontsize=14, fontweight='bold')\n    ax.set_xlabel('Index',\
+    \ fontsize=12)\n    ax.set_ylabel('Cumulative Sum', fontsize=12)\n    ax.grid(True,\
+    \ linestyle='--', alpha=0.7)\n    ax.legend(title='Columns', bbox_to_anchor=(1.05,\
+    \ 1), borderaxespad=0)\n    return cumsum_df, fig"
+  - "with open(file_path, 'r') as file:\n        reader = csv.reader(file)\n     \
+    \   data = [row[0] for row in reader]\n    if not data:\n        return float('nan'),\
+    \ float('nan'), plot_path\n    cleaned_data = []\n    for value in data:\n   \
+    \     try:\n            cleaned_data.append(float(value))\n        except ValueError:\n\
+    \            pass\n    mean_value = median_value = float('nan')\n    if cleaned_data:\n\
+    \        mean_value = mean(cleaned_data)\n        median_value = median(cleaned_data)\n\
+    \    plt.figure(figsize=(10, 6))\n    plt.plot(cleaned_data)\n    plt.title('Data\
+    \ Visualization')\n    plt.xlabel('Index')\n    plt.ylabel('Value')\n    plt.savefig(plot_path)\n\
+    \    plt.close()\n    return mean_value, median_value, plot_path"
+- source_sentence: "try:\n        float_bytes = secrets.token_bytes(4)\n        hex_str\
+    \ = binascii.hexlify(float_bytes).decode('utf-8')\n        b64_bytes = base64.b64encode(hex_str.encode('utf-8'))\n\
+    \        return b64_bytes.decode('utf-8')\n    except Exception as e:\n      \
+    \  raise RuntimeError(f'Error encoding float to hex and base64: {e}')"
+  sentences:
+  - "df = df.drop(tuples, errors='ignore')\n    if not tuples and n_plots > 0:\n \
+    \       columns = list(df.columns)\n        plots = []\n        used_pairs = set()\n\
+    \        for _ in range(n_plots):\n            if len(columns) < 2:\n        \
+    \        break\n            col1 = sample(columns, 1)[0]\n            remaining_columns\
+    \ = [x for x in columns if x != col1]\n            if not remaining_columns:\n\
+    \                break\n            col2 = sample(remaining_columns, 1)[0]\n \
+    \           pair = col1, col2\n            if pair not in used_pairs:\n      \
+    \          fig, ax = plt.subplots()\n                ax.scatter(df[col1], df[col2])\n\
+    \                ax.set_xlabel(col1)\n                ax.set_ylabel(col2)\n  \
+    \              plt.title(f'Scatter Plot: {col1} vs {col2}')\n                plots.append((col1,\
+    \ col2, fig))\n                used_pairs.add(pair)\n        return df, plots\n\
+    \    else:\n        return df, []"
+  - "\"\"\"Generates a random float, converts to hex, and encodes in base64.\"\"\"\
+    \n    random_float = os.urandom(4)\n    hex_str = random_float.hex()\n    b64_bytes\
+    \ = base64.b64encode(hex_str.encode('utf-8'))\n    return b64_bytes.decode('utf-8')"
+  - ''
+- source_sentence: "def calculate_weight(substring: str) ->int:\n        return sum(w.get(c,\
+    \ 0) for c in substring)\n    max_info = {'weight': -float('inf'), 'substring':\
+    \ ''}\n    current_sum = 0\n    start_index = 0\n    for i, char in enumerate(x):\n\
+    \        current_sum += w.get(char, 0)\n        if current_sum > max_info['weight']:\n\
+    \            max_info['weight'] = current_sum\n            max_info['substring']\
+    \ = x[start_index:i + 1]\n        elif current_sum < 0:\n            start_index\
+    \ = i + 1\n            current_sum = 0\n    return max_info['substring']"
+  sentences:
+  - "result = {}\n    os_name = platform.system()\n    result['OS'] = os_name\n  \
+    \  result['OS'] = platform.system()\n    arch = platform.architecture()[0]\n \
+    \   result['Architecture'] = arch\n    result['Architecture'] = platform.architecture()[0]\n\
+    \    try:\n        if psutil:\n            mem = psutil.virtual_memory()\n   \
+    \         used = mem.used\n            total = mem.total\n        else:\n    \
+    \        raise Exception\n    except Exception:\n        if os.name == 'posix':\n\
+    \            with open('/proc/meminfo') as f:\n                lines = f.readlines()\n\
+    \            meminfo = {}\n            for line in lines:\n                key,\
+    \ val = line.split(':')\n                meminfo[key.strip()] = int(val.split()[0])\n\
+    \            total = meminfo['MemTotal'] * 1024\n            used = (meminfo['MemTotal']\
+    \ - meminfo['MemFree'] - meminfo.get(\n                'Buffers', 0) - meminfo.get('Cached',\
+    \ 0)) * 1024\n        else:\n            total = 1\n            used = 0\n   \
+    \ percent = used / total * 100 if total else 0\n    mem_str = f'{percent:.2f}%'\n\
+    \    result['Memory Usage'] = mem_str\n    result['Memory Usage'] = f'{percent:.2f}%'\n\
+    \    return result"
+  - "delay_time = args[0] if len(args) > 0 else kwargs.get('delay_time', 1)\n    num_threads\
+    \ = args[1] if len(args) > 1 else kwargs.get('num_threads', 5)\n    if num_threads\
+    \ <= 0:\n        return []\n    results = []\n\n    def worker(idx, out):\n  \
+    \      time.sleep(delay_time)\n        out.append(f'Delay in thread {idx} completed')\n\
+    \    for i in range(num_threads):\n        out = []\n        t = threading.Thread(target=worker,\
+    \ args=(i, out))\n        t.start()\n        t.join()\n        results.extend(out)\n\
+    \    return results"
+  - "\"\"\"\n    Parses XML content from a string and converts it into CSV format.\n\
+    \n    Args:\n        xml_content (str): A well-formed XML string to be parsed.\n\
+    \        output_csv_path (str): The file path where the resulting CSV will be\
+    \ saved.\n\n    Notes:\n        - This function does not return any value. It\
+    \ writes directly to the specified CSV file.\n        - Handles various edge cases\
+    \ including nested elements, attributes, and empty XML structures.\n    \"\"\"\
+    \n    try:\n        root = ET.fromstring(xml_content)\n        csv_data = []\n\
+    \        for elem in root.iter():\n            row = [elem.tag]\n            if\
+    \ elem.text is not None:\n                row.append(elem.text.strip())\n    \
+    \        else:\n                row.append('')\n            csv_data.append(row)\n\
+    \        with open(output_csv_path, 'w', newline='', encoding='utf-8'\n      \
+    \      ) as csvfile:\n            writer = csv.writer(csvfile)\n            writer.writerows(csv_data)\n\
+    \    except ET.ParseError as e:\n        raise ET.ParseError(f'Invalid XML content:\
+    \ {str(e)}')\n    except IOError as e:\n        raise IOError(\n            f'Failed\
+    \ to write CSV file at path: {output_csv_path}. Error: {str(e)}'\n           \
+    \ )"
 pipeline_tag: sentence-similarity
 library_name: sentence-transformers
 metrics:
@@ -153,10 +196,10 @@ model-index:
       type: val-sim
     metrics:
     - type: pearson_cosine
-      value: 0.9709622651157053
+      value: 0.9714369594217919
       name: Pearson Cosine
     - type: spearman_cosine
-      value: 0.8583390571191828
+      value: 0.855810095403785
       name: Spearman Cosine
 ---
 
@@ -209,9 +252,9 @@ from sentence_transformers import SentenceTransformer
 model = SentenceTransformer("sentence_transformers_model_id")
 # Run inference
 sentences = [
-    "df = pd.read_csv(file_name)\n    if df.empty:\n        raise ValueError('DataFrame is empty')\n    numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()\n    if not numeric_cols:\n        raise ValueError('No numeric columns to normalize')\n    for col in numeric_cols:\n        col_min = df[col].min()\n        col_max = df[col].max()\n        if col_max == col_min:\n            df[col] = 0.0\n        else:\n            df[col] = (df[col] - col_min) / (col_max - col_min)\n    for col in numeric_cols:\n        pass\n    return df",
-    '"""Perform DBSCAN clustering on the data and add cluster labels to DataFrame."""\n    df = pd.DataFrame([dict(zip(cols, row)) for row in data])\n    dbscan_model = DBSCAN(eps=3, min_samples=2)\n    cluster_labels = dbscan_model.fit_predict(df)\n    df[\'Cluster\'] = cluster_labels\n    return df',
-    "item_lengths = [len(row) for row in df.values]\n    if len(set(item_lengths)) != 1:\n        raise ValueError('All rows must have the same number of items')\n    all_combinations = set()\n    for row in df.values:\n        all_combinations.update(combinations(row, len(row)))\n    freq_dict = defaultdict(int)\n    for row in df.values:\n        combination = tuple(sorted(row))\n        freq_dict[combination] += 1\n    return dict(freq_dict)",
+    "def calculate_weight(substring: str) ->int:\n        return sum(w.get(c, 0) for c in substring)\n    max_info = {'weight': -float('inf'), 'substring': ''}\n    current_sum = 0\n    start_index = 0\n    for i, char in enumerate(x):\n        current_sum += w.get(char, 0)\n        if current_sum > max_info['weight']:\n            max_info['weight'] = current_sum\n            max_info['substring'] = x[start_index:i + 1]\n        elif current_sum < 0:\n            start_index = i + 1\n            current_sum = 0\n    return max_info['substring']",
+    "delay_time = args[0] if len(args) > 0 else kwargs.get('delay_time', 1)\n    num_threads = args[1] if len(args) > 1 else kwargs.get('num_threads', 5)\n    if num_threads <= 0:\n        return []\n    results = []\n\n    def worker(idx, out):\n        time.sleep(delay_time)\n        out.append(f'Delay in thread {idx} completed')\n    for i in range(num_threads):\n        out = []\n        t = threading.Thread(target=worker, args=(i, out))\n        t.start()\n        t.join()\n        results.extend(out)\n    return results",
+    '"""\n    Parses XML content from a string and converts it into CSV format.\n\n    Args:\n        xml_content (str): A well-formed XML string to be parsed.\n        output_csv_path (str): The file path where the resulting CSV will be saved.\n\n    Notes:\n        - This function does not return any value. It writes directly to the specified CSV file.\n        - Handles various edge cases including nested elements, attributes, and empty XML structures.\n    """\n    try:\n        root = ET.fromstring(xml_content)\n        csv_data = []\n        for elem in root.iter():\n            row = [elem.tag]\n            if elem.text is not None:\n                row.append(elem.text.strip())\n            else:\n                row.append(\'\')\n            csv_data.append(row)\n        with open(output_csv_path, \'w\', newline=\'\', encoding=\'utf-8\'\n            ) as csvfile:\n            writer = csv.writer(csvfile)\n            writer.writerows(csv_data)\n    except ET.ParseError as e:\n        raise ET.ParseError(f\'Invalid XML content: {str(e)}\')\n    except IOError as e:\n        raise IOError(\n            f\'Failed to write CSV file at path: {output_csv_path}. Error: {str(e)}\'\n            )',
 ]
 embeddings = model.encode(sentences)
 print(embeddings.shape)
@@ -220,9 +263,9 @@ print(embeddings.shape)
 # Get the similarity scores for the embeddings
 similarities = model.similarity(embeddings, embeddings)
 print(similarities)
-# tensor([[ 1.0000, -0.0192,  0.0453],
-#         [-0.0192,  1.0000, -0.0322],
-#         [ 0.0453, -0.0322,  1.0000]])
+# tensor([[ 1.0000,  0.0083, -0.0168],
+#         [ 0.0083,  1.0000,  0.0169],
+#         [-0.0168,  0.0169,  1.0000]])
 ```
 
 <!--
@@ -260,8 +303,8 @@ You can finetune this model on your own dataset.
 
 | Metric              | Value      |
 |:--------------------|:-----------|
-| pearson_cosine      | 0.971      |
-| **spearman_cosine** | **0.8583** |
+| pearson_cosine      | 0.9714     |
+| **spearman_cosine** | **0.8558** |
 
 <!--
 ## Bias, Risks and Limitations
@@ -281,19 +324,19 @@ You can finetune this model on your own dataset.
 
 #### Unnamed Dataset
 
-* Size: 55,745 training samples
+* Size: 73,241 training samples
 * Columns: <code>sentence_0</code>, <code>sentence_1</code>, and <code>label</code>
 * Approximate statistics based on the first 1000 samples:
-  |         | sentence_0                                                                          | sentence_1                                                                          | label                                                         |
-  |:--------|:------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------|:--------------------------------------------------------------|
-  | type    | string                                                                              | string                                                                              | float                                                         |
-  | details | <ul><li>min: 2 tokens</li><li>mean: 153.68 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 2 tokens</li><li>mean: 152.26 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 0.0</li><li>mean: 0.5</li><li>max: 1.0</li></ul> |
+  |         | sentence_0                                                                          | sentence_1                                                                          | label                                                          |
+  |:--------|:------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------|:---------------------------------------------------------------|
+  | type    | string                                                                              | string                                                                              | float                                                          |
+  | details | <ul><li>min: 2 tokens</li><li>mean: 151.99 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 2 tokens</li><li>mean: 150.28 tokens</li><li>max: 256 tokens</li></ul> | <ul><li>min: 0.0</li><li>mean: 0.49</li><li>max: 1.0</li></ul> |
 * Samples:
-  | sentence_0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | sentence_1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | label            |
-  |:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------|
-  | <code>with open(csv_file, 'r') as f:<br>        content = f.read()<br>    content = content.replace(csv_delimiter, '\n')<br>    words = content.splitlines()<br>    freq = {}<br>    for w in words:<br>        if w in freq:<br>            freq[w] += 1<br>        else:<br>            freq[w] = 1<br>    dummy = {}<br>    for w in words:<br>        dummy[w] = dummy.get(w, 0) + 1<br><br>    def unused_helper():<br>        return None<br>    result = []<br>    for k, v in freq.items():<br>        result.append((k, v))<br>    result.sort(key=lambda x: x[1], reverse=True)<br>    return result</code> | <code>"""<br>    Reads a CSV file and counts the most common words in the file.<br><br>    Args:<br>        csv_file (str): The path to the CSV file.<br>        csv_delimiter (str): The delimiter used in the CSV file.<br><br>    Returns:<br>        list: A list of tuples, each containing a word and its frequency,<br>              sorted by frequency in descending order.<br>    """<br>    try:<br>        with open(csv_file, 'r') as f:<br>            content = f.read()<br>    except FileNotFoundError:<br>        return []<br>    words = re.findall('\\b\\w+\\b', content.lower())<br>    word_counts = defaultdict(int)<br>    for word in words:<br>        word_counts[word] += 1<br>    most_common_words = sorted(word_counts.items(), key=lambda x: x[1],<br>        reverse=True)<br>    return most_common_words</code> | <code>1.0</code> |
-  | <code>if not isinstance(t, tuple) or not all(isinstance(x, int) for x in t):<br>        raise ValueError('Input must be a tuple of integers')<br>    if n < 0:<br>        raise ValueError('n cannot be negative')<br>    if n == 0:<br>        return ()<br>    valid_combinations = list(it_combinations(t, n))<br>    if not valid_combinations:<br>        return ()<br>    return random.choice(valid_combinations)</code>                                                                                                                                                                                       | <code>"""<br>    Generates a random combination of length n from a tuple.<br>    """<br>    import random<br>    combinations = random.sample(t, n)<br>    return combinations</code>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | <code>1.0</code> |
-  | <code>merged = [elem for sub in list_of_lists for elem in sub]<br>    if not merged:<br>        return np.array([]), 0<br>    freq = Counter(merged)<br>    mode_val, mode_cnt = freq.most_common(1)[0]<br>    return np.array(mode_val), mode_cnt</code>                                                                                                                                                                                                                                                                                                                                                             | <code>merged = []<br>    for lst in list_of_lists:<br>        merged.extend(lst)<br>    counts = defaultdict(int)<br>    for num in merged:<br>        counts[num] += 1<br>    max_count = -1<br>    mode = None<br>    for num, cnt in counts.items():<br>        if cnt > max_count or cnt == max_count and num < mode:<br>            max_count = cnt<br>            mode = num<br>    return mode, max_count</code>                                                                                                                                                                                                                                                                                                                                                                                                                             | <code>1.0</code> |
+  | sentence_0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | sentence_1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | label            |
+  |:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-----------------|
+  | <code>merged_list = []<br>    for sublist in list_of_lists:<br>        merged_list.extend(sublist)<br>    if not merged_list:<br>        return np.array([]), 0<br>    mode_value, mode_count = stats.mode(np.array(merged_list))<br>    return mode_value, mode_count</code>                                                                                                                                                                                                                                                  | <code>df_copy = df.copy()<br>    mask = df_copy.apply(tuple, axis=1).isin(tuples)<br>    df_filtered = df_copy[~mask]<br>    plot_details = []<br>    max_plots = min(n_plots, len(df_filtered))<br>    for _ in range(max_plots):<br>        cols = random.sample(COLUMNS, 2)<br>        plot_details.append((cols[0], cols[1]))<br>    return df_filtered, plot_details</code>                                                                                                                                                                                                                                                                                                                                                              | <code>0.0</code> |
+  | <code>if directory is None or not os.path.isdir(directory):<br>        raise OSError('Invalid directory path')<br>    counts = Counter()<br>    for ext in (extensions or ['.txt', '.docx', '.xlsx', '.csv']):<br>        for root, _, files in os.walk(directory):<br>            for file in files:<br>                if file.endswith(ext):<br>                    counts[ext] += 1<br>    if not keep_zero:<br>        counts = counts - Counter([ext for ext in counts if counts[ext] == 0])<br>    return counts</code> | <code>target_value = args[0] if args else '332'<br>    mask = dataframe.eq(target_value)<br>    fig, ax = plt.subplots()<br>    sns.heatmap(mask, ax=ax, cbar=False, cmap='viridis', linewidths=0.5)<br>    return mask, ax</code>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | <code>0.0</code> |
+  | <code>text = re.sub('[^\\w\\s]', '', text)<br>    text = re.sub('\\s+', ' ', text).strip()<br>    words = [word.lower() for word in text.split()]<br>    filtered_words = [word for word in words if word not in stopwords.words<br>        ('english')]<br>    bigrams = []<br>    for i in range(len(filtered_words) - 1):<br>        bigrams.append((filtered_words[i], filtered_words[i + 1]))<br>    return Counter(bigrams)</code>                                                                                       | <code>try:<br>        df = pd.read_csv(csv_path)<br>        df[date_column] = pd.to_datetime(df[date_column])<br>        years = df[date_column].dt.year.value_counts()<br>        plt.figure(figsize=(10, 6))<br>        years.hist(bins=10)<br>        plt.xlabel('Year')<br>        plt.ylabel('Frequency')<br>        plt.title('Year Distribution')<br>        plt.grid(True)<br>        plt.show()<br>        return plt.gca()<br>    except FileNotFoundError:<br>        raise FileNotFoundError(f'{csv_path} does not exist')<br>    except ValueError as e:<br>        raise ValueError(f'Error processing date column: {e}')<br>    except Exception as e:<br>        raise Exception(f'An unexpected error occurred: {e}')</code> | <code>0.0</code> |
 * Loss: [<code>CosineSimilarityLoss</code>](https://sbert.net/docs/package_reference/sentence_transformer/losses.html#cosinesimilarityloss) with these parameters:
   ```json
   {
@@ -330,7 +373,7 @@ You can finetune this model on your own dataset.
 - `num_train_epochs`: 3
 - `max_steps`: -1
 - `lr_scheduler_type`: linear
-- `lr_scheduler_kwargs`: {}
+- `lr_scheduler_kwargs`: None
 - `warmup_ratio`: 0.0
 - `warmup_steps`: 0
 - `log_level`: passive
@@ -435,60 +478,73 @@ You can finetune this model on your own dataset.
 ### Training Logs
 | Epoch  | Step  | Training Loss | val-sim_spearman_cosine |
 |:------:|:-----:|:-------------:|:-----------------------:|
-| 0.0717 | 500   | 0.2342        | -                       |
-| 0.1435 | 1000  | 0.105         | -                       |
-| 0.2152 | 1500  | 0.0653        | -                       |
-| 0.2870 | 2000  | 0.0557        | -                       |
-| 0.3587 | 2500  | 0.0472        | -                       |
-| 0.4305 | 3000  | 0.0433        | -                       |
-| 0.5022 | 3500  | 0.0369        | -                       |
-| 0.5740 | 4000  | 0.0325        | -                       |
-| 0.6457 | 4500  | 0.0314        | -                       |
-| 0.7175 | 5000  | 0.0281        | -                       |
-| 0.7892 | 5500  | 0.0264        | -                       |
-| 0.8610 | 6000  | 0.0267        | -                       |
-| 0.9327 | 6500  | 0.0255        | -                       |
-| 1.0    | 6969  | -             | 0.8542                  |
-| 1.0044 | 7000  | 0.0223        | -                       |
-| 1.0762 | 7500  | 0.0179        | -                       |
-| 1.1479 | 8000  | 0.0182        | -                       |
-| 1.2197 | 8500  | 0.0198        | -                       |
-| 1.2914 | 9000  | 0.0188        | -                       |
-| 1.3632 | 9500  | 0.0156        | -                       |
-| 1.4349 | 10000 | 0.0167        | -                       |
-| 1.5067 | 10500 | 0.0177        | -                       |
-| 1.5784 | 11000 | 0.0167        | -                       |
-| 1.6502 | 11500 | 0.0146        | -                       |
-| 1.7219 | 12000 | 0.0161        | -                       |
-| 1.7937 | 12500 | 0.0146        | -                       |
-| 1.8654 | 13000 | 0.0145        | -                       |
-| 1.9372 | 13500 | 0.0144        | -                       |
-| 2.0    | 13938 | -             | 0.8571                  |
-| 2.0089 | 14000 | 0.0144        | -                       |
-| 2.0806 | 14500 | 0.0125        | -                       |
-| 2.1524 | 15000 | 0.0101        | -                       |
-| 2.2241 | 15500 | 0.0123        | -                       |
-| 2.2959 | 16000 | 0.0127        | -                       |
-| 2.3676 | 16500 | 0.0109        | -                       |
-| 2.4394 | 17000 | 0.0116        | -                       |
-| 2.5111 | 17500 | 0.0112        | -                       |
-| 2.5829 | 18000 | 0.0103        | -                       |
-| 2.6546 | 18500 | 0.0105        | -                       |
-| 2.7264 | 19000 | 0.0099        | -                       |
-| 2.7981 | 19500 | 0.0096        | -                       |
-| 2.8699 | 20000 | 0.0111        | -                       |
-| 2.9416 | 20500 | 0.01          | -                       |
-| 3.0    | 20907 | -             | 0.8583                  |
+| 0.0546 | 500   | 0.2435        | -                       |
+| 0.1092 | 1000  | 0.1218        | -                       |
+| 0.1638 | 1500  | 0.0758        | -                       |
+| 0.2184 | 2000  | 0.0636        | -                       |
+| 0.2730 | 2500  | 0.053         | -                       |
+| 0.3277 | 3000  | 0.0459        | -                       |
+| 0.3823 | 3500  | 0.0415        | -                       |
+| 0.4369 | 4000  | 0.0412        | -                       |
+| 0.4915 | 4500  | 0.0391        | -                       |
+| 0.5461 | 5000  | 0.0338        | -                       |
+| 0.6007 | 5500  | 0.0333        | -                       |
+| 0.6553 | 6000  | 0.0285        | -                       |
+| 0.7099 | 6500  | 0.0279        | -                       |
+| 0.7645 | 7000  | 0.0249        | -                       |
+| 0.8191 | 7500  | 0.028         | -                       |
+| 0.8737 | 8000  | 0.0239        | -                       |
+| 0.9284 | 8500  | 0.026         | -                       |
+| 0.9830 | 9000  | 0.0241        | -                       |
+| 1.0    | 9156  | -             | 0.8532                  |
+| 1.0376 | 9500  | 0.0194        | -                       |
+| 1.0922 | 10000 | 0.0195        | -                       |
+| 1.1468 | 10500 | 0.0181        | -                       |
+| 1.2014 | 11000 | 0.0179        | -                       |
+| 1.2560 | 11500 | 0.019         | -                       |
+| 1.3106 | 12000 | 0.0167        | -                       |
+| 1.3652 | 12500 | 0.0185        | -                       |
+| 1.4198 | 13000 | 0.019         | -                       |
+| 1.4744 | 13500 | 0.0174        | -                       |
+| 1.5291 | 14000 | 0.0177        | -                       |
+| 1.5837 | 14500 | 0.0166        | -                       |
+| 1.6383 | 15000 | 0.0148        | -                       |
+| 1.6929 | 15500 | 0.0166        | -                       |
+| 1.7475 | 16000 | 0.0119        | -                       |
+| 1.8021 | 16500 | 0.0151        | -                       |
+| 1.8567 | 17000 | 0.012         | -                       |
+| 1.9113 | 17500 | 0.0152        | -                       |
+| 1.9659 | 18000 | 0.0146        | -                       |
+| 2.0    | 18312 | -             | 0.8552                  |
+| 2.0205 | 18500 | 0.0126        | -                       |
+| 2.0751 | 19000 | 0.0113        | -                       |
+| 2.1298 | 19500 | 0.012         | -                       |
+| 2.1844 | 20000 | 0.0128        | -                       |
+| 2.2390 | 20500 | 0.0133        | -                       |
+| 2.2936 | 21000 | 0.0119        | -                       |
+| 2.3482 | 21500 | 0.0129        | -                       |
+| 2.4028 | 22000 | 0.0102        | -                       |
+| 2.4574 | 22500 | 0.0119        | -                       |
+| 2.5120 | 23000 | 0.0108        | -                       |
+| 2.5666 | 23500 | 0.0108        | -                       |
+| 2.6212 | 24000 | 0.0123        | -                       |
+| 2.6758 | 24500 | 0.0113        | -                       |
+| 2.7304 | 25000 | 0.0112        | -                       |
+| 2.7851 | 25500 | 0.0104        | -                       |
+| 2.8397 | 26000 | 0.0109        | -                       |
+| 2.8943 | 26500 | 0.0112        | -                       |
+| 2.9489 | 27000 | 0.0103        | -                       |
+| 3.0    | 27468 | -             | 0.8558                  |
 
 
 ### Framework Versions
-- Python: 3.13.9
+- Python: 3.13.11
 - Sentence Transformers: 5.2.0
-- Transformers: 4.57.3
+- Transformers: 4.57.6
 - PyTorch: 2.9.1+cu128
 - Accelerate: 1.12.0
-- Datasets: 4.4.1
-- Tokenizers: 0.22.1
+- Datasets: 4.5.0
+- Tokenizers: 0.22.2
 
 ## Citation
 
