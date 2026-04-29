@@ -1,0 +1,4609 @@
+code_a,code_b,label,manual_label1
+"import pandas as pd
+import seaborn as sns
+
+
+def task_func(goals: dict, penalties: dict) ->tuple[pd.DataFrame, sns.
+    axisgrid.PairGrid]:
+    """"""
+    Creates a DataFrame and visualization showing goals and penalties per team.
+
+    Args:
+        goals (dict): Dictionary mapping teams to their number of goals.
+        penalties (dict): Dictionary mapping teams to their number of penalties.
+
+    Returns:
+        tuple: Contains a DataFrame with columns ['Team', 'Goals', 'Penalties'] 
+              and a PairGrid visualization.
+    """"""
+    TEAMS = ['Team A', 'Team B', 'Team C', 'Team D', 'Team E']
+    df_data = {'Team': TEAMS, 'Goals': [goals.get(team, 0) for team in
+        TEAMS], 'Penalties': [penalties.get(team, 0) for team in TEAMS]}
+    df = pd.DataFrame(df_data)
+    plot = sns.pairplot(df, hue='Team', palette='viridis')
+    return df, plot
+","import pandas as pd
+from random import Random
+from typing import List, Optional
+
+
+def task_func(categories: Optional[List[str]]=None, months: Optional[List[
+    str]]=None, random_seed: int=42) ->pd.DataFrame:
+    default_categories = ['Electronics', 'Clothing', 'Home & Kitchen',
+        'Books', 'Beauty & Personal Care']
+    default_months = ['January', 'February', 'March', 'April', 'May',
+        'June', 'July', 'August', 'September', 'October', 'November',
+        'December']
+    if categories is None:
+        categories = default_categories
+    elif not isinstance(categories, list) or any(not isinstance(c, str) for
+        c in categories):
+        raise ValueError(""Invalid 'categories': must be a list of strings."")
+    if months is None:
+        months = default_months
+    elif not isinstance(months, list) or any(not isinstance(m, str) for m in
+        months):
+        raise ValueError(""Invalid 'months': must be a list of strings."")
+    try:
+        rng = Random()
+        rng.seed(random_seed)
+        sales_data = []
+        for month in months:
+            for category in categories:
+                sales = rng.randint(100, 500) + rng.uniform(0, 1)
+                sales_data.append([month, category, sales])
+        return pd.DataFrame(sales_data, columns=['Month', 'Category', 'Sales'])
+    except Exception as e:
+        raise RuntimeError(f'Failed to generate sales data: {e}')
+",0,0
+"import subprocess
+import os
+import shutil
+import sys
+
+
+def task_func(filename):
+    file_path = os.path.join('c:\\Program Files\\VMware\\VMware Server',
+        filename)
+    backup_path = os.path.join(
+        'c:\\Program Files\\VMware\\VMware Server\\Backup', filename)
+    try:
+        shutil.copy(file_path, backup_path)
+    except Exception as e:
+        sys.stderr.write(f'Failed to backup the file: {e}')
+        return -1
+    try:
+        process = subprocess.Popen([file_path])
+        exit_code = process.poll()
+        return exit_code
+    except Exception as e:
+        sys.stderr.write(f'Failed to execute the file: {e}')
+        return -1
+","import os
+import shutil
+import subprocess
+
+
+def task_func(filename):
+    backup_dir = 'backup_directory'
+    if not os.path.exists(backup_dir):
+        os.makedirs(backup_dir)
+    src_path = f'{os.getcwd()}/{filename}'
+    dst_path = f'{backup_dir}/{filename}'
+    if not os.path.exists(src_path):
+        return -1
+    try:
+        shutil.copy(src_path, dst_path)
+    except Exception as e:
+        print(f'Backup failed: {e}')
+        return -1
+    try:
+        subprocess.Popen([dst_path])
+    except FileNotFoundError as e:
+        print(f'File not executable: {e}')
+        return -1
+    return 0
+",1,
+"import numpy as np
+import matplotlib.pyplot as plt
+from typing import Tuple, Optional
+
+
+def task_func(num_types: int=5, integer_range: Tuple[int, int]=(0, 100)
+    ) ->Tuple:
+    labels = [f'Type{i + 1}' for i in range(num_types)]
+    data = np.random.randint(*integer_range, size=(num_types, num_types))
+    df = pd.DataFrame(data, index=labels)
+    fig, ax = plt.subplots()
+    df.plot(kind='barh', stacked=True, ax=ax)
+    return fig, ax
+
+
+import pandas as pd
+","import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def task_func(num_types=5, integer_range=(0, 100)):
+    """"""
+    Generates a DataFrame with random integers across specified categories and creates a horizontal stacked bar chart.
+
+    Args:
+        num_types (int): Number of distinct categories for data generation.
+        integer_range (tuple): Inclusive range for random integer values.
+
+    Returns:
+        tuple: A tuple containing a matplotlib Figure and Axes objects.
+    """"""
+    data = np.random.randint(integer_range[0], integer_range[1] + 1, size=(
+        num_types, num_types))
+    df = pd.DataFrame(data, columns=[f'Category_{i + 1}' for i in range(
+        num_types)], index=[f'Type_{i + 1}' for i in range(num_types)])
+    fig, ax = plt.subplots(figsize=(10, 6))
+    df.plot(kind='barh', stacked=True, ax=ax)
+    return fig, ax
+",1,
+"import numpy as np
+from scipy import stats
+
+
+def task_func(df, col1, col2, N=10):
+    if col1 not in df.columns or col2 not in df.columns:
+        raise ValueError('Specified columns not found in DataFrame.')
+    if N <= 1:
+        raise ValueError('N must be greater than 1.')
+    a = df[col1].to_numpy()
+    b = df[col2].to_numpy()
+    idx = np.argsort(np.abs(a - b))[::-1][:N]
+    _, p = stats.ttest_ind(a[idx], b[idx])
+    return p
+","import unittest
+from collections import defaultdict
+from string import ascii_lowercase
+
+
+def task_func(string: str) ->dict:
+    """"""
+    Count frequency of each lowercase letter in the prefix before last hyphen.
+
+    Args:
+        string (str): Input string to process
+
+    Returns:
+        dict: Dictionary with counts for each lowercase letter
+    """"""
+    parts = string.split('-')
+    if len(parts) > 1 and all(c.islower() for c in parts[-1]):
+        prefix = '-'.join(parts[:-1])
+    else:
+        prefix = string
+    counts = defaultdict(int)
+    for char in prefix.lower():
+        if char in ascii_lowercase:
+            counts[char] += 1
+    result = {letter: (0) for letter in ascii_lowercase}
+    for letter, count in counts.items():
+        result[letter] = count
+    return result
+
+
+if __name__ == '__main__':
+    test_cases = [('abc-def-ghij', {letter: (1 if letter in 'abcdef' else 0
+        ) for letter in ascii_lowercase}), ('abcdefghij', {letter: (1 if 
+        letter in 'abcdefghij' else 0) for letter in ascii_lowercase}), (
+        'aabbcc-def', {letter: (2 if letter in 'aabbcc' else 0) for letter in
+        ascii_lowercase}), ('', {letter: (0) for letter in ascii_lowercase}
+        ), ('xyz-abc', {letter: (1 if letter in 'xyz' else 0) for letter in
+        ascii_lowercase})]
+    for input_str, expected in test_cases:
+        assert task_func(input_str) == expected
+",0,
+"import numpy as np
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+
+def task_func(myList, n_clusters):
+    if not myList or n_clusters <= 0:
+        raise ValueError('Invalid input parameters')
+    points = np.array(myList)
+    if len(points) < n_clusters:
+        raise ValueError('Number of clusters exceeds the number of points')
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42).fit(points)
+    labels = kmeans.labels_
+    plt.figure(figsize=(10, 8))
+    ax = plt.gca()
+    scatter = ax.scatter(points[:, 0], points[:, 1], c=labels, cmap='viridis')
+    centers = kmeans.cluster_centers_
+    ax.scatter(centers[:, 0], centers[:, 1], marker='x', color='red', s=100)
+    return ax
+","import pandas as pd
+from sklearn.linear_model import LinearRegression
+import logging
+
+
+def task_func(df):
+    if not isinstance(df, pd.DataFrame):
+        raise ValueError('The input df is not a DataFrame')
+    try:
+        X = df.iloc[:, :-1]
+        y = df.iloc[:, -1]
+        model = LinearRegression()
+        model.fit(X, y)
+        return model
+    except Exception as e:
+        raise e
+",0,
+"import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def task_func(csv_file_path: str):
+    df = pd.read_csv(csv_file_path)
+    df['column1_normalized'] = (df['column1'] - df['column1'].mean()) / df[
+        'column1'].std()
+    _, ax = plt.subplots()
+    ax.plot(df['column1_normalized'])
+    title = '          Plot Title :  Normalized Column 1'
+    xlabel = '               Index :     Normalized Value'
+    ylabel = '           Frequency :     Normalized Value'
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    return ax
+","import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import random
+
+
+def task_func(array):
+    if not array or not all(len(sublist) == 5 for sublist in array):
+        raise ValueError(
+            'Input array must be a 2D list with sublists of length 5.')
+    df = pd.DataFrame(array, columns=['A', 'B', 'C', 'D', 'E'])
+    corr_matrix = df.corr()
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+    plt.title('Correlation Heatmap')
+    plt.show()
+    return df, sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+",0,
+"import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
+import random
+
+
+def task_func(epoch_milliseconds, teams=None, random_seed=0):
+    if epoch_milliseconds > int(datetime.now().timestamp() * 1000):
+        raise ValueError('Epoch milliseconds must not be in the future')
+    if teams is None:
+        teams = ['Team1', 'Team2', 'Team3', 'Team4', 'Team5']
+    if not all(isinstance(team, str) for team in teams):
+        raise TypeError('Teams must be a list of strings')
+    random.seed(random_seed)
+    start_date = datetime.fromtimestamp(epoch_milliseconds / 1000)
+    end_date = datetime.now()
+    days = (end_date - start_date).days + 1
+    performance_data = {team: [random.uniform(0.1, 1) for _ in range(days)] for
+        team in teams}
+    fig, ax = plt.subplots()
+    for i, team in enumerate(performance_data.keys()):
+        ax.plot(range(days), performance_data[team], label=team)
+    ax.set_xlabel('Days since start date')
+    ax.set_ylabel('Performance')
+    ax.legend()
+    return performance_data, fig
+","import urllib.request
+import os
+import json
+import pandas as pd
+
+
+def task_func(url: str) ->pd.DataFrame:
+    """"""
+    Retrieve JSON data from the given URL and convert it into a DataFrame.
+
+    The function performs the following steps:
+    1. Downloads the JSON file using urlretrieve.
+    2. Reads the downloaded JSON content.
+    3. Converts the JSON content to a pandas DataFrame.
+    4. Deletes the temporary JSON file.
+
+    Args:
+        url: URL of the JSON file to be downloaded
+
+    Returns:
+        pd.DataFrame: DataFrame constructed from the JSON data
+    """"""
+    urllib.request.urlretrieve(url, 'downloaded_file.json')
+    try:
+        with open('downloaded_file.json', 'r') as f:
+            json_data = json.load(f)
+        df = pd.DataFrame(json_data)
+        return df
+    finally:
+        os.remove('downloaded_file.json')
+",0,
+"import re
+
+
+def task_func(text: str) ->list:
+    words = re.split('\\s+', text)
+    cleaned_words = []
+    for word in words:
+        cleaned_word = re.sub('[^a-zA-Z0-9]', '', word).lower()
+        cleaned_words.append(cleaned_word)
+    return cleaned_words
+","import re
+
+
+def task_func(text):
+    """"""Process input text by splitting into words and cleaning punctuation.""""""
+    words = re.split('\\s+', text)
+    cleaned_words = []
+    for word in words:
+        clean_word = re.sub('[^\\w\\s]', '', word).lower()
+        cleaned_words.append(clean_word)
+    return cleaned_words
+",1,
+"import re
+import nltk
+import pandas as pd
+from collections import Counter
+nltk.download('stopwords')
+stop_words = set(nltk.corpus.stopwords.words('english'))
+pattern = re.compile('[^a-zA-Z0-9 ]+')
+
+
+def task_func(texts):
+    cleaned = []
+    for t in texts:
+        s = pattern.sub(' ', t).lower()
+        cleaned.append(s)
+    term_counts = []
+    for s in cleaned:
+        words = [w for w in s.split() if w not in stop_words]
+        term_counts.append(Counter(words))
+    df = pd.DataFrame(term_counts).fillna(0).astype(int)
+    return df
+","import subprocess
+import os
+
+
+def task_func(script_path: str, *args):
+    timeout = args[0] if args else 60
+    try:
+        subprocess.run(['python', script_path], timeout=timeout,
+            capture_output=True, text=True)
+        return 'Script executed successfully.'
+    except subprocess.TimeoutExpired:
+        return 'Terminating process due to timeout.'
+",0,
+"import logging
+import requests
+import numpy as np
+logging.basicConfig(level=logging.INFO)
+
+
+def task_func(word):
+    if not isinstance(word, str):
+        raise TypeError('Input must be a string')
+    try:
+        sanitized = ''.join([c for c in word if c.isalpha()])
+        sanitized_dup = ''.join(filter(str.isalpha, word))
+        if sanitized != sanitized_dup:
+            logging.warning('Sanitization mismatch')
+        result = {}
+        arr = np.array(list(sanitized))
+        for i in range(len(arr) - 1):
+            pair = arr[i] + arr[i + 1]
+            result[pair] = result.get(pair, 0) + 1
+        return result
+    except Exception as e:
+        logging.error(f'Error processing word: {e}')
+        return {}
+","import numpy as np
+import matplotlib.pyplot as plt
+CITIES = ['New York', 'London', 'Beijing', 'Tokyo', 'Sydney', 'Paris',
+    'Berlin', 'Moscow', 'Madrid', 'Rome']
+
+
+def task_func(city_dict, max_range=1000000, seed=0):
+    np.random.seed(seed)
+    city_pop = {}
+    for person, city in city_dict.items():
+        if isinstance(city, str) and city in CITIES:
+            city_pop[city] = np.random.randint(1, max_range)
+        else:
+            city_pop[city] = -1
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    cities = list(city_pop.keys())
+    populations = [city_pop[city] for city in cities]
+    ax.bar(cities, populations)
+    ax.set_xlabel('City')
+    ax.set_ylabel('Population')
+    ax.set_title('City Populations')
+    return city_pop, ax
+",0,
+"import pandas as pd
+import random
+from typing import List, Optional
+
+
+def task_func(data_list: List[str], seed: Optional[int]=None) ->pd.DataFrame:
+    """"""Shuffles substrings within each string in a given list and returns a DataFrame.""""""
+    df = pd.DataFrame({'Original String': data_list})
+    shuffled_strings = []
+    for s in data_list:
+        if not s.strip():
+            shuffled_strings.append('')
+            continue
+        substrings = [sub.strip() for sub in s.split(',')]
+        random.seed(seed)
+        random.shuffle(substrings)
+        shuffled_s = ', '.join(substrings)
+        shuffled_strings.append(shuffled_s)
+    df['Shuffled String'] = shuffled_strings
+    return df
+","import pandas as pd
+import random
+
+
+def task_func(data_list, seed=None):
+    result = []
+    for s in data_list:
+        parts = [part.strip() for part in s.replace(' ', '').split(',')]
+        if len(parts) <= 1 or not seed:
+            shuffled = s
+        else:
+            random.seed(seed)
+            if len(parts) > 1:
+                random.shuffle(parts)
+                shuffled = ', '.join(parts)
+            else:
+                shuffled = s
+        result.append({'Original String': s, 'Shuffled String': shuffled})
+    return pd.DataFrame(result)
+",1,
+"import json
+from datetime import datetime
+import numpy as np
+from decimal import Decimal
+
+
+def task_func(my_obj):
+    """"""Serialize an object to JSON, handling datetime, numpy.ndarray, and Decimal.""""""
+
+
+    class CustomEncoder(json.JSONEncoder):
+
+        def default(self, obj):
+            handlers = [(datetime, lambda o: o.isoformat()), (np.ndarray, 
+                lambda o: o.tolist()), (Decimal, lambda o: str(o))]
+            for typ, handler in handlers:
+                if isinstance(obj, typ):
+                    return handler(obj)
+            return super().default(obj)
+    return json.dumps(my_obj, cls=CustomEncoder)
+","import os
+import pandas as pd
+
+
+def task_func(filename):
+    try:
+        df = pd.read_csv(filename)
+        df_reversed = df.iloc[::-1]
+        df_reversed.to_csv(filename, index=False)
+    except Exception as e:
+        print(f'An error occurred: {e}')
+",0,
+"import base64
+import hashlib
+import os
+
+
+def task_func(hex_str: str, salt_size: int) ->tuple:
+    if '\\x' in hex_str:
+        cleaned = hex_str.replace('\\x', '')
+        byte_data = bytes.fromhex(cleaned)
+    else:
+        byte_data = bytes.fromhex(hex_str)
+    salt = os.urandom(salt_size)
+    combined_data = byte_data + salt
+    hash_value = hashlib.sha256(combined_data).hexdigest()
+    b64_salt = base64.b64encode(salt).decode('utf-8')
+    return b64_salt, hash_value
+","import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+
+
+def task_func(text: str) ->pd.DataFrame:
+    """"""
+    Analyzes text by creating a document term matrix using CountVectorizer.
+    Splits the text into sentences based on periods and processes each sentence.
+    Ignores empty sentences and constructs a DataFrame with the term frequency matrix.
+
+    Args:
+        text (str): The input text to analyze.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the document-term matrix.
+    """"""
+    sentences = [s.strip() for s in text.split('.')]
+    non_empty_sentences = [s for s in sentences if s]
+    vectorizer = CountVectorizer()
+    X = vectorizer.fit_transform(non_empty_sentences)
+    dtm = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())
+    return dtm
+",0,
+"import random
+
+
+def task_func(t, n):
+    """"""Return a random combination of length n from tuple t.""""""
+
+    def rec(start, k):
+        if k == 0:
+            yield ()
+        else:
+            for i in range(start, len(t) - k + 1):
+                for rest in rec(i + 1, k - 1):
+                    yield (t[i],) + rest
+    combos = list(rec(0, n))
+    return random.choice(combos)
+","import requests
+import logging
+from typing import Dict, Any
+
+
+def task_func(repo_url: str) ->Dict[str, Any]:
+    response = requests.get(repo_url, timeout=2)
+
+    def handle_errors() ->None:
+        if (response.status_code == 403 and 'message' in repo_info and 
+            repo_info['message'] == 'API rate limit exceeded'):
+            raise requests.exceptions.HTTPError('API rate limit exceeded')
+    repo_info = response.json()
+    handle_errors()
+    open_issues_count = repo_info.get('open_issues_count', 0)
+    if open_issues_count > 10000:
+        logging.warning('The repository has more than 10000 open issues.')
+    return repo_info
+",0,
+"import hashlib
+import base64
+from pathlib import Path
+
+
+def task_func(filename, data, password):
+    Path(filename).parent.mkdir(parents=True, exist_ok=True)
+    key = hashlib.sha256(password.encode()).digest()
+    encrypted_bytes = []
+    for i, b in enumerate(data.encode()):
+        encrypted_bytes.append(b ^ key[i % len(key)])
+    combined = bytes(encrypted_bytes)
+    encrypted = base64.b64encode(combined).decode()
+    with open(filename, 'w') as f:
+        f.write(encrypted)
+    return encrypted
+","import os
+from datetime import datetime
+
+
+def task_func(metrics, filename, log_dir):
+    if not isinstance(metrics, dict):
+        raise ValueError
+    if not isinstance(filename, str):
+        raise ValueError
+    try:
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+        path = os.path.join(log_dir, filename)
+        with open(path, 'a') as f:
+            ts = datetime.now().isoformat() + '\n'
+            f.write(ts)
+            if metrics:
+                for k, v in metrics.items():
+                    f.write(f'{k}: {v}\n')
+            else:
+                f.write('\n')
+        return True
+    except Exception:
+        return False
+",0,
+"import json
+
+
+def task_func(data_list, json_file_name):
+    positions = {}
+    for item in data_list:
+        pos_index = 0
+        while pos_index < len(item) - 1:
+            if pos_index + 1 not in positions:
+                positions[pos_index + 1] = []
+            positions[pos_index + 1].append(item[pos_index + 1])
+            pos_index += 1
+    mean_values = {}
+    for pos, values in positions.items():
+        mean = sum(values) / len(values)
+        mean_values[f'Position {pos}'] = mean
+    with open(json_file_name, 'w') as f:
+        json.dump(mean_values, f)
+    return mean_values
+","import json
+
+
+def task_func(data_list, json_file_name):
+    numeric_data = []
+    for row in data_list:
+        numeric_data.append(row[1:])
+    means = []
+    if numeric_data:
+        num_cols = len(numeric_data[0])
+        for col_index in range(num_cols):
+            col_sum = 0
+            for row in numeric_data:
+                col_sum += row[col_index]
+            means.append(col_sum / len(numeric_data))
+    results = {}
+    for idx, val in enumerate(means, start=1):
+        results[f'Position {idx}'] = val
+    with open(json_file_name, 'w') as f:
+        json.dump(results, f)
+    with open(json_file_name, 'w') as f2:
+        json.dump(results, f2)
+    return results
+",1,
+"import matplotlib.pyplot as plt
+import numpy as np
+import random
+
+
+def task_func(n_pairs):
+    """"""
+    This function generates and displays a bar chart representing random letter-number pairs.
+
+    Parameters:
+    n_pairs (int): The number of letter-number pairs to display in the bar chart. 
+                   The value must be an integer between 1 and 26, inclusive.
+
+    Returns:
+    matplotlib.container.BarContainer: This object represents the bar chart created by the function.
+    """"""
+    if not isinstance(n_pairs, int) or n_pairs < 1 or n_pairs > 26:
+        raise ValueError('n_pairs should be an integer between 1 and 26')
+    pairs = [(chr(96 + i), str(i)) for i in range(1, n_pairs + 1)]
+    random.shuffle(pairs)
+    counts = np.random.randint(1, 11, size=n_pairs)
+    bars = plt.bar([pair[0] for pair in pairs], counts)
+    for i, (letter, number) in enumerate(pairs):
+        bars[i].set_label(f'{letter}:{number}')
+    plt.title('Random Letter:Number Pairs Chart')
+    plt.xlabel('Letter:Number Pairs')
+    plt.ylabel('Counts')
+    return bars
+","import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+
+
+def task_func(l):
+    scaler = MinMaxScaler()
+    reshaped_array = l.reshape(-1, 1)
+    scaled_values = scaler.fit_transform(reshaped_array)
+    data_frame = pd.DataFrame(scaled_values, columns=['Scaled Values'])
+    return data_frame
+",0,
+"import random
+import os
+from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+
+def task_func(n, output_path=None):
+    if n <= 0:
+        return []
+    timestamps = set()
+    base = datetime.now()
+    while len(timestamps) < n:
+        offset = random.randint(0, 100000)
+        ts = base + timedelta(seconds=offset)
+        timestamps.add(ts.strftime(DATE_FORMAT))
+    result = list(timestamps)
+    if output_path:
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        epoch_times = [datetime.strptime(t, DATE_FORMAT).timestamp() for t in
+            result]
+        plt.figure()
+        plt.hist(epoch_times, bins=10)
+        plt.title('Timestamp Histogram')
+        plt.xlabel('Epoch Time')
+        plt.ylabel('Frequency')
+        plt.savefig(output_path)
+        plt.close()
+    return result
+","import os
+import random
+import logging
+from datetime import datetime
+import matplotlib.pyplot as plt
+DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def task_func(n, output_path=None):
+    if not isinstance(n, int):
+        raise TypeError('n must be an integer')
+    if n < 0:
+        raise ValueError('n must be non‑negative')
+    if n == 0:
+        return []
+    timestamps = set()
+    while len(timestamps) < n:
+        ts = random.randint(0, 2 ** 31 - 1)
+        timestamps.add(ts)
+    formatted = [datetime.utcfromtimestamp(ts).strftime(DATE_FORMAT) for ts in
+        timestamps]
+    numeric = sorted(timestamps)
+    plt.figure(figsize=(8, 4))
+    plt.hist(numeric, bins=20, color='#4c72b0', edgecolor='black')
+    plt.title('Distribution of Generated Timestamps')
+    plt.xlabel('Unix Timestamp')
+    plt.ylabel('Frequency')
+    if output_path:
+        try:
+            plt.savefig(output_path)
+        except Exception as e:
+            logger.error('Failed to save histogram: %s', e)
+            raise
+    else:
+        plt.close()
+    return formatted
+",1,
+"import numpy as np
+import random
+
+
+def task_func(my_list):
+    my_list.append(random.randint(0, 100))
+    total = sum(my_list)
+    return np.random.rand(total)
+","import pandas as pd
+from random import randint
+
+
+def task_func(cities_list):
+    """"""
+    Generate a DataFrame with population data for a list of cities.
+
+    Parameters:
+    cities_list (list): A list of city names.
+
+    Returns:
+    DataFrame: A pandas DataFrame with columns 'City' and 'Population', containing population data for the cities.
+    """"""
+    population_data = {city: (randint(1000000, 20000000) // 1000 * 1000) for
+        city in cities_list}
+    return pd.DataFrame(list(population_data.items()), columns=['City',
+        'Population'])
+",0,
+"import re
+from scipy.stats import ttest_rel
+
+
+def task_func(text1, text2):
+
+    def count_words(text):
+        words = re.findall('\\w+', text)
+        return len(words)
+    word_count1 = count_words(text1)
+    word_count2 = count_words(text2)
+    if word_count1 != word_count2:
+        return np.nan, np.nan
+    t_statistic, p_value = ttest_rel([word_count1], [word_count2])
+    return t_statistic, p_value
+","import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def task_func(students: list, seed: int=42) ->tuple:
+    """"""
+    Generate random scores for students and create a bar plot.
+
+    Args:
+        students (list): List of student names.
+        seed (int): Seed for random number generator. Defaults to 42.
+
+    Returns:
+        tuple: Contains a DataFrame and matplotlib Axes object.
+            - DataFrame: Columns 'Student' and 'Score', sorted by 'Score'.
+            - Axes: Bar plot of scores.
+    """"""
+    np.random.seed(seed)
+    scores = np.random.randint(0, 100, len(students))
+    df = pd.DataFrame({'Student': students, 'Score': scores}).sort_values(by
+        ='Score')
+    fig, ax = plt.subplots()
+    ax.bar(df['Student'], df['Score'])
+    ax.set_xlabel('Student')
+    ax.set_ylabel('Score')
+    return df, ax
+",0,
+"import matplotlib.pyplot as plt
+import numpy as np
+
+
+def task_func(array_length=100):
+    arr1 = np.random.randint(0, 100, size=array_length)
+    arr2 = np.random.randint(0, 100, size=array_length)
+    max_values = np.maximum(arr1, arr2)
+    fig, ax = plt.subplots()
+    ax.plot(max_values)
+    ax.set_ylabel('Maximum Values')
+    return ax
+","import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
+
+def task_func(n_rows: int, scale_cols: list[int], columns: list[str]=['A',
+    'B', 'C', 'D', 'E'], random_seed: (int | None)=None) ->pd.DataFrame:
+    """"""
+    Generate a DataFrame with specified columns and scale selected columns using StandardScaler.
+
+    Args:
+        n_rows: Number of rows in the DataFrame
+        scale_cols: Indices of columns to be scaled
+        columns: Column names for the DataFrame (default ['A', 'B', 'C', 'D', 'E'])
+        random_seed: Seed for random number generation (default None)
+
+    Returns:
+        pd.DataFrame: DataFrame with specified columns and scaled values where applicable
+    """"""
+    if random_seed is not None:
+        np.random.seed(random_seed)
+    df = pd.DataFrame(data=np.random.randint(low=0, high=100, size=(n_rows,
+        len(columns))), columns=columns)
+    if scale_cols:
+        for col_idx in scale_cols:
+            scaler = StandardScaler()
+            df[columns[col_idx]] = scaler.fit_transform(df[[columns[col_idx]]])
+    return df
+",0,
+"import numpy as np
+import pandas as pd
+
+
+def task_func(length, min_value=0, max_value=1):
+    data = np.random.default_rng().integers(min_value, max_value, (length, 5))
+    df = pd.DataFrame(data, columns=['Column1', 'Column2', 'Column3',
+        'Column4', 'Column5'])
+    cdf_columns = []
+    for col in df.columns:
+        cdf_values = df[col].value_counts().sort_index().cumsum()
+        cdf_columns.append(cdf_values)
+    result_df = pd.DataFrame({col: cdf_columns[i] for i, col in enumerate(
+        df.columns)})
+    return result_df
+","import numpy as np
+import pandas as pd
+
+
+def task_func(length, min_value=0, max_value=100):
+    data = [np.random.randint(min_value, max_value, size=length) for _ in
+        range(5)]
+    df = pd.DataFrame({'Column1': data[0], 'Column2': data[1], 'Column3':
+        data[2], 'Column4': data[3], 'Column5': data[4]})
+    cdf = df.apply(lambda x: x.value_counts().sort_index().cumsum())
+    return cdf
+",1,
+"import http.client
+import ssl
+import socket
+
+
+def task_func(SERVER_NAME, SERVER_PORT, path):
+    try:
+        sock = socket.create_connection((SERVER_NAME, SERVER_PORT))
+        sock.close()
+        conn = http.client.HTTPSConnection(SERVER_NAME, SERVER_PORT)
+        conn.request('GET', path)
+        response = conn.getresponse()
+        result = response.read().decode('utf-8')
+        return result
+    except Exception as e:
+        raise e
+","import socket
+import ssl
+import http.client
+
+
+def task_func(SERVER_NAME, SERVER_PORT, path):
+    context = ssl.create_default_context()
+    sock = socket.create_connection((SERVER_NAME, SERVER_PORT))
+    ssock = context.wrap_socket(sock, server_hostname=SERVER_NAME)
+    conn = http.client.HTTPSConnection(SERVER_NAME, SERVER_PORT, context=
+        context)
+
+    def send_request(connection, path):
+        connection.request('GET', path)
+        response = connection.getresponse()
+        return response.read().decode()
+    return send_request(conn, path)
+",1,
+"import logging
+from collections import defaultdict
+logging.basicConfig(level=logging.WARNING)
+logger = logging.getLogger(__name__)
+
+
+def task_func(animal_dict):
+    if not isinstance(animal_dict, dict):
+        logger.error('Input must be a dictionary')
+        raise TypeError('animal_dict must be a dict')
+    known_animals = {'cat', 'dog', 'elephant', 'fox', 'camel', 'cow',
+        'horse', 'lion', 'tiger', 'bear', 'wolf', 'rabbit', 'deer', 'goat',
+        'sheep', 'pig', 'cow', 'duck', 'chicken'}
+    letter_counts = defaultdict(int)
+    for key in animal_dict:
+        if not isinstance(key, str):
+            logger.warning(f'Skipping non-string key: {key}')
+            continue
+        if key not in known_animals:
+            logger.info(f'Ignoring non-animal key: {key}')
+            continue
+        for ch in key:
+            letter_counts[ch] += 1
+    sorted_items = sorted(letter_counts.items(), key=lambda x: (-x[1], x[0]))
+    return dict(sorted_items)
+","from collections import defaultdict
+
+
+def task_func(animal_dict):
+    known_animals = {'cat', 'dog', 'elephant', 'fox', 'camel', 'cow'}
+    letter_counts = defaultdict(int)
+    for animal in animal_dict:
+        if animal not in known_animals:
+            continue
+        for char in animal:
+            letter_counts[char] += 1
+    return dict(sorted(letter_counts.items(), key=lambda item: item[1],
+        reverse=True))
+",1,
+"import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
+
+def task_func(data=None):
+    if data is None:
+        data = np.random.rand(100, 5)
+    replaced = np.where(data < 0.5, 0, data)
+    scaled = StandardScaler().fit_transform(replaced)
+    return pd.DataFrame(scaled)
+","import re
+from collections import Counter
+
+
+def task_func(sentence: str) ->dict:
+    """"""
+    Count the occurrence of each word in a sentence using regular expressions and return the result as a dictionary.
+
+    Args:
+        sentence: The input string containing words to be counted.
+
+    Returns:
+        A dictionary where keys are words and values are their respective counts.
+    """"""
+    words = re.findall('\\b\\w+\\b', sentence)
+    counts = Counter(words)
+    return dict(counts)
+",0,
+"import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import zscore
+
+
+def task_func(data_matrix):
+    z_scores = zscore(data_matrix, axis=1)
+    feature_cols = [f'Feature {i + 1}' for i in range(z_scores.shape[1])]
+    df = pd.DataFrame(z_scores, columns=feature_cols)
+    df['Mean'] = df.mean(axis=1)
+    fig, ax = plt.subplots(figsize=(8, 6))
+    heatmap = ax.imshow(df.drop(columns=['Mean']).values, cmap='hot',
+        interpolation='nearest')
+    plt.colorbar(heatmap, ax=ax)
+    ax.set_title('Z-Values Heatmap')
+    return df, ax
+","import matplotlib.pyplot as plt
+import random
+import numpy as np
+from scipy import stats
+
+
+def task_func(mu, sigma, *args):
+    num_samples = args[0] if len(args) > 0 else 1000
+    seed = args[1] if len(args) > 1 else 77
+    random.seed(seed)
+    np.random.seed(seed)
+    samples_dict = {i: random.gauss(mu, sigma) for i in range(num_samples)}
+    samples_list = list(samples_dict.values())
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+    ax0 = axes[0]
+    ax0.hist(samples_list, bins=30, color='g')
+    ax1 = axes[1]
+    stats.probplot(samples_list, dist='norm', plot=ax1)
+    return fig
+",0,
+"def task_func(target_value, csv_dir='./csv_files/', processed_dir=
+    './processed_files/', simulate=False):
+    result = {}
+    for filename in os.listdir(csv_dir):
+        if filename.endswith('.csv'):
+            filepath = os.path.join(csv_dir, filename)
+            try:
+                with open(filepath, 'r') as f:
+                    reader = csv.reader(f)
+                    found = False
+                    for i, row in enumerate(reader):
+                        if row and row[0] == target_value:
+                            result[filename] = i
+                            found = True
+                            break
+                    if found:
+                        if not simulate:
+                            shutil.move(filepath, processed_dir)
+            except Exception as e:
+                print(f'Error processing {filename}: {e}')
+    return result
+
+
+import os
+import shutil
+import csv
+","import os
+import csv
+from shutil import move as move_file
+
+
+def task_func(target_value, csv_dir, processed_dir, simulate):
+    """"""
+    Scans a directory for CSV files and finds the index of the row with the first cell equal to the target value.
+    Optionally moves the processed files to another directory based on the simulate flag.
+
+    Args:
+        target_value (str): The value to search for in the first cell of each row.
+        csv_dir (str): The directory to scan for CSV files.
+        processed_dir (str): The directory to move processed files to.
+        simulate (bool): If True, simulates file moving without performing the action.
+
+    Returns:
+        dict: A dictionary with file names as keys and the row indices as values where the target value was found.
+    """"""
+    result = {}
+    for filename in os.listdir(csv_dir):
+        if not filename.endswith('.csv'):
+            continue
+        file_path = os.path.join(csv_dir, filename)
+        try:
+            with open(file_path, 'r') as f:
+                reader = csv.reader(f)
+                index = None
+                for i, row in enumerate(reader):
+                    if row and row[0] == target_value:
+                        index = i
+                        break
+                if index is not None:
+                    result[filename] = index
+                    if not simulate:
+                        move_file(file_path, processed_dir)
+        except Exception as e:
+            pass
+    return result
+",1,
+"import logging
+import pandas as pd
+import matplotlib.pyplot as plt
+COLUMNS = ['col1', 'col2', 'col3']
+
+
+def task_func(data):
+    logger = logging.getLogger(__name__)
+    if isinstance(data, pd.DataFrame):
+        df = data.copy()
+    else:
+        try:
+            df = pd.DataFrame(data, columns=COLUMNS)
+        except Exception as exc:
+            logger.exception('Failed to create DataFrame from input data')
+            raise ValueError(
+                'Input data must be a DataFrame or a list of lists') from exc
+    if df.empty:
+        logger.warning('Input DataFrame is empty')
+        analyzed_df = pd.DataFrame(columns=COLUMNS)
+        fig, ax = plt.subplots()
+        return analyzed_df, ax
+    try:
+        counts = df.groupby(COLUMNS[:-1])[COLUMNS[-1]].nunique()
+        analyzed_df = counts.reset_index().pivot(index=COLUMNS[0], columns=
+            COLUMNS[1], values=COLUMNS[2])
+    except Exception as exc:
+        logger.exception('Failed to compute unique counts')
+        raise
+    fig, ax = plt.subplots()
+    try:
+        im = ax.imshow(analyzed_df.values, aspect='auto', cmap='viridis')
+        ax.set_xticks(range(len(analyzed_df.columns)))
+        ax.set_xticklabels(analyzed_df.columns)
+        ax.set_yticks(range(len(analyzed_df.index)))
+        ax.set_yticklabels(analyzed_df.index)
+        for i in range(analyzed_df.shape[0]):
+            for j in range(analyzed_df.shape[1]):
+                val = analyzed_df.iat[i, j]
+                if pd.notna(val):
+                    ax.text(j, i, int(val), ha='center', va='center', color
+                        ='white')
+        fig.colorbar(im, ax=ax)
+    except Exception as exc:
+        logger.exception('Failed to create heatmap')
+        raise
+    return analyzed_df, ax
+","import pandas as pd
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from nltk.corpus import stopwords
+
+
+def task_func(text, n=2):
+    processed = []
+    prev_word = None
+    words = text.split()
+    for word in words:
+        if word != prev_word and word.lower() not in stopwords.words('english'
+            ):
+            processed.append(word)
+            prev_word = word
+    ngrams = []
+    for i in range(len(processed) - n + 1):
+        ngram = ' '.join(processed[i:i + n])
+        ngrams.append(ngram)
+    unique_ngrams = list(set(ngrams))
+    matrix_data = defaultdict(lambda : defaultdict(int))
+    for i in range(len(ngrams)):
+        current = ngrams[i]
+        for j in range(i + 1):
+            if i - j <= n:
+                neighbor = ngrams[j]
+                matrix_data[current][neighbor] += 1
+    index = unique_ngrams
+    columns = unique_ngrams
+    df_matrix = pd.DataFrame({col: [matrix_data[row].get(col, 0) for row in
+        index] for col in columns}, index=index)
+    plt.figure(figsize=(len(index), len(columns)))
+    ax = plt.gca()
+    heatmap = ax.imshow(df_matrix.values, cmap='hot', interpolation='nearest')
+    plt.colorbar(heatmap)
+    plt.xticks(range(len(columns)), columns, rotation=45)
+    plt.yticks(range(len(index)), index)
+    plt.title('Co-occurrence Matrix (n-gram size: {})'.format(n))
+    return df_matrix, ax
+",0,
+"import secrets
+import hashlib
+import base64
+
+
+def task_func(num, from_base, to_base, alphabet):
+    custom_alphabet = list(alphabet)
+    num_value = int(num, from_base)
+    if to_base < 2:
+        raise ValueError('to_base must be >= 2.')
+
+    def convert_base(n, base):
+        result = []
+        while n > 0:
+            remainder = n % base
+            result.append(custom_alphabet[remainder])
+            n = n // base
+        return ''.join(reversed(result))
+    converted_num = convert_base(num_value, to_base)
+    salt = secrets.token_hex(16)
+    hash_input = bytes(converted_num, 'utf-8') + bytes(salt, 'utf-8')
+    hashed = hashlib.sha256(hash_input).digest()
+    encoded_hash = base64.b64encode(hashed)
+    return encoded_hash.decode(), salt
+","import hmac
+import hashlib
+import base64
+import string
+import secrets
+import random
+
+
+def task_func(num, from_base, to_base, alphabet):
+    if not isinstance(from_base, int) or not isinstance(to_base, int):
+        raise TypeError('Base must be an integer.')
+    if len(alphabet) != 64:
+        raise ValueError('Alphabet length must be 64.')
+
+    def convert_to_decimal(num, base):
+        try:
+            return int(num, base)
+        except ValueError:
+            raise ValueError(f'Invalid number for base {base}.')
+
+    def convert_from_decimal(num, base, alphabet):
+        if base < 2:
+            raise ValueError('Base must be >= 2.')
+        result = ''
+        while num > 0:
+            result = alphabet[num % base] + result
+            num //= base
+        return result
+    decimal_num = convert_to_decimal(num, from_base)
+    converted_num = convert_from_decimal(decimal_num, to_base, alphabet)
+    salt = ''.join(secrets.choice(string.ascii_letters + string.digits) for
+        _ in range(16))
+    hashed_num = hmac.new(bytes(salt, 'utf-8'), bytes(converted_num,
+        'utf-8'), hashlib.sha256).digest()
+    base64_encoded = base64.b64encode(hashed_num)
+    return base64_encoded.decode(), salt
+",1,
+"import operator
+
+
+def task_func(x, n):
+    counter = dict(x)
+    sorted_counter = sorted(counter.items(), key=operator.itemgetter(1),
+        reverse=True)
+    return [k for k, v in sorted_counter[:n]]
+","import math
+
+
+def task_func(x, n):
+    if not isinstance(x, dict) or not x:
+        return []
+    if not isinstance(n, int) or n <= 0:
+        return []
+    frequencies = list(x.items())
+    total = sum(freq for letter, freq in frequencies)
+
+    def calculate_probability(letter):
+        return math.log(x[letter] / total, 2)
+    sorted_letters = sorted(frequencies, key=lambda item: (-item[1], -
+        calculate_probability(item[0])))
+    most_common = [letter for letter, _ in sorted_letters[:n]]
+    return most_common
+",1,
+"import os
+import hashlib
+DIRECTORY = './hashed_files'
+
+
+def task_func(input_string: str) ->list[str]:
+    if not input_string:
+        return []
+    os.makedirs(DIRECTORY, exist_ok=True)
+    lines = input_string.splitlines()
+    result = []
+    for line in lines:
+        if line == '':
+            continue
+        hash_obj = hashlib.sha256(line.encode())
+        hash_hex = hash_obj.hexdigest()[:10]
+        file_path = os.path.join(DIRECTORY, f'{hash_hex}.txt')
+        with open(file_path, 'w') as f:
+            f.write(hash_hex)
+        result.append(file_path)
+    return result
+","import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def task_func(list_of_pairs):
+    """"""
+    Creates a Pandas DataFrame from a list of pairs and visualizes the data using a bar chart.
+    - The title of the barplot should be set to 'Category vs Value'
+    """"""
+    df = pd.DataFrame(list_of_pairs, columns=['Category', 'Value'])
+    fig, ax = plt.subplots()
+    ax.bar(df['Category'], df['Value'])
+    ax.set_title('Category vs Value')
+    return df, ax
+",0,
+"import pandas as pd
+import matplotlib.pyplot as plt
+import re
+
+
+def task_func(df):
+    """"""
+    Analyzes a DataFrame to find videos with titles containing 'how' or 'what' and visualizes their like ratios.
+    Returns a bar plot of the like ratios for these specific videos. If the DataFrame is empty, lacks required columns,
+    or contains no matching titles, returns an empty subplot.
+    """"""
+    if not isinstance(df, pd.DataFrame) or df.empty:
+        fig, ax = plt.subplots()
+        return ax
+    required_columns = ['Likes', 'Views', 'Title']
+    missing_cols = [col for col in required_columns if col not in df.columns]
+    if len(missing_cols) > 0:
+        fig, ax = plt.subplots()
+        return ax
+    pattern = re.compile('(how|what)', flags=re.IGNORECASE)
+    try:
+        interesting_videos = df[df['Title'].apply(lambda x: bool(pattern.
+            search(str(x))))]
+    except (KeyError, TypeError):
+        fig, ax = plt.subplots()
+        return ax
+    if interesting_videos.empty:
+        fig, ax = plt.subplots()
+        return ax
+    try:
+        interesting_videos['Like Ratio'] = df['Likes'] / df['Views']
+    except ZeroDivisionError:
+        pass
+    filtered_data = interesting_videos[['Title', 'Like Ratio']]
+    fig, ax = plt.subplots()
+    bars = ax.bar(filtered_data['Title'], filtered_data['Like Ratio'])
+    ax.set_ylabel('Like Ratio')
+    ax.set_xticklabels(filtered_data['Title'], rotation=90)
+    for bar in bars:
+        height = bar.get_height()
+        if not pd.isna(height):
+            ax.text(bar.get_x() + bar.get_width() / 2.0, height,
+                f'{height:.4f}', ha='center', va='bottom')
+    return ax
+","import matplotlib.pyplot as plt
+
+
+def task_func(df):
+    cols_needed = {'Title', 'Views', 'Likes'}
+    if df.empty:
+        fig, ax = plt.subplots()
+        return ax
+    if not cols_needed.issubset(set(df.columns)):
+        fig, ax = plt.subplots()
+        return ax
+    title_mask = df['Title'].str.contains('how|what', case=False, na=False)
+    if title_mask.sum() == 0:
+        fig, ax = plt.subplots()
+        return ax
+    selected = df[title_mask].copy()
+    like_ratios = []
+    for idx in range(len(selected)):
+        likes = selected.iloc[idx]['Likes']
+        views = selected.iloc[idx]['Views']
+        if views == 0:
+            like_ratios.append(0)
+        else:
+            like_ratios.append(likes / views)
+    selected['Like Ratio'] = like_ratios
+    fig, ax = plt.subplots()
+    ax.bar(selected['Title'], selected['Like Ratio'])
+    ax.set_ylabel('Like Ratio')
+    ax.set_xticklabels(selected['Title'], rotation='vertical')
+    return ax
+",1,
+"import pandas as pd
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+
+
+def task_func(df):
+    if df.empty:
+        raise ValueError('Input DataFrame is empty')
+    if not all(col in df.columns for col in ['group', 'date', 'value']):
+        raise ValueError(
+            ""Invalid input. DataFrame must contain 'group', 'date', and 'value' columns.""
+            )
+    df['date'] = pd.to_datetime(df['date']).map(pd.Timestamp.toordinal)
+    model = LinearRegression()
+    model.fit(df[['date']], df['value'])
+    predictions = model.predict(df[['date']])
+    plt.scatter(df['date'], df['value'], label='Original Values')
+    plt.plot(df['date'], predictions, color='red', label='Predicted Values')
+    plt.xlabel('Date (ordinal)')
+    plt.ylabel('Value')
+    plt.title('Value vs Date (Linear Regression Prediction)')
+    return model, predictions, plt.gca()
+","import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+
+
+def task_func(df):
+    if (not isinstance(df, pd.DataFrame) or 'group' not in df.columns or 
+        'date' not in df.columns or 'value' not in df.columns):
+        raise ValueError('Invalid input DataFrame')
+    if len(df) == 0:
+        raise ValueError('Empty DataFrame')
+    try:
+        X = pd.to_numeric(df['date']).values.reshape(-1, 1)
+        y = df['value'].values
+        model = LinearRegression()
+        model.fit(X, y)
+        predictions = model.predict(X)
+        plt.figure(figsize=(10, 6))
+        ax = plt.gca()
+        ax.plot(df['date'], y, 'b-', label='Original')
+        ax.plot(df['date'], predictions, 'r-', label='Predicted')
+        ax.set_title('Value vs Date (Linear Regression Prediction)')
+        ax.set_xlabel('Date (ordinal)')
+        ax.set_ylabel('Value')
+        ax.legend()
+    except Exception as e:
+        raise ValueError('Error in processing DataFrame') from e
+    return model, predictions, ax
+",1,
+"import os
+import re
+import uuid
+
+
+def task_func(input_string, directory):
+    os.makedirs(directory, exist_ok=True)
+    lines = input_string.split('\n')
+    file_paths = [os.path.join(directory, f'{uuid.uuid4().hex}.txt') for _ in
+        lines]
+    for line, path in zip(lines, file_paths):
+        clean_line = re.sub('[^a-zA-Z0-9\\s]', '', line)
+        with open(path, 'w') as file:
+            file.write(clean_line)
+    return file_paths
+","import os
+import random
+import string
+
+
+def task_func(input_string, directory):
+
+    def generate_filename():
+        return os.path.join(directory, 'text_' + ''.join(random.choices(
+            string.ascii_letters + string.digits, k=4)) + '.txt')
+    lines = [line.strip().translate({ord(c): None for c in string.
+        punctuation}) for line in input_string.split('\n')]
+    file_paths = []
+    for line in lines:
+        if not os.path.exists(line):
+            filename = generate_filename()
+            with open(filename, 'w') as f:
+                f.write(line)
+            file_paths.append(filename)
+    return file_paths
+",1,
+"import json
+import re
+
+
+def task_func(ip_address):
+    """"""
+    Retrieves the public IP address from a JSON string.
+
+    Args:
+        ip_address (str): JSON-formatted string containing the IP address.
+
+    Returns:
+        str: The public IP address, or ""Invalid IP address received"" if parsing fails.
+    """"""
+    try:
+        data = json.loads(ip_address)
+        ip = data.get('ip')
+        if ip:
+            if re.match('\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}', ip):
+                return ip
+            else:
+                return 'Invalid IP address received'
+        else:
+            return 'Invalid IP address received'
+    except json.JSONDecodeError:
+        return 'Invalid IP address received'
+","import json
+
+
+def task_func(ip_address):
+    try:
+        data = json.loads(ip_address)
+        ip = data['ip']
+        if isinstance(ip, str) and len(ip.split('.')) == 4:
+            return ip
+        else:
+            raise ValueError('Invalid IP address received')
+    except (json.JSONDecodeError, KeyError, ValueError) as e:
+        return str(e)
+",1,
+"import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+import pandas as pd
+
+
+def task_func(feature_array, target_array, feature_names=['f1', 'f2', 'f3',
+    'f4', 'f5'], target_name='target', seed=None):
+    if seed is not None:
+        np.random.seed(seed)
+    df = pd.DataFrame(feature_array, columns=feature_names)
+    df[target_name] = target_array
+    clf = RandomForestClassifier()
+    clf.fit(df[feature_names], df[target_name])
+    return clf
+","import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+
+
+def task_func(feature_array, target_array, feature_names=None, target_name=
+    'target', seed=None):
+    if feature_names is None:
+        feature_names = ['f1', 'f2', 'f3', 'f4', 'f5']
+    if feature_array.shape[0] != len(target_array):
+        raise ValueError(
+            'Feature array and target array must have the same number of samples.'
+            )
+    if feature_names is not None and len(feature_names) != feature_array.shape[
+        1]:
+        raise ValueError(
+            'Number of feature names must match the number of features in the feature array.'
+            )
+    clf = RandomForestClassifier(random_state=seed)
+    clf.fit(feature_array, target_array)
+    return clf
+",1,
+"from collections import Counter
+ANIMALS = {'cat', 'dog', 'elephant', 'fox', 'camel', 'cow', 'horse', 'lion',
+    'tiger', 'bear', 'rabbit', 'sheep', 'goat', 'pig', 'chicken', 'duck',
+    'goose', 'zebra', 'giraffe', 'hippo', 'iguana', 'jaguar', 'kangaroo',
+    'koala', 'lemur', 'monkey', 'octopus', 'penguin', 'snake', 'whale',
+    'wolf', 'yak'}
+
+
+def task_func(animal_dict):
+    filtered = [k for k in animal_dict if k in ANIMALS]
+    if not filtered:
+        return {}
+    return dict(Counter(''.join(filtered)))
+","import collections
+ANIMALS = {'cat', 'dog', 'elephant', 'fox', 'camel', 'cow', 'horse', 'lion',
+    'tiger', 'giraffe', 'hippo', 'iguana', 'jaguar', 'bear', 'wolf',
+    'rabbit', 'deer', 'monkey', 'zebra', 'kangaroo'}
+
+
+def task_func(animal_dict):
+    letters = (ch for key in animal_dict if key in ANIMALS for ch in key)
+    return dict(collections.Counter(letters))
+",1,
+"import datetime as dt
+from calendar import day_name
+
+
+def task_func(days_in_past: int=7) ->str:
+    """"""
+    Get the weekday of the date 'days_in_past' days ago from today.
+
+    Args:
+        days_in_past (int): Number of days to go back from current date. Defaults to 7.
+
+    Returns:
+        str: Name of the weekday for the computed date.
+
+    Raises:
+        ValueError: If days_in_past is negative or not an integer.
+    """"""
+    if not isinstance(days_in_past, int) or days_in_past < 0:
+        raise ValueError('days_in_past must be a non-negative integer')
+    current_date = dt.datetime.utcnow()
+    target_date = current_date - dt.timedelta(days=days_in_past)
+    return day_name[target_date.weekday()]
+","import time
+
+
+def task_func(days_in_past=7):
+    if not isinstance(days_in_past, int):
+        raise Exception('days_in_past must be an integer')
+    if days_in_past < 0:
+        raise Exception('days_in_past cannot be negative')
+    epoch_now = time.time()
+    epoch_target = epoch_now - days_in_past * 86400
+    target_struct = time.gmtime(epoch_target)
+    weekday_name = time.strftime('%A', target_struct)
+    return weekday_name
+",1,
+"import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def task_func(data_list):
+
+    def prepare_data(data):
+        return pd.DataFrame(data)
+
+    def plot_graph(df, ax):
+        for idx, column in enumerate(df.columns):
+            x_values = df.index.values.astype(int)
+            y_values = df[column].values.astype(float)
+            ax.plot(x_values, y_values, label=column)
+        ax.set_title('Student Scores over Tests')
+        ax.set_xlabel('Test Number')
+        ax.set_ylabel('Score')
+        return ax
+    if not data_list:
+        fig, ax = plt.subplots()
+        return ax
+    df = prepare_data(data_list)
+    fig, ax = plt.subplots()
+    plot_graph(df, ax)
+    return ax
+","import json
+import logging
+from typing import List, Dict
+logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(message)s')
+
+
+def task_func(text_file: str) ->List[Dict]:
+    """"""
+    Extracts all dictionary literals from a text file and returns them as Python dictionaries.
+    The function scans the file content for balanced curly braces, converts the extracted
+    substrings to JSON-compatible format, and parses them with json.loads.
+    """"""
+    try:
+        with open(text_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except FileNotFoundError as e:
+        logging.error(f'File not found: {text_file}')
+        raise e
+    except OSError as e:
+        logging.error(f'Error reading file {text_file}: {e}')
+        raise e
+    results: List[Dict] = []
+    stack: List[int] = []
+    for idx, char in enumerate(content):
+        if char == '{':
+            stack.append(idx)
+        elif char == '}' and stack:
+            start = stack.pop()
+            if not stack:
+                raw_dict = content[start:idx + 1]
+                json_str = raw_dict.replace(""'"", '""')
+                try:
+                    parsed = json.loads(json_str)
+                    results.append(parsed)
+                except json.JSONDecodeError as e:
+                    logging.warning(
+                        f'Failed to parse dictionary at positions {start}-{idx}: {e}'
+                        )
+    return results
+",0,
+"import matplotlib.pyplot as plt
+import numpy as np
+
+
+def task_func(data, bins):
+    if not data:
+        plt.hist([], bins=bins)
+    else:
+        plt.hist(data, bins=bins, color=np.random.choice(COLORS))
+    plt.title('Histogram')
+    plt.xlabel('Number')
+    plt.ylabel('Frequency')
+    return plt.gca()
+","import matplotlib.pyplot as plt
+import numpy as np
+from collections import defaultdict
+
+
+def task_func(data, bins):
+    if not isinstance(data, list) or not all(isinstance(x, (int, float)) for
+        x in data):
+        raise ValueError('Data must be a list of numbers')
+    if not isinstance(bins, int) or bins <= 0:
+        raise ValueError('Bins must be a positive integer')
+    plt.figure()
+    ax = plt.gca()
+    _, bins_edges = np.histogram(data, bins=bins)
+    for i in range(len(bins_edges) - 1):
+        left = bins_edges[i]
+        right = bins_edges[i + 1]
+        count = sum(1 for x in data if left <= x < right)
+        bar = plt.bar(left, count, width=right - left, align='edge')
+    ax.set_title('Histogram')
+    ax.set_xlabel('Number')
+    ax.set_ylabel('Frequency')
+    colors = ['#00bfbf', '#000000', '#0000ff']
+    for bar in ax.patches:
+        color = colors[i % len(colors)]
+        bar.set_facecolor(color)
+    return ax
+",1,
+"from typing import Dict, List
+
+
+def task_func(dict1: Dict[str, int]) ->Dict[str, List[int]]:
+    employee_data = {}
+    for department, num_employees in dict1.items():
+        if department.startswith('EMP$$'):
+            salaries = [(1000 + i * 10) for i in range(num_employees)]
+            employee_data[department] = salaries
+    return employee_data
+","import random
+from typing import Dict, List, Any
+
+
+def task_func(dict1: Dict[str, int]) ->Dict[str, List[int]]:
+    employee_data = {}
+    for prefix in dict1:
+        if not prefix.startswith('EMP$$'):
+            continue
+        num_employees = dict1[prefix]
+        salaries = [random.randint(1, 100) for _ in range(num_employees)]
+        employee_data[prefix] = salaries
+    return employee_data
+",1,
+"import subprocess
+import logging
+from typing import NoReturn
+
+
+def task_func(filepath: str) ->NoReturn:
+    """"""
+    Attempts to compile an existing C++ file specified by 'filepath'.
+    Logs the outcome of the compilation process.
+    Does not return anything but provides output through logs.
+    """"""
+    try:
+        subprocess.check_call(['g++', filepath, '-o', os.path.splitext(
+            filepath)[0]])
+        logging.info('Compilation successful')
+    except subprocess.CalledProcessError as e:
+        logging.error(f'Compilation failed with error: {str(e)}', exc_info=True
+            )
+    except FileNotFoundError:
+        logging.error(
+            'G++ compiler not found. Please install GCC or check your installation.'
+            )
+    except Exception as e:
+        logging.error(f'An unexpected error occurred: {str(e)}', exc_info=True)
+","import numpy as np
+import pandas as pd
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def task_func(products_list):
+    if not isinstance(products_list, list):
+        logger.error('Input is not a list')
+        raise TypeError('products_list must be a list')
+    for item in products_list:
+        if not isinstance(item, str):
+            logger.error('Product name is not a string: %s', item)
+            raise ValueError('All product names must be strings')
+    sales_data = []
+    try:
+        for product in products_list:
+            sales = []
+            for _ in range(12):
+                sales.append(np.random.randint(100, 501))
+            avg_sales = np.mean(sales)
+            sales.append(avg_sales)
+            sales_data.append([product] + sales)
+        month_columns = []
+        for i in range(1, 13):
+            month_columns.append(f'Month {i}')
+        month_columns.append('Average Sales')
+        columns = ['Product'] + month_columns
+        df = pd.DataFrame(sales_data, columns=columns)
+        return df
+    except Exception as e:
+        logger.exception('An error occurred while generating sales data')
+        raise e
+",0,
+"import socket
+import ssl
+import http.client
+
+
+def task_func(SERVER_NAME, SERVER_PORT, path):
+    context = ssl.create_default_context()
+    sock = socket.create_connection((SERVER_NAME, SERVER_PORT))
+    ssock = context.wrap_socket(sock, server_hostname=SERVER_NAME)
+    conn = http.client.HTTPSConnection(SERVER_NAME, SERVER_PORT, context=
+        context)
+
+    def send_request(connection, path):
+        connection.request('GET', path)
+        response = connection.getresponse()
+        return response.read().decode()
+    return send_request(conn, path)
+","import random
+import time
+
+
+def task_func(iterations=5, min_delay=1.0, max_delay=2.0, seed=None):
+    if iterations < 0:
+        raise ValueError('iterations must be non-negative')
+    if min_delay < 0:
+        raise ValueError('min_delay must be non-negative')
+    random.seed(seed)
+    messages = []
+    total_delay = 0.0
+    for _ in range(iterations):
+        delay = random.uniform(min_delay, max_delay)
+        total_delay += delay
+        time.sleep(delay)
+        messages.append(f'{delay:.2f} seconds have passed')
+    return messages, total_delay
+",0,
+"import unicodedata
+import requests
+
+
+def task_func(username):
+    URL = 'https://api.github.com/users/'
+    try:
+        response = requests.get(URL + username)
+        response.raise_for_status()
+        user_data = response.json()
+    except requests.exceptions.RequestException as e:
+        raise Exception(
+            f""Failed to fetch user data for '{username}'. HTTP status: {e.response.status_code} - {e.response.reason}""
+            ) from e
+    normalization_dict = {'login': str, 'id': int, 'node_id': str,
+        'avatar_url': str, 'gravatar_id': str, 'url': str, 'html_url': str,
+        'followers_url': str, 'following_url': str, 'gists_url': str,
+        'starred_url': str, 'subscriptions_url': str, 'organizations_url':
+        str, 'repos_url': str, 'events_url': str, 'received_events_url':
+        str, 'type': str, 'site_admin': bool}
+    normalized_data = {}
+    for key in user_data:
+        if isinstance(user_data[key], str):
+            normalized_value = unicodedata.normalize('NFKD', user_data[key]
+                ).encode('ascii', errors='ignore').decode()
+            normalized_data[key] = normalized_value
+        else:
+            normalized_data[key] = user_data[key]
+    return normalized_data
+","import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def task_func(data_list):
+
+    def prepare_data(data):
+        return pd.DataFrame(data)
+
+    def plot_graph(df, ax):
+        for idx, column in enumerate(df.columns):
+            x_values = df.index.values.astype(int)
+            y_values = df[column].values.astype(float)
+            ax.plot(x_values, y_values, label=column)
+        ax.set_title('Student Scores over Tests')
+        ax.set_xlabel('Test Number')
+        ax.set_ylabel('Score')
+        return ax
+    if not data_list:
+        fig, ax = plt.subplots()
+        return ax
+    df = prepare_data(data_list)
+    fig, ax = plt.subplots()
+    plot_graph(df, ax)
+    return ax
+",0,
+"import matplotlib.pyplot as plt
+from typing import List
+
+
+def task_func(data: List[List], labels: List):
+    colors = ['red', 'green', 'blue', 'yellow']
+    num_colors = len(colors)
+    fig, ax = plt.subplots()
+    for i in range(len(data)):
+        color = colors[i % num_colors]
+        if i >= num_colors:
+            color = 'black'
+        ax.plot(data[i], label=labels[i] if labels else f'Series {i + 1}',
+            color=color)
+    return ax
+","import math
+import pandas as pd
+
+
+def task_func(data, target, k):
+    if not isinstance(k, int) or k < 0:
+        raise ValueError('k must be a non‑negative integer')
+    if k == 0:
+        return []
+    target_lat, target_lon = target
+    target_lat_rad = math.radians(target_lat)
+    target_lon_rad = math.radians(target_lon)
+    R = 6371.0
+    neighbors = []
+    for _, row in data.iterrows():
+        lat, lon = row['Latitude'], row['Longitude']
+        lat_rad = math.radians(lat)
+        lon_rad = math.radians(lon)
+        dlat = lat_rad - target_lat_rad
+        dlon = lon_rad - target_lon_rad
+        a = math.sin(dlat / 2) ** 2 + math.cos(target_lat_rad) * math.cos(
+            lat_rad) * math.sin(dlon / 2) ** 2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        distance = R * c
+        neighbors.append((distance, lat, lon))
+    neighbors.sort(key=lambda x: x[0])
+    result = [[lat, lon] for _, lat, lon in neighbors[:min(k, len(neighbors))]]
+    return result
+",0,
+"import numpy as np
+from sklearn.linear_model import LinearRegression
+
+
+def task_func(d, target='z'):
+    if not d:
+        raise ValueError('Input list is empty')
+    keys = set(d[0].keys())
+    if target not in keys:
+        raise KeyError(f'Target {target} not found in data')
+    predictors = list(keys - {target})
+    X = np.array([[item.get(p, 0) for p in predictors] for item in d])
+    y = np.array([item[target] for item in d])
+    model = LinearRegression()
+    model.fit(X, y)
+    return model
+","import random
+from collections import defaultdict
+
+
+def task_func(num_strings, string_length):
+
+    def generate_strings(n, length):
+        return [''.join(random.choices('abcdefghijklmnopqrstuvwxyz', k=
+            length)) for _ in range(n)]
+
+    def count_characters(strings_list):
+        char_count = defaultdict(int)
+        for s in strings_list:
+            for c in s:
+                char_count[c] += 1
+        return char_count
+
+    def sort_by_frequency(char_dict):
+        sorted_chars = sorted(char_dict.items(), key=lambda x: (-x[1], x[0]))
+        return sorted_chars
+    strings = generate_strings(num_strings, string_length)
+    counts = count_characters(strings)
+    result = sort_by_frequency(counts)
+    return result
+",0,
+"import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+
+
+def task_func(file_name: str) ->pd.DataFrame:
+    df = pd.read_csv(file_name)
+    numeric_cols = df.select_dtypes(include=['number']).columns
+    if not len(numeric_cols):
+        raise ValueError('Input must contain at least one numeric column.')
+    scaler = MinMaxScaler()
+    normalized_data = scaler.fit_transform(df[numeric_cols])
+    df[numeric_cols] = pd.DataFrame(normalized_data, index=df.index,
+        columns=numeric_cols)
+    return df
+","import pandas as pd
+
+
+def task_func(file_name: str) ->pd.DataFrame:
+    df = pd.read_csv(file_name)
+    if df.empty or df.select_dtypes(include='number').empty:
+        raise ValueError('Input must have at least one numeric column.')
+    numeric_cols = df.select_dtypes(include='number').columns
+    numeric_df = df[numeric_cols]
+    mins = numeric_df.min()
+    maxs = numeric_df.max()
+    ranges = maxs - mins
+    zero_range_mask = ranges == 0
+    safe_ranges = ranges.replace(0, 1)
+    scaled = (numeric_df - mins) / safe_ranges
+    scaled.loc[:, zero_range_mask] = 0
+    df.loc[:, numeric_cols] = scaled
+    return df
+",1,
+"import numpy as np
+from typing import List, Dict, Optional
+import string
+import random
+
+
+def task_func(LETTERS: Optional[List[str]]=None) ->Dict[str, float]:
+    if LETTERS is None:
+        LETTERS = list(string.ascii_lowercase)
+    random_dict = {}
+    for letter in LETTERS:
+        num_list = [random.randint(0, 100) for _ in range(random.randint(1,
+            10))]
+        random_dict[letter] = np.std(num_list)
+    sd_dict = {k: v for k, v in zip(LETTERS, random_dict.values())}
+    return sd_dict
+","import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+
+
+def task_func():
+    random_state = 42
+    length = 10
+    lower_bound = 0
+    upper_bound = 10
+    arr = np.random.RandomState(random_state).randint(lower_bound,
+        upper_bound, (length,))
+    arr_reshaped = arr.reshape(-1, 1)
+    scaler = MinMaxScaler()
+    normalized_data = scaler.fit_transform(arr_reshaped)
+    return normalized_data
+",0,
+"import pandas as pd
+PLANETS = ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn',
+    'Uranus', 'Neptune']
+ELEMENTS = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne']
+
+
+def task_func():
+    data = [[f'{p}:{e}' for e in ELEMENTS] for p in PLANETS]
+    return pd.DataFrame(data, columns=ELEMENTS, index=PLANETS)
+","import pandas as pd
+import random
+from typing import List
+PLANETS = ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn',
+    'Uranus', 'Neptune']
+ELEMENTS = ['Hydrogen', 'Helium', 'Lithium', 'Beryllium', 'Boron', 'Carbon',
+    'Nitrogen', 'Oxygen']
+
+
+def task_func() ->pd.DataFrame:
+    data = [[f'{p}:{e}' for e in ELEMENTS] for p in PLANETS]
+    return pd.DataFrame(data, columns=ELEMENTS)
+
+
+class TaskFuncAlternative:
+
+    def __init__(self):
+        self.planets = PLANETS
+        self.elements = ELEMENTS
+
+    def generate_pairs(self) ->List[List[str]]:
+        return [[f'{p}:{e}' for e in self.elements] for p in self.planets]
+
+    def create_dataframe(self, pairs: List[List[str]]) ->pd.DataFrame:
+        return pd.DataFrame(pairs, columns=self.elements)
+
+
+def task_func_alternative() ->pd.DataFrame:
+    generator = TaskFuncAlternative()
+    pairs = generator.generate_pairs()
+    return generator.create_dataframe(pairs)
+",1,
+"import numpy as np
+
+
+def task_func(myList):
+    if not myList:
+        return np.array([])
+    min_val = min(myList)
+    max_val = max(myList)
+    range_val = max_val - min_val
+    if range_val == 0:
+        normalized = [(0.0) for _ in myList]
+    else:
+        normalized = [((x - min_val) / range_val) for x in myList]
+    return np.array(normalized)
+","import numpy as np
+
+
+def task_func(myList):
+    if not isinstance(myList, list):
+        raise TypeError('Input must be a list')
+    for item in myList:
+        if not isinstance(item, (int, float)):
+            raise TypeError('List elements must be numeric')
+    normalized_array = np.array(myList)
+    min_val = np.min(normalized_array)
+    max_val = np.max(normalized_array)
+    if max_val == min_val:
+        return np.zeros_like(normalized_array)
+    normalized_array = (normalized_array - min_val) / (max_val - min_val)
+    return normalized_array.flatten()
+",1,
+"import numpy as np
+import logging
+VALID_CHARACTERS = (
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+
+
+def task_func(n_strings, string_length):
+    """"""Generate random strings and count character frequencies.""""""
+    if not isinstance(n_strings, int) or not isinstance(string_length, int):
+        raise TypeError('n_strings and string_length must be integers')
+    if n_strings < 0 or string_length < 0:
+        raise ValueError('n_strings and string_length must be non-negative')
+    logger = logging.getLogger(__name__)
+    logger.debug('Generating %d strings of length %d', n_strings, string_length
+        )
+    rng = np.random.default_rng()
+    if n_strings == 0 or string_length == 0:
+        return {}
+    chars = rng.choice(list(VALID_CHARACTERS), size=(n_strings, string_length))
+    flat = chars.ravel()
+    unique, counts = np.unique(flat, return_counts=True)
+    result = dict(zip(unique, counts))
+    logger.debug('Character counts: %s', result)
+    return result
+","import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def task_func(students: list, seed: int=42) ->tuple:
+    """"""
+    Generate random scores for students and create a bar plot.
+
+    Args:
+        students (list): List of student names.
+        seed (int): Seed for random number generator. Defaults to 42.
+
+    Returns:
+        tuple: Contains a DataFrame and matplotlib Axes object.
+            - DataFrame: Columns 'Student' and 'Score', sorted by 'Score'.
+            - Axes: Bar plot of scores.
+    """"""
+    np.random.seed(seed)
+    scores = np.random.randint(0, 100, len(students))
+    df = pd.DataFrame({'Student': students, 'Score': scores}).sort_values(by
+        ='Score')
+    fig, ax = plt.subplots()
+    ax.bar(df['Student'], df['Score'])
+    ax.set_xlabel('Student')
+    ax.set_ylabel('Score')
+    return df, ax
+",0,
+"import requests
+import json
+import pandas as pd
+import seaborn as sns
+
+
+def task_func(url, parameters):
+    response = None
+    try:
+        response = requests.get(url, params=parameters)
+        if response.status_code == 200:
+            data = response.json()
+            df = pd.DataFrame(data)
+            if len(df.columns) >= 1:
+                corr_matrix = df.corr()
+                ax = sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+                return df, ax
+            else:
+                raise ValueError(
+                    'DataFrame has no columns to compute correlation')
+        else:
+            raise Exception(
+                f'API request failed with status code: {response.status_code}')
+    except requests.exceptions.RequestException as e:
+        raise Exception(f'Request error occurred: {str(e)}')
+    except json.JSONDecodeError as e:
+        raise Exception(f'Failed to decode JSON response: {str(e)}')
+    finally:
+        if response is not None:
+            response.close()
+","import random
+
+
+def task_func(MIN_WORDS, MAX_WORDS, WORDS_POOL):
+    word_count = random.randint(MIN_WORDS, MAX_WORDS)
+    words = []
+    for _ in range(word_count):
+        words.append(random.choice(WORDS_POOL))
+    if len(words) % 2 == 0:
+        first_half = words[:len(words) // 2]
+        second_half = first_half[::-1]
+    else:
+        first_half = words[:len(words) // 2 + 1]
+        second_half = first_half[:-1][::-1]
+    palindrome_words = first_half + second_half
+    return ' '.join(palindrome_words)
+",0,
+"import math
+
+
+def task_func(points):
+    norm = list(map(lambda t: (t[0], t[0]) if len(t) == 1 else (t[0], t[1]),
+        points))
+    return [math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(norm, norm
+        [1:])]
+","import math
+import logging
+logging.basicConfig(level=logging.INFO)
+
+
+def task_func(points):
+    """"""Calculate Euclidean distances between consecutive 2D points.""""""
+    if not isinstance(points, list):
+        raise TypeError('points must be a list')
+    distances = []
+    prev = None
+    for idx, pt in enumerate(points):
+        if not isinstance(pt, tuple):
+            raise TypeError(f'point at index {idx} is not a tuple')
+        if len(pt) == 1:
+            x = y = pt[0]
+        elif len(pt) == 2:
+            x, y = pt
+        else:
+            raise ValueError(f'point at index {idx} must have 1 or 2 elements')
+        if not all(isinstance(v, (int, float)) for v in (x, y)):
+            raise TypeError(f'coordinates at index {idx} must be numeric')
+        if prev is not None:
+            dx = x - prev[0]
+            dy = y - prev[1]
+            distances.append(math.hypot(dx, dy))
+        prev = x, y
+    return distances
+",1,
+"import pandas as pd
+import numpy as np
+
+
+def task_func(array):
+    if not array:
+        raise IndexError('Input array cannot be empty')
+    if not all(isinstance(row, list) for row in array):
+        raise TypeError('Each element of the input must be a list')
+    for row in array:
+        if not all(isinstance(x, (int, float)) for x in row):
+            raise TypeError('All elements must be integers or floats')
+    num_columns = len(array[0])
+    columns = [chr(ord('A') + i) for i in range(num_columns)]
+    df = pd.DataFrame(array, columns=columns)
+
+    def compute_distance(row1, row2):
+        return np.sqrt(np.sum((row1 - row2) ** 2))
+    num_rows = len(df)
+    distance_matrix = pd.DataFrame(index=df.index, columns=df.index)
+    for i in range(num_rows):
+        for j in range(i + 1):
+            if i == j:
+                distance = 0.0
+            else:
+                distance = compute_distance(df.iloc[i], df.iloc[j])
+            distance_matrix.iloc[i, j] = distance
+            distance_matrix.iloc[j, i] = distance
+    return df, distance_matrix
+","import pandas as pd
+from scipy.spatial import distance_matrix as dist_matrix
+import numpy as np
+
+
+def task_func(array):
+    """"""
+    Generate a Pandas DataFrame from a 2D list and calculate a distance matrix.
+
+    Args:
+        array: A 2D list representing the data. Each sublist must contain only integers or floats.
+
+    Returns:
+        df (pd.DataFrame): Data converted from 2D list with columns named alphabetically starting from 'A'.
+        distance_matrix (pd.DataFrame): Output distance matrix based on Euclidean distances between rows.
+
+    Raises:
+        TypeError: If the input contains non-numeric elements.
+        IndexError: If the input is an empty list.
+    """"""
+    if not isinstance(array, list):
+        raise TypeError('Input must be a list of lists.')
+    for row in array:
+        if not all(isinstance(x, (int, float)) for x in row):
+            raise TypeError(
+                'All elements in each sublist must be integers or floats.')
+    if len(array) == 0:
+        raise IndexError('Input is an empty list')
+    df = pd.DataFrame(array)
+    column_labels = [chr(ord('A') + i) for i in range(len(df.columns))]
+    df.columns = column_labels
+    dist_mat = np.zeros((len(array), len(array)))
+    for i in range(len(array)):
+        for j in range(i, len(array)):
+            if i == j:
+                dist_mat[i][j] = 0.0
+            else:
+                dist = np.linalg.norm(np.array(array[i]) - np.array(array[j]))
+                dist_mat[i][j] = dist
+                dist_mat[j][i] = dist
+    distance_matrix = pd.DataFrame(dist_mat)
+    return df, distance_matrix
+",1,
+"import numpy as np
+from cmath import sqrt, exp
+
+
+def task_func(precision=2, seed=0):
+    """"""
+    Solve a quadratic equation in the form of ax^2 + bx + c = 0.
+
+    Parameters:
+    precision (int): The number of decimal places to round the solutions.
+    seed (int): A random seed for reproducibility.
+
+    Returns:
+    tuple: Two complex numbers representing the solutions.
+    """"""
+    np.random.seed(seed)
+    a = np.random.uniform(-10, 10)
+    b = np.random.uniform(-10, 10)
+    c = np.random.uniform(-10, 10)
+    d = (b ** 2 - 4 * a * c) ** 0.5
+    sol1 = (-b + d) / (2 * a)
+    sol2 = (-b - d) / (2 * a)
+    sol1 = round(sol1.real, precision) + round(sol1.imag, precision) * 1.0j
+    sol2 = round(sol2.real, precision) + round(sol2.imag, precision) * 1.0j
+    return sol1, sol2
+","import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import csv
+
+
+def task_func(csv_file):
+    data = []
+    with open(csv_file, newline='') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            email = row['email']
+            list_str = row['list']
+            l = list_str.strip()[1:-1]
+            if l.strip() == '':
+                nums = []
+            else:
+                nums = [int(x.strip()) for x in l.split(',')]
+            data.append({'email': email, 'list': nums})
+    df = pd.DataFrame(data)
+    sums = []
+    for lst in df['list']:
+        s = 0
+        for val in lst:
+            s += val
+        sums.append(s)
+    df['sum'] = sums
+    means = []
+    for lst in df['list']:
+        if len(lst) == 0:
+            m = np.nan
+        else:
+            total = 0
+            for val in lst:
+                total += val
+            m = total / len(lst)
+        means.append(m)
+    df['mean'] = means
+    stds = []
+    for lst in df['list']:
+        if len(lst) == 0:
+            stds.append(np.nan)
+        else:
+            mean_val = 0
+            for val in lst:
+                mean_val += val
+            mean_val /= len(lst)
+            var = 0
+            for val in lst:
+                var += (val - mean_val) ** 2
+            var /= len(lst)
+            stds.append(np.sqrt(var))
+    df['std'] = stds
+    fig, ax = plt.subplots()
+    ax.hist(df['mean'].dropna(), bins=10)
+    return df, ax
+",0,
+"import requests
+import re
+
+
+def task_func(url, tag):
+    """"""
+    Scrape the first occurrence of the specified HTML tag from the given URL
+    and return its text content. If the tag is not found, empty, or malformed,
+    return None. Raises requests.exceptions.RequestException for invalid URLs.
+    """"""
+    response = requests.get(url)
+    pattern = re.compile(f'<{tag}>(.*?)</{tag}>', re.DOTALL | re.IGNORECASE)
+    match = pattern.search(response.text)
+    if not match:
+        return None
+    content = match.group(1).strip()
+    return content if content else None
+","import requests
+from bs4 import BeautifulSoup
+from typing import Optional
+
+
+def task_func(url: str, tag: str) ->Optional[str]:
+
+    def get_response(url: str) ->requests.Response:
+        try:
+            return requests.get(url)
+        except requests.exceptions.RequestException as e:
+            raise e
+
+    def parse_html(html_content: str) ->BeautifulSoup:
+        return BeautifulSoup(html_content, 'html.parser')
+
+    def find_tag(soup: BeautifulSoup, tag: str) ->Optional[BeautifulSoup]:
+        return soup.find(tag)
+    response = get_response(url)
+    html_content = response.text
+    soup = parse_html(html_content)
+    tag_content = find_tag(soup, tag)
+    return tag_content.string if tag_content else None
+",1,
+"import pandas as pd
+import random
+
+
+def task_func(name: str, age: int, code: str, salary: float, bio: str
+    ) ->pd.DataFrame:
+    EMPLOYEES = ['John', 'Alice', 'Bob', 'Charlie', 'David']
+    JOBS = ['Engineer', 'Manager', 'Analyst', 'Developer', 'Tester']
+    if name not in EMPLOYEES:
+        raise ValueError(f'Invalid employee name. Must be one of {EMPLOYEES}')
+    job = random.choice(JOBS)
+    data = {'Name': [name], 'Age': [age], 'Code': [code], 'Salary': [salary
+        ], 'Bio': [bio], 'Job Title': [job]}
+    return pd.DataFrame(data)
+","import pandas as pd
+from typing import List, Dict
+from random import choice
+
+
+def task_func(name: str, age: int, code: str, salary: float, bio: str
+    ) ->pd.DataFrame:
+    predefined_names = ['John', 'Alice', 'Bob', 'Charlie', 'David']
+    job_titles = ['Engineer', 'Manager', 'Analyst', 'Developer', 'Tester']
+    if not isinstance(name, str):
+        raise TypeError('Name must be a string')
+    if name not in predefined_names:
+        raise ValueError(
+            f'Invalid employee name. Must be one of {predefined_names}')
+    if not isinstance(age, int) or age < 0:
+        raise ValueError('Age must be a non-negative integer')
+    if not isinstance(code, str):
+        raise TypeError('Code must be a string')
+    if not isinstance(salary, float) or salary < 0:
+        raise ValueError('Salary must be a non-negative float')
+    if not isinstance(bio, str):
+        raise TypeError('Bio must be a string')
+    job_title = choice(job_titles)
+    data_dict: Dict[str, List] = {'Name': [name], 'Age': [age], 'Code': [
+        code], 'Salary': [salary], 'Bio': [bio], 'Job Title': [job_title]}
+    return pd.DataFrame(data_dict)
+",1,
+"import math
+from collections import deque
+
+
+def task_func(n):
+    """"""
+    Generates all unique integer pairs (i, j) where 1 <= i < j <= n.
+
+    Args:
+        n (int): The upper limit for generating pairs. Must be a positive integer.
+
+    Returns:
+        list of tuples: A list containing all valid pairs in ascending order.
+
+    Raises:
+        ValueError: If the input is not a positive integer.
+    """"""
+    if not isinstance(n, int) or n < 1:
+        raise ValueError('Input must be a positive integer')
+    result = []
+    numbers = deque(range(1, n + 1))
+    while len(numbers) >= 2:
+        first = numbers.popleft()
+        for second in numbers:
+            if second > first:
+                result.append((first, second))
+    return result
+","import itertools
+
+
+def task_func(n):
+    if n < 1:
+        raise ValueError('Input must be a positive integer')
+    numbers = list(range(1, n + 1))
+    pairs = []
+    for i in range(len(numbers)):
+        for j in range(i + 1, len(numbers)):
+            pairs.append((numbers[i], numbers[j]))
+    return pairs
+",1,
+"import random
+from typing import List, Tuple, Any, Optional
+
+
+def task_func(obj_list: List[Any], attr: str, top_n: int, seed: int) ->Tuple[
+    List[int], Optional[int]]:
+    if not isinstance(obj_list, list):
+        raise TypeError('obj_list must be a list')
+    if not isinstance(attr, str):
+        raise TypeError('attr must be a string')
+    if not isinstance(top_n, int):
+        raise TypeError('top_n must be an integer')
+    if not isinstance(seed, (int, float)):
+        raise TypeError('seed must be a number')
+    if not obj_list:
+        return [], None
+    values = []
+    for obj in obj_list:
+        if not hasattr(obj, attr):
+            raise AttributeError(f""Object {obj} lacks attribute '{attr}'"")
+        val = getattr(obj, attr)
+        if not isinstance(val, int):
+            raise TypeError(f""Attribute '{attr}' must be an integer"")
+        values.append(val)
+    top_values = sorted(values, reverse=True)[:top_n]
+    random.seed(seed)
+    rand_value = random.choice(values)
+    return top_values, rand_value
+","import random
+from faker import Faker
+faker = Faker()
+
+
+def task_func(obj_list, attr, top_n, seed):
+    if not obj_list:
+        return [], None
+    values = [obj.__getattribute__(attr) for obj in obj_list]
+    random.seed(seed)
+    rand_value = values[random.randint(0, len(values) - 1)]
+    sorted_values = sorted(values, reverse=True)
+    top_values = sorted_values[:top_n]
+    return top_values, rand_value
+",1,
+"from random import Random
+import time
+from itertools import cycle
+
+
+def task_func(n_colors, colors=['Red', 'Green', 'Blue', 'Yellow', 'Purple'],
+    rng_seed=None):
+    if n_colors <= 0:
+        return []
+    if not isinstance(colors, list) or len(colors) == 0:
+        raise ValueError('Colors must be a non-empty list of strings')
+    random_gen = Random()
+    if rng_seed is not None:
+        random_gen.seed(rng_seed)
+    else:
+        random_gen.seed(time.time())
+    color_cycle = cycle(colors * (n_colors // len(colors) + 2))
+    pattern = []
+    for i in range(n_colors):
+        if i % 2 == 0:
+            try:
+                cycle_color = next(color_cycle)
+                pattern.append(cycle_color)
+            except StopIteration:
+                pattern.append(random_gen.choice(colors))
+        else:
+            pattern.append(random_gen.choice(colors))
+    return pattern
+","import random
+from collections import Counter
+import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
+
+
+def task_func(*args):
+    if len(args) == 0:
+        n_rows = 1000
+    else:
+        n_rows = args[0]
+    if not isinstance(n_rows, int) or n_rows <= 0:
+        raise ValueError('n_rows must be a positive integer')
+    letters = 'abcdefghijklmnopqrstuvwxyz'
+    strings = [''.join(random.choices(letters, k=3)) for _ in range(n_rows)]
+    freq = Counter(strings)
+    top30 = freq.most_common(30)
+    labels, counts = zip(*top30) if top30 else ([], [])
+    fig, ax = plt.subplots()
+    ax.bar(labels, counts)
+    ax.set_xlabel('3-letter string')
+    ax.set_ylabel('Frequency')
+    ax.set_title('Top 30 most frequent 3-letter strings')
+    return ax
+",0,
+"import os
+import re
+from glob import glob
+
+
+def task_func(dir_path: str) ->dict:
+    if not os.path.isdir(dir_path):
+        raise ValueError(f'Directory does not exist: {dir_path}')
+    result = {}
+    txt_files = list(glob(os.path.join(dir_path, '**/*.txt'), recursive=True))
+    for file in txt_files:
+        try:
+            with open(file, 'r') as f:
+                content = f.read()
+                matches = re.findall('\\berror\\b', content, flags=re.
+                    IGNORECASE)
+                result[os.path.relpath(file, dir_path)] = len(matches)
+        except IOError:
+            pass
+    return result
+","import numpy as np
+from scipy import stats
+
+
+def task_func(df, col1, col2, N=10):
+    if col1 not in df.columns or col2 not in df.columns:
+        raise ValueError('Specified columns not found in DataFrame.')
+    if N <= 1:
+        raise ValueError('N must be greater than 1.')
+    a = df[col1].to_numpy()
+    b = df[col2].to_numpy()
+    idx = np.argsort(np.abs(a - b))[::-1][:N]
+    _, p = stats.ttest_ind(a[idx], b[idx])
+    return p
+",0,
+"from collections import Counter
+from random import choice
+
+
+def task_func(list_of_lists):
+    """"""
+    Generates a list of shopping carts (Counters) based on the input list_of_lists.
+    Each cart contains randomly selected items from POSSIBLE_ITEMS, with quantities matching the length of the corresponding list.
+    """"""
+    POSSIBLE_ITEMS = ['apple', 'banana', 'cherry', 'date', 'elderberry']
+    baskets = []
+    for lst in list_of_lists:
+        basket = Counter()
+        items = [choice(POSSIBLE_ITEMS) for _ in range(len(lst))]
+        basket.update(items)
+        baskets.append(basket)
+    return baskets
+","import pandas as pd
+import numpy as np
+from sklearn.decomposition import PCA
+
+
+def task_func(array: list, random_seed: int=42) ->tuple[pd.DataFrame, np.
+    ndarray]:
+    df = pd.DataFrame(array)
+    pca = PCA(n_components=2, random_state=random_seed)
+    transformed_data = pca.fit_transform(df)
+    return df, transformed_data
+",0,
+"import os
+import pandas as pd
+
+
+def task_func(filename: str) ->pd.DataFrame:
+    if not os.path.exists(filename):
+        raise FileNotFoundError(f""No such file: '{filename}'"")
+    try:
+        df = pd.read_csv(filename)
+    except pd.errors.EmptyDataError:
+        df = pd.DataFrame()
+    with open(filename, 'w'):
+        pass
+    return df
+","import os
+import csv
+from typing import List, Dict
+import pandas as pd
+
+
+def task_func(filename: str) ->pd.DataFrame:
+    """"""
+    Reads a CSV file into a DataFrame and clears the original file content.
+
+    Args:
+        filename (str): Path to the CSV file
+
+    Returns:
+        pd.DataFrame: Data read from the CSV file
+
+    Raises:
+        FileNotFoundError: If the specified file does not exist
+    """"""
+    if not os.path.exists(filename):
+        raise FileNotFoundError(f""File '{filename}' not found."")
+    with open(filename, 'r') as f:
+        csv_reader = csv.DictReader(f)
+        data = list(csv_reader)
+    with open(filename, 'w', newline='') as f:
+        pass
+    return pd.DataFrame(data)
+",1,
+"import numpy as np
+import matplotlib.pyplot as plt
+
+
+def task_func(X, Y):
+    X_arr = np.asarray(X)
+    Y_arr = np.asarray(Y)
+    if X_arr.size == 0 or Y_arr.size == 0:
+        raise ValueError('Input arrays must not be empty')
+    if X_arr.shape != Y_arr.shape:
+        raise ValueError('Input arrays must have the same shape')
+    X_numeric = np.issubdtype(X_arr.dtype, np.number)
+    Y_numeric = np.issubdtype(Y_arr.dtype, np.number)
+    if not X_numeric and not Y_numeric:
+        raise ValueError('Both inputs must be numeric')
+    if X_numeric != Y_numeric:
+        raise TypeError('Both inputs must be of the same numeric type')
+    coeffs = np.polyfit(X_arr, Y_arr, 2)
+    fig, ax = plt.subplots()
+    ax.scatter(X_arr, Y_arr)
+    ax.plot(X_arr, np.polyval(coeffs, X_arr), 'r-')
+    return coeffs.tolist(), ax
+","import numpy as np
+import matplotlib.pyplot as plt
+
+
+def task_func(X, Y):
+    X_arr = np.array(X)
+    Y_arr = np.array(Y)
+    if X_arr.size == 0 or Y_arr.size == 0:
+        raise ValueError('X and Y must not be empty')
+    if X_arr.ndim != 1 or Y_arr.ndim != 1:
+        raise ValueError('X and Y must be 1D arrays')
+    try:
+        X_num = X_arr.astype(float)
+        Y_num = Y_arr.astype(float)
+    except Exception:
+        raise ValueError('X and Y must be numeric')
+    if X_arr.dtype.kind in ('O', 'U', 'S') or Y_arr.dtype.kind in ('O', 'U',
+        'S'):
+        raise TypeError('X and Y must be numeric arrays')
+    if not np.issubdtype(X_num.dtype, np.number) or not np.issubdtype(Y_num
+        .dtype, np.number):
+        raise TypeError('X and Y must be numeric arrays')
+    coeffs = np.polyfit(X_num, Y_num, 2)
+    a, b, c = coeffs
+    plt.scatter(X_num, Y_num)
+    plt.plot(X_num, a * X_num ** 2 + b * X_num + c, color='red')
+    ax = plt.gca()
+    return [a, b, c], ax
+",1,
+"import re
+import os
+from pathlib import Path
+import glob
+
+
+def task_func(pattern: str, directory: str, extensions: list[str]) ->list[Path
+    ]:
+    """"""Find files matching a regex pattern in their contents within specified directory and file extensions.""""""
+    matched_files = []
+    for ext in extensions:
+        search_pattern = os.path.join(directory, ext)
+        found_files = glob.glob(search_pattern)
+        for file_path in found_files:
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read().lower()
+                    if re.search(pattern.lower(), content):
+                        matched_files.append(Path(file_path).resolve())
+            except IOError:
+                pass
+    return matched_files
+","import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def task_func(csv_file_path: str):
+    df = pd.read_csv(csv_file_path)
+    normalized_column = (df['column1'] - df['column1'].mean()) / df['column1'
+        ].std()
+    _, ax = plt.subplots()
+    ax.plot(normalized_column)
+    title = '%*s : %*s' % (20, 'Plot Title', 20, 'Normalized Column 1')
+    xlabel = '%*s : %*s' % (20, 'Index', 20, 'Normalized Value')
+    ylabel = '%*s : %*s' % (20, 'Frequency', 20, 'Normalized Value')
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    return ax
+",0,
+"import numpy as np
+
+
+def task_func(myList):
+
+    def find_min_max(arr):
+        min_val = max_val = arr[0]
+        for num in arr:
+            if num < min_val:
+                min_val = num
+            if num > max_val:
+                max_val = num
+        return min_val, max_val
+
+    def normalize_value(value, min_v, max_v):
+        if max_v - min_v == 0:
+            return 0.0
+        return (value - min_v) / (max_v - min_v)
+    if not myList:
+        return np.array([])
+    min_val, max_val = find_min_max(myList)
+    normalized = [normalize_value(num, min_val, max_val) for num in myList]
+    return np.array(normalized)
+","import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+
+
+def task_func(myList):
+    data = np.array(myList)
+    scaler = MinMaxScaler()
+    normalized_data = scaler.fit_transform(data.reshape(-1, 1))
+    return normalized_data.flatten()
+",1,
+"import os
+import re
+from pathlib import Path
+
+
+def task_func(source_directory, target_directory, pattern='\\d{4}'):
+
+    def get_matching_files(directory, pattern):
+        files = []
+        for file in os.listdir(directory):
+            if re.search(pattern, file):
+                files.append(file)
+        return files
+
+    def move_file(src_path, dst_path, file_name):
+        src = os.path.join(src_path, file_name)
+        dst = os.path.join(dst_path, file_name)
+        os.rename(src, dst)
+    source_exists = os.path.exists(source_directory)
+    if not source_exists:
+        return 0
+    target_created = os.path.exists(target_directory)
+    if not target_created:
+        os.makedirs(target_directory)
+    matching_files = get_matching_files(source_directory, pattern)
+    moved_count = 0
+    for file in matching_files:
+        move_file(source_directory, target_directory, file)
+        moved_count += 1
+    return moved_count
+","import gzip
+import difflib
+from io import TextIOWrapper
+
+
+def task_func(file_path1, file_path2):
+    """"""
+    Compares the contents of two gzip files and returns a string describing their differences.
+    Uses difflib to compute differences efficiently.
+    Returns an empty string if files are identical.
+    """"""
+
+    def read_gzip_file(file_path):
+        """"""Reads content from a gzip file.""""""
+        with gzip.open(file_path, 'rt') as f:
+            return f.read()
+    try:
+        content1 = read_gzip_file(file_path1)
+        content2 = read_gzip_file(file_path2)
+        diff = difflib.ndiff(content1.splitlines(), content2.splitlines())
+        return '\n'.join(line for line in diff if line.startswith(('-', '+')))
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f'File not found: {e.filename}') from None
+",0,
+"import subprocess
+import random
+from pathlib import Path
+import os
+
+
+def task_func(directory: str, file_list: list) ->(int | None):
+    if not file_list:
+        return None
+    try:
+        selected_file = random.choice(file_list)
+        script_path = Path(directory) / selected_file
+        process = subprocess.Popen(str(script_path))
+        process.wait()
+        return process.returncode
+    except Exception as e:
+        print(f'An error occurred: {e}')
+        return None
+","import subprocess
+import os
+import random
+
+
+class TestCases:
+
+    def test_valid_input(self):
+        random.seed(0)
+        directory = 'valid_dir'
+        file_list = ['script1.bat', 'script2.bat']
+        with patch('subprocess.Popen') as mock_popen:
+            mock_process = MagicMock()
+            mock_process.wait.return_value = None
+            mock_process.returncode = 0
+            mock_popen.return_value = mock_process
+            result = task_func(directory, file_list)
+            self.assertEqual(result, 0)
+
+    def test_empty_file_list(self):
+        random.seed(0)
+        directory = 'valid_dir'
+        file_list = []
+        result = task_func(directory, file_list)
+        self.assertIsNone(result)
+
+    def test_invalid_directory(self):
+        random.seed(0)
+        directory = 'invalid_dir'
+        file_list = ['script1.bat']
+        with patch('subprocess.Popen', side_effect=Exception('Error')):
+            result = task_func(directory, file_list)
+            self.assertIsNone(result)
+
+    def test_non_zero_exit_code(self):
+        random.seed(0)
+        directory = 'valid_dir'
+        file_list = ['script3.bat']
+        with patch('subprocess.Popen') as mock_popen:
+            mock_process = MagicMock()
+            mock_process.wait.return_value = None
+            mock_process.returncode = 1
+            mock_popen.return_value = mock_process
+            result = task_func(directory, file_list)
+            self.assertEqual(result, 1)
+
+    def test_random_file_selection(self):
+        random.seed(0)
+        directory = 'valid_dir'
+        file_list = ['script1.bat', 'script2.bat', 'script3.bat']
+        with patch('random.choice', side_effect=file_list):
+            with patch('subprocess.Popen') as mock_popen:
+                mock_process = MagicMock()
+                mock_process.wait.return_value = None
+                mock_process.returncode = 0
+                mock_popen.return_value = mock_process
+                for expected_file in file_list:
+                    result = task_func(directory, file_list)
+                    expected_call = os.path.join(directory, expected_file)
+                    found = False
+                    for call in mock_popen.call_args_list:
+                        call_args, call_kwargs = call
+                        if call_args[0] == expected_call:
+                            found = True
+                            break
+                    self.assertTrue(found,
+                        f'Expected call with {expected_call} not found')
+
+
+def task_func(directory, file_list):
+    if not file_list:
+        return None
+    random_file = random.choice(file_list)
+    command = os.path.join(directory, random_file)
+    try:
+        process = subprocess.Popen(command, shell=True)
+        process.wait()
+        return process.returncode
+    except Exception as e:
+        print(f'Error: {e}')
+        return None
+",1,
+"import numpy as np
+import matplotlib.pyplot as plt
+
+
+def task_func(ax, func_index):
+    """"""
+    Plot mathematical functions (sine, cosine, tangent) on a polar diagram.
+
+    Args:
+        ax: The axes to plot on.
+        func_index: Index of the function to plot (0: sine, 1: cosine, 2: tangent).
+
+    Returns:
+        matplotlib.axes._axes.Axes: Modified axes with plotted function.
+
+    Raises:
+        ValueError: If ax is not a valid axes object.
+        IndexError: If func_index is out of range [0, 2].
+    """"""
+    if not isinstance(ax, plt.Axes):
+        raise ValueError('ax must be a matplotlib Axes instance')
+    if func_index < 0 or func_index > 2:
+        raise IndexError('func_index must be in {0, 1, 2}')
+    theta = np.linspace(0, 2 * np.pi, 1000)
+    if func_index == 0:
+        rho = np.sin(theta)
+    elif func_index == 1:
+        rho = np.cos(theta)
+    else:
+        rho = np.tan(theta)
+    ax.plot(theta, rho)
+    ax.set_rlabel_position(func_index * 45)
+    return ax
+","import math
+import logging
+from matplotlib.axes import Axes
+logger = logging.getLogger(__name__)
+
+
+def task_func(ax, func_index):
+    """"""
+    Plot a trigonometric function on a polar Axes.
+
+    Parameters
+    ----------
+    ax : matplotlib.axes._axes.Axes
+        The polar axes to plot on.
+    func_index : int
+        Index of the function: 0 for sine, 1 for cosine, 2 for tangent.
+
+    Returns
+    -------
+    matplotlib.axes._axes.Axes
+        The modified axes with the plotted function.
+
+    Raises
+    ------
+    ValueError
+        If `ax` is not a matplotlib Axes instance.
+    IndexError
+        If `func_index` is not 0, 1, or 2.
+    """"""
+    if not isinstance(ax, Axes):
+        logger.error('Provided ax is not a matplotlib Axes instance.')
+        raise ValueError('ax must be a matplotlib Axes instance')
+    if func_index not in (0, 1, 2):
+        logger.error('Function index %s is out of range.', func_index)
+        raise IndexError(
+            'func_index must be 0 (sine), 1 (cosine), or 2 (tangent)')
+    n_points = 1000
+    x_vals = [(2 * math.pi * i / (n_points - 1)) for i in range(n_points)]
+    if func_index == 0:
+        y_vals = [math.sin(x) for x in x_vals]
+    elif func_index == 1:
+        y_vals = [math.cos(x) for x in x_vals]
+    else:
+        y_vals = [math.tan(x) for x in x_vals]
+    ax.plot(x_vals, y_vals)
+    ax.set_rlabel_position(func_index * 45)
+    return ax
+",1,
+"import pandas as p
+import numpy as n
+
+
+def task_func(test_scores, student):
+    df = p.DataFrame(test_scores)
+    if student not in df['Student'].unique():
+        raise ValueError('Student ID ' + str(student) + ' not found')
+    scores = df.loc[df['Student'] == student, 'Score']
+    arr = scores.to_numpy()
+    avg = n.mean(arr)
+    std = n.std(arr, ddof=1)
+    return n.array([avg, std]), df
+","import numpy as np
+from collections import defaultdict
+
+
+def task_func(test_scores, student_id):
+    if not test_scores:
+        raise ValueError('Empty input data provided.')
+    required_keys = ['Student', 'Score']
+    for key in required_keys:
+        if key not in test_scores:
+            raise ValueError(f'Missing required key: {key}')
+    df = pd.DataFrame(test_scores)
+    unique_students = set(df['Student'].values)
+    if student_id not in unique_students:
+        raise ValueError(f'Student with ID {student_id} not found.')
+    filtered_df = df[df['Student'] == student_id]
+    avg_score = filtered_df['Score'].mean()
+    score_std = filtered_df['Score'].std()
+    return np.array([avg_score, score_std]), df
+",1,
+"import importlib.util
+import pkgutil
+import sys
+
+
+def task_func(package_name):
+    modules_added = []
+    spec = importlib.util.find_spec(package_name)
+    if spec is None:
+        raise ImportError(f'Package {package_name} not found')
+    for module_info in pkgutil.iter_modules(spec.submodule_search_locations):
+        try:
+            module = importlib.import_module(module_info.name, package=
+                package_name)
+            modules_added.append(module.__name__)
+        except Exception as e:
+            pass
+    return [m for m in set(modules_added) if any(m in path for path in sys.
+        path)]
+","import pandas as pd
+from matplotlib import pyplot as plt
+import numpy as np
+
+
+def task_func(data):
+    df = pd.DataFrame(data, columns=['Letter', 'Count'])
+    max_value_letter = df.loc[df['Count'].idxmax()]['Letter']
+    letter_counts = df.groupby('Letter')['Count'].sum().reset_index()
+    letters = letter_counts['Letter']
+    counts = letter_counts['Count']
+    fig, ax = plt.subplots(figsize=(10, 6))
+    bar_width = 0.8
+    x = np.arange(len(letters))
+    ax.bar(x - bar_width / 2, counts, bar_width, label='Letter Counts')
+    ax.bar(max_value_letter, letter_counts.loc[letter_counts['Letter'] ==
+        max_value_letter, 'Count'].values[0], color='red', label=
+        'Max Value Letter')
+    ax.set_xlabel('Letter')
+    ax.set_ylabel('Count')
+    ax.set_title('Letter Counts with Max Value Letter Highlighted')
+    ax.legend()
+    return ax
+",0,
+"import matplotlib.pyplot as plt
+from collections import defaultdict
+import re
+
+
+def task_func(text):
+    words = text.split()
+    dollar_words = []
+    for word in words:
+        if word.startswith('$') and len(word) > 1:
+            has_alpha = any(c.isalpha() for c in word)
+            if has_alpha:
+                dollar_words.append(word)
+    freq = defaultdict(int)
+    for word in dollar_words:
+        freq[word] += 1
+    if not freq:
+        return None
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.bar(freq.keys(), freq.values())
+    return ax
+","import matplotlib.pyplot as plt
+import numpy as np
+import os
+
+
+def task_func(mystrings, folder_path, seed=None):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+    file_names = []
+    seen_titles = set()
+    for title in mystrings:
+        if title in seen_titles:
+            continue
+        seen_titles.add(title)
+        np.random.seed(seed)
+        data = np.random.rand(10)
+        plt.bar(range(10), data)
+        plt.title(title)
+        filename = title.replace(' ', '_') + '.png'
+        plt.savefig(os.path.join(folder_path, filename))
+        plt.close()
+        file_names.append(filename)
+    return file_names
+",0,
+"import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+def task_func(s1, s2):
+    """"""
+    Generates a swarm plot comparing two pandas Series, highlighting intersecting data points.
+
+    Args:
+        s1 (pd.Series): The first series of data.
+        s2 (pd.Series): The second series of data.
+
+    Returns:
+        ax (matplotlib.Axes): The Axes object of the plotted swarm chart.
+        intersection_count (int): The number of unique intersecting data points between s1 and s2.
+    """"""
+    df = pd.DataFrame({'value1': s1.values, 'value2': s2.values})
+    plt.figure(figsize=(10, 6))
+    sns.swarmplot(x='value1', y='value2', data=df)
+    intersection = df['value1'][df['value1'].isin(df['value2'])].unique()
+    for point in intersection:
+        plt.axvline(x=point, color='red', linestyle='--')
+    plt.title(f'Overlap Between {s1.name} and {s2.name}')
+    ax = plt.gca()
+    intersection_count = len(intersection)
+    return ax, intersection_count
+","import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def task_func(s1, s2):
+    arr1 = np.array(s1)
+    arr2 = np.array(s2)
+    fig, ax = plt.subplots()
+    all_data = np.concatenate([arr1.reshape(-1, 1), arr2.reshape(-1, 1)],
+        axis=1)
+    unique_s1 = np.unique(arr1)
+    unique_s2 = np.unique(arr2)
+    intersection = np.intersect1d(unique_s1, unique_s2)
+    intersection_count = len(intersection)
+    positions = np.linspace(0.5, 1.5, arr1.size + arr2.size)
+    plt.scatter(positions, np.concatenate([arr1, arr2]), alpha=0.5)
+    for val in intersection:
+        plt.plot([0.75, 1.25], [val, val], color='red', linestyle='--')
+    plt.title(f'Overlap Between {s1.name} and {s2.name}')
+    plt.xlabel('Series')
+    plt.ylabel('Value')
+    return ax, intersection_count
+",1,
+"import numpy as np
+from scipy.stats import norm
+
+
+def task_func(data: np.ndarray, threshold: float=2.0) ->tuple:
+    params = norm.fit(data)
+    mean = params[0]
+    var = params[1] ** 2
+    if var == 0:
+        return [], mean, var
+    z_scores = (data - mean) / np.sqrt(var)
+    outliers = np.where(np.abs(z_scores) > threshold)[0]
+    return outliers.tolist(), mean, var
+","import numpy as np
+
+
+def task_func(data: np.ndarray, threshold: float=2) ->tuple[list[int],
+    float, float]:
+    """"""
+    Determine outlier indices in a 1D numpy array based on Z score.
+
+    Args:
+        data: Input 1D numpy array to check for outliers.
+        threshold: The outlier detection threshold. Defaults to 2.
+
+    Returns:
+        A tuple containing:
+            - list of outlier indices
+            - mean of the fitted normal distribution
+            - variance of the fitted normal distribution
+    """"""
+    if len(data) == 0:
+        return [], 0.0, 0.0
+    mean = np.mean(data)
+    std = np.std(data)
+    if std == 0:
+        return [], mean, 0.0
+    z_scores = (data - mean) / std
+    outliers_mask = np.abs(z_scores) > threshold
+    outlier_indices = np.where(outliers_mask)[0].tolist()
+    return outlier_indices, float(mean), float(np.var(data))
+",1,
+"import numpy as np
+from collections import Counter
+
+
+def task_func(list_of_lists):
+    merged_list = [item for sublist in list_of_lists for item in sublist]
+    mode_value, mode_count = max(Counter(merged_list).items(), key=lambda x:
+        x[1])
+    return mode_value, mode_count
+
+
+import unittest
+
+
+class TestCases(unittest.TestCase):
+
+    def test_case_1(self):
+        self.assertEqual(task_func([[1, 1, 3], [4, 5, 6], [7, 8, 9]]), (1, 2))
+
+    def test_case_2(self):
+        self.assertEqual(task_func([[1, 1, 3], [4, 5, 6], [7, 8, 9], [1, 1,
+            1]]), (1, 5))
+
+    def test_case_3(self):
+        self.assertEqual(task_func([[1, 1, 3], [4, 5, 6], [7, 8, 9], [1, 1,
+            1], [2, 2, 2]]), (1, 5))
+
+    def test_case_4(self):
+        self.assertEqual(task_func([[1, 1, 3], [4, 5, 6], [7, 8, 9], [1, 1,
+            1], [2, 2, 2], [3, 3, 3]]), (1, 5))
+
+    def test_case_5(self):
+        self.assertEqual(task_func([[1, 1, 3], [4, 5, 6], [7, 8, 9], [1, 1,
+            1], [2, 2, 2], [3, 3, 3], [4, 4, 4]]), (1, 5))
+
+
+if __name__ == '__main__':
+    unittest.main()
+","import numpy as np
+from matplotlib.pyplot import figure, scatter, xlabel, ylabel, title, legend
+
+
+def task_func(data):
+    max_val = -float('inf')
+    max_tuple = None
+    for item in data:
+        if item[1] > max_val:
+            max_val = item[1]
+            max_tuple = item
+    x_values = [x[0] for x in data]
+    y_values = [y[1] for y in data]
+    fig = figure()
+    ax = fig.add_subplot(111)
+    scatter(x_values, y_values, label='Data')
+    scatter(max_tuple[0], max_tuple[1], color='red', label='Max Tuple')
+    xlabel('x')
+    ylabel('y')
+    title('Max Tuple Highlighted')
+    legend()
+    return ax
+",0,
+"import logging
+import pandas as pd
+import matplotlib.pyplot as plt
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def task_func(df):
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError('Input must be a pandas DataFrame')
+    required_cols = {'Title', 'Views', 'Likes'}
+    if df.empty or not required_cols.issubset(df.columns):
+        logger.warning('DataFrame is empty or missing required columns')
+        fig, ax = plt.subplots()
+        return ax
+    mask = df['Title'].str.contains('\\b(how|what)\\b', case=False, na=False)
+    filtered = df.loc[mask].copy()
+    if filtered.empty:
+        logger.info('No titles match the criteria')
+        fig, ax = plt.subplots()
+        return ax
+    filtered['Like Ratio'] = filtered['Likes'] / filtered['Views']
+    fig, ax = plt.subplots()
+    ax.bar(filtered['Title'], filtered['Like Ratio'])
+    ax.set_ylabel('Like Ratio')
+    ax.set_xticklabels(filtered['Title'], rotation=90)
+    return ax
+","import pandas as pd
+import matplotlib.pyplot as plt
+import re
+
+
+def task_func(df: pd.DataFrame) ->plt.Axes:
+    """"""
+    Analyzes a DataFrame to find videos with titles containing ""how"" or ""what""
+    and visualizes their like ratios. The like ratio for each video is calculated 
+    by dividing the number of likes by the number of views.
+
+    Returns a bar plot of the like ratios for these specific videos. If the 
+    DataFrame is empty, lacks the required columns, or contains no titles 
+    matching the criteria, an empty subplot is returned.
+    """"""
+    if (not df.empty and 'Likes' in df.columns and 'Views' in df.columns and
+        'Title' in df.columns):
+        title_pattern = re.compile('(how|what)', flags=re.IGNORECASE)
+        filtered_df = df[df['Title'].apply(lambda x: bool(title_pattern.
+            search(x)))]
+        if not filtered_df.empty:
+            filtered_df = filtered_df.copy()
+            filtered_df['Like Ratio'] = filtered_df['Likes'] / filtered_df[
+                'Views']
+            fig, ax = plt.subplots(figsize=(10, 6))
+            bars = ax.bar(filtered_df['Title'], filtered_df['Like Ratio'])
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width() / 2.0, height,
+                    f'{height:.2f}', ha='center', va='bottom')
+            ax.set_ylabel('Like Ratio', fontsize=12)
+            ax.set_xticklabels(filtered_df['Title'], rotation=45, ha='right')
+            ax.tick_params(axis='both', which='major', labelsize=10)
+            return ax
+    fig, ax = plt.subplots()
+    return ax
+",1,
+"from datetime import datetime
+import pytz
+
+
+def task_func(date_str, from_tz, to_tz):
+    try:
+        date = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+        from_tz_obj = pytz.timezone(from_tz)
+        to_tz_obj = pytz.timezone(to_tz)
+        converted_date = from_tz_obj.localize(date).astimezone(to_tz_obj)
+        return converted_date.strftime('%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        raise
+","import re
+from collections import defaultdict
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from nltk.corpus import stopwords
+
+
+def task_func(text: str, n: int=2) ->tuple[pd.DataFrame, plt.Axes]:
+    """"""
+    Analyzes a text string by removing duplicate consecutive words and stopwords,
+    generating a square co-occurrence matrix of words, and plotting this matrix.
+
+    Args:
+        text (str): Input text to be analyzed.
+        n (int, optional): Size of n-grams for the co-occurrence matrix. Defaults to 2.
+
+    Returns:
+        tuple[pd.DataFrame, plt.Axes]: A tuple containing a square co-occurrence matrix
+            as a DataFrame and the plot object as Axes.
+    """"""
+
+    def remove_duplicates(text):
+        return re.sub('\\b(\\w+)( \\1\\b)+', '\\1', text)
+
+    def remove_stopwords(text):
+        stop_words = set(stopwords.words('english'))
+        return ' '.join([word.lower() for word in text.split() if word not in
+            stop_words])
+    processed_text = remove_duplicates(text)
+    processed_text = remove_stopwords(processed_text)
+    if not processed_text.strip():
+        fig, ax = plt.subplots()
+        return pd.DataFrame(), ax
+    words = processed_text.split()
+    ngram_counts = defaultdict(int)
+    for i in range(len(words) - n + 1):
+        ngram = ' '.join(words[i:i + n])
+        ngram_counts[ngram] += 1
+    unique_ngrams = list(ngram_counts.keys())
+    matrix_size = len(unique_ngrams)
+    co_occurrence_matrix = np.zeros((matrix_size, matrix_size))
+    for i in range(matrix_size):
+        for j in range(matrix_size):
+            if i == j:
+                continue
+            ngram1 = unique_ngrams[i]
+            ngram2 = unique_ngrams[j]
+            count1 = ngram_counts[ngram1]
+            count2 = ngram_counts[ngram2]
+            co_occurrence_matrix[i][j] = (count1 + count2) / 2
+    df_columns = pd.Index(unique_ngrams, name='n-grams')
+    matrix_df = pd.DataFrame(co_occurrence_matrix, index=df_columns,
+        columns=df_columns)
+    fig, ax = plt.subplots(figsize=(10, 8))
+    cax = ax.matshow(matrix_df, cmap='hot')
+    fig.colorbar(cax)
+    ax.set_xticks(np.arange(len(df_columns)))
+    ax.set_yticks(np.arange(len(df_columns)))
+    ax.set_xticklabels(df_columns, rotation=90, ha='right')
+    ax.set_yticklabels(df_columns)
+    return matrix_df, ax
+",0,
+"import pandas as pd
+import numpy as np
+from typing import List
+
+
+def task_func(l: List) ->pd.DataFrame:
+    if not l:
+        return pd.DataFrame()
+    shuffled_list = l.copy()
+    np.random.shuffle(shuffled_list)
+    df = pd.DataFrame([shuffled_list for _ in range(5)])
+
+    def roll_row(row):
+        rolled_row = np.roll(row, -5)
+        return rolled_row
+    df = df.apply(roll_row, axis=1, result_type='expand')
+    return df
+","import json
+from collections import Counter
+import os
+
+
+def task_func(json_files_path, key):
+    """"""
+    Count the occurrence of a particular key in all json files in a specified directory and return a dictionary with the values of the specified key and their counts.
+    """"""
+    counts = {}
+    for filename in os.listdir(json_files_path):
+        if filename.endswith('.json'):
+            filepath = os.path.join(json_files_path, filename)
+            try:
+                with open(filepath, 'r') as f:
+                    data = json.load(f)
+                    if key in data:
+                        value = data[key]
+                        if value in counts:
+                            counts[value] += 1
+                        else:
+                            counts[value] = 1
+            except FileNotFoundError:
+                pass
+            except json.JSONDecodeError:
+                pass
+    return dict(counts)
+",0,
+"import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+
+def task_func(df: pd.DataFrame, target_column: str, target_values: list=None):
+    """"""
+    Perform linear regression on a DataFrame after replacing non-target values with zeros.
+
+    Args:
+        df: Input DataFrame containing numeric values.
+        target_column: Name of the target column for regression.
+        target_values: List of values to retain in the DataFrame. All other values are replaced with zero.
+
+    Returns:
+        LinearRegression model trained on the processed data.
+    """"""
+    if not isinstance(df, pd.DataFrame):
+        raise ValueError('Input must be a pandas DataFrame.')
+    if df.empty:
+        raise ValueError('DataFrame cannot be empty.')
+    if target_column not in df.columns:
+        raise ValueError(
+            f""Target column '{target_column}' not found in DataFrame."")
+    if any(not np.issubdtype(dtype, np.number) for dtype in df.dtypes):
+        raise ValueError('All columns must contain numeric values.')
+    if target_values is not None:
+        mask = df.isin(target_values)
+        df = df.where(mask, 0)
+    X = df.drop(columns=[target_column])
+    y = df[target_column]
+    model = LinearRegression()
+    model.fit(X, y)
+    return model
+","import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+
+
+def task_func(students: list[str], seed: int=42):
+    """"""Generate random scores for students and create a bar plot.""""""
+    np.random.seed(seed)
+    df = pd.DataFrame({'Student': students, 'Score': np.random.randint(0, 
+        100, len(students))})
+    df_sorted = df.sort_values('Score')
+    ax = df_sorted.plot.bar(x='Student', y='Score', legend=False)
+    ax.set_ylabel('Score')
+    return df_sorted, ax
+",0,
+"import os
+import subprocess
+import logging
+import unittest
+
+
+def task_func(filepath):
+    try:
+        result = subprocess.check_call(['g++', filepath, '-o', 'example'])
+        logging.info('Compilation successful')
+    except subprocess.CalledProcessError as e:
+        logging.error(f'Compilation failed: {e}')
+    except FileNotFoundError:
+        logging.error('Compiler not found')
+    except Exception as e:
+        logging.error(f'An unexpected error occurred: {e}')
+","import numpy as np
+import matplotlib.pyplot as plt
+ARRAY_SIZE = 10000
+
+
+def task_func():
+    rng = np.random
+    arr = rng.randint(1, 100, size=ARRAY_SIZE)
+    m1 = np.mean(arr)
+    m2 = np.mean(arr)
+    mean_val = m1
+    std_val = np.std(arr)
+    fig, ax = plt.subplots()
+    ax.hist(arr, bins='auto')
+    ax.set_title('Histogram of Random Integers')
+    ax.set_xlabel('Value')
+    ax.set_ylabel('Frequency')
+    return arr, mean_val, std_val, ax
+",0,
+"import random
+import matplotlib.pyplot as plt
+
+
+def task_func(n_rows=1000):
+    if n_rows <= 0:
+        raise ValueError('Number of rows must be positive')
+    strings = [''.join(random.choice('abcdefghijklmnopqrstuvwxyz') for _ in
+        range(3)) for _ in range(n_rows)]
+    freqs = {}
+    for s in strings:
+        if s not in freqs:
+            freqs[s] = 1
+        else:
+            freqs[s] += 1
+    top_strings = sorted(freqs, key=freqs.get, reverse=True)[:30]
+    plt.bar(top_strings, [freqs[s] for s in top_strings])
+    return plt.gca()
+","import random
+from typing import List, Optional
+
+
+def task_func(obj_list: List, attr: str, top_n: int, seed: float) ->(List[
+    int], Optional[float]):
+    if not obj_list:
+        return [], None
+    values = [getattr(obj, attr) for obj in obj_list]
+    sorted_values = sorted(values, reverse=True)[:top_n]
+    random.seed(seed)
+    all_attributes = [getattr(obj, attr) for obj in obj_list]
+    random_value = random.choice(all_attributes)
+    return sorted_values, random_value
+",0,
+"import matplotlib.pyplot as plt
+
+
+def task_func(column, data):
+    """"""
+    Analyzes and visualizes statistical properties of a specified weather data column.
+
+    Args:
+        column (str): The column to analyze. Valid columns include 'Temperature', 
+            'Humidity', 'Wind Speed', and 'Precipitation'.
+        data (list of lists): Weather data where each inner list contains the format:
+            [Date (datetime object), Temperature (int), Humidity (int), Wind Speed (int), Precipitation (float)]
+
+    Returns:
+        dict: A dictionary containing statistical measures and a plot.
+            'sum': Sum of values in the specified column.
+            'mean': Mean of values in the specified column.
+            'min': Minimum value in the specified column.
+            'max': Maximum value in the specified column.
+            'plot': Matplotlib BarContainer object of the histogram plot.
+    """"""
+    if not data:
+        return {'sum': 0, 'mean': np.nan, 'min': np.inf, 'max': -np.inf,
+            'plot': plt.bar([], [])}
+    col_index = {'Temperature': 1, 'Humidity': 2, 'Wind Speed': 3,
+        'Precipitation': 4}
+    values = [row[col_index[column]] for row in data]
+    sum_val = sum(values)
+    mean_val = np.mean(values) if len(values) > 0 else np.nan
+    min_val = min(values) if len(values) > 0 else np.inf
+    max_val = max(values) if len(values) > 0 else -np.inf
+    fig, ax = plt.subplots()
+    bars = ax.bar([str(row[0]) for row in data], values)
+    return {'sum': sum_val, 'mean': mean_val, 'min': min_val, 'max':
+        max_val, 'plot': bars}
+","import numpy as np
+import matplotlib.pyplot as plt
+
+
+def task_func():
+    """"""Plots y = x^2 using matplotlib with specified styling and data points.""""""
+    X = np.linspace(-10, 10, 400)
+    Y = X ** 2
+    plt.figure(figsize=(8, 6))
+    plt.plot(X, Y, color='blue', linestyle='-', linewidth=1.5)
+    plt.title('y = x^2', fontsize=14, fontweight='bold')
+    plt.xlabel('x', fontsize=12)
+    plt.ylabel('y', fontsize=12)
+    plt.grid(True, color='gray', linestyle='--', linewidth=0.5)
+    plt.show()
+",0,
+"import numpy as np
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+
+def task_func(array=np.array([['0', '1', '2'], ['a', 'bb', 'ccc'], ['332',
+    '33', '2'], ['33', '22', '3']])):
+    indices = np.where(array[:, 0] == '332')[0]
+    if len(indices) < 2:
+        plt.hist(indices, bins='auto')
+        plt.show()
+        return (np.mean(indices), 'N/A', 'N/A', 'N/A') if indices.size else (
+            'N/A', 'N/A', 'N/A', 'N/A')
+    mean = np.mean(indices)
+    variance = np.var(indices)
+    skewness = stats.skew(indices)
+    kurtosis = stats.kurtosis(indices)
+    plt.hist(indices, bins='auto')
+    plt.title('Distribution of Indices')
+    plt.xlabel('Indices')
+    plt.ylabel('Frequency')
+    plt.show()
+    return mean, variance, skewness, kurtosis
+","import matplotlib.pyplot as plt
+import numpy as np
+
+
+def task_func(n, seed=None):
+    if not isinstance(n, int):
+        raise TypeError('n must be an integer')
+    if n < 0:
+        raise ValueError('n must be a non-negative integer')
+    if seed is not None:
+        np.random.seed(seed)
+    x = [np.random.rand() for _ in range(n)]
+    y = [np.random.rand() for _ in range(n)]
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.scatter(x, y)
+    ax.set_title('Scatter plot of random points')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    return fig, list(zip(x, y))
+",0,
+"import logging
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+
+
+def task_func(df):
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError('Input must be a pandas DataFrame.')
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    if numeric_cols.empty:
+        raise ValueError('DataFrame must contain at least one numeric column.')
+    df_filled = df.copy()
+    df_scaled = df.copy()
+    for col in numeric_cols:
+        mean_val = df_filled[col].mean()
+        df_filled[col] = df_filled[col].fillna(mean_val)
+    scaler = StandardScaler()
+    df_scaled[numeric_cols] = scaler.fit_transform(df_filled[numeric_cols])
+    corr = np.corrcoef(df_scaled[numeric_cols].T)
+    fig, ax = plt.subplots(figsize=(6, 5))
+    im = ax.imshow(corr, cmap='coolwarm', interpolation='nearest')
+    ax.set_xticks(np.arange(len(numeric_cols)))
+    ax.set_yticks(np.arange(len(numeric_cols)))
+    ax.set_xticklabels(numeric_cols)
+    ax.set_yticklabels(numeric_cols)
+    plt.setp(ax.get_xticklabels(), rotation=45, ha='right', rotation_mode=
+        'anchor')
+    fig.colorbar(im, ax=ax)
+    return df_scaled, ax
+","import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
+
+def task_func(mu=0, sigma=1):
+    """"""Generates a subplot of a normal distribution with specified mean and std dev.""""""
+    x_values = np.linspace(mu - 3 * sigma, mu + 3 * sigma, num=100)
+    y_values = norm.pdf(x_values, loc=mu, scale=sigma)
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.plot(x_values, y_values, color='blue', linestyle='-', linewidth=2)
+    ax.set_title(f'Normal Distribution (μ={mu}, σ={sigma})')
+    ax.set_xlabel('x')
+    ax.set_ylabel('Probability Density')
+    return ax
+",0,
+"import random
+
+
+def task_func(MIN_WORDS, MAX_WORDS, WORDS_POOL):
+    word_count = random.randint(MIN_WORDS, MAX_WORDS)
+    words = []
+    for _ in range(word_count):
+        words.append(random.choice(WORDS_POOL))
+    if len(words) % 2 == 0:
+        first_half = words[:len(words) // 2]
+        second_half = first_half[::-1]
+    else:
+        first_half = words[:len(words) // 2 + 1]
+        second_half = first_half[:-1][::-1]
+    palindrome_words = first_half + second_half
+    return ' '.join(palindrome_words)
+","import random
+
+
+def task_func(MIN_WORDS, MAX_WORDS, WORDS_POOL):
+    pool_set = set(WORDS_POOL)
+    length = random.randint(MIN_WORDS, MAX_WORDS)
+    first_half = []
+    for _ in range(length // 2):
+        first_half.append(random.choice(list(pool_set)))
+    middle_word = None
+    if length % 2:
+        middle_word = random.choice(list(pool_set))
+    second_half = []
+    for w in first_half[::-1]:
+        second_half.append(w)
+    sentence_words = first_half
+    if middle_word:
+        sentence_words.append(middle_word)
+    sentence_words.extend(second_half)
+    return ' '.join(sentence_words)
+",1,
+"import re
+import subprocess
+import os
+import signal
+from typing import List, Set
+
+
+def task_func(process_name: str) ->int:
+
+    def get_pids() ->Set[int]:
+        try:
+            output = subprocess.check_output(['pgrep', '-f', process_name]
+                ).decode()
+            pids = set(re.findall('\\d+', output))
+            return pids
+        except subprocess.CalledProcessError:
+            return set()
+
+    def terminate_process(pid: int) ->None:
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except OSError as e:
+            pass
+    pids = get_pids()
+    if not pids:
+        return 0
+    for pid in pids:
+        terminate_process(pid)
+    return len(pids)
+","import subprocess
+import os
+import signal
+
+
+def task_func(process_name: str) ->int:
+    try:
+        raw = subprocess.check_output(['pgrep', '-f', process_name])
+    except subprocess.CalledProcessError:
+        return 0
+    pids = {int(pid.decode()) for pid in raw.splitlines() if pid}
+    for pid in pids:
+        os.kill(pid, signal.SIGTERM)
+    return len(pids)
+",1,
+"import pathlib
+from typing import Dict, Any
+import re
+
+
+def task_func(dir_path: str) ->Dict[str, int]:
+
+    def count_errors(content: str) ->int:
+        return len(re.findall('\\berror\\b', content, flags=re.IGNORECASE))
+
+    def get_relpath(file_path: str, base_dir: str) ->str:
+        file = pathlib.Path(file_path)
+        base = pathlib.Path(base_dir)
+        return str(file.relative_to(base))
+    result: Dict[str, int] = {}
+    if not pathlib.Path(dir_path).is_dir():
+        raise ValueError('Specified directory does not exist.')
+    txt_files = list(pathlib.Path(dir_path).rglob('*.txt'))
+    for file in txt_files:
+        try:
+            content = file.read_text()
+            count = count_errors(content)
+            relpath = get_relpath(str(file), dir_path)
+            result[relpath] = count
+        except Exception as e:
+            pass
+    return result
+","import re
+import os
+from collections import defaultdict
+
+
+def task_func(dir_path):
+    file_info = FileScanner().scan_directory(dir_path)
+    error_counts = ErrorCounter().count_errors(file_info)
+    return error_counts
+
+
+class FileScanner:
+
+    def scan_directory(self, directory):
+        if not os.path.isdir(directory):
+            raise ValueError('Specified directory does not exist.')
+        file_paths = []
+        for root, _, files in os.walk(directory):
+            for file in files:
+                if file.endswith('.txt'):
+                    file_path = os.path.join(root, file)
+                    relative_path = os.path.relpath(file_path, directory)
+                    file_paths.append((relative_path, file_path))
+        return file_paths
+
+
+class ErrorCounter:
+
+    def count_errors(self, file_info):
+        error_counts = defaultdict(int)
+        for relative_path, file_path in file_info:
+            try:
+                with open(file_path, 'r') as f:
+                    content = f.read()
+                matches = re.findall('\\berror\\b', content, flags=re.
+                    IGNORECASE)
+                error_counts[relative_path] = len(matches)
+            except Exception:
+                pass
+        return dict(error_counts)
+",1,
+"import pandas as pd
+import random
+
+
+def task_func(data_list, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    if not all(isinstance(item, str) for item in data_list):
+        raise TypeError('data_list must contain only strings')
+    df = pd.DataFrame({'Original String': data_list})
+
+    def apply_operation(s):
+        substrings = s.split(', ')
+        operation = random.choice(['remove', 'replace', 'shuffle', 'randomize']
+            )
+        if operation == 'remove':
+            if len(substrings) > 1:
+                random_substring = random.choice(substrings)
+                substrings.remove(random_substring)
+                return ', '.join(substrings)
+            else:
+                return s
+        elif operation == 'replace':
+            if len(substrings) > 0:
+                index = random.randint(0, len(substrings) - 1)
+                substrings[index] = 'random_string'
+                return ', '.join(substrings)
+            else:
+                return s
+        elif operation == 'shuffle':
+            if len(substrings) > 0:
+                random.shuffle(substrings)
+                return ', '.join(substrings)
+            else:
+                return s
+        elif operation == 'randomize':
+            if len(substrings) > 0:
+                positions = random.sample(range(len(substrings)), len(
+                    substrings))
+                return ', '.join([substrings[i] for i in positions])
+            else:
+                return s
+    modified_list = []
+    for s in data_list:
+        modified_s = apply_operation(s)
+        modified_list.append(modified_s)
+    df['Modified String'] = modified_list
+    return df
+","import pandas as pd
+import random
+from typing import List, Optional
+
+
+def task_func(data_list: List[str], seed: Optional[int]=None) ->pd.DataFrame:
+    if not data_list:
+        return pd.DataFrame(columns=['Original String', 'Modified String'])
+    operations = ['remove', 'replace', 'shuffle', 'randomize']
+    random.seed(seed)
+
+    def process_string(s):
+        substrings = s.split(', ')
+        if len(substrings) == 1:
+            return s
+        operation = random.choice(operations)
+        if operation == 'remove':
+            if len(substrings) > 1:
+                index = random.randint(0, len(substrings) - 1)
+                del substrings[index]
+        elif operation == 'replace':
+            index = random.randint(0, len(substrings) - 1)
+            substrings[index] = f'random_{index}'
+        elif operation == 'shuffle':
+            random.shuffle(substrings)
+        elif operation == 'randomize':
+            random_order = list(range(len(substrings)))
+            random.shuffle(random_order)
+            substrings = [substrings[i] for i in random_order]
+        return ', '.join(substrings)
+    original = data_list.copy()
+    modified = []
+    for s in data_list:
+        if isinstance(s, str):
+            modified_s = process_string(s)
+            modified.append(modified_s)
+        else:
+            raise TypeError('Input list must only contain strings.')
+    df = pd.DataFrame({'Original String': original, 'Modified String':
+        modified})
+    return df
+",1,
+"import pandas as pd
+import os
+import numpy as np
+from ast import literal_eval
+from collections import defaultdict
+import logging
+import warnings
+
+
+def task_func(directory):
+    max_length = -1
+    selected_file = None
+    if not os.path.exists(directory) or len(os.listdir(directory)) == 0:
+        return pd.DataFrame(columns=['email', 'list', 'sum', 'mean', 'median']
+            ), None
+    for filename in os.listdir(directory):
+        if filename.endswith('.csv'):
+            current_length = len(filename)
+            if current_length > max_length:
+                max_length = current_length
+                selected_file = filename
+    if selected_file is None:
+        return pd.DataFrame(columns=['email', 'list', 'sum', 'mean', 'median']
+            ), None
+    try:
+        df = pd.read_csv(os.path.join(directory, selected_file))
+        if 'email' not in df.columns or 'list' not in df.columns:
+            raise ValueError('Required columns are missing')
+        try:
+            df['list'] = df['list'].apply(literal_eval)
+        except (ValueError, SyntaxError) as e:
+            logging.error(
+                f'Failed to convert list for file {selected_file}: {e}')
+            return pd.DataFrame(columns=['email', 'list', 'sum', 'mean',
+                'median']), None
+        try:
+            df['sum'] = df['list'].apply(lambda x: sum(x))
+            df['mean'] = df['list'].apply(lambda x: np.mean(x))
+            df['median'] = df['list'].apply(lambda x: np.median(x))
+        except TypeError as e:
+            logging.error(
+                f'Failed to calculate statistics for file {selected_file}: {e}'
+                )
+            return pd.DataFrame(columns=['email', 'list', 'sum', 'mean',
+                'median']), None
+        fig, ax = plt.subplots()
+        df['median'].hist(ax=ax, bins=10)
+        return df, ax.get_figure()
+    except Exception as e:
+        logging.error(f'Error processing file {selected_file}: {e}')
+        return pd.DataFrame(columns=['email', 'list', 'sum', 'mean', 'median']
+            ), None
+","import random
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.figure import Figure
+import numpy as np
+
+
+def task_func(n_points=100, random_seed=None):
+    """"""
+    Generates 3D points and creates a scatter plot.
+
+    Args:
+        n_points (int): Number of points to generate. Defaults to 100.
+        random_seed (int): Seed for random number generation. Defaults to None.
+
+    Returns:
+        tuple: Contains the generated points and the plot axes.
+
+    Raises:
+        ValueError: If n_points is less than or equal to zero.
+        TypeError: If n_points is not an integer or if random_seed is invalid.
+    """"""
+    if not isinstance(n_points, int):
+        raise TypeError('n_points must be an integer')
+    if n_points <= 0:
+        raise ValueError('n_points must be greater than zero')
+    if random_seed is not None and not isinstance(random_seed, int):
+        raise TypeError('random_seed must be an integer or None')
+    random.seed(random_seed)
+    points = [[random.uniform(0, 1) for _ in range(3)] for _ in range(n_points)
+        ]
+    fig = Figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter([p[0] for p in points], [p[1] for p in points], [p[2] for p in
+        points])
+    return np.array(points), ax
+",0,
+"import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def task_func(df, groups=None):
+    required_columns = {'group', 'date', 'value'}
+    if not required_columns.issubset(df.columns):
+        raise ValueError(
+            ""DataFrame must contain 'group', 'date', and 'value' columns"")
+    fig, ax = plt.subplots()
+    if groups is None:
+        groups = ['A', 'B', 'C', 'D', 'E']
+    for group in groups:
+        group_data = df[df['group'] == group]
+        ax.scatter(group_data['date'], group_data['value'], label=group)
+    ax.set_xlabel('Date (ordinal)')
+    ax.set_ylabel('Value')
+    ax.set_title('Scatterplot of Values for Each Group Over Time')
+    ax.legend()
+    return ax
+","import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+def task_func(df, groups=None):
+    plt.figure(figsize=(12, 6))
+    sns.scatterplot(x='date', y='value', hue='group', data=df)
+    plt.title('Scatterplot of Values for Each Group Over Time')
+    plt.xlabel('Date (ordinal)')
+    plt.ylabel('Value')
+    if groups is not None:
+        df_filtered = df[df['group'].isin(groups)]
+        plt.scatter(df_filtered['date'], df_filtered['value'], label=groups)
+        plt.legend()
+    return plt.gca()
+",1,
+"import os
+import re
+from typing import Dict, List, Any
+
+
+def task_func(directory_path: str, regex_pattern: str) ->Dict[str, List[str]]:
+    result = {}
+    if not os.path.exists(directory_path):
+        return result
+    for filename in os.listdir(directory_path):
+        file_path = os.path.join(directory_path, filename)
+        if os.path.isfile(file_path) and filename.endswith('.txt'):
+            with open(file_path, 'r') as f:
+                content = f.read()
+                matches = re.findall(regex_pattern, content)
+                result[filename] = matches
+    return result
+","import json
+from itertools import combinations
+
+
+def task_func(json_list, r):
+    try:
+        data = json.loads(json_list)
+        number_list = data['number_list']
+        combinations_list = list(combinations(number_list, r))
+        return combinations_list
+    except KeyError:
+        raise KeyError(""Invalid JSON format. 'number_list' key not found."")
+    except TypeError:
+        raise TypeError(
+            ""Invalid input. 'json_list' must be a string and 'r' must be an integer.""
+            )
+    except Exception as e:
+        raise Exception(f'An unexpected error occurred: {e}')
+",0,
+"import statistics
+
+
+def task_func(LETTERS):
+    data = {}
+    for letter in LETTERS:
+        base = ord(letter) - ord('a') + 1
+        data[letter] = [base, base + 1, base + 2]
+    sorted_items = sorted(data.items(), key=lambda kv: statistics.mean(kv[1
+        ]), reverse=True)
+    return dict(sorted_items)
+","import pandas as pd
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+
+
+def task_func(n_rows: int, scale_cols: list[int], columns: list[str]=['A',
+    'B', 'C', 'D', 'E'], random_seed: int=None) ->pd.DataFrame:
+    if not isinstance(n_rows, int) or n_rows < 0:
+        raise ValueError('n_rows must be a non-negative integer')
+    if not isinstance(scale_cols, list) or any(not isinstance(col, int) for
+        col in scale_cols):
+        raise ValueError('scale_cols must be a list of integers')
+    if not all(0 <= col < len(columns) for col in scale_cols):
+        raise ValueError('Columns to scale are out of range')
+    df = pd.DataFrame()
+    np.random.seed(random_seed)
+    data = np.random.randint(0, 100, size=(n_rows, len(columns)))
+    df = pd.DataFrame(data, columns=columns)
+    for col in scale_cols:
+        scaler = StandardScaler()
+        df[columns[col]] = scaler.fit_transform(df[[columns[col]]])
+    return df
+",0,
+"import pandas as pd
+from typing import List, Any
+from random import shuffle
+
+
+def task_func(l: List[Any], n_groups: int=5) ->pd.DataFrame:
+    if not isinstance(l, list):
+        raise TypeError('Input must be a list.')
+    if n_groups <= 0:
+        raise ValueError('n_groups must be a positive integer.')
+    if len(l) == 0:
+        return pd.DataFrame()
+    shuffled_list = l.copy()
+    shuffle(shuffled_list)
+    rows = []
+    for i in range(n_groups):
+        row = shuffled_list[i:] + shuffled_list[:i]
+        rows.append(row)
+    return pd.DataFrame(rows)
+","import numpy as np
+import pandas as pd
+
+
+def task_func(l, n_groups=5):
+    shuffled_list = np.random.permutation(l)
+    df = pd.DataFrame([shuffled_list for _ in range(n_groups)])
+    for i in range(n_groups):
+        row = df.iloc[i]
+        first_n_groups = row[:n_groups]
+        rest_of_row = row[n_groups:]
+        df.iloc[i] = np.concatenate((rest_of_row, first_n_groups))
+    return df
+",1,
+"import os
+
+
+def task_func(log_file_path, keywords):
+    formatted_lines = []
+    try:
+        with open(log_file_path, 'r') as f:
+            for line in f:
+                if any(keyword in line for keyword in keywords):
+                    formatted_line = (
+                        f""{keyword} {line.split(' ', 1)[1].strip()} "" for
+                        keyword in keywords if keyword in line)
+                    formatted_lines.extend(formatted_line)
+    except FileNotFoundError as e:
+        raise e
+    return formatted_lines
+","import sys
+from typing import List, Optional
+
+
+def task_func(log_file_path: str, keywords: List[str]) ->Optional[List[str]]:
+    if not keywords:
+        return []
+    try:
+        with open(log_file_path, 'r') as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        raise
+    except UnicodeDecodeError:
+        raise
+    result = []
+    for line in lines:
+        matched = False
+        for kw in keywords:
+            if kw in line:
+                parts = line.strip().split(maxsplit=2)
+                if len(parts) >= 3:
+                    formatted = (
+                        f'{kw:>{20}} : {parts[1]:>{20}} : {parts[2]:>{20}}')
+                    result.append(formatted)
+                else:
+                    result.append(f'Line format unexpected: {line.strip()}')
+                matched = True
+                break
+        if not matched:
+            continue
+    return result if result else []
+",1,
+"import base64
+from cryptography.fernet import Fernet
+
+
+def task_func(message: str, encryption_key: str) ->str:
+    """"""
+    Encrypts a message with a symmetric encryption key using Fernet encryption,
+    and then encode the encrypted message using base64.
+
+    Args:
+        message (str): The message to be encrypted and encoded.
+        encryption_key (str): The key used for symmetric encryption.
+
+    Returns:
+        str: The base64 encoded encrypted message.
+    """"""
+    key_bytes = encryption_key.encode()
+    encoded_key = base64.urlsafe_b64encode(key_bytes)
+    fernet = Fernet(encoded_key)
+    encrypted_message = fernet.encrypt(message.encode())
+    encoded_message = base64.b64encode(encrypted_message)
+    return encoded_message.decode()
+","import json
+import os
+from pathlib import Path
+from typing import List, Optional
+
+
+def task_func(directory: str, string: str) ->List[str]:
+
+    def is_json_file(file_path: str) ->bool:
+        try:
+            with open(file_path, 'r') as f:
+                json.load(f)
+                return True
+        except (IOError, json.JSONDecodeError):
+            return False
+
+    def search_file(file_path: str) ->Optional[str]:
+        if string in file_data:
+            return str(file_path)
+        return None
+    result_files = []
+    directory_path = Path(directory).resolve()
+    for root, _, files in os.walk(str(directory_path)):
+        for file in files:
+            file_path = os.path.join(root, file)
+            if is_json_file(file_path):
+                try:
+                    with open(file_path, 'r') as f:
+                        file_data = json.load(f)
+                        result = search_file(file_path)
+                        if result:
+                            result_files.append(result)
+                except Exception as e:
+                    continue
+    return result_files
+",0,
+"import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import random
+
+
+def task_func(array):
+    if not array or not all(len(sublist) == 5 for sublist in array):
+        raise ValueError(
+            'Input array must be a 2D list with sublists of length 5.')
+    df = pd.DataFrame(array, columns=['A', 'B', 'C', 'D', 'E'])
+    corr_matrix = df.corr()
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+    plt.title('Correlation Heatmap')
+    plt.show()
+    return df, sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+","import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def task_func(array):
+    if not array:
+        raise ValueError
+    columns = ['A', 'B', 'C', 'D', 'E']
+    data_dict = {col: [] for col in columns}
+    for row in array:
+        if len(row) != 5:
+            raise ValueError
+        for i, val in enumerate(row):
+            if not isinstance(val, (int, float)):
+                raise ValueError
+            data_dict[columns[i]].append(val)
+    df = pd.DataFrame(data_dict)
+    corr_matrix = df.corr()
+    heatmap = sns.heatmap(corr_matrix)
+    return df, heatmap
+",1,
+"import numpy as np
+from pandas import DataFrame
+
+
+def task_func(data, columns):
+    df = DataFrame(data)
+    if not isinstance(df, DataFrame) or not all(isinstance(x, list) for x in
+        data.values()):
+        raise ValueError('Invalid input format')
+    if not all(col in df.columns for col in columns):
+        raise ValueError('Column names do not match the DataFrame')
+    result_df = df.copy()
+    for col in columns:
+        series = df[col]
+        min_val = series.min()
+        max_val = series.max()
+        if min_val == max_val:
+            result_df[col] = 0.0
+        else:
+            normalized_series = (series - min_val) / (max_val - min_val)
+            result_df[col] = normalized_series
+    return result_df
+","import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+
+
+def task_func(data, columns):
+    df = pd.DataFrame(data)
+    scaler = MinMaxScaler()
+    normalized_df = df.copy()
+    normalized_df[columns] = scaler.fit_transform(normalized_df[columns])
+    return normalized_df
+",1,
+"import json
+from statistics import mean
+from typing import List, Tuple, Dict, Optional
+
+
+def task_func(data_list: List[Tuple[str, ...]], json_file_name: str=
+    'mean_values.json') ->Dict[str, float]:
+    positions = {}
+    if not data_list:
+        return positions
+    num_positions = len(data_list[0]) - 1
+    for i in range(1, num_positions + 1):
+        position_data = [item[i] for item in data_list]
+        mean_value = mean(position_data)
+        positions[f'Position {i}'] = float(mean_value)
+    if json_file_name:
+        with open(json_file_name, 'w') as f:
+            json.dump(positions, f)
+    return positions
+","import json
+from statistics import mean
+from typing import List, Dict, Any
+from collections import defaultdict
+
+
+def task_func(data_list: List[tuple], json_file_name: str='mean_values.json'
+    ) ->Dict[str, Any]:
+    position_data = defaultdict(list)
+    for data in data_list:
+        if not isinstance(data, tuple) or len(data) < 1:
+            continue
+        pos = str(data[0])
+        values = list(data[1:])
+        for i, value in enumerate(values):
+            try:
+                num_value = float(value)
+                position_data[f'Position {i + 1}'].append(num_value)
+            except (ValueError, TypeError):
+                pass
+    results = {}
+    for pos_key in position_data:
+        values = position_data[pos_key]
+        if not values:
+            continue
+        try:
+            mean_val = mean(values)
+            results[pos_key] = float(mean_val)
+        except statistics.StatisticsError:
+            results[pos_key] = None
+    with open(json_file_name, 'w') as f:
+        json.dump(results, f)
+    return results
+",1,
+"import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
+
+def task_func(data=None):
+    if data is None:
+        data = np.random.rand(100, 5)
+    replaced = np.where(data < 0.5, 0, data)
+    scaled = StandardScaler().fit_transform(replaced)
+    return pd.DataFrame(scaled)
+","from datetime import datetime, timedelta
+import holidays
+
+
+def task_func(start_date=datetime(2023, 1, 1), end_date=datetime(2023, 12, 
+    31), country='US'):
+    """"""
+    Generates a list of business days between start and end dates.
+
+    Args:
+        start_date (datetime): The start date. Defaults to January 1, 2023.
+        end_date (datetime): The end date. Defaults to December 31, 2023.
+        country (str): ISO country code for public holidays. Default is 'US'.
+
+    Returns:
+        list[datetime]: A list of business days as datetime objects.
+    """"""
+    if not isinstance(start_date, datetime) or not isinstance(end_date,
+        datetime):
+        raise ValueError('Invalid date types')
+    if end_date < start_date:
+        raise ValueError('End date cannot be before start date')
+    business_days = []
+    current_date = start_date
+    us_holidays = holidays.country_holidays(country)
+    while current_date <= end_date:
+        if current_date.weekday() >= 5:
+            current_date += timedelta(days=1)
+            continue
+        if current_date in us_holidays:
+            current_date += timedelta(days=1)
+            continue
+        business_days.append(current_date)
+        current_date += timedelta(days=1)
+    return business_days
+",0,
+"import pandas as pd
+import numpy as np
+from random import choice, seed as set_seed
+
+
+def task_func(num_of_students, seed=None, name_list=None, gender_list=None,
+    age_range=(15, 20), score_range=(50, 100)):
+    if num_of_students <= 0:
+        raise ValueError('num_of_students must be positive.')
+    set_seed(seed)
+    np.random.seed(seed)
+    name_list = name_list or ['John', 'Mike', 'Sara', 'Emma', 'Nick']
+    gender_list = gender_list or ['Male', 'Female']
+    data = []
+    for _ in range(num_of_students):
+        name = choice(name_list)
+        age = np.random.randint(age_range[0], age_range[1] + 1)
+        gender = choice(gender_list)
+        score = np.random.randint(score_range[0], score_range[1] + 1)
+        data.append([name, age, gender, score])
+    columns = ['Name', 'Age', 'Gender', 'Score']
+    df = pd.DataFrame(data, columns=columns)
+    return df
+","import pandas as pd
+import numpy as np
+import random
+from typing import Optional, List, Tuple
+from random import choice
+
+
+def task_func(num_of_students: int, seed: int=42, name_list: Optional[List[
+    str]]=None, gender_list: Optional[List[str]]=None, age_range: Tuple[int,
+    int]=(15, 20), score_range: Tuple[int, int]=(50, 100)) ->pd.DataFrame:
+    if num_of_students <= 0:
+        raise ValueError('num_of_students must be positive.')
+    np.random.seed(seed)
+    random.seed(seed)
+    name_list = ['John', 'Mike', 'Sara', 'Emma', 'Nick'
+        ] if not name_list else name_list
+    gender_list = ['Male', 'Female'] if not gender_list else gender_list
+    data_dict = {'Name': [], 'Age': [], 'Gender': [], 'Score': []}
+    for _ in range(num_of_students):
+        data_dict['Name'].append(choice(name_list))
+        data_dict['Age'].append(np.random.randint(age_range[0], age_range[1
+            ] + 1))
+        data_dict['Gender'].append(choice(gender_list))
+        data_dict['Score'].append(np.random.randint(score_range[0], 
+            score_range[1] + 1))
+    return pd.DataFrame(data_dict)
+",1,

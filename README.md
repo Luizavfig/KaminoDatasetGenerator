@@ -1,8 +1,79 @@
-# KaminoDatasetGenerator
-A pipeline to generate type 4 clones using LLMs and deterministic validation.
+# Kamino Clone Dataset Generator
 
-<img src="pipeline/resources/approach.png" alt="Approach workflow" width="500"/>
+> A hybrid pipeline for generating **Type-IV (semantic) code clones** using Large Language Models (LLMs) and deterministic validation.
 
+---
+
+## 🧠 Overview
+
+**Kamino** is a fully automated pipeline designed to generate **behaviorally equivalent but syntactically diverse implementations** of programs (Type-IV clones).
+
+Unlike naive LLM-based generation, Kamino enforces:
+- ✅ **Semantic correctness** (via test execution)
+- ✅ **Syntactic diversity** (via CodeBLEU filtering)
+- ✅ **Non-redundancy** (via clustering)
+
+This makes it suitable for:
+- Training ML-based clone detectors  
+- Benchmark creation  
+- Program transformation studies  
+
+---
+
+## 🏗️ Pipeline Architecture
+
+The pipeline consists of six main stages: 
+``Normalization → Generation → Syntactic Filtering → Testing → Repairing → Clustering``
+
+
+---
+
+## ⚙️ Detailed Pipeline 
+
+The pipeline is organized into six modular steps.  
+Each step is documented in detail in the [`doc/`](./doc) folder:
+
+### 📦 Step 1: Normalization
+Standardizes input data into a unified format, extracting code, tests, metadata, and generating AST representations.
+
+➡️ See details: [Normalization](./doc/step1.md)
+
+---
+
+### 🤖 Step 2: Clone Generation
+Generates diverse candidate implementations using configurable LLM prompting strategies and refactorings.
+
+➡️ See details: [Clone Generation](./doc/step2.md)
+
+---
+
+### 🔍 Step 3: Syntactic Filtering
+Removes clones that are too similar to the original using a CodeBLEU-based similarity threshold.
+
+➡️ See details: [Syntactic Filtering](./doc/step3.md)
+
+---
+
+### 🧪 Step 4: Semantic Testing
+Executes unit tests to ensure behavioral equivalence between generated clones and the original implementation.
+
+➡️ See details: [Semantic Testing](./doc/step4.md)
+
+---
+
+### 🛠️ Step 5: Repairing Clone Candidates
+Attempts to fix partially correct clones using LLM-based re-prompting and test feedback.
+
+➡️ See details: [Repairing Clone Candidates](./doc/step5.md)
+
+---
+
+### 🧬 Step 6: Representative Selection
+Applies clustering to select a diverse, non-redundant subset of valid clones.
+
+➡️ See details: [Representative Selection](./doc/step6.md)
+
+---
 
 ## Requirements 
 * A hugging face token must be placed in a .env file in the root.
