@@ -1,5 +1,5 @@
-code_a,code_b,label,manual_label1,manual_label2
-"import pandas as pd
+id,code_a,code_b,label,manual_label1,manual_label2
+0,"import pandas as pd
 import matplotlib.pyplot as plt
 from random import randint
 
@@ -30,7 +30,7 @@ def task_func(num_rows=5, rand_range=(0, 100)):
     plt.ylabel('Values')
     return ax.get_figure()
 ",1,4,
-"import numpy as np
+1,"import numpy as np
 import itertools
 import json
 
@@ -75,7 +75,7 @@ def task_func(data_list: list, json_file_name: str) ->Dict[str, float]:
     save_to_json(results, json_file_name)
     return results
 ",1,4,
-"from collections import defaultdict
+2,"from collections import defaultdict
 from random import randint
 
 def task_func(dict1):
@@ -113,7 +113,7 @@ def task_func(department_dict):
         result[dept_code] = salaries
     return result
 ",1,4,
-"import os
+3,"import os
 import shutil
 
 # Constants
@@ -243,7 +243,7 @@ class TestCases(unittest.TestCase):
         self.assertFalse(errors)
         self.assertEqual(backup_dir, expected_backup_dir)
 ",1,3,
-"import re
+4,"import re
 import json
 
 # Constants
@@ -316,7 +316,7 @@ def task_func_data_structure(ip_address):
     except ValueError:
         return 'Invalid IP address received'
 ",1,0,
-"import bisect
+5,"import bisect
 import statistics
 
 def task_func(df, column, value):
@@ -365,7 +365,7 @@ def task_func(df, column, value):
     except Exception as e:
         raise ValueError(f'An error occurred during processing: {str(e)}')
 ",1,4,
-"import csv
+6,"import csv
 import json
 import os
 
@@ -408,7 +408,7 @@ def task_func(file_name):
     _write_json(records, json_file)
     return json_file
 ",1,4,
-"import pandas as pd
+7,"import pandas as pd
 import matplotlib.pyplot as plt
 from random import randint
 
@@ -444,7 +444,7 @@ def task_func(num_types=5, integer_range=(0, 100)):
     df.plot(kind='barh', stacked=True, ax=ax)
     return fig, ax
 ",1,3,
-"import pandas as pd
+8,"import pandas as pd
 from scipy.stats import zscore
 import matplotlib.pyplot as plt
 
@@ -513,7 +513,7 @@ def task_func(df):
     ax.set_ylabel('Z-Score')
     return zscore_df, fig
 ",1,4,
-"from collections import Counter
+9,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -533,7 +533,7 @@ def task_func(word_dict):
         counter.update(word)
     return dict(counter)
 ",1,4,
-"import numpy as np
+10,"import numpy as np
 import itertools
 import json
 
@@ -567,7 +567,7 @@ def task_func(data_list, json_file_name):
         json.dump(mean_values, f)
     return mean_values
 ",1,4,
-"import os
+11,"import os
 import logging
 
 def task_func(directory):
@@ -618,7 +618,7 @@ def task_func(directory):
                 logging.error(f'Failed to remove {file_name}: {str(e)}')
     return len(removed_files), removed_files
 ",1,3,
-"import pandas as pd
+12,"import pandas as pd
 import numpy as np
 
 
@@ -666,7 +666,7 @@ def task_func(column, data):
     ax.set_title(f'Bar Chart of {column}')
     return stats, ax
 ",1,4,
-"import numpy as np
+13,"import numpy as np
 import pandas as pd
 from dateutil.parser import parse
 
@@ -699,7 +699,7 @@ def task_func(dates_str_list):
         result.append(counts.get(day, 0))
     return pd.Series(result, index=DAYS_OF_WEEK)
 ",1,4,
-"import xlwt
+14,"import xlwt
 import os
 
 # Constants
@@ -729,7 +729,7 @@ def task_func(values, filename):
         pass
     return os.path.abspath(filename)
 ",1,0,
-"import os
+15,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -762,7 +762,7 @@ def task_func(log_file_path, keywords):
         strip().split(None, 2)) if len(parts) == 3]
     return formatted_lines
 ",1,4,
-"from sklearn.preprocessing import MinMaxScaler
+16,"from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
 def task_func(myList):
@@ -795,7 +795,7 @@ def task_func(myList):
     except Exception as e:
         raise RuntimeError(f'An error occurred during normalization: {e}')
 ",1,4,
-"from random import sample
+17,"from random import sample
 import matplotlib.pyplot as plt
 
 
@@ -831,7 +831,7 @@ def task_func(df: pd.DataFrame, tuples: list[tuple], n_plots: int) ->tuple[
         plots.append((cols[0], cols[1]))
     return filtered_df, plots
 ",1,3,
-"import numpy as np
+18,"import numpy as np
 import random
 import itertools
 import pandas as pd
@@ -906,7 +906,7 @@ def task_func_alternative() ->pd.DataFrame:
     pairs = generator.generate_pairs()
     return generator.create_dataframe(pairs)
 ",1,0,
-"from bs4 import BeautifulSoup
+19,"from bs4 import BeautifulSoup
 import requests
 
 # Constants
@@ -950,7 +950,7 @@ def task_func(url: str, from_encoding: str, use_lxml: bool=False) ->Optional[
     except Exception as e:
         return None
 ",1,1,
-"import os
+20,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -987,7 +987,7 @@ def task_func(log_file_path: str, keywords: list):
         raise FileNotFoundError(f'Log file {log_file_path} does not exist.')
     return formatted_lines
 ",1,4,
-"from collections import Counter
+21,"from collections import Counter
 import re
 
 def task_func(word: str) -> list:
@@ -1066,7 +1066,7 @@ def task_func_bad(word: str):
                 best_pair = pair
     return [(best_pair, max_count)]
 ",1,4,
-"from collections import defaultdict
+22,"from collections import defaultdict
 from random import randint
 
 def task_func(dict1):
@@ -1094,7 +1094,7 @@ def task_func(dict1):
         emp_data[dept_code] = salaries
     return emp_data
 ",1,4,
-"import numpy as np
+23,"import numpy as np
 import pandas as pd
 
 # Constants
@@ -1125,7 +1125,7 @@ def task_func(length, min_value=0, max_value=1):
         df.columns)})
     return result_df
 ",1,4,
-"import heapq
+24,"import heapq
 import random
 
 
@@ -1145,7 +1145,7 @@ def task_func(list_length: int, k: int) ->Tuple[List[int], List[int]]:
     top_k = sorted(rand_list, reverse=True)[:k]
     return rand_list, top_k
 ",1,4,
-"import cgi
+25,"import cgi
 import http.server
 import json
 
@@ -1232,7 +1232,7 @@ class PostRequestHandler:
 def task_func():
     return PostRequestHandler
 ",1,4,
-"import pandas as pd
+26,"import pandas as pd
 import itertools
 from random import shuffle
 
@@ -1261,7 +1261,7 @@ def task_func(letters=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
     df = pd.DataFrame({'Letter': letter_list, 'Category': category_list})
     return df
 ",1,4,
-"import xlwt
+27,"import xlwt
 import os
 
 # Constants
@@ -1303,7 +1303,7 @@ def task_func(values: List[OrderedDict], filename: str) ->str:
     wb.save(filename)
     return os.path.abspath(filename)
 ",1,4,
-"import pandas as pd
+28,"import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -1351,7 +1351,7 @@ def task_func(s1, s2):
     plt.ylabel('Value')
     return ax, intersection_count
 ",1,4,
-"import os
+29,"import os
 import pandas as pd
 import re
 
@@ -1407,7 +1407,7 @@ def task_func(file_path: str) ->pd.DataFrame:
         messages})
     return df
 ",1,3,
-"import re
+30,"import re
 import json
 import requests
 
@@ -1441,7 +1441,7 @@ def task_func(data_url: str):
         return 'Invalid url input'
     return [name for name in names if '[' not in name and ']' not in name]
 ",1,4,
-"import pandas as pd
+31,"import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -1493,7 +1493,7 @@ def task_func(s1, s2):
     intersection_count = len(intersection)
     return ax, intersection_count
 ",1,1,
-"import heapq
+32,"import heapq
 import random
 
 
@@ -1524,7 +1524,7 @@ def task_func(list_length: int, k: int) ->Tuple[List[int], List[int]]:
     top_k = sorted_rand_list[:k]
     return rand_list, top_k
 ",1,4,
-"import pandas as pd
+33,"import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
@@ -1582,7 +1582,7 @@ def task_func(csv_file_path, target_column='target', test_size=0.2,
     report = classification_report(y_test, y_pred)
     return report
 ",1,4,
-"from sklearn.preprocessing import MinMaxScaler
+34,"from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
 def task_func(myList):
@@ -1604,7 +1604,7 @@ def task_func(myList):
         stats_dup['min'])) for x in myList]
     return np.array(normalized)
 ",1,4,
-"from collections import Counter
+35,"from collections import Counter
 import random
 import string
 
@@ -1636,7 +1636,7 @@ def task_func(list_of_lists):
         result[letter] += 1
     return dict(result)
 ",1,4,
-"from geopy.distance import geodesic
+36,"from geopy.distance import geodesic
 import folium
 
 def task_func(dic):
@@ -1682,7 +1682,7 @@ def task_func(dic):
             distances[loc1, loc2] = distance
     return map_obj, distances
 ",1,4,
-"import numpy as np
+37,"import numpy as np
 import itertools
 import json
 
@@ -1717,7 +1717,7 @@ def task_func(data_list, json_file_name):
         json.dump(result, f)
     return result
 ",1,3,
-"import re
+38,"import re
 import pandas as pd
 
 
@@ -1770,7 +1770,7 @@ def task_func(df: pd.DataFrame, column_name: str, pattern: str) ->pd.DataFrame:
         _word_reverser(x, pattern))
     return result_df
 ",1,4,
-"import numpy as np
+39,"import numpy as np
 from itertools import combinations
 
 def task_func(n):
@@ -1787,7 +1787,7 @@ def task_func(n):
         raise ValueError('n must be a positive integer')
     return list(itertools.combinations(range(1, n + 1), 2))
 ",1,3,
-"import xlwt
+40,"import xlwt
 import os
 
 # Constants
@@ -1827,7 +1827,7 @@ def task_func(values, filename):
     wb.save(filename)
     return os.path.abspath(filename)
 ",1,3,
-"import pandas as pd
+41,"import pandas as pd
 import matplotlib.pyplot as plt
 from random import randint
 
@@ -1872,7 +1872,7 @@ def task_func(num_rows=5, rand_range=(0, 100)):
     df.plot(kind='bar', stacked=True, ax=ax)
     return fig
 ",1,4,
-"import subprocess
+42,"import subprocess
 import os
 import shutil
 import sys
@@ -1923,7 +1923,7 @@ def task_func(filename):
         return -1
     return 0
 ",1,3,
-"import itertools
+43,"import itertools
 import random
 
 def task_func(t, n):
@@ -1936,7 +1936,7 @@ def task_func(t, n):
 def task_func(t, n):
     return tuple(random.sample(t, n))
 ",1,4,
-"import numpy as np
+44,"import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
@@ -1994,7 +1994,7 @@ def task_func(**kwargs):
     r_squared = model.score(X_test, y_test.ravel())
     return r_squared, model
 ",1,4,
-"import pickle
+45,"import pickle
 import os
 from sklearn.datasets import make_classification
 
@@ -2032,7 +2032,7 @@ def task_func(data: np.ndarray, target: np.ndarray) ->tuple:
     except Exception as e:
         raise RuntimeError(f'Error saving/loading dataset: {e}')
 ",1,4,
-"import pandas as pd
+46,"import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 def task_func(d, target='z'):
@@ -2068,7 +2068,7 @@ def task_func(d, target='z'):
     model = LinearRegression().fit(X_scaled, y)
     return model
 ",1,4,
-"import sqlite3
+47,"import sqlite3
 import pandas as pd
 import os
 
@@ -2103,7 +2103,7 @@ def task_func(db_name: str, table_name: str, csv_path: str='data.csv') ->str:
         if 'conn' in locals():
             conn.close()
 ",1,4,
-"import numpy as np
+48,"import numpy as np
 import random
 import itertools
 import pandas as pd
@@ -2157,7 +2157,7 @@ def task_func():
         rows.append([f'{planet}:{element}' for element in ELEMENTS])
     return pd.DataFrame(rows, columns=ELEMENTS)
 ",1,4,
-"import xlwt
+49,"import xlwt
 import os
 
 # Constants
@@ -2201,7 +2201,7 @@ def task_func(values, filename):
     workbook.save(filename)
     return os.path.abspath(filename)
 ",1,4,
-"import cgi
+50,"import cgi
 import http.server
 import json
 
@@ -2267,7 +2267,7 @@ class TaskHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_error(405)
 ",1,0,
-"import numpy as np
+51,"import numpy as np
 from itertools import combinations
 
 def task_func(n):
@@ -2299,7 +2299,7 @@ def task_func(n):
             result.append((i, j))
     return result
 ",1,4,
-"import pandas as pd
+52,"import pandas as pd
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 
@@ -2363,7 +2363,7 @@ def task_func(s1, s2, n_clusters=3):
     ax.set_title('K-Means Clustering')
     return labels, ax
 ",1,3,
-"import numpy as np
+53,"import numpy as np
 from itertools import combinations
 
 def task_func(n):
@@ -2400,7 +2400,7 @@ def task_func(n):
                 result.append((first, second))
     return result
 ",1,4,
-"import itertools
+54,"import itertools
 import random
 
 def task_func(t, n):
@@ -2415,7 +2415,7 @@ def task_func(t, n):
     combinations = random.sample(t, n)
     return combinations
 ",1,4,
-"from collections import Counter
+55,"from collections import Counter
 import re
 
 def task_func(word: str) -> list:
@@ -2456,7 +2456,7 @@ def task_func(word: str) ->list:
     max_pair = max(pair_freq, key=pair_freq.get)
     return [(max_pair, pair_freq[max_pair])]
 ",1,4,
-"import random
+56,"import random
 import string
 
 POSSIBLE_LETTERS = ['a', 'b', 'c']
@@ -2483,7 +2483,7 @@ def task_func(word):
     random.shuffle(pairs)
     return pairs[:POSSIBLE_LETTERS]
 ",1,4,
-"import os
+57,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -2526,7 +2526,7 @@ def task_func(log_file_path, keywords):
         return []
     return results
 ",1,4,
-"import os
+58,"import os
 import random
 
 def task_func(directory, n_files):
@@ -2607,7 +2607,7 @@ class TestCases(unittest.TestCase):
         for file in os.listdir(directory):
             self.assertEqual(file.split('.')[-1], 'txt')
 ",1,1,
-"import xlwt
+59,"import xlwt
 import os
 
 # Constants
@@ -2648,7 +2648,7 @@ def task_func(values, filename):
     wb.save(filename)
     return os.path.abspath(filename)
 ",1,3,
-"import pandas as pd
+60,"import pandas as pd
 import pytz
 
 
@@ -2702,7 +2702,7 @@ def task_func(articles, timezone):
     return grouped_df.astype({'count': 'int64', 'min': 'int32', 'max':
         'int32', 'mean': 'float64'})
 ",1,4,
-"from collections import Counter
+61,"from collections import Counter
 import re
 
 def task_func(word: str) -> list:
@@ -2739,7 +2739,7 @@ def task_func(word: str):
         logger.exception('Error processing word')
         return []
 ",1,4,
-"import random
+62,"import random
 import string
 
 POSSIBLE_LETTERS = ['a', 'b', 'c']
@@ -2773,7 +2773,7 @@ def task_func(word):
             result.append(random.choice(pairs))
     return result
 ",1,4,
-"import pandas as pd
+63,"import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 def task_func(d, target='z'):
@@ -2812,7 +2812,7 @@ def task_func(d, *args, **kwargs):
     model = LinearRegression().fit(X_np, y_np)
     return model
 ",1,4,
-"import pandas as pd
+64,"import pandas as pd
 import random
 from sklearn.preprocessing import StandardScaler
 
@@ -2865,7 +2865,7 @@ def task_func(*args):
     normalized = [((x - mean_val) / std_dev) for x in raw_values]
     return pd.DataFrame(normalized, columns=['Normalized Value'])
 ",1,4,
-"from geopy.distance import geodesic
+65,"from geopy.distance import geodesic
 import folium
 
 def task_func(dic):
@@ -2910,7 +2910,7 @@ def task_func(locations_dict):
                 distance_pairs[loc1, loc2] = distance
     return folium_map, distance_pairs
 ",1,4,
-"import numpy as np
+66,"import numpy as np
 import itertools
 
 def task_func(data_list):
@@ -2949,7 +2949,7 @@ def task_func(data_list: List[Tuple]):
             mean_values.append(mean_val)
     return mean_values
 ",1,4,
-"from sklearn.preprocessing import MinMaxScaler
+67,"from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
 def task_func(myList):
@@ -2978,7 +2978,7 @@ def task_func(myList: List[float]) ->np.ndarray:
     except Exception as e:
         raise ValueError(f'An error occurred during normalization: {e}')
 ",1,4,
-"from sklearn.preprocessing import MinMaxScaler
+68,"from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
 def task_func(myList):
@@ -3041,7 +3041,7 @@ def task_func_secure(myList):
         logging.error(f'Error normalizing values: {str(e)}')
         raise
 ",1,0,
-"import os
+69,"import os
 import pandas as pd
 
 
@@ -3080,7 +3080,7 @@ def task_func(filename: str) ->pd.DataFrame:
         raise
     return df
 ",1,4,
-"from collections import Counter
+70,"from collections import Counter
 import re
 
 def task_func(word: str) -> list:
@@ -3114,7 +3114,7 @@ def task_func(word: str) ->list:
     frequency = pair_counts[most_common_pair]
     return [(most_common_pair, frequency)]
 ",1,4,
-"import csv
+71,"import csv
 import json
 import os
 
@@ -3172,7 +3172,7 @@ def task_func(file_name):
         raise Exception(f'Error writing JSON file: {e}')
     return json_file_name
 ",1,4,
-"import random
+72,"import random
 import matplotlib.pyplot as plt
 
 # Constants
@@ -3220,7 +3220,7 @@ def task_func(dict1):
     ylabel = 'Number of Employees'
     return create_histogram(salaries, title, xlabel, ylabel)
 ",1,4,
-"import pandas as pd
+73,"import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 def task_func(data, columns):
@@ -3251,7 +3251,7 @@ def task_func(data, columns):
                 normalized_df[col] = (df[col] - min_val) / (max_val - min_val)
     return normalized_df
 ",1,4,
-"import numpy as np
+74,"import numpy as np
 import pandas as pd
 from dateutil.parser import parse
 
@@ -3309,7 +3309,7 @@ def task_func(dates_str_list: list) ->pd.Series:
         index=weekdays)
     return series
 ",1,4,
-"import re
+75,"import re
 import pandas as pd
 
 
@@ -3348,7 +3348,7 @@ def task_func(df, column_name, pattern):
     new_df[column_name] = new_df[column_name].apply(process)
     return new_df
 ",1,3,
-"import random
+76,"import random
 from collections import Counter
 
 def task_func(values, weights, n_samples):
@@ -3373,7 +3373,7 @@ def task_func(values, weights, n_samples):
                 break
     return dict(histogram)
 ",1,4,
-"import pandas as pd
+77,"import pandas as pd
 import numpy as np
 from random import choice, seed as set_seed
 
@@ -3424,7 +3424,7 @@ def task_func(num_of_students: int, seed: int=42, name_list: Optional[List[
             score_range[1] + 1))
     return pd.DataFrame(data_dict)
 ",1,3,
-"import requests
+78,"import requests
 import json
 import pandas as pd
 import seaborn as sns
@@ -3481,7 +3481,7 @@ def task_func(url, parameters):
     ax.set_title('Correlation Heatmap')
     return df, ax
 ",1,4,
-"import numpy as np
+79,"import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -3518,7 +3518,7 @@ def task_func():
     plt.show()
     return df
 ",1,3,
-"import pandas as pd
+80,"import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 def task_func(data, columns):
@@ -3558,7 +3558,7 @@ def task_func(data, columns):
             df[col] = (df[col] - col_min) / (col_max - col_min)
     return df
 ",1,4,
-"import pandas as pd
+81,"import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 def task_func(data, columns):
@@ -3583,7 +3583,7 @@ def task_func(data, columns):
     normalized_df[columns] = scaler.fit_transform(normalized_df[columns])
     return normalized_df
 ",1,1,
-"import random
+82,"import random
 from collections import Counter
 
 def task_func(values, weights, n_samples):
@@ -3615,7 +3615,7 @@ def task_func(values, weights, n_samples):
             histogram[value] = 1
     return histogram
 ",1,4,
-"from collections import Counter
+83,"from collections import Counter
 import pandas as pd
 
 
@@ -3654,7 +3654,7 @@ def task_func(list_of_menuitems: List[List[str]]) ->pd.DataFrame:
     df.index.name = 'MenuItem'
     return df
 ",1,4,
-"import csv
+84,"import csv
 import json
 import os
 
@@ -3701,7 +3701,7 @@ def task_func(file_name):
     save_data_to_json(data, json_file)
     return json_file
 ",1,4,
-"import pandas as pd
+85,"import pandas as pd
 from scipy.stats import zscore
 import matplotlib.pyplot as plt
 
@@ -3752,7 +3752,7 @@ def task_func(df):
     ax.set_ylabel('Z-Score')
     return zscore_df, fig
 ",1,4,
-"import numpy as np
+86,"import numpy as np
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
@@ -3803,7 +3803,7 @@ def task_func(P, T, tensor_shape=(3, 3, 3)):
     ax.set_ylabel('Principal Component 2')
     return pca_result, ax
 ",1,3,
-"import pandas as pd
+87,"import pandas as pd
 import itertools
 from random import shuffle
 
@@ -3854,7 +3854,7 @@ def task_func(letters: List[str]=None, categories: List[str]=None
         expanded_categories})
     return df
 ",1,4,
-"import heapq
+88,"import heapq
 import random
 
 
@@ -3874,7 +3874,7 @@ def task_func(list_length: int, k: int):
     largest_numbers = heapq.nlargest(k, numbers)
     return numbers, list(largest_numbers)
 ",1,4,
-"import heapq
+89,"import heapq
 import random
 
 def task_func(obj_list, attr, top_n=5, seed=None):
@@ -3915,7 +3915,7 @@ def task_func(obj_list: List[Any], attr: str, top_n: int, seed: int) ->Tuple[
     rand_value = random.choice(values)
     return top_values, rand_value
 ",1,4,
-"import pandas as pd
+90,"import pandas as pd
 import numpy as np
 
 
@@ -3962,7 +3962,7 @@ def task_func(column, data):
     ax.set_ylabel(column)
     return stats, ax
 ",1,4,
-"import pandas as pd
+91,"import pandas as pd
 import string
 
 def task_func(word):
@@ -3985,7 +3985,7 @@ def task_func(word):
     df = pd.DataFrame({'Letter': list(word), 'Position': positions})
     return df
 ",1,3,
-"from geopy.distance import geodesic
+92,"from geopy.distance import geodesic
 import folium
 
 def task_func(dic):
@@ -4022,7 +4022,7 @@ def task_func(dic):
         name1, coord1), (name2, coord2) in combinations(locs, 2)}
     return fmap, distances
 ",1,4,
-"from collections import Counter
+93,"from collections import Counter
 import random
 import string
 
@@ -4050,7 +4050,7 @@ def task_func(list_of_lists):
         _ = counts[ch]
     return counts
 ",1,4,
-"import json
+94,"import json
 from collections import Counter
 import random
 
@@ -4092,7 +4092,7 @@ def task_func(my_dict, keys):
             f.write(f'{key}: {updated_dict[key]}\n')
     return updated_dict, json_path, txt_path
 ",1,1,
-"import itertools
+95,"import itertools
 import random
 
 def task_func(t, n):
@@ -4123,7 +4123,7 @@ def task_func(t, n):
     selected_combination = select_random_combination(all_combinations)
     return tuple(selected_combination)
 ",1,4,
-"import itertools
+96,"import itertools
 import random
 
 def task_func(t, n):
@@ -4144,7 +4144,7 @@ def task_func(t, n):
     selected_combination = itertools.islice(combinations, 1)
     return next(selected_combination)
 ",1,4,
-"import os
+97,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -4182,7 +4182,7 @@ def task_func(log_file_path, keywords):
                     formatted_lines.append(formatted_line)
     return formatted_lines
 ",1,3,
-"from collections import Counter
+98,"from collections import Counter
 import itertools
 from random import randint
 
@@ -4206,7 +4206,7 @@ def task_func(T1, RANGE=100):
     generated_nums = random.choices(range(RANGE + 1), k=nums_to_generate)
     return Counter(generated_nums)
 ",1,3,
-"import os
+99,"import os
 import pandas as pd
 import re
 
@@ -4264,7 +4264,7 @@ def task_func(file_path: str) ->pd.DataFrame:
     df = create_dataframe(logs)
     return df
 ",1,4,
-"import re
+100,"import re
 import json
 
 # Constants
@@ -4295,7 +4295,7 @@ def task_func(ip_address):
     except (json.JSONDecodeError, KeyError, ValueError) as e:
         return str(e)
 ",1,3,
-"import math
+101,"import math
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -4336,7 +4336,7 @@ def task_func(list_input):
     axes = create_line_chart(cumsum)
     return cumsum, axes
 ",1,4,
-"import numpy as np
+102,"import numpy as np
 import secrets
 import hashlib
 import base64
@@ -4384,7 +4384,7 @@ def task_func(num, from_base, to_base, alphabet):
     base64_encoded = base64.b64encode(hashed_num)
     return base64_encoded.decode(), salt
 ",1,3,
-"import numpy as np
+103,"import numpy as np
 import secrets
 import hashlib
 import base64
@@ -4425,7 +4425,7 @@ def task_func(num, from_base, to_base, alphabet):
     encoded_hash = base64.b64encode(digest).decode()
     return encoded_hash, salt
 ",1,4,
-"import cgi
+104,"import cgi
 import http.server
 import json
 
@@ -4490,7 +4490,7 @@ async def task_func(request):
     return web.Response(text=json.dumps(success_response), status=200,
         content_type='application/json')
 ",1,4,
-"import os
+105,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -4535,7 +4535,7 @@ def task_func(log_file_path: str, keywords: list):
                         f'Line format unexpected: {line.strip()}')
     return formatted_lines
 ",1,4,
-"import numpy as np
+106,"import numpy as np
 import pandas as pd
 from dateutil.parser import parse
 
@@ -4573,7 +4573,7 @@ def task_func(dates_str_list):
     result = pd.Series(weekday_counts, index=DAYS_OF_WEEK)
     return result
 ",1,4,
-"import random
+107,"import random
 from collections import Counter
 
 def task_func(values, weights, n_samples):
@@ -4600,7 +4600,7 @@ def task_func(values, weights, n_samples):
                 break
     return histogram
 ",1,4,
-"from collections import Counter
+108,"from collections import Counter
 import pandas as pd
 
 
@@ -4625,7 +4625,7 @@ def task_func(list_of_menuitems):
     df.index.name = 'MenuItem'
     return df
 ",1,4,
-"import pandas as pd
+109,"import pandas as pd
 import numpy as np
 
 
@@ -4682,7 +4682,7 @@ def task_func(column, data):
     ax.set_xlabel('Product')
     return stats, ax
 ",1,4,
-"from collections import Counter
+110,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -4710,7 +4710,7 @@ def task_func(animal_dict):
     concatenated = ''.join(filtered_keys)
     return dict(Counter(concatenated))
 ",1,4,
-"import xlwt
+111,"import xlwt
 import os
 
 # Constants
@@ -4749,7 +4749,7 @@ def task_func(values, filename):
     wb.save(filename)
     return os.path.abspath(filename)
 ",1,3,
-"import numpy as np
+112,"import numpy as np
 import itertools
 
 def task_func(data_list):
@@ -4778,7 +4778,7 @@ def task_func(data_list):
     result = [calculate_mean(col) for col in transposed_complete]
     return result
 ",1,4,
-"import pandas as pd
+113,"import pandas as pd
 from scipy.spatial.distance import pdist, squareform
 
 
@@ -4824,7 +4824,7 @@ def task_func(array):
             distance_matrix[j, i] = dist
     return df, pd.DataFrame(distance_matrix)
 ",1,,
-"import pandas as pd
+114,"import pandas as pd
 import numpy as np
 
 
@@ -4905,7 +4905,7 @@ def task_func(column: str, data: list) ->tuple:
     ax.set_ylabel(f'{column}')
     return stats, ax
 ",1,,
-"from itertools import zip_longest
+115,"from itertools import zip_longest
 from scipy.spatial import distance
 
 def task_func(points):
@@ -4955,7 +4955,7 @@ def task_func(points):
             p2, dist)
     return distances
 ",1,,
-"import pandas as pd
+116,"import pandas as pd
 import json
 import numpy as np
 
@@ -5011,7 +5011,7 @@ def task_func(json_file: str) ->Tuple[pd.DataFrame, plt.Axes]:
     ax = plot_sum_mean(df)
     return df, ax
 ",1,,
-"import pandas as pd
+117,"import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 def task_func(d, target='z'):
@@ -5038,7 +5038,7 @@ def task_func(d, target='z'):
     model.fit(np.array(X), np.array(y))
     return model
 ",1,,
-"from itertools import zip_longest
+118,"from itertools import zip_longest
 from scipy.spatial import distance
 
 def task_func(points):
@@ -5108,7 +5108,7 @@ def task_func(points):
         distances.append(dist)
     return distances
 ",1,4,
-"import random
+119,"import random
 from collections import Counter
 
 def task_func(values, weights, n_samples):
@@ -5138,7 +5138,7 @@ def task_func(values, weights, n_samples):
         histogram[values[idx]] += 1
     return dict(histogram)
 ",1,,
-"import math
+120,"import math
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -5180,7 +5180,7 @@ def task_func(list_input):
     ax.set_ylabel('Cumulative Sum')
     return cumsum, ax
 ",1,,
-"import numpy as np
+121,"import numpy as np
 import base64
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -5245,7 +5245,7 @@ def task_func(num: str, from_base: int, to_base: int, private_key: rsa.
     b64_encoded = base64.b64encode(signature)
     return b64_encoded.decode('utf-8')
 ",1,,
-"import cgi
+122,"import cgi
 import http.server
 import json
 
@@ -5303,7 +5303,7 @@ def task_func(data):
         return {'status': 'error', 'message': 'An unexpected error occurred.'
             }, 500
 ",1,,
-"import xlwt
+123,"import xlwt
 import os
 
 # Constants
@@ -5367,7 +5367,7 @@ def task_func(values, filename):
         raise
     return abs_path
 ",1,,
-"import cgi
+124,"import cgi
 import http.server
 import json
 
@@ -5455,7 +5455,7 @@ class PostRequestHandler(http.server.BaseHTTPRequestHandler):
 def task_func() ->type[PostRequestHandler]:
     return PostRequestHandler
 ",1,4,
-"from collections import defaultdict
+125,"from collections import defaultdict
 from random import randint
 
 def task_func(dict1):
@@ -5485,7 +5485,7 @@ def task_func(dict1):
             pass
     return dict(employee_data)
 ",1,,
-"import bisect
+126,"import bisect
 import statistics
 
 def task_func(df, column, value):
@@ -5528,7 +5528,7 @@ def task_func(df: pd.DataFrame, column: str, value: float) ->tuple[np.
     df.hist(column=column, bins=10, ax=ax)
     return greater_avg, num_greater_value, ax
 ",1,,
-"from collections import Counter
+127,"from collections import Counter
 import random
 import string
 
@@ -5559,7 +5559,7 @@ def task_func(list_of_lists: List[List[Any]]) ->Dict[str, int]:
         counts[letter] = counts.get(letter, 0) + 1
     return counts
 ",1,,
-"from collections import Counter
+128,"from collections import Counter
 import pandas as pd
 
 
@@ -5584,7 +5584,7 @@ def task_func(list_of_menuitems):
     df.rename_axis('MenuItem', inplace=True)
     return df
 ",1,,
-"import pandas as pd
+129,"import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 def task_func(data, columns):
@@ -5621,7 +5621,7 @@ def task_func(data, columns):
         logging.error(f'An error occurred during data normalization: {str(e)}')
         raise
 ",1,,
-"import itertools
+130,"import itertools
 import random
 
 def task_func(t, n):
@@ -5653,7 +5653,7 @@ def task_func(t, n):
     rand_key = random.randint(0, len(comb_dict) - 1)
     return comb_dict[rand_key]
 ",1,,
-"from collections import Counter
+131,"from collections import Counter
 import random
 import string
 
@@ -5674,7 +5674,7 @@ def task_func(list_of_lists):
         result[letter] = result.get(letter, 0) + 1
     return result
 ",1,,
-"import os
+132,"import os
 import pandas as pd
 import re
 
@@ -5713,7 +5713,7 @@ def task_func(file_path: str):
         ) if entries else pd.DataFrame(columns=['Timestamp', 'Level',
         'Message'])
 ",1,,
-"from geopy.distance import geodesic
+133,"from geopy.distance import geodesic
 import folium
 
 def task_func(dic):
@@ -5751,7 +5751,7 @@ def task_func(dic):
             distances[location[0], other_location[0]] = distance
     return folium_map, distances
 ",1,1,
-"from collections import Counter
+134,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -5776,7 +5776,7 @@ def task_func(word_dict):
         count_dict[letter] = count
     return count_dict
 ",1,4,
-"import numpy as np
+135,"import numpy as np
 import pandas as pd
 from dateutil.parser import parse
 
@@ -5820,7 +5820,7 @@ def task_func(dates_str_list):
             pass
     return distribution
 ",1,4,
-"import pickle
+136,"import pickle
 import os
 from sklearn.datasets import make_classification
 
@@ -5869,7 +5869,7 @@ def task_func(data, target):
             logger.error(f'Failed to remove save.pkl: {e}')
     return loaded_data, loaded_target
 ",1,,
-"import os
+137,"import os
 import random
 
 def task_func(directory, n_files):
@@ -5907,7 +5907,7 @@ def task_func(directory, n_files):
         files.append(file_path)
     return directory
 ",1,,
-"import pandas as pd
+138,"import pandas as pd
 import string
 
 def task_func(word):
@@ -5936,7 +5936,7 @@ def task_func(word):
     data = {'Letter': list(word), 'Position': letter_positions}
     return pd.DataFrame(data)
 ",1,,
-"import pandas as pd
+139,"import pandas as pd
 import json
 import numpy as np
 
@@ -5971,7 +5971,7 @@ def task_func(json_file):
     ax = df[['sum', 'mean']].plot(kind='bar')
     return df, ax
 ",1,,
-"import pandas as pd
+140,"import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -6024,7 +6024,7 @@ def task_func(start_date='2016-01-01', periods=13, freq='WOM-2FRI', seed=None):
     ax.set_ylabel('Price')
     return df, ax
 ",1,,
-"from collections import Counter
+141,"from collections import Counter
 import random
 import string
 
@@ -6051,7 +6051,7 @@ def task_func(list_of_lists):
         raise ValueError('Error processing the nested list') from e
     return dict(counts)
 ",1,,
-"import random
+142,"import random
 import re
 
 
@@ -6090,7 +6090,7 @@ def task_func(target_words: List[str], n_sentences: int, vocabulary: List[str]
         sentences.append(modified_sentence.lower())
     return sentences
 ",1,3,
-"import pandas as pd
+143,"import pandas as pd
 import numpy as np
 
 
@@ -6130,7 +6130,7 @@ def task_func(column, data):
     plt.title(f'Bar Chart of {column}')
     return stats, plt.gca()
 ",1,,
-"import numpy as np
+144,"import numpy as np
 from scipy.stats import norm
 import matplotlib.pyplot as plt
 
@@ -6161,7 +6161,7 @@ def task_func(mean, std_dev, num_samples):
     ax.set_title(f'mean = {mean:.2f},  std = {std_dev:.2f}')
     return samples, fig
 ",1,,
-"import os
+145,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -6212,7 +6212,7 @@ def task_func(log_file_path, keywords):
     except UnicodeDecodeError:
         raise ValueError('Unable to decode the log file content')
 ",1,,
-"import binascii
+146,"import binascii
 import hashlib
 
 
@@ -6252,7 +6252,7 @@ def task_func(input_string, *args):
     else:
         return digest
 ",1,4,
-"import os
+147,"import os
 import pandas as pd
 
 
@@ -6291,7 +6291,7 @@ def task_func(filename: str) ->Optional[pd.DataFrame]:
     except Exception as e:
         raise RuntimeError(f'Error processing the CSV file: {e}')
 ",1,,
-"import numpy as np
+148,"import numpy as np
 from scipy import stats
 
 def task_func(df):
@@ -6322,7 +6322,7 @@ def task_func(df):
             results[col] = np.nan
     return results
 ",1,,
-"import sqlite3
+149,"import sqlite3
 import pandas as pd
 import os
 
@@ -6352,7 +6352,7 @@ def task_func(db_name: str, table_name: str, csv_path: str='data.csv') ->str:
         csv_path = export_to_csv(table_data, csv_path)
     return csv_path
 ",1,4,
-"import bisect
+150,"import bisect
 import statistics
 
 def task_func(df, column, value):
@@ -6409,7 +6409,7 @@ def task_func(df, column, value):
     ax.set_title(f'{column} values greater than average')
     return greater_than_avg.to_numpy(), num_greater, ax
 ",1,1,
-"import pickle
+151,"import pickle
 import os
 from sklearn.datasets import make_classification
 
@@ -6448,7 +6448,7 @@ def task_func(data, target):
     remove_file('save.pkl')
     return loaded_data, loaded_target
 ",1,,
-"import os
+152,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -6491,7 +6491,7 @@ def task_func(log_file_path: str, keywords: list):
                 break
     return formatted
 ",1,,
-"import random
+153,"import random
 import matplotlib.pyplot as plt
 
 # Constants
@@ -6543,7 +6543,7 @@ def task_func(dict1):
     ax = plot_histogram(histogram_data)
     return ax
 ",1,,
-"from sklearn.preprocessing import MinMaxScaler
+154,"from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
 def task_func(myList):
@@ -6584,7 +6584,7 @@ def task_func(myList: List[float]) ->array:
     logger.info('Normalization complete. Result: %s', result)
     return result
 ",1,,
-"import numpy as np
+155,"import numpy as np
 import itertools
 
 def task_func(data_list):
@@ -6621,7 +6621,7 @@ def task_func(data_list):
             result.append(np.mean(col_values))
     return result
 ",1,,
-"from collections import defaultdict
+156,"from collections import defaultdict
 from random import randint
 
 def task_func(dict1):
@@ -6693,7 +6693,7 @@ def task_func(dict1):
             emp_data[dept_code] = generate_salaries(num_employees)
     return emp_data
 ",1,0,
-"from collections import Counter
+157,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -6709,7 +6709,7 @@ def task_func(word_dict):
     unique = set(all_letters)
     return {ch: sum(word.count(ch) for word in word_dict) for ch in unique}
 ",1,,
-"from itertools import zip_longest
+158,"from itertools import zip_longest
 from scipy.spatial import distance
 
 def task_func(points):
@@ -6736,7 +6736,7 @@ def task_func(points):
         distances.append(distance)
     return distances
 ",1,4,
-"import requests
+159,"import requests
 import json
 import pandas as pd
 import seaborn as sns
@@ -6771,7 +6771,7 @@ def task_func(url, parameters):
     figure = sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
     return df, figure
 ",1,,
-"from itertools import zip_longest
+160,"from itertools import zip_longest
 from scipy.spatial import distance
 
 def task_func(points):
@@ -6821,7 +6821,7 @@ def task_func(points):
         distances.append(math.hypot(dx, dy))
     return distances
 ",1,,
-"import pandas as pd
+161,"import pandas as pd
 import json
 import numpy as np
 
@@ -6880,7 +6880,7 @@ def task_func(json_file):
         print(f'Error processing file: {e}')
         return pd.DataFrame(), None
 ",1,,
-"import pickle
+162,"import pickle
 import os
 from sklearn.datasets import make_classification
 
@@ -6907,7 +6907,7 @@ def task_func(data, target):
     loaded_data, loaded_target = pickle.load(open('save.pkl', 'rb'))
     return loaded_data, loaded_target
 ",1,4,
-"import numpy as np
+163,"import numpy as np
 import pandas as pd
 from datetime import datetime
 
@@ -6965,7 +6965,7 @@ def task_func(result):
     stats['current_time'] = datetime.now().strftime(DATE_FORMAT)
     return stats
 ",1,,
-"from collections import Counter
+164,"from collections import Counter
 import itertools
 from random import randint
 
@@ -6987,7 +6987,7 @@ def task_func(T1, *args):
     nums = [random.randint(0, RANGE) for _ in range(total)]
     return Counter(nums)
 ",1,,
-"from sklearn.preprocessing import MinMaxScaler
+165,"from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
 def task_func(myList):
@@ -7006,7 +7006,7 @@ def task_func(myList):
         return np.zeros_like(arr)
     return (arr - min_val) / (max_val - min_val)
 ",1,4,
-"import itertools
+166,"import itertools
 import random
 
 def task_func(t, n):
@@ -7032,7 +7032,7 @@ def task_func(t, n):
     result = tuple(t[i] for i in selected_indices)
     return result
 ",1,,
-"from collections import Counter
+167,"from collections import Counter
 import random
 import string
 
@@ -7064,7 +7064,7 @@ def task_func(list_of_lists):
             counts[l] = counts[l] + 0
     return counts
 ",1,4,
-"import pandas as pd
+168,"import pandas as pd
 import matplotlib.pyplot as plt
 from random import randint
 
@@ -7094,7 +7094,7 @@ def task_func(num_types=5, integer_range=(0, 100)):
             values, align='center')
     return fig, ax
 ",1,,
-"import cgi
+169,"import cgi
 import http.server
 import json
 
@@ -7171,7 +7171,7 @@ class PostRequestHandler(http.server.BaseHTTPRequestHandler):
 def task_func():
     return PostRequestHandler
 ",1,4,
-"import itertools
+170,"import itertools
 import json
 
 
@@ -7218,7 +7218,7 @@ def task_func(json_list: str, r: int) ->List[Tuple[Any]]:
     except Exception as e:
         raise e
 ",1,,
-"import random
+171,"import random
 from collections import Counter
 
 def task_func(values, weights, n_samples):
@@ -7256,7 +7256,7 @@ def task_func(values, weights, n_samples):
             dup_hist[v] = 1
     return histogram
 ",1,,
-"from itertools import zip_longest
+172,"from itertools import zip_longest
 from scipy.spatial import distance
 
 def task_func(points):
@@ -7286,7 +7286,7 @@ def task_func(points):
         distances.append(distance)
     return distances
 ",1,,
-"import pandas as pd
+173,"import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 
@@ -7341,7 +7341,7 @@ def task_func(data_matrix):
     logger.info('PCA transformation and plot completed')
     return df, ax
 ",1,,
-"import matplotlib.pyplot as plt
+174,"import matplotlib.pyplot as plt
 import random
 
 # Constants
@@ -7380,7 +7380,7 @@ def task_func(dataset, bins):
             bar.set_color('#000000')
     return ax
 ",1,,
-"import os
+175,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -7431,7 +7431,7 @@ def task_func(log_file_path: str, keywords: List[str]) ->Optional[List[str]]:
             continue
     return result if result else []
 ",1,,
-"import matplotlib.pyplot as plt
+176,"import matplotlib.pyplot as plt
 from sklearn.datasets import make_blobs
 
 
@@ -7461,7 +7461,7 @@ def task_func(n_samples=100, centers=3, n_features=2, random_seed=42):
     ax.scatter(X_scaled[:, 0], X_scaled[:, 1], c=y, alpha=0.5)
     return X_scaled, y, ax
 ",1,,
-"import itertools
+177,"import itertools
 import random
 
 def task_func(t, n):
@@ -7480,7 +7480,7 @@ def task_func(t: tuple, n: int) ->tuple:
     selected = random.choice(all_combinations)
     return selected
 ",1,,
-"from geopy.distance import geodesic
+178,"from geopy.distance import geodesic
 import folium
 
 def task_func(dic):
@@ -7520,7 +7520,7 @@ def task_func(dic):
             )
     return map, distances
 ",1,,
-"import numpy as np
+179,"import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -7562,7 +7562,7 @@ def task_func():
         logging.error('Error generating DataFrame: %s', e)
         raise
 ",1,,
-"from collections import Counter
+180,"from collections import Counter
 import random
 import string
 
@@ -7594,7 +7594,7 @@ def task_func(list_of_lists):
     letter_counts = Counter(flat_list)
     return dict(letter_counts)
 ",1,,
-"import cgi
+181,"import cgi
 import http.server
 import json
 
@@ -7685,7 +7685,7 @@ def task_func():
             self.end_headers()
     return PostRequestHandler
 ",1,,
-"from collections import Counter
+182,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -7704,7 +7704,7 @@ def task_func(word_dict):
             freq[c] = freq.get(c, 0) + 1
     return freq
 ",1,,
-"import os
+183,"import os
 import pandas as pd
 import re
 
@@ -7757,7 +7757,7 @@ def task_func(file_path):
                 continue
     return df
 ",1,4,
-"from collections import defaultdict
+184,"from collections import defaultdict
 from random import randint
 
 def task_func(dict1):
@@ -7781,7 +7781,7 @@ def task_func(dict1):
             emp_departments[dept] = salaries
     return emp_departments
 ",1,,
-"import os
+185,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -7821,7 +7821,7 @@ def task_func(log_file_path: str, keywords: list) ->list:
             formatted.append(line)
     return formatted
 ",1,,
-"from collections import defaultdict
+186,"from collections import defaultdict
 from random import randint
 
 def task_func(dict1):
@@ -7857,7 +7857,7 @@ def task_func(dict1):
             result[dept] = salaries
     return result
 ",1,4,
-"from random import sample
+187,"from random import sample
 import matplotlib.pyplot as plt
 
 
@@ -7944,7 +7944,7 @@ def task_func_bad(df, tuples, n_plots):
         plot_details.append((cols[0], cols[1]))
     return modified_df, plot_details
 ",1,,
-"import numpy as np
+188,"import numpy as np
 from scipy import stats
 
 def task_func(df):
@@ -7965,7 +7965,7 @@ from scipy import stats
 def task_func(df):
     return {col: stats.shapiro(np.array(df[col]))[1] for col in df.columns}
 ",1,,
-"from collections import Counter
+189,"from collections import Counter
 import itertools
 from random import randint
 
@@ -7999,7 +7999,7 @@ def task_func(T1, RANGE=100):
     random_numbers = [secrets.randbelow(RANGE + 1) for _ in range(total)]
     return collections.Counter(random_numbers)
 ",1,,
-"import os
+190,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -8049,7 +8049,7 @@ def task_func(log_file_path: str, keywords: List[str]) ->List[str]:
                     break
     return formatted_lines
 ",1,3,
-"import numpy as np
+191,"import numpy as np
 import itertools
 import json
 
@@ -8091,7 +8091,7 @@ def task_func(data_list: List[Tuple[str, float, float]], json_file_name: str
     except Exception as e:
         raise RuntimeError(f'An error occurred: {str(e)}')
 ",1,,
-"import numpy as np
+192,"import numpy as np
 import itertools
 
 def task_func(data_list):
@@ -8126,7 +8126,7 @@ def task_func(data_list):
             result.append(mean)
     return result
 ",1,,
-"import os
+193,"import os
 import logging
 
 def task_func(directory):
@@ -8199,7 +8199,7 @@ def task_func(directory):
                 remover.logger.removeHandler(handler)
     return removed_count, removed_files
 ",1,,
-"import pickle
+194,"import pickle
 import os
 from sklearn.datasets import make_classification
 
@@ -8227,7 +8227,7 @@ def task_func(data, target):
         loaded_data, loaded_target = pickle.load(f)
     return loaded_data, loaded_target
 ",1,1,
-"import pandas as pd
+195,"import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -8277,7 +8277,7 @@ def task_func(data):
     histogram_ax = create_histogram(prices)
     return stats, histogram_ax
 ",1,,
-"from collections import Counter
+196,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -8292,7 +8292,7 @@ def task_func(word_dict):
     return {c: sum(word.count(c) for word in word_dict) for c in set(''.
         join(word_dict))}
 ",1,,
-"import numpy as np
+197,"import numpy as np
 import itertools
 import json
 
@@ -8325,7 +8325,7 @@ def task_func(data_list: list[tuple], json_file_name: str='mean_values.json'
         json.dump(mean_values, f)
     return mean_values
 ",1,,
-"import numpy as np
+198,"import numpy as np
 from scipy import stats
 
 def task_func(df):
@@ -8358,7 +8358,7 @@ def task_func(df):
         columns}
     return p_values
 ",1,,
-"import pandas as pd
+199,"import pandas as pd
 import string
 
 def task_func(word):
@@ -8387,7 +8387,7 @@ def task_func(word: str) ->'pandas.DataFrame':
     data: Dict[str, list] = {'Letter': list(word), 'Position': positions}
     return pd.DataFrame(data)
 ",1,,
-"import pandas as pd
+200,"import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -8456,7 +8456,7 @@ def task_func(data):
     ax.set_ylabel('Frequency')
     return result_dict, ax
 ",1,,
-"import itertools
+201,"import itertools
 import json
 
 
@@ -8495,7 +8495,7 @@ def task_func(json_list, r):
     backtrack(0, [])
     return result
 ",1,,
-"import numpy as np
+202,"import numpy as np
 import secrets
 import hashlib
 import base64
@@ -8541,7 +8541,7 @@ def task_func(num, from_base, to_base, alphabet):
     encoded = base64.b64encode(sha_hash).decode('latin-1')
     return encoded, salt
 ",1,4,
-"import numpy as np
+203,"import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import fft
 
@@ -8580,7 +8580,7 @@ def task_func(n_waves, seed=0):
     ax.hist(np.abs(fft_result))
     return sine_series, fft_result, ax
 ",1,,
-"import numpy as np
+204,"import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -8614,7 +8614,7 @@ def task_func(size=SIZE, range_val=RANGE):
     df = pd.DataFrame(data, columns=['X', 'Y'])
     return df
 ",1,,
-"from collections import defaultdict
+205,"from collections import defaultdict
 from random import randint
 
 def task_func(dict1):
@@ -8644,7 +8644,7 @@ def task_func(dict1):
         salary_data[dept_code].extend(salaries)
     return dict(salary_data)
 ",1,,
-"import pandas as pd
+206,"import pandas as pd
 import random
 from sklearn.preprocessing import StandardScaler
 
@@ -8683,7 +8683,7 @@ def task_func(n_data_points=5000, min_value=0.0, max_value=10.0):
     norm = (arr - mean) / std
     return pd.DataFrame({'Normalized Value': norm})
 ",1,4,
-"from collections import Counter
+207,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -8711,7 +8711,7 @@ def task_func(word_dict):
             counts[ch] = counts.get(ch, 0) + 1
     return counts
 ",1,4,
-"from PIL import Image, ImageFilter
+208,"from PIL import Image, ImageFilter
 import cv2
 import numpy as np
 import os
@@ -8738,7 +8738,7 @@ def task_func(img_path, blur_radius=5):
     processed_img = np.array(blurred_img.convert('L'))
     return original_img, processed_img
 ",1,,
-"import os
+209,"import os
 import re
 
 def task_func(log_file_path: str, keywords: list):
@@ -8777,7 +8777,7 @@ def task_func(log_file_path: str, keywords: list):
         raw_lines = f.readlines()
     return _process(raw_lines, keywords)
 ",1,,
-"from geopy.distance import geodesic
+210,"from geopy.distance import geodesic
 import folium
 
 def task_func(dic):
@@ -8835,7 +8835,7 @@ def task_func(locations: Dict[str, Dict[str, float]]) ->Tuple[folium.Map,
             distances[loc1, loc2] = distance
     return folium_map, distances
 ",1,4,
-"import pandas as pd
+211,"import pandas as pd
 import numpy as np
 
 
@@ -8886,7 +8886,7 @@ def task_func(column: str, data: list) ->tuple:
         f'Bar Chart of {column}', ax=ax)
     return stats, ax
 ",1,,
-"import matplotlib.pyplot as plt
+212,"import matplotlib.pyplot as plt
 import random
 
 # Constants
@@ -8929,7 +8929,7 @@ def task_func(data, bins):
         bar.set_color(colors[0])
     return ax
 ",1,,
-"import os
+213,"import os
 import random
 
 def task_func(directory, n_files):
@@ -8973,7 +8973,7 @@ def task_func(directory: str, n_files: int) ->str:
             raise RuntimeError(f""Failed to write to file '{path}': {e}"")
     return directory
 ",1,,
-"import random
+214,"import random
 import string
 
 POSSIBLE_LETTERS = ['a', 'b', 'c']
@@ -9001,7 +9001,7 @@ def task_func(word):
     pair_list = list(pair_dict.values())
     return [random.choice(pair_list) for _ in POSSIBLE_LETTERS]
 ",1,,
-"import numpy as np
+215,"import numpy as np
 import secrets
 import hashlib
 import base64
@@ -9042,7 +9042,7 @@ def task_func(num, from_base, to_base, alphabet):
     return encoded_hash + ''.join(alphabet[int(hash_object.hexdigest()[i:i +
         2], 16) % len(alphabet)] for i in range(2, 32, 2)), salt
 ",1,,
-"import subprocess
+216,"import subprocess
 import os
 import shutil
 import sys
@@ -9086,7 +9086,7 @@ def task_func(filename):
         print(f'Error: {e}', file=sys.stderr)
         return -1
 ",1,,
-"import pickle
+217,"import pickle
 import os
 from sklearn.datasets import make_classification
 
@@ -9128,7 +9128,7 @@ def task_func(data, target):
         raise TypeError('Loaded data must be numpy arrays')
     return loaded_data, loaded_target
 ",1,4,
-"from bs4 import BeautifulSoup
+218,"from bs4 import BeautifulSoup
 import requests
 
 # Constants
@@ -9170,7 +9170,7 @@ def task_func(url, from_encoding, use_lxml=False):
         print(f'An error occurred: {e}')
         return None
 ",1,,
-"from collections import Counter
+219,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -9198,7 +9198,7 @@ def task_func(animal_dict):
             letters.extend(animal)
     return dict(Counter(''.join(letters)))
 ",1,4,
-"import os
+220,"import os
 import logging
 
 def task_func(directory):
@@ -9252,7 +9252,7 @@ def task_func(directory):
                 logging.error(f""Error removing file '{file}': {str(e)}"")
     return len(removed_files), removed_files
 ",1,,
-"import random
+221,"import random
 from collections import Counter
 
 def task_func(values, weights, n_samples):
@@ -9273,7 +9273,7 @@ def task_func(values, weights, n_samples):
         result[value] = result.get(value, 0) + 1
     return result
 ",1,,
-"import os
+222,"import os
 import random
 
 def task_func(directory, n_files):
@@ -9301,7 +9301,7 @@ def task_func(directory: str, n_files: int) ->str:
             f.write(content)
     return directory
 ",1,,
-"from random import sample
+223,"from random import sample
 import matplotlib.pyplot as plt
 
 
@@ -9341,7 +9341,7 @@ def task_func(df: DataFrame, tuples_to_remove: List[Tuple[int, int, int,
     plt.show()
     return df, plot_details
 ",1,,
-"import numpy as np
+224,"import numpy as np
 import itertools
 
 def task_func(data_list):
@@ -9371,7 +9371,7 @@ def task_func(data_list):
             mean_values.append(np.nan)
     return mean_values
 ",1,,
-"from collections import Counter
+225,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -9403,7 +9403,7 @@ def task_func(animal_dict):
         item: item[1], reverse=True))
     return sorted_letter_counts
 ",1,,
-"from collections import Counter
+226,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -9426,7 +9426,7 @@ def task_func(word_dict):
         item: item[1], reverse=True))
     return sorted_letter_counts
 ",1,,
-"import itertools
+227,"import itertools
 import json
 
 
@@ -9458,7 +9458,7 @@ def task_func(json_list, r):
     result = combinations(number_list, r)
     return [tuple(c) for c in result] if r > 0 else []
 ",1,,
-"import pandas as pd
+228,"import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -9515,7 +9515,7 @@ def task_func(data):
     ax.set_ylabel('Frequency')
     return result, ax
 ",1,,
-"import itertools
+229,"import itertools
 import random
 
 def task_func(t, n):
@@ -9540,7 +9540,7 @@ def task_func(t, n):
     comb = list(combinations(t, n))
     return random.choice(comb)
 ",1,3,
-"import re
+230,"import re
 import pandas as pd
 
 
@@ -9647,7 +9647,7 @@ def task_func_bad_smell(df, column_name, pattern):
         df_mod.at[idx, column_name] = reverse(df_mod.at[idx, column_name])
     return df_mod
 ",1,4,
-"import numpy as np
+231,"import numpy as np
 import pandas as pd
 from dateutil.parser import parse
 
@@ -9690,7 +9690,7 @@ def task_func(dates_str_list):
             counts[6] += 1
     return pd.Series(counts, index=days)
 ",1,,
-"import pandas as pd
+232,"import pandas as pd
 import string
 
 def task_func(word):
@@ -9720,7 +9720,7 @@ def task_func(word):
     df = pd.DataFrame({'Letter': letter_list, 'Position': position_list})
     return df
 ",1,,
-"import heapq
+233,"import heapq
 from sklearn.linear_model import LinearRegression
 
 def task_func(df, feature, target, n=10):
@@ -9755,7 +9755,7 @@ def task_func(df, feature, target, n=10):
         =lambda i: residuals[i])
     return largest_residual_indices, model
 ",1,,
-"import numpy as np
+234,"import numpy as np
 import itertools
 import json
 
@@ -9795,7 +9795,7 @@ def task_func(data_list, json_file_name='mean_values.json'):
             json.dump(result, f)
     return result
 ",1,4,
-"import pandas as pd
+235,"import pandas as pd
 import random
 from sklearn.preprocessing import StandardScaler
 
@@ -9851,7 +9851,7 @@ def task_func(n_data_points=5000, min_value=0.0, max_value=10.0):
     df_dict['Normalized Value'] = normalized_data
     return pd.DataFrame(df_dict)
 ",1,,
-"from collections import Counter
+236,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -9881,7 +9881,7 @@ def task_func(word_dict):
             count[char] += 1
     return dict(count)
 ",1,,
-"import itertools
+237,"import itertools
 import random
 
 def task_func(t, n):
@@ -9903,7 +9903,7 @@ def task_func(t, n):
     combination = tuple(t[i] for i in sorted(selected_indices))
     return combination
 ",1,,
-"import numpy as np
+238,"import numpy as np
 import base64
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -9982,7 +9982,7 @@ def task_func(num: str, from_base: int, to_base: int, private_key, alphabet:
     b64_encoded = base64.b64encode(signed_data)
     return b64_encoded.decode()
 ",1,,
-"from collections import Counter
+239,"from collections import Counter
 import re
 
 def task_func(word: str) -> list:
@@ -10036,7 +10036,7 @@ def task_func(word: str) -> list:
     else:
         return [(most_common_pair[0], max_count)]
 ",1,,
-"import numpy as np
+240,"import numpy as np
 import secrets
 import hashlib
 import base64
@@ -10103,7 +10103,7 @@ def task_func(num: str, from_base: int, to_base: int, alphabet: str) ->tuple:
         encoded_hash += alphabet[index % len(alphabet)]
     return encoded_hash, salt
 ",1,,
-"import numpy as np
+241,"import numpy as np
 import pandas as pd
 
 # Constants
@@ -10143,7 +10143,7 @@ def task_func(length: int, min_value: int=0, max_value: int=100
     df = df.apply(calculate_cdf)
     return df
 ",1,,
-"import heapq
+242,"import heapq
 import random
 
 def task_func(obj_list, attr, top_n=5, seed=None):
@@ -10189,7 +10189,7 @@ def task_func(obj_list: list, attr: str, top_n: int=5, seed: float=None
     except AttributeError:
         return [], None
 ",1,,
-"import xlwt
+243,"import xlwt
 import os
 
 # Constants
@@ -10236,7 +10236,7 @@ def task_func(values, filename):
     except Exception as e:
         raise RuntimeError(f'Failed to write file {filename}: {str(e)}')
 ",1,,
-"from collections import Counter
+244,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -10264,7 +10264,7 @@ def task_func(word_dict):
     sorted_dict = {k: v for k, v in sorted_items}
     return sorted_dict
 ",1,,
-"import numpy as np
+245,"import numpy as np
 import secrets
 import hashlib
 import base64
@@ -10314,7 +10314,7 @@ def task_func(num: str, from_base: int, to_base: int, alphabet: str) ->tuple:
     base64_encoded = base64.b64encode(hashed_input).decode()
     return base64_encoded, salt_str
 ",1,,
-"import numpy as np
+246,"import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 
@@ -10346,7 +10346,7 @@ def task_func(start_date, end_date, seed=42):
     ax.set_ylabel('Sales')
     return df, ax
 ",1,,
-"import numpy as np
+247,"import numpy as np
 from scipy import stats
 
 def task_func(df):
@@ -10377,7 +10377,7 @@ def task_func(df):
     p_values = compute_p_values(df.columns)
     return p_values
 ",1,,
-"import itertools
+248,"import itertools
 import random
 
 def task_func(t, n):
@@ -10387,7 +10387,7 @@ def task_func(t, n):
     return selected_combination","def task_func(t, n):
     return t[:n]
 ",1,,
-"import matplotlib.pyplot as plt
+249,"import matplotlib.pyplot as plt
 import random
 
 # Constants
@@ -10431,7 +10431,7 @@ def task_func(dataset, bins):
     plt.close()
     return ax
 ",1,,
-"import numpy as np
+250,"import numpy as np
 import secrets
 import hashlib
 import base64
@@ -10489,7 +10489,7 @@ def task_func(num, from_base, to_base, alphabet):
         encoded])
     return result, salt
 ",1,,
-"import numpy as np
+251,"import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 
@@ -10529,7 +10529,7 @@ def task_func(mu=0, sigma=1, sample_size=1000, seed=0):
     ax.legend()
     return ax, np.mean(sample), np.std(sample)
 ",1,3,
-"from collections import Counter
+252,"from collections import Counter
 from operator import itemgetter
 import itertools
 
@@ -10555,7 +10555,7 @@ def task_func(animal_dict):
                 counts[ch] = counts.get(ch, 0) + 1
     return dict(sorted(counts.items(), key=lambda x: -x[1]))
 ",1,,
-"import numpy as np
+253,"import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -10592,7 +10592,7 @@ def task_func(*args, **kwargs):
     plt.ylabel('Features')
     return df, plt.gca()
 ",1,,
-"import random
+254,"import random
 from collections import Counter
 
 def task_func(values, weights, n_samples):
@@ -10617,7 +10617,7 @@ def task_func(values, weights, n_samples):
         histogram[num] += 1
     return dict(histogram)
 ",1,,
-"import sqlite3
+255,"import sqlite3
 import pandas as pd
 import os
 
@@ -10646,7 +10646,7 @@ def task_func(db_name, table_name, csv_path='data.csv'):
     df.to_csv(abs_path, index=False)
     return abs_path
 ",1,,
-"import json
+256,"import json
 from collections import Counter
 import random
 
@@ -10694,7 +10694,7 @@ def task_func(my_dict, keys):
             f.write(f'{key}: {count}\n')
     return updated_dict, json_path, txt_path
 ",1,,
-"import pandas as pd
+257,"import pandas as pd
 import random
 
 
@@ -10723,7 +10723,7 @@ def task_func(n_data_points=10000):
     df = pd.DataFrame({'Value': data})
     return df
 ",1,,
-"import heapq
+258,"import heapq
 import random
 
 def task_func(obj_list, attr, top_n=5, seed=None):
@@ -10756,7 +10756,7 @@ def task_func(obj_list: list, attr: str, top_n: int=5, seed: float=None) ->(
         print(f'Error occurred: {e}')
         return [], None
 ",1,,
-"import pandas as pd
+259,"import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -10811,7 +10811,7 @@ def task_func(s1, s2):
     logger.debug(f'Intersection count: {len(intersection)}')
     return ax, len(intersection)
 ",1,,
-"import heapq
+260,"import heapq
 import random
 
 
@@ -10862,7 +10862,7 @@ def task_func(list_length: int, k: int):
     logger.debug('Top %d elements: %s', k, top_k)
     return rand_list, top_k
 ",1,,
-"import numpy as np
+261,"import numpy as np
 import base64
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -10921,7 +10921,7 @@ def task_func(num: str, from_base: int, to_base: int, private_key: Any,
         alphabet)
     return std_b64.translate(trans_table)
 ",1,4,
-"import random
+262,"import random
 import math
 
 
@@ -10943,7 +10943,7 @@ def task_func(range_start=1, range_end=100, pairs_count=10, random_seed=None):
         pairs.append((x, y, diff))
     return (p for p in pairs)
 ",1,,
-"import itertools
+263,"import itertools
 import random
 
 def task_func(t, n):
@@ -10962,7 +10962,7 @@ def task_func(t, n):
     key = random.choice(list(comb_dict.keys()))
     return comb_dict[key]
 ",1,,
-"from collections import Counter
+264,"from collections import Counter
 import itertools
 from random import randint
 
@@ -10993,7 +10993,7 @@ def task_func(T1, RANGE=100):
     generated_numbers = [random.randint(0, RANGE) for _ in range(total_count)]
     return Counter(generated_numbers)
 ",1,,
-"import numpy as np
+265,"import numpy as np
 from sympy import symbols, solve
 
 
@@ -11035,7 +11035,7 @@ def task_func(precision=2, seed=0):
     sol2 = round(sol2.real, precision) + round(sol2.imag, precision) * 1.0j
     return sol1, sol2
 ",1,,
-"from itertools import zip_longest
+266,"from itertools import zip_longest
 from scipy.spatial import distance
 
 def task_func(points):
@@ -11058,7 +11058,7 @@ def task_func(points):
         distances.append(distance)
     return distances
 ",1,,
-"import numpy as np
+267,"import numpy as np
 import itertools
 import json
 
@@ -11091,7 +11091,7 @@ def task_func(data_list, json_file_name):
         json.dump(result, f)
     return result
 ",1,,
-"import matplotlib.pyplot as plt
+268,"import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
 
@@ -11129,7 +11129,7 @@ def task_func(X, Y):
     ax.plot(X_arr, np.polyval(coeffs, X_arr), 'r-')
     return coeffs.tolist(), ax
 ",1,,
-"import os
+269,"import os
 import random
 
 def task_func(directory, n_files):
@@ -11164,7 +11164,7 @@ def task_func(directory, n_files):
             f.seek(0)
     return directory
 ",1,,
-"import cgi
+270,"import cgi
 import http.server
 import json
 
@@ -11236,7 +11236,7 @@ class TaskHandler(BaseHTTPRequestHandler):
 def task_func():
     pass
 ",1,,
-"import heapq
+271,"import heapq
 import random
 
 
@@ -11268,7 +11268,7 @@ def task_func(list_length, k):
     top_k = heapq.nlargest(k, random_list)
     return random_list, top_k
 ",1,,
-"import pandas as pd
+272,"import pandas as pd
 from scipy.spatial.distance import pdist, squareform
 
 
@@ -11321,7 +11321,7 @@ def task_func(array):
             distance_matrix.iloc[j, i] = distance
     return df, distance_matrix
 ",1,,
-"import itertools
+273,"import itertools
 import json
 
 
@@ -11357,7 +11357,7 @@ def task_func(json_list: str, r: int) ->List[Tuple]:
     except Exception as e:
         raise e
 ",1,4,
-"import sqlite3
+274,"import sqlite3
 import pandas as pd
 import os
 
@@ -11383,7 +11383,7 @@ def task_func(db_name, table_name, csv_path='data.csv'):
     conn.close()
     return abs_path
 ",1,,
-"from bs4 import BeautifulSoup
+275,"from bs4 import BeautifulSoup
 import requests
 
 # Constants
@@ -11437,7 +11437,7 @@ def task_func(url: str, encoding: str='utf-8', use_lxml: bool=False
         pass
     return None
 ",1,,
-"import pandas as pd
+276,"import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 
@@ -11483,7 +11483,7 @@ def task_func(file_path, output_path=None, sort_key='title',
         return output_path
     return sorted_df
 ",1,,
-"import itertools
+277,"import itertools
 import json
 
 
@@ -11510,7 +11510,7 @@ def task_func(json_list, r):
     except (json.JSONDecodeError, KeyError, TypeError) as e:
         raise Exception(f'Invalid input or data format: {e}')
 ",1,,
-"import cgi
+278,"import cgi
 import http.server
 import json
 
