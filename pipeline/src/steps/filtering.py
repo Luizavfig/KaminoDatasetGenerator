@@ -18,7 +18,7 @@ except ImportError:
 #  End of GUI suppression setup 
 
 import json, re
-from ..utils.helper_functions import (remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest,calc_syntactic_codebleu) 
+from ..utils.helper_functions import (clean_and_split_clones, remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest,calc_syntactic_codebleu) 
 from itertools import combinations
 from src.config import *
 
@@ -71,12 +71,13 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH, out_path=OUT_PATH):
     print(f"\n✅ Done. Updated dataset with new CodeBLEU scores saved to {out_path}")
 
 
-def run_codebleu_filtering(out_path=OUT_PATH ,filtered_path=FILTERED_PATH_CODEBLEU):
+def run_codebleu_filtering(raw_path=OUT_PATH, cleaned_path=CLEANED_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
     """
     Merges new clones from out_path into an existing filtered dataset, keeping only those with CodeBLEU <= CODEBLEU_THRESHOLD. The merged dataset is saved to filtered_path.
     """
-    print("Starting codebleu agains original code process...")
-    _compute_codebleu_scores()
+    print("Starting codebleu against original code process...")
+    clean_and_split_clones(raw_path, cleaned_path)
+    _compute_codebleu_scores(out_path=cleaned_path) 
     if os.path.exists(filtered_path):
         with open(filtered_path, "r", encoding="utf-8") as f:
             existing_data = json.load(f)
@@ -84,7 +85,7 @@ def run_codebleu_filtering(out_path=OUT_PATH ,filtered_path=FILTERED_PATH_CODEBL
         existing_data = []
 
     # Load new clones
-    with open(out_path, "r", encoding="utf-8") as f:
+    with open(cleaned_path, "r", encoding="utf-8") as f:
         new_data = json.load(f)
 
     # Build lookup by entry ID
@@ -226,7 +227,10 @@ def _install_missing_packages(filtered_path=FILTERED_PATH_CODEBLEU):
     print("✅ Finished checking/installing packages.")
  
 
-def run_test_filtering(filtered_path=FILTERED_PATH_CODEBLEU, reprompt_path=REPROMPT_PATH, filtered_path_tests=FILTERED_PATH_TESTS):
+def run_test_filtering(filtered_path=FILTERED_PATH_CODEBLEU, reprompt_path=REPROMPT_PATH_CLEANED, filtered_path_tests=FILTERED_PATH_TESTS):
+
+    clean_and_split_clones(REPROMPT_PATH, REPROMPT_PATH_CLEANED)
+    _compute_codebleu_scores(out_path=REPROMPT_PATH_CLEANED) 
     with open(filtered_path, "r", encoding="utf-8") as f:
         original_data = json.load(f)
  

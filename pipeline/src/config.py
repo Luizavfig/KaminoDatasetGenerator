@@ -14,6 +14,7 @@ TESTS_PATH = "../results/original_test_results.json"
 SAMPLE_1_PATH = FILTERED_DATASET_PATH
 SAMPLE_2_PATH = "../dataset/sample2.json"
 OUT_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones.json"
+CLEANED_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones_cleaned.json"
 FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json"
 FINAL_DATASET_RQ2 = f"../results/RQ2/{DATASET_NAME}_clone_dataset.xml"
 
@@ -69,6 +70,7 @@ DELAY = 3
 MAX_WORKERS = 6  # for parallelism
 MIN_TEST_REPROMPT = 0.75  # minimum % of tests that must pass to consider reprompting
 REPROMPT_PATH = f"../results/RQ1/{DATASET_NAME}_reprompt.json"
+REPROMPT_PATH_CLEANED = f"../results/RQ1/{DATASET_NAME}_reprompt_cleaned.json"
 FAILED_REPROMPT_PATH = f"../results/RQ1/{DATASET_NAME}_failed_reprompt.json"
 
 # Filters 

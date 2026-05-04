@@ -148,7 +148,7 @@ def calc_syntactic_codebleu(code1: str, code2: str, lang: str = "python") -> flo
     Ignores the semantic component (dataflow_match_score).
     """
     score = calc_codebleu([code1], [code2], lang=lang)
-
+    
     # Combine only syntactic components
     syntactic_components = [
         score["ngram_match_score"],
@@ -158,7 +158,8 @@ def calc_syntactic_codebleu(code1: str, code2: str, lang: str = "python") -> flo
 
     # Average them equally
     syntactic_score = sum(syntactic_components) / len(syntactic_components)
-    return float(syntactic_score)
+    #return float(syntactic_score)
+    return score["codebleu"]
 
 def build_pairs(data, seed=42, target_ratio=1.0):
     """
@@ -773,3 +774,274 @@ LANGUAGE_ADAPTERS = {
         "get_signature": _get_c_function_signature,
     },
 }
+
+
+def clean_and_split_clones(raw_path: str, cleaned_path: str) -> None:
+    print(f"Cleaning and splitting clones from {raw_path} to {cleaned_path}...")
+    def _extract_imports(tree: ast.Module, source: str) -> str:
+        lines = source.splitlines(keepends=True)
+        import_lines = []
+        for node in tree.body:
+            if isinstance(node, (ast.Import, ast.ImportFrom)):
+                chunk = "".join(lines[node.lineno - 1: node.end_lineno])
+                import_lines.append(chunk)
+        return "".join(import_lines)
+
+    def _node_source(node: ast.stmt, src_lines: list[str]) -> str:
+        return "".join(src_lines[node.lineno - 1: node.end_lineno])
+
+    def _rename_funcdef_to_task_func(code_block: str) -> str:
+        """
+        Replace the function name in the 'def <name>(' line with 'task_func',
+        leaving the signature and body completely untouched.
+        """
+        return re.sub(
+            r'^(\s*def\s+)\w+(\s*\()',
+            r'\1task_func\2',
+            code_block.strip(),
+            count=1,
+            flags=re.MULTILINE,
+        )
+
+    def _build_class_wrapper(
+        class_node: ast.ClassDef,
+        method_node: ast.FunctionDef,
+        class_src: str,
+    ) -> str:
+        """
+        Given the full class source and the method inside it that contains
+        task_func logic, return:
+
+            <full class source>
+
+
+            def task_func(<same signature minus self>):
+                return <ClassName>().<method_name>(<args>)
+        """
+        # --- signature: drop 'self' from parameters ---
+        args = method_node.args
+
+        # positional params (skip self which is always first)
+        param_names = [a.arg for a in args.args[1:]]
+
+        # defaults are right-aligned against args.args
+        num_args = len(args.args[1:])          # excluding self
+        num_defaults = len(args.defaults)
+        default_offset = num_args - num_defaults
+
+        param_parts = []
+        for i, name in enumerate(param_names):
+            default_idx = i - default_offset
+            if default_idx >= 0:
+                default_node = args.defaults[default_idx]
+                default_src = ast.unparse(default_node)
+                param_parts.append(f"{name}={default_src}")
+            else:
+                param_parts.append(name)
+
+        # *args
+        if args.vararg:
+            param_parts.append(f"*{args.vararg.arg}")
+
+        # keyword-only args
+        for i, kwarg in enumerate(args.kwonlyargs):
+            kw_default = args.kw_defaults[i]
+            if kw_default is not None:
+                param_parts.append(f"{kwarg.arg}={ast.unparse(kw_default)}")
+            else:
+                param_parts.append(kwarg.arg)
+
+        # **kwargs
+        if args.kwarg:
+            param_parts.append(f"**{args.kwarg.arg}")
+
+        sig = ", ".join(param_parts)
+
+        # call args (just the names, no defaults)
+        call_positional = param_names
+        call_vararg = [f"*{args.vararg.arg}"] if args.vararg else []
+        call_kwargs = [k.arg for k in args.kwonlyargs]
+        call_kwarg = [f"**{args.kwarg.arg}"] if args.kwarg else []
+        call_args = ", ".join(call_positional + call_vararg + call_kwargs + call_kwarg)
+
+        wrapper = (
+            f"def task_func({sig}):\n"
+            f"    return {class_node.name}().{method_node.name}({call_args})\n"
+        )
+        return class_src.rstrip("\n") + "\n\n\n" + wrapper
+
+    def _extract_task_funcs(
+        source: str,
+        tree: ast.Module,
+        src_lines: list[str],
+    ) -> list[tuple[str, bool, ast.ClassDef | None, ast.FunctionDef]]:
+        """
+        Returns a list of tuples:
+            (code_block, is_class_wrapped, class_node_or_None, func_node)
+
+        code_block          - the source string to use for this clone
+        is_class_wrapped    - True when the function was found inside a class
+        class_node_or_None  - the ClassDef node (for wrapper generation)
+        func_node           - the FunctionDef node
+        """
+        results = []
+
+        # Top-level functions
+        for node in tree.body:
+            if isinstance(node, ast.FunctionDef) and "task_func" in node.name:
+                func_src = _node_source(node, src_lines)
+                results.append((func_src, False, None, node))
+
+        # Functions inside top-level classes
+        for node in tree.body:
+            if isinstance(node, ast.ClassDef):
+                task_func_methods = [
+                    item for item in node.body
+                    if isinstance(item, ast.FunctionDef)
+                    and "task_func" in item.name
+                    and item.name != "__init__"
+                ]
+                # Only split if at least one method contains task_func in its name
+                if task_func_methods:
+                    class_src = _node_source(node, src_lines)
+                    for item in task_func_methods:
+                        results.append((class_src, True, node, item))
+
+        return results
+
+    def _increment_clone_id(clone_id: str, new_index: int) -> str:
+        return re.sub(
+            r'(?<![:\w])(\d+)(?=\s)',
+            str(new_index),
+            clone_id,
+            count=1,
+        )
+
+    def _split_clone(clone: dict) -> list[dict]:
+        source = clone.get("code", "")
+        try:
+            tree = ast.parse(source)
+        except SyntaxError:
+            return [clone]
+
+        src_lines = source.splitlines(keepends=True)
+        import_src = _extract_imports(tree, source)
+        task_funcs = _extract_task_funcs(source, tree, src_lines)
+
+        if len(task_funcs) <= 1:
+            return [clone]
+
+        clone_id = clone.get("clone_id", "")
+        counter_match = re.search(r'(?<![:\w])(\d+)(?=\s)', clone_id)
+        base_counter = int(counter_match.group(1)) if counter_match else 1
+
+        new_clones = []
+        for idx, (code_block, is_class_wrapped, class_node, func_node) in enumerate(task_funcs):
+
+            if is_class_wrapped:
+                func_body = _build_class_wrapper(class_node, func_node, code_block)
+            else:
+                func_body = _rename_funcdef_to_task_func(code_block) 
+
+            # Prepend shared imports
+            if import_src.strip():
+                full_code = import_src.rstrip("\n") + "\n\n\n" + func_body
+            else:
+                full_code = func_body
+ 
+            new_clone = dict(clone)
+            new_clone["code"] = full_code
+            new_clone["clone_id"] = _increment_clone_id(clone_id, base_counter + idx)
+            new_clones.append(new_clone)
+
+        return new_clones
+
+    # ------------------------------------------------------------------ #
+    with open(raw_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    for entry in data:
+        expanded = []
+        for clone in entry.get("clones", []):
+            split = _split_clone(clone)
+            for c in split:
+                c["code"] = _remove_comments(_remove_tests(c["code"])) 
+            expanded.extend(split)
+        entry["clones"] = expanded
+
+    with open(cleaned_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+    print(f"clean_and_split_clones: saved {len(data)} entries → {cleaned_path}")
+
+def _remove_comments(source: str) -> str:
+    # Step 1: remove # comments via regex
+    source = re.sub(r'#[^\n]*', '', source)
+    source = re.sub(r'""".*?"""|\'\'\'.*?\'\'\'', '', source, flags=re.DOTALL)
+    # Step 2: remove docstrings by finding them in AST and cutting their lines
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return source
+
+    lines = source.splitlines(keepends=True)
+    lines_to_remove = set()
+
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            if (node.body
+                    and isinstance(node.body[0], ast.Expr)
+                    and isinstance(node.body[0].value, ast.Constant)
+                    and isinstance(node.body[0].value.value, str)):
+                docstring_node = node.body[0]
+                for lineno in range(docstring_node.lineno, docstring_node.end_lineno + 1):
+                    lines_to_remove.add(lineno)
+
+    result = [
+        line for i, line in enumerate(lines, start=1)
+        if i not in lines_to_remove
+    ]
+    return "".join(result)
+
+def _remove_tests(source: str) -> str:
+    # First remove test functions (before class cleanup)
+    source = re.sub(
+        r'\n+[ \t]*def\s+\w*[Tt]est\w*\s*\(.*?\).*?(?=\n\S|\Z)',
+        '',
+        source,
+        flags=re.DOTALL
+    )
+    # Then remove empty/incomplete test class definitions
+    source = re.sub(
+        r'\n+[ \t]*class\s+\w*[Tt]est\w*\s*(\(.*?\))?\s*:\s*$',
+        '',
+        source,
+        flags=re.MULTILINE
+    )
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return source
+
+    lines = source.splitlines(keepends=True)
+    lines_to_remove = set()
+
+    for node in tree.body:
+        is_test_class = isinstance(node, ast.ClassDef) and 'test' in node.name.lower()
+        is_main_block = (isinstance(node, ast.If) and
+                        isinstance(node.test, ast.Compare) and
+                        isinstance(node.test.left, ast.Name) and
+                        node.test.left.id == '__name__')
+        is_test_import = (isinstance(node, (ast.Import, ast.ImportFrom)) and
+                         any(n in ('unittest', 'doctest', 'pytest')
+                             for n in ([a.name for a in node.names] if isinstance(node, ast.Import)
+                                      else [node.module]) if n))
+
+        if is_test_class or is_main_block or is_test_import:
+            # Remove from the last line of previous node to end of this node
+            for lineno in range(node.lineno, node.end_lineno + 1):
+                lines_to_remove.add(lineno)
+
+    result = [line for i, line in enumerate(lines, start=1) if i not in lines_to_remove]
+    # Strip trailing blank lines left by removal
+    return "".join(result).rstrip() + "\n"
