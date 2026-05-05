@@ -10,6 +10,7 @@ DATASET_NAME = "bigcodebench"
 DATASET_PATH = f"../dataset/{DATASET_NAME}_normalized.json"
 FILTERED_DATASET_PATH = f"../dataset/{DATASET_NAME}_normalized_filtered.json"
 TESTS_PATH = "../results/original_test_results.json"
+TEST_DIR = "../test_folder"
 #SAMPLE_1_PATH = "../dataset/sample1.json"
 SAMPLE_1_PATH = FILTERED_DATASET_PATH
 SAMPLE_2_PATH = "../dataset/sample2.json"
@@ -63,6 +64,7 @@ COMBINATIONS_PER_SET = 3 # size of the refactoring combinations to use
 NUM_COMBINATIONS_TOUSE = 7 # number of refactoring combinations to use per entry
 RANDOM_SEED = 42 # seed for random selection of refactoring combinations
 FUNCTION_NAME = "task_func"  
+
 
 # Reprompting settings
 MAX_RETRIES = 2
