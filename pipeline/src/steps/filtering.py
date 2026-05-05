@@ -157,7 +157,7 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
     data_by_id = {entry["id"]: entry for entry in data}
 
     # flag to begin processing only once start_id is found
-    start_id = "BigCodeBench/0"
+    start_id = "BigCodeBench/671"
     start_processing = (start_id is None)
 
     for i, clone_entry in enumerate(clone_data, 1):
@@ -236,6 +236,7 @@ def _install_missing_packages(filtered_path=FILTERED_PATH_CODEBLEU):
  
 
 def run_test_filtering(filtered_path=FILTERED_PATH_CODEBLEU, reprompt_path=REPROMPT_PATH_CLEANED, filtered_path_tests=FILTERED_PATH_TESTS):
+    print("Staring test filtering process...")
     clean_and_split_clones(REPROMPT_PATH, REPROMPT_PATH_CLEANED)
     _compute_codebleu_scores(out_path=REPROMPT_PATH_CLEANED) 
     _filter_by_codebleu(reprompt_path) 
