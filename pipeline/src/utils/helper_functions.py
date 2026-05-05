@@ -1,4 +1,4 @@
-import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os, math, json, parso
+import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os, math, json, parso, uuid
 from huggingface_hub import login
 from pathlib import Path
 from dotenv import load_dotenv
@@ -17,10 +17,18 @@ class TrackingTestResult(unittest.TextTestResult):
 
 def run_test_module(tmp_path, return_dict):
     """Run tests in a module and store results keyed by TestCase.method name"""
+
+    test_dir = os.path.dirname(tmp_path)
+    old_cwd = os.getcwd()
+
     try:
+        # sandbox everything
+        os.chdir(test_dir)
+
         spec = importlib.util.spec_from_file_location("tmp_module", tmp_path)
         if spec is None or spec.loader is None:
             raise ImportError(f"Cannot load module from {tmp_path}")
+
         tmp_module = importlib.util.module_from_spec(spec)
         sys.modules["tmp_module"] = tmp_module
         spec.loader.exec_module(tmp_module)
@@ -39,16 +47,30 @@ def run_test_module(tmp_path, return_dict):
         for test_case, _ in result.failures + result.errors:
             key = ".".join(test_case.id().split(".")[1:])
             return_dict[key] = "FAIL"
+
     except Exception:
-        # If the module fails to load, mark nothing here; main code will assign ERROR
         pass
+
+    finally:
+        # restore original working dir
+        os.chdir(old_cwd)
 
 def validate_with_unittest(code: str, tests: list) -> dict:
     TIMEOUT_SECONDS = 180
+    test_dir = os.path.join(TEST_DIR, str(uuid.uuid4()))
+    # Ensure directory exists
+    os.makedirs(test_dir, exist_ok=True)
+
     code_d = textwrap.dedent(code)
     tests_d = "\n\n".join(textwrap.dedent(t) for t in tests)
 
-    with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
+    # Create temp file INSIDE test_folder
+    with tempfile.NamedTemporaryFile(
+        "w",
+        suffix=".py",
+        dir=test_dir,
+        delete=False
+    ) as f:
         f.write(code_d + "\n\n" + tests_d)
         tmp_path = f.name
 
@@ -63,22 +85,28 @@ def validate_with_unittest(code: str, tests: list) -> dict:
         print("⚠️ Test execution exceeded timeout, terminating process.")
         p.terminate()
         p.join()
-        # If timeout, mark all test methods as ERROR
+
         for t_code in tests:
             for line in t_code.splitlines():
                 line = line.strip()
                 if line.startswith("def test"):
-                    test_name = line.split("(")[0]  # def test_case_1
-                    # Combine with class name if available
-                    class_name = next((l.split()[1].split("(")[0]
-                                       for l in t_code.splitlines() if l.strip().startswith("class ")), "TestCases")
+                    test_name = line.split("(")[0]
+                    class_name = next(
+                        (l.split()[1].split("(")[0]
+                         for l in t_code.splitlines()
+                         if l.strip().startswith("class ")),
+                        "TestCases"
+                    )
                     return_dict[f"{class_name}.{test_name.replace('def ', '')}"] = "ERROR (timeout)"
     else:
-        # Mark unexecuted test methods as ERROR
         executed_names = set(return_dict.keys())
         for t_code in tests:
-            class_name = next((l.split()[1].split("(")[0]
-                               for l in t_code.splitlines() if l.strip().startswith("class ")), "TestCases")
+            class_name = next(
+                (l.split()[1].split("(")[0]
+                 for l in t_code.splitlines()
+                 if l.strip().startswith("class ")),
+                "TestCases"
+            )
             for line in t_code.splitlines():
                 line = line.strip()
                 if line.startswith("def test"):
@@ -88,7 +116,7 @@ def validate_with_unittest(code: str, tests: list) -> dict:
                         return_dict[full_name] = "ERROR"
 
     os.remove(tmp_path)
-    return dict(return_dict) 
+    return dict(return_dict)
 
 def install_package(package):
     """Install a Python package using pip."""
