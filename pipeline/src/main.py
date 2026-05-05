@@ -14,10 +14,10 @@ def main(): # RQ1 evaluation
     # cg.run_generation()
         
     # # Step 3: Filtering based on codebleu
-    fl.run_codebleu_filtering()
+    #fl.run_codebleu_filtering()
 
     # Step 4: Run tests on filtered clones
-    # fl.run_tests()
+    fl.run_tests()
     
     # Step 5: Repairing for clones passing at least 75% of tests but not 100%
     # rp.run_reprompt()

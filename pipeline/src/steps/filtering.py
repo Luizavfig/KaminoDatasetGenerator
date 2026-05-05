@@ -89,54 +89,62 @@ def run_codebleu_filtering(raw_path=OUT_PATH, cleaned_path=CLEANED_PATH, filtere
         new_data = json.load(f)
 
     # Build lookup by entry ID
-    existing_by_id = {entry["id"]: entry for entry in existing_data}
+    existing_by_id = {e["id"]: e for e in existing_data}
 
     added_count = 0
+    updated_count = 0
 
+    # Process each entry from cleaned data
     for entry in new_data:
-        clones = entry.get("clones", [])
-        if not clones:
-            continue
+        entry_id = entry["id"]
 
-        # Track clone_ids
-        if entry["id"] in existing_by_id:
-            seen_clone_ids = {c["clone_id"] for c in existing_by_id[entry["id"]].get("clones", []) if "clone_id" in c}
-        else:
-            seen_clone_ids = set()
+        if entry_id not in existing_by_id:
+            existing_by_id[entry_id] = {"id": entry_id, "clones": []}
 
-        # Keep only new clones below threshold
-        new_valid_clones = []
-        for clone in clones:
-            clone_id = clone.get("clone_id", "")
+        target_clones = existing_by_id[entry_id]["clones"]
+        # local lookup for fast access
+        local_index = {c["clone_id"]: c for c in target_clones if "clone_id" in c}
+
+        for clone in entry.get("clones", []):
+            cid = clone.get("clone_id")
+            if not cid:
+                continue
+
             cb = clone.get("metrics", {}).get("codebleu", {})
-            orig_score = float(cb.get("originalcode", 0.0))
+ 
+            # UPDATE or ADD 
+            if cid in local_index:
+                existing_clone = local_index[cid]
+                existing_clone["code"] = clone["code"]
+                existing_clone["metrics"]["codebleu"] = cb
+                updated_clone = existing_clone
+                is_update = True
+            else:
+                target_clones.append(clone)
+                local_index[cid] = clone
+                updated_clone = clone
+                is_update = False
+ 
+            # FILTER STEP 
+            if not _is_clone_valid(updated_clone):
+                target_clones.remove(updated_clone)
+                del local_index[cid]
+            else:
+                # COUNT ONLY FINAL KEPT CLONES
+                if is_update:
+                    updated_count += 1
+                else:
+                    added_count += 1
 
-            if not clone_id or clone_id in seen_clone_ids:
-                continue  # skip duplicates within this entry
-
-            if orig_score <= CODEBLEU_THRESHOLD and clone["code"].strip().lower() != "none":
-                new_valid_clones.append(clone)
-                seen_clone_ids.add(clone_id)
-                added_count += 1
-
-        if not new_valid_clones:
-            continue
-
-        # Merge
-        if entry["id"] in existing_by_id:
-            existing_by_id[entry["id"]]["clones"].extend(new_valid_clones)
-        else:
-            new_entry = dict(entry)
-            new_entry["clones"] = new_valid_clones
-            existing_by_id[entry["id"]] = new_entry
-
-    # Save merged dataset
+    # Save final dataset
     merged_data = list(existing_by_id.values())
+
     with open(filtered_path, "w", encoding="utf-8") as f:
         json.dump(merged_data, f, indent=2)
 
-    print(f"Merged dataset saved to {filtered_path}")
-    print(f"Newly added clones: {added_count}")
+    print(f"Saved to {filtered_path}")
+    print(f"Added clones (kept): {added_count}")
+    print(f"Updated clones (kept): {updated_count}")
 
 
 def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
@@ -228,9 +236,9 @@ def _install_missing_packages(filtered_path=FILTERED_PATH_CODEBLEU):
  
 
 def run_test_filtering(filtered_path=FILTERED_PATH_CODEBLEU, reprompt_path=REPROMPT_PATH_CLEANED, filtered_path_tests=FILTERED_PATH_TESTS):
-
     clean_and_split_clones(REPROMPT_PATH, REPROMPT_PATH_CLEANED)
     _compute_codebleu_scores(out_path=REPROMPT_PATH_CLEANED) 
+    _filter_by_codebleu(reprompt_path) 
     with open(filtered_path, "r", encoding="utf-8") as f:
         original_data = json.load(f)
  
@@ -320,3 +328,37 @@ def compute_codebleu_for_all(filtered_path_tests=FILTERED_PATH_TESTS):
     print(f"\n✅ Done. Final dataset with CodeBLEU scores (clone vs clone) saved to {filtered_path_tests}")
 
 
+def _is_clone_valid(clone):
+    cb = clone.get("metrics", {}).get("codebleu", {})
+    score = float(cb.get("originalcode", 0.0))
+
+    return (
+        score <= CODEBLEU_THRESHOLD
+        and clone["code"].strip().lower() != "none"
+    )
+
+def _filter_by_codebleu(path): 
+    
+    with open(path, "r", encoding="utf-8") as f: 
+        data = json.load(f) 
+
+    filtered_data = [] 
+    removed_count = 0 
+    kept_count = 0 
+
+    for entry in data: 
+        new_entry = {"id": entry["id"], "clones": []} 
+        for clone in entry.get("clones", []): 
+            if _is_clone_valid(clone): 
+                new_entry["clones"].append(clone) 
+                kept_count += 1 
+            else: removed_count += 1 # keep entry only if it has valid clones 
+        if new_entry["clones"]: 
+            filtered_data.append(new_entry) 
+
+    with open(path, "w", encoding="utf-8") as f: 
+        json.dump(filtered_data, f, indent=2) 
+    
+    print(f"Saved to {path}") 
+    print(f"Kept clones: {kept_count}") 
+    print(f"Removed clones: {removed_count}")
