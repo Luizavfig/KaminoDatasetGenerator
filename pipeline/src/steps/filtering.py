@@ -52,9 +52,9 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH, out_path=OUT_PATH):
             clone["metrics"].setdefault("codebleu", {})
 
             # Skip if already computed
-            if "originalcode" in clone["metrics"]["codebleu"]:
-                print(f"Clone {idx + 1}: CodeBLEU already computed ({clone['metrics']['codebleu']['originalcode']:.4f})")
-                continue
+            # if "originalcode" in clone["metrics"]["codebleu"]:
+            #     print(f"Clone {idx + 1}: CodeBLEU already computed ({clone['metrics']['codebleu']['originalcode']:.4f})")
+            #     continue
 
             try:
                 clone_body = remove_function_signature(clone["code"])
@@ -147,7 +147,7 @@ def run_codebleu_filtering(raw_path=OUT_PATH, cleaned_path=CLEANED_PATH, filtere
     print(f"Updated clones (kept): {updated_count}")
 
 
-def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
+def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU, skip_entries=True):
     print("Starting testing process...")
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -157,6 +157,7 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
     data_by_id = {entry["id"]: entry for entry in data}
 
     # flag to begin processing only once start_id is found
+    
     start_id = "BigCodeBench/0"
     start_processing = (start_id is None)
 
@@ -164,7 +165,7 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
         entry_id = clone_entry["id"]
 
         # Skip until we find the start_id
-        if not start_processing:
+        if not start_processing and skip_entries:
             if entry_id == start_id:
                 start_processing = True
             else:
@@ -240,6 +241,7 @@ def run_test_filtering(filtered_path=FILTERED_PATH_CODEBLEU, reprompt_path=REPRO
     clean_and_split_clones(REPROMPT_PATH, REPROMPT_PATH_CLEANED)
     _compute_codebleu_scores(out_path=REPROMPT_PATH_CLEANED) 
     _filter_by_codebleu(reprompt_path) 
+    run_tests(filtered_path=reprompt_path, skip_entries=False) # test newly created clones
     with open(filtered_path, "r", encoding="utf-8") as f:
         original_data = json.load(f)
  

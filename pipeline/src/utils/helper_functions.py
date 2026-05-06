@@ -980,6 +980,8 @@ def clean_and_split_clones(raw_path: str, cleaned_path: str) -> None:
             new_clone = dict(clone)
             new_clone["code"] = full_code
             new_clone["clone_id"] = _increment_clone_id(clone_id, base_counter + idx)
+            new_clone.pop("metrics", None)
+            new_clone.pop("test_results", None)
             new_clones.append(new_clone)
 
         return new_clones
