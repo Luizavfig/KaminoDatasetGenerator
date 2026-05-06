@@ -157,7 +157,7 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
     data_by_id = {entry["id"]: entry for entry in data}
 
     # flag to begin processing only once start_id is found
-    start_id = "BigCodeBench/1044"
+    start_id = "BigCodeBench/0"
     start_processing = (start_id is None)
 
     for i, clone_entry in enumerate(clone_data, 1):
@@ -309,9 +309,9 @@ def compute_codebleu_for_all(filtered_path_tests=FILTERED_PATH_TESTS):
             clone2.setdefault("metrics", {}).setdefault("codebleu", {})
 
             # Skip if already computed in either direction
-            if clone2_id in clone1["metrics"]["codebleu"] and clone1_id in clone2["metrics"]["codebleu"]:
-                print(f"  Skipping Clone {idx1 + 1} vs Clone {idx2 + 1} (already computed)")
-                continue
+            # if clone2_id in clone1["metrics"]["codebleu"] and clone1_id in clone2["metrics"]["codebleu"]:
+            #     print(f"  Skipping Clone {idx1 + 1} vs Clone {idx2 + 1} (already computed)")
+            #     continue
 
             try:
                 val = calc_syntactic_codebleu(clone1["code"], clone2["code"], lang="python") 
