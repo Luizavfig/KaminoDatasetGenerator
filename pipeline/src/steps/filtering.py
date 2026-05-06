@@ -18,7 +18,7 @@ except ImportError:
 #  End of GUI suppression setup 
 
 import json, re
-from ..utils.helper_functions import (clean_and_split_clones, remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest,calc_syntactic_codebleu) 
+from ..utils.helper_functions import (clean_and_split_clones, remove_function_signature, install_package, extract_required_packages_clones, validate_with_unittest,calc_complete_codebleu) 
 from itertools import combinations
 from src.config import *
 
@@ -58,7 +58,7 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH, out_path=OUT_PATH):
 
             try:
                 clone_body = remove_function_signature(clone["code"])
-                score = calc_syntactic_codebleu(ref_body, clone_body, lang="python")
+                score = calc_complete_codebleu(ref_body, clone_body, lang="python")
                 clone["metrics"]["codebleu"]["originalcode"] = score
                 print(f"Clone {idx + 1}: CodeBLEU={score:.4f}")
             except Exception as e:
@@ -316,7 +316,7 @@ def compute_codebleu_for_all(filtered_path_tests=FILTERED_PATH_TESTS):
             #     continue
 
             try:
-                val = calc_syntactic_codebleu(clone1["code"], clone2["code"], lang="python") 
+                val = calc_complete_codebleu(clone1["code"], clone2["code"], lang="python") 
                 clone1["metrics"]["codebleu"][clone2_id] = val
                 clone2["metrics"]["codebleu"][clone1_id] = val
 

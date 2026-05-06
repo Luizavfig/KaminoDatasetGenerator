@@ -168,6 +168,13 @@ def remove_function_signature(code: str) -> str:
             cleaned_lines.append(line)
     return "\n".join(cleaned_lines).strip()
 
+def calc_complete_codebleu(code1: str, code2: str, lang: str = "python") -> float:
+    """
+    Compute a CodeBLEU score between two code snippets.
+    """
+    score = calc_codebleu([code1], [code2], lang=lang)
+     
+    return score["codebleu"]
 
 
 def calc_syntactic_codebleu(code1: str, code2: str, lang: str = "python") -> float:
@@ -186,9 +193,8 @@ def calc_syntactic_codebleu(code1: str, code2: str, lang: str = "python") -> flo
 
     # Average them equally
     syntactic_score = sum(syntactic_components) / len(syntactic_components)
-    #return float(syntactic_score)
-    return score["codebleu"]
-
+    return float(syntactic_score)
+    
 def build_pairs(data, seed=42, target_ratio=1.0):
     """
     Build positive and negative code pairs using _calculate_max_negatives for balancing.
