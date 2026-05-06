@@ -1,8 +1,8 @@
 refac,efficiency
-"refac_1,refac_3,refac_4",0.047642058961857435
-"refac_1,refac_4,refac_5",0.04503778963302397
-"refac_2,refac_6,refac_7",0.03537674219370966
-"refac_2,refac_5,refac_6",0.03529965389617499
-"refac_3,refac_5,refac_7",0.034324048325857684
-"refac_1,refac_3,refac_7",0.03424492765675697
-"refac_2,refac_4,refac_6",0.031839391948590846
+"refac_1,refac_3,refac_4",0.028611660873596425
+"refac_1,refac_4,refac_5",0.02748251938152915
+"refac_2,refac_5,refac_6",0.021526982543813987
+"refac_2,refac_6,refac_7",0.0207272596896122
+"refac_1,refac_3,refac_7",0.020682525166750322
+"refac_3,refac_5,refac_7",0.019635727058604426
+"refac_2,refac_4,refac_6",0.019387297023445077

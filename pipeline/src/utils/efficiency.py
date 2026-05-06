@@ -27,10 +27,10 @@ def select_top_n_configs(n = TOP_N):
 
 def _calc_efficient_prompts(top_n=TOP_N):
 #  Load all stages 
-    df0 = _load_clones(OUT_PATH)
+    df0 = _load_clones(CLEANED_PATH)
     df1 = _load_clones(FILTERED_PATH_CODEBLEU)
     df2 = _load_clones(FILTERED_PATH_TESTS)
-    df3 = _load_clones(REPROMPT_PATH)
+    df3 = _load_clones(REPROMPT_PATH_CLEANED)
     df5 = _load_clones(FINAL_DATASET) 
     # Note: df4 (clones that pass all tests) is implicitly represented inside df2 and df3
 
