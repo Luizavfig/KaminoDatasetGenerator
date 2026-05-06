@@ -993,6 +993,10 @@ def clean_and_split_clones(raw_path: str, cleaned_path: str) -> None:
     for entry in data:
         expanded = []
         for clone in entry.get("clones", []):
+            code = clone.get("code")
+            # Skip invalid clones
+            if not isinstance(code, str) or code.strip() in {"", "None"}:
+                continue
             split = _split_clone(clone)
             for c in split:
                 c["code"] = _remove_comments(_remove_tests(c["code"])) 
