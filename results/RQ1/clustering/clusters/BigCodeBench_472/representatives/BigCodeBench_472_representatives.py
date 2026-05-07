@@ -17,7 +17,7 @@ def task_func(myList, n_clusters):
     ax.scatter(centers[:, 0], centers[:, 1], c='red', marker='x', s=100)
     return ax
 
-# Cluster 1 - Representative clone cot deepseek-r1:14b-complete 1 ['refac_3', 'refac_5', 'refac_7']
+# Cluster 1 - Representative clone zero-shot deepseek-r1:14b-complete 1 ['refac_3', 'refac_5', 'refac_7']
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
@@ -37,5 +37,26 @@ def task_func(myList, n_clusters):
     scatter = ax.scatter(*zip(*myList), c=kmeans.labels_)
     centers = kmeans.cluster_centers_
     ax.scatter(*zip(*centers), marker='x', color='red')
+    return ax
+
+# Cluster 2 - Representative clone zero-shot deepseek-r1:14b-test 1 ['refac_3', 'refac_5', 'refac_7']
+import numpy as np
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+
+def task_func(myList, n_clusters):
+    if not myList or n_clusters <= 0:
+        raise ValueError('Invalid input parameters')
+    points = np.array(myList)
+    if len(points) < n_clusters:
+        raise ValueError('Number of clusters exceeds the number of points')
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42).fit(points)
+    labels = kmeans.labels_
+    plt.figure(figsize=(10, 8))
+    ax = plt.gca()
+    scatter = ax.scatter(points[:, 0], points[:, 1], c=labels, cmap='viridis')
+    centers = kmeans.cluster_centers_
+    ax.scatter(centers[:, 0], centers[:, 1], marker='x', color='red', s=100)
     return ax
 
