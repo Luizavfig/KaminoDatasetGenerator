@@ -13,7 +13,7 @@ def main(): # RQ1 evaluation
     # Step 2: Clone Generation
     cg.run_generation()
         
-    # # Step 3: Filtering based on codebleu
+    # Step 3: Filtering based on codebleu
     fl.run_codebleu_filtering()
 
     # Step 4: Run tests on filtered clones
