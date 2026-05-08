@@ -81,7 +81,7 @@ Applies clustering to select a diverse, non-redundant subset of valid clones.
 * Python 3 or newer
 * Ollama running on a server (use the default OLLAMA port for local connection or 3333 for remote)
     * Port configurations can be changed in ```pipeline/src/resources```
-* Inside the *pipeline* folder, run `pip install -r required_packages.txt` to install required packages -- depending on your Python kernel additional packages may need to be installed
+* Inside the *pipeline* folder, run `pip install -r requirements.txt` to install required packages -- depending on your Python kernel additional packages may need to be installed
 * [MS C++ build tools](https://visualstudio.microsoft.com/pt-br/visual-cpp-build-tools/) -- make sure to install Desktop development with C++ (include Win 10/11 SDK and C++ CMake tools for Windows) -- this is **required by Codebleu**
 ## Configuration
 The pipeline is pre-configured with the setup used for the experiments. 

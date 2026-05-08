@@ -1,9 +1,13 @@
-import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os, math, json, parso, uuid
+import unittest, tempfile, textwrap, importlib.util, sys, os, subprocess, ast, multiprocessing, re, random, os, math, json, parso, uuid, Levenshtein
 from huggingface_hub import login
 from pathlib import Path
 from dotenv import load_dotenv
 from codebleu import calc_codebleu
 from datasets import load_dataset
+from sklearn.model_selection import GroupShuffleSplit
+from collections import defaultdict
+from itertools import combinations
+
 from src.config import *
 
 class TrackingTestResult(unittest.TextTestResult):
@@ -254,16 +258,22 @@ def build_pairs(data, seed=42, target_ratio=1.0):
     print(f"Built {len(pairs)} code pairs (Positives: {positives}, Negatives: {negatives})")
     return pairs
 
-def build_pairs_from_folders(seed=42,language="python"):
+def build_pairs_from_folders(seed=42,language="python",dataset="GPTCloneBench"):
     """
     Build positive and negative pairs from a folder containing source files.
     Logic for number of positives and negatives is unchanged.
     """
-
-    if language not in LANGUAGE_ADAPTERS:
+    
+    if language not in GPT_LANGUAGE_ADAPTERS or language not in SEMANTIC_LANGUAGE_ADAPTERS:
         raise ValueError(f"Unsupported language: {language}")
 
-    adapter = LANGUAGE_ADAPTERS[language]
+    adapter = (
+        GPT_LANGUAGE_ADAPTERS[language]
+        if dataset == "GPTCloneBench"
+        else SEMANTIC_LANGUAGE_ADAPTERS[language]
+    )
+
+
     pos_folder = adapter["pairs_folder"]
     output_file = adapter["output_file"]
     extension = adapter["extension"]
@@ -337,7 +347,7 @@ def build_pairs_from_folders(seed=42,language="python"):
             ))
             attempts += 1
 
-    # Combine and shuffle (UNCHANGED)
+    # Combine and shuffle 
     pairs.extend(negatives)
     rng.shuffle(pairs)
 
@@ -345,7 +355,7 @@ def build_pairs_from_folders(seed=42,language="python"):
     negatives_count = sum(1 for _, _, l in pairs if l == 0)
 
     print(
-        f"Built {len(pairs)} {language} code pairs "
+        f"Built {len(pairs)} {language} code pairs for {dataset} dataset"
         f"(Positives: {positives}, Negatives: {negatives_count})"
     )
 
@@ -355,6 +365,110 @@ def build_pairs_from_folders(seed=42,language="python"):
 
     print(f"Saved {language} pairs to {output_file}")
     return pairs
+ 
+
+def build_pairs_from_folders_split(seed=42, language="python", dataset="GPTCloneBench", test_size=0.2):
+
+    if language not in GPT_LANGUAGE_ADAPTERS or language not in SEMANTIC_LANGUAGE_ADAPTERS:
+        raise ValueError(f"Unsupported language: {language}")
+
+    adapter = (
+        GPT_LANGUAGE_ADAPTERS[language]
+        if dataset == "GPTCloneBench"
+        else SEMANTIC_LANGUAGE_ADAPTERS[language]
+    )
+
+    pos_folder = adapter["pairs_folder"]
+    output_file = adapter["output_file"]
+    extension = adapter["extension"]
+    extract = adapter["extract"]
+    remove_sig = adapter["remove_signature"]
+
+    identity_fn = (
+        adapter["get_signature"]
+        if dataset == "GPTCloneBench"
+        else adapter["get_name"]
+    )
+
+    cache_file = output_file.replace(".json", f"_split_seed{seed}.json")
+
+    if os.path.exists(cache_file):
+        print(f"Loading split cache from {cache_file}")
+        with open(cache_file, "r", encoding="utf-8") as f:
+            cached = json.load(f)
+        return cached["train"], cached["test"]
+
+    rng = random.Random(seed)
+
+    all_files = [f for f in os.listdir(pos_folder) if f.endswith(extension)]
+
+    grouped = defaultdict(list)
+
+    for filename in all_files:
+        path = os.path.join(pos_folder, filename)
+        funcs = extract(path)
+
+        for f in funcs:
+            key = identity_fn(f)
+            grouped[key].append(f)
+
+    keys = list(grouped.keys())
+
+    gss = GroupShuffleSplit(
+        n_splits=1,
+        test_size=test_size,
+        random_state=seed
+    )
+
+    train_idx, test_idx = next(gss.split(keys, groups=keys))
+
+    train_keys = set(keys[i] for i in train_idx)
+    test_keys = set(keys[i] for i in test_idx)
+
+    train_funcs = [f for k in train_keys for f in grouped[k]]
+    test_funcs = [f for k in test_keys for f in grouped[k]]
+
+    def build_pairs(funcs):
+        pairs = []
+
+        if len(funcs) >= 2:
+            pairs.append((
+                remove_sig(funcs[0]),
+                remove_sig(funcs[1]),
+                1
+            ))
+
+        total_pos = len(pairs)
+
+        negatives = []
+        if len(funcs) >= 2:
+            attempts = 0
+
+            while len(negatives) < total_pos and attempts < total_pos * 10:
+
+                func_a = rng.choice(funcs)
+                func_b = rng.choice(funcs)
+
+                if func_a == func_b:
+                    attempts += 1
+                    continue
+
+                negatives.append((
+                    remove_sig(func_a),
+                    remove_sig(func_b),
+                    0
+                ))
+
+                attempts += 1
+
+        pairs.extend(negatives)
+        rng.shuffle(pairs)
+
+        return pairs
+
+    train_pairs = build_pairs(train_funcs)
+    test_pairs = build_pairs(test_funcs)
+
 
 
 def _calculate_max_negatives(data, target_ratio=1.0):
@@ -401,6 +515,27 @@ def _get_function_signature(code):
     except Exception as e:
         # Fallback if parsing fails: use first line
         return code.splitlines()[0].strip()
+    return None
+
+def _get_function_name(code):
+    """
+    Extracts only the Python function name.
+    Returns: 'func_name'
+    """
+    try:
+        tree = ast.parse(code)
+        for node in tree.body:
+            if isinstance(node, ast.FunctionDef):
+                return node.name
+    except Exception:
+        pass
+
+    # fallback: try regex if AST fails
+    import re
+    match = re.search(r"def\s+([a-zA-Z_][a-zA-Z0-9_]*)", code)
+    if match:
+        return match.group(1)
+
     return None
 
 def _extract_functions_from_file(path):
@@ -537,6 +672,30 @@ def _get_java_method_signature(code: str):
 
     return f"{name}({params})"
 
+def _get_java_method_name(code: str):
+    """
+    Extracts only the Java method name.
+    Returns: 'methodName'
+    """
+    code = code.strip().replace("\n", " ")
+
+    pattern = re.compile(
+        r'''
+        (public|protected|private)?\s*
+        (static\s+)?(final\s+)?(synchronized\s+)?   # modifiers
+        ([\w\<\>\[\]]+\s+)+                         # return type
+        (?P<name>\w+)\s*
+        \(
+        ''',
+        re.VERBOSE
+    )
+
+    match = pattern.search(code)
+    if not match:
+        return None
+
+    return match.group("name")
+
 def _extract_csharp_methods_from_file(path):
     """
     Extracts C# method code blocks from a .cs file.
@@ -633,96 +792,23 @@ def _get_csharp_method_signature(code: str):
 
     return f"{match.group('name')}({match.group('params').strip()})"
 
-def _extract_c_functions_from_file(path):
+def _get_csharp_method_name(code: str):
     """
-    Extracts C function definitions from a .c file.
-    Returns a list of full function strings (signature + body).
-    """
-    with open(path, "r", encoding="utf-8", errors="ignore") as f:
-        code = f.read()
-
-    functions = []
-
-    signature_pattern = re.compile(
-        r'''
-        (?P<ret_type>
-            (?:static\s+)?                # static
-            (?:inline\s+)?                # inline
-            (?:const\s+)?                 # const
-            [\w\s\*\(\)]+?               # return type
-        )
-        \s+
-        (?P<name>\w+)\s*                 # function name
-        \(
-            (?P<params>[^;]*?)
-        \)
-        \s*
-        \{
-        ''',
-        re.VERBOSE | re.MULTILINE
-    )
-
-    for match in signature_pattern.finditer(code):
-        start = match.start()
-        brace_count = 0
-        i = match.end() - 1
-
-        while i < len(code):
-            if code[i] == "{":
-                brace_count += 1
-            elif code[i] == "}":
-                brace_count -= 1
-                if brace_count == 0:
-                    functions.append(code[start:i + 1].strip())
-                    break
-            i += 1
-
-    return functions
-
-def _remove_c_function_signature(code: str) -> str:
-    """
-    Removes C function signature and outer braces.
-    Returns only the function body.
-    """
-    code = code.strip()
-
-    first_brace = code.find("{")
-    last_brace = code.rfind("}")
-
-    if first_brace == -1 or last_brace == -1:
-        return ""
-
-    body = code[first_brace + 1:last_brace]
-
-    lines = body.splitlines()
-
-    while lines and not lines[0].strip():
-        lines.pop(0)
-    while lines and not lines[-1].strip():
-        lines.pop()
-
-    indents = [
-        len(line) - len(line.lstrip())
-        for line in lines
-        if line.strip()
-    ]
-    min_indent = min(indents) if indents else 0
-
-    return "\n".join(line[min_indent:] for line in lines)
-
-def _get_c_function_signature(code: str):
-    """
-    Extracts C function signature.
-    Returns: 'funcName(type1 arg1, type2 arg2)'
+    Extracts only the C# method name.
+    Returns: 'MethodName'
     """
     code = code.strip().replace("\n", " ")
 
     pattern = re.compile(
         r'''
-        (?:static\s+)?(?:inline\s+)?(?:const\s+)?   # modifiers
-        [\w\s\*\(\)]+?                             # return type
-        (?P<name>\w+)\s*
-        \((?P<params>[^\)]*)\)
+        (public|private|protected|internal)?\s*
+        (static\s+|virtual\s+|override\s+|async\s+)*
+
+        ([\w\<\>\[\],]+\s+)+   # return type(s)
+
+        (?P<name>\w+)\s*       # method name
+
+        \(
         ''',
         re.VERBOSE
     )
@@ -731,7 +817,7 @@ def _get_c_function_signature(code: str):
     if not match:
         return None
 
-    return f"{match.group('name')}({match.group('params').strip()})"
+    return match.group("name")
 
 
 def build_pairs_bigclonebench(output_file=BIGCLONEBENCH_PAIRS, split="test"):
@@ -772,42 +858,6 @@ def build_pairs_bigclonebench(output_file=BIGCLONEBENCH_PAIRS, split="test"):
         f"(Positives: {positives}, Negatives: {negatives})"
     )
     return pairs
-
-
-LANGUAGE_ADAPTERS = {
-    "python": {
-        "extension": ".py",
-        "pairs_folder": GPTCLONEBENCH_PY_POS_CLONES_DIR,
-        "output_file": GPTCLONEBENCH_PY_PAIRS,
-        "extract": _extract_functions_from_file,
-        "remove_signature": remove_function_signature,
-        "get_signature": _get_function_signature,
-    },
-    "java": {
-        "extension": ".java",
-        "pairs_folder": GPTCLONEBENCH_JAVA_POS_CLONES_DIR,
-        "output_file": GPTCLONEBENCH_JAVA_PAIRS,
-        "extract": _extract_java_methods_from_file,
-        "remove_signature": _remove_java_method_signature,
-        "get_signature": _get_java_method_signature,
-    },
-    "csharp": {
-        "extension": ".cs",
-        "pairs_folder": GPTCLONEBENCH_CS_POS_CLONES_DIR,
-        "output_file": GPTCLONEBENCH_CS_PAIRS,
-        "extract": _extract_csharp_methods_from_file,
-        "remove_signature": _remove_csharp_method_signature,
-        "get_signature": _get_csharp_method_signature,
-    },
-    "c": {
-        "extension": ".c",
-        "pairs_folder": GPTCLONEBENCH_C_POS_CLONES_DIR,
-        "output_file": GPTCLONEBENCH_C_PAIRS,
-        "extract": _extract_c_functions_from_file,
-        "remove_signature": _remove_c_function_signature,
-        "get_signature": _get_c_function_signature,
-    },
-}
 
 
 def clean_and_split_clones(raw_path: str, cleaned_path: str) -> None:
@@ -992,7 +1042,6 @@ def clean_and_split_clones(raw_path: str, cleaned_path: str) -> None:
 
         return new_clones
 
-    # ------------------------------------------------------------------ #
     with open(raw_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
@@ -1085,3 +1134,83 @@ def _remove_tests(source: str) -> str:
     result = [line for i, line in enumerate(lines, start=1) if i not in lines_to_remove]
     # Strip trailing blank lines left by removal
     return "".join(result).rstrip() + "\n"
+
+
+def _name_similarity(a: str, b: str) -> float:
+    """
+    Returns normalized similarity in [0, 1]
+    1 = identical
+    0 = completely different
+    """
+    if not a and not b:
+        return 1.0
+
+    dist = Levenshtein.distance(a, b)
+    max_len = max(len(a), len(b))
+
+    if max_len == 0:
+        return 1.0
+
+    return 1.0 - (dist / max_len)
+ 
+ 
+
+GPT_LANGUAGE_ADAPTERS = {
+    "python": {
+        "extension": ".py",
+        "pairs_folder": GPTCLONEBENCH_PY_POS_CLONES_DIR,
+        "output_file": GPTCLONEBENCH_PY_PAIRS,
+        "extract": _extract_functions_from_file,
+        "remove_signature": remove_function_signature,
+        "get_signature": _get_function_signature,
+        "get_name": _get_function_name,
+    },
+    "java": {
+        "extension": ".java",
+        "pairs_folder": GPTCLONEBENCH_JAVA_POS_CLONES_DIR,
+        "output_file": GPTCLONEBENCH_JAVA_PAIRS,
+        "extract": _extract_java_methods_from_file,
+        "remove_signature": _remove_java_method_signature,
+        "get_signature": _get_java_method_signature,
+        "get_name": _get_java_method_name,
+    },
+    "csharp": {
+        "extension": ".cs",
+        "pairs_folder": GPTCLONEBENCH_CS_POS_CLONES_DIR,
+        "output_file": GPTCLONEBENCH_CS_PAIRS,
+        "extract": _extract_csharp_methods_from_file,
+        "remove_signature": _remove_csharp_method_signature,
+        "get_signature": _get_csharp_method_signature,
+        "get_name": _get_csharp_method_name,
+    },
+}
+
+SEMANTIC_LANGUAGE_ADAPTERS = {
+    "python": {
+        "extension": ".py",
+        "pairs_folder": SCLONEBENCH_PY_POS_CLONES_DIR,
+        "output_file": SCLONEBENCH_PY_PAIRS,
+        "extract": _extract_functions_from_file,
+        "remove_signature": remove_function_signature,
+        "get_signature": _get_function_signature,
+        "get_name": _get_function_name,
+    },
+    "java": {
+        "extension": ".java",
+        "pairs_folder": SCLONEBENCH_JAVA_POS_CLONES_DIR,
+        "output_file": SCLONEBENCH_JAVA_PAIRS,
+        "extract": _extract_java_methods_from_file,
+        "remove_signature": _remove_java_method_signature,
+        "get_signature": _get_java_method_signature,
+        "get_name": _get_java_method_name,
+    },
+    "csharp": {
+        "extension": ".cs",
+        "pairs_folder": SCLONEBENCH_CS_POS_CLONES_DIR,
+        "output_file": SCLONEBENCH_CS_PAIRS,
+        "extract": _extract_csharp_methods_from_file,
+        "remove_signature": _remove_csharp_method_signature,
+        "get_signature": _get_csharp_method_signature,
+        "get_name": _get_csharp_method_name,
+    },
+}

@@ -16,18 +16,24 @@ SAMPLE_1_PATH = FILTERED_DATASET_PATH
 SAMPLE_2_PATH = "../dataset/sample2.json"
 OUT_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones.json"
 CLEANED_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones_cleaned.json"
-FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json"
-FINAL_DATASET_RQ2 = f"../results/RQ2/{DATASET_NAME}_clone_dataset.xml"
+FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json" 
 
+OTHER_DATASET_PATH ="../dataset/"
 #GPTCloneBench settings
 GPTCLONEBENCH_PY_POS_CLONES_DIR = "../dataset/GPTCloneBench/python/"
 GPTCLONEBENCH_PY_PAIRS =  "../dataset/GPTCloneBench/pairs_py.json"
 GPTCLONEBENCH_JAVA_POS_CLONES_DIR = "../dataset/GPTCloneBench/java/"
 GPTCLONEBENCH_JAVA_PAIRS =  "../dataset/GPTCloneBench/pairs_java.json"
 GPTCLONEBENCH_CS_POS_CLONES_DIR = "../dataset/GPTCloneBench/cs/"
-GPTCLONEBENCH_CS_PAIRS =  "../dataset/GPTCloneBench/pairs_cs.json"
-GPTCLONEBENCH_C_POS_CLONES_DIR = "../dataset/GPTCloneBench/c/"
-GPTCLONEBENCH_C_PAIRS =  "../dataset/GPTCloneBench/pairs_c.json"
+GPTCLONEBENCH_CS_PAIRS =  "../dataset/GPTCloneBench/pairs_cs.json" 
+
+#SemanticCloneBench settings
+SCLONEBENCH_PY_POS_CLONES_DIR = "../dataset/SemanticCloneBench/python/"
+SCLONEBENCH_PY_PAIRS =  "../dataset/SemanticCloneBench/pairs_py.json"
+SCLONEBENCH_JAVA_POS_CLONES_DIR = "../dataset/SemanticCloneBench/java/"
+SCLONEBENCH_JAVA_PAIRS =  "../dataset/SemanticCloneBench/pairs_java.json"
+SCLONEBENCH_CS_POS_CLONES_DIR = "../dataset/SemanticCloneBench/cs/"
+SCLONEBENCH_CS_PAIRS =  "../dataset/SemanticCloneBench/pairs_cs.json" 
 
 # BigCloneBench settings 
 BIGCLONEBENCH_PAIRS = "../dataset/BigCloneBench/pairs.json"

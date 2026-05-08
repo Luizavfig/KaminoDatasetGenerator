@@ -3,38 +3,57 @@ import pandas as pd
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
-from src.utils.helper_functions import build_pairs, build_pairs_from_folders, build_pairs_bigclonebench
+from src.utils.helper_functions import build_pairs, build_pairs_from_folders
 from src.clone_detection.finetune import run_finetuning
 from src.config import *
 
 EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
 
-def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=None, dataset_name="Kamino", reults_csv=CLONE_DETECTION_RESULTS, language="python"):
-    model_dir = Path(model_path)
+def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=None, test_dataset_name="GPTCloneBench",train_dataset_name="Kamino", reults_csv=CLONE_DETECTION_RESULTS, language="python"):
+    model_folder_name = full_model_name.split("/")[-1] 
+    if "-default" in full_model_name:
+        model_dir = Path(model_path) / model_folder_name
+    else:
+        dataset_name = train_dataset_name.replace("/", "_")
+        model_dir = Path(model_path) / dataset_name / model_folder_name
     model_folder_name = model_dir.name
     print(f"Checking model: {model_folder_name}") 
     # Fine-tuning is executed if mode is still not on local folder
     if not model_dir.exists() or not all((model_dir / f).exists() for f in EXPECTED_MODEL_FILES):
         print(f"Model not found or incomplete at {model_dir}")
-        run_finetuning(model_name=full_model_name)
+        run_finetuning(model_name=full_model_name,model_path=model_path)
 
    
     print(f"Loading model from: {model_dir}")
     model = SentenceTransformer(str(model_dir))
     
-    if(dataset_name == "Kamino"): # use our own dataset
+    if(test_dataset_name == "Kamino"): # use our own dataset
         with open(dataset_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        pairs = build_pairs(data) 
-    elif(dataset_name == "BigCloneBench"): # use BigCloneBench dataset
-        pairs = build_pairs_bigclonebench()
-    else: # use GPCloneBench dataset
-        pairs = build_pairs_from_folders(language=language) 
+        pairs = build_pairs(data)  
+    else: # use GPCloneBench\SemanticCloneBench dataset
+        pairs = build_pairs_from_folders(language=language, dataset=test_dataset_name) 
 
     precision, recall, f1, sims, mcc, TP, TN, FP, FN = _evaluate_model(model, pairs, threshold=threshold)
     print(f"✅ Evaluation complete (threshold={threshold}):")
     print(f"Precision: {precision:.4f}, Recall: {recall:.4f}, F1-score: {f1:.4f}") 
-    _save_evaluation_to_csv(full_model_name, precision, recall, f1, mcc, TP, TN, FP, FN, threshold=threshold, csv_path=reults_csv, dataset_name=dataset_name, language=language , num_pairs=len(pairs))
+    _save_evaluation_to_csv(
+        full_model_name,
+        precision,
+        recall,
+        f1,
+        mcc,
+        TP,
+        TN,
+        FP,
+        FN,
+        threshold=threshold,
+        csv_path=reults_csv,
+        train_dataset_name=train_dataset_name,
+        test_dataset_name=test_dataset_name,
+        language=language,
+        num_pairs=len(pairs)
+    )
     return precision, recall, f1, sims
 
 def _evaluate_model(model, pairs, threshold):
@@ -72,12 +91,16 @@ def _compute_metrics(TP, TN, FP, FN):  # Calculate metrics
     mcc = ((TP * TN) - (FP * FN)) / denom if denom else 0.0
     return precision, recall, f1, mcc
 
-def _save_evaluation_to_csv(full_model_name, precision, recall, f1, mcc, TP, TN, FP, FN, threshold, csv_path=CLONE_DETECTION_RESULTS, dataset_name=None, language="python", num_pairs=None):
+def _save_evaluation_to_csv(full_model_name, precision, recall, f1, mcc, TP, TN, FP, FN, threshold, csv_path=CLONE_DETECTION_RESULTS, train_dataset_name=None, test_dataset_name=None, language="python", num_pairs=None):
     csv_path = Path(csv_path)
-    
+
+    if "-default" in full_model_name:
+        train_dataset_name = "-"
+
     metrics_row = {
         "model": full_model_name,
-        "dataset": dataset_name,
+        "train_dataset": train_dataset_name,
+        "test_dataset": test_dataset_name,
         "lan": language,
         "pairs": num_pairs,
         "threshold": threshold,
@@ -93,13 +116,12 @@ def _save_evaluation_to_csv(full_model_name, precision, recall, f1, mcc, TP, TN,
 
     if csv_path.exists():
         df = pd.read_csv(csv_path)
-        # Check if this model + threshold already exists
-        mask = (df["model"] == full_model_name) & (df["threshold"] == threshold) & (df["dataset"] == dataset_name) & (df["lan"] == language)
+
+        mask = (df["model"] == full_model_name) & (df["threshold"] == threshold) & (df["train_dataset"] == train_dataset_name) & (df["test_dataset"] == test_dataset_name) & (df["lan"] == language)
+
         if mask.any():
-            # Update existing row
-            df.loc[mask, ["precision", "recall", "f1"]] = [precision, recall, f1]
+            df.loc[mask, ["precision", "recall", "f1", "mcc", "TP", "TN", "FP", "FN"]] = [precision, recall, f1, mcc, TP, TN, FP, FN]
         else:
-            # Append new row
             df = pd.concat([df, pd.DataFrame([metrics_row])], ignore_index=True)
     else:
         df = pd.DataFrame([metrics_row])
