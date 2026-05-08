@@ -542,8 +542,7 @@ def _extract_functions_from_file(path):
     """
     Returns a list of function code strings from a Python file using parso.
     """
-    with open(path, "r", encoding="utf-8") as f:
-        code = f.read()
+    code = _read_source_file(path)
 
     funcs = []
     try:
@@ -573,8 +572,7 @@ def _extract_java_methods_from_file(path):
     Extracts Java method code blocks from a .java file.
     Returns a list of full method strings (signature + body).
     """
-    with open(path, "r", encoding="utf-8") as f:
-        code = f.read()
+    code = _read_source_file(path)
 
     methods = []
 
@@ -701,8 +699,7 @@ def _extract_csharp_methods_from_file(path):
     Extracts C# method code blocks from a .cs file.
     Returns a list of full method strings (signature + body).
     """
-    with open(path, "r", encoding="utf-8") as f:
-        code = f.read()
+    code = _read_source_file(path)
 
     methods = []
 
@@ -1154,6 +1151,27 @@ def _name_similarity(a: str, b: str) -> float:
     return 1.0 - (dist / max_len)
  
  
+
+def _read_source_file(path: str) -> str:
+    """
+    Robust source file reader with encoding fallbacks.
+    """
+
+    encodings = ["utf-8", "utf-8-sig", "cp1252", "latin-1"]
+
+    for enc in encodings:
+        try:
+            with open(path, "r", encoding=enc) as f:
+                return f.read()
+        except UnicodeDecodeError:
+            continue
+
+    raise UnicodeDecodeError("unknown",
+        b"",
+        0,
+        1,
+        f"Could not decode file: {path}"
+    )
 
 GPT_LANGUAGE_ADAPTERS = {
     "python": {
