@@ -1,0 +1,38 @@
+/*
+* Semantic clone benchmark
+*  Source code are extracted from Stack Overflow
+*  Stack overflow Question #:680786
+*  Stack Overflow answer #:10094329
+*  And Stack Overflow answer#:10094329
+*/
+public static void Rename (this FileSystemInfo item, string newName) {
+    if (item == null) {
+        throw new ArgumentNullException ("item");
+    }
+    FileInfo fileInfo = item as FileInfo;
+    if (fileInfo != null) {
+        fileInfo.Rename (newName);
+        return;
+    }
+    DirectoryInfo directoryInfo = item as DirectoryInfo;
+    if (directoryInfo != null) {
+        directoryInfo.Rename (newName);
+        return;
+    }
+    throw new ArgumentException ("Item", "Unexpected subclass of FileSystemInfo " + item.GetType ());
+}
+
+public static void Rename (this DirectoryInfo directory, string newName) {
+    if (directory == null) {
+        throw new ArgumentNullException ("directory");
+    } else if (newName == null) {
+        throw new ArgumentNullException ("newName");
+    } else if (newName.Length == 0) {
+        throw new ArgumentException ("The name is empty.", "newName");
+    } else if (newName.IndexOf (Path.DirectorySeparatorChar) >= 0 || newName.IndexOf (Path.AltDirectorySeparatorChar) >= 0) {
+        throw new ArgumentException ("The name contains path separators. The directory would be moved.", "newName");
+    }
+    string newPath = Path.Combine (directory.Parent.FullName, newName);
+    directory.MoveTo (newPath);
+}
+
