@@ -469,6 +469,8 @@ def build_pairs_from_folders_split(seed=42, language="python", dataset="GPTClone
     train_pairs = build_pairs(train_funcs)
     test_pairs = build_pairs(test_funcs)
 
+    return train_pairs, test_pairs
+
 
 
 def _calculate_max_negatives(data, target_ratio=1.0):
