@@ -367,7 +367,12 @@ def build_pairs_from_folders(seed=42,language="python",dataset="GPTCloneBench"):
     return pairs
  
 
-def build_pairs_from_folders_split(seed=42, language="python", dataset="GPTCloneBench", test_size=0.2):
+def build_pairs_from_folders_split(
+    seed=42,
+    language="python",
+    dataset="GPTCloneBench",
+    test_size=0.2
+):
 
     if language not in GPT_LANGUAGE_ADAPTERS or language not in SEMANTIC_LANGUAGE_ADAPTERS:
         raise ValueError(f"Unsupported language: {language}")
@@ -422,54 +427,79 @@ def build_pairs_from_folders_split(seed=42, language="python", dataset="GPTClone
 
     train_idx, test_idx = next(gss.split(keys, groups=keys))
 
-    train_keys = set(keys[i] for i in train_idx)
-    test_keys = set(keys[i] for i in test_idx)
+    train_keys = [keys[i] for i in train_idx]
+    test_keys = [keys[i] for i in test_idx]
 
-    train_funcs = [f for k in train_keys for f in grouped[k]]
-    test_funcs = [f for k in test_keys for f in grouped[k]]
+    def build_pairs(split_keys):
 
-    def build_pairs(funcs):
         pairs = []
 
-        if len(funcs) >= 2:
-            pairs.append((
-                remove_sig(funcs[0]),
-                remove_sig(funcs[1]),
-                1
-            ))
+        # ---------- POSITIVE PAIRS ----------
+        for key in split_keys:
+
+            funcs = grouped[key]
+
+            if len(funcs) < 2:
+                continue
+
+            for i in range(len(funcs)):
+                for j in range(i + 1, len(funcs)):
+
+                    pairs.append((
+                        remove_sig(funcs[i]),
+                        remove_sig(funcs[j]),
+                        1
+                    ))
 
         total_pos = len(pairs)
 
+        # ---------- NEGATIVE PAIRS ----------
         negatives = []
-        if len(funcs) >= 2:
-            attempts = 0
+        attempts = 0
+        max_attempts = total_pos * 20 if total_pos > 0 else 100
 
-            while len(negatives) < total_pos and attempts < total_pos * 10:
+        while len(negatives) < total_pos and attempts < max_attempts:
 
-                func_a = rng.choice(funcs)
-                func_b = rng.choice(funcs)
+            key_a = rng.choice(split_keys)
+            key_b = rng.choice(split_keys)
 
-                if func_a == func_b:
-                    attempts += 1
-                    continue
-
-                negatives.append((
-                    remove_sig(func_a),
-                    remove_sig(func_b),
-                    0
-                ))
-
+            # negatives must come from different groups
+            if key_a == key_b:
                 attempts += 1
+                continue
+
+            func_a = rng.choice(grouped[key_a])
+            func_b = rng.choice(grouped[key_b])
+
+            negatives.append((
+                remove_sig(func_a),
+                remove_sig(func_b),
+                0
+            ))
+
+            attempts += 1
 
         pairs.extend(negatives)
         rng.shuffle(pairs)
 
         return pairs
 
-    train_pairs = build_pairs(train_funcs)
-    test_pairs = build_pairs(test_funcs)
+    train_pairs = build_pairs(train_keys)
+    test_pairs = build_pairs(test_keys)
 
-    print(f"Created split for {dataset} with {len(train_pairs)} train pairs and {len(test_pairs)} test pairs")
+    cache_data = {
+        "train": train_pairs,
+        "test": test_pairs
+    }
+
+    with open(cache_file, "w", encoding="utf-8") as f:
+        json.dump(cache_data, f, indent=2)
+
+    print(
+        f"Created split for {dataset} "
+        f"with {len(train_pairs)} train pairs and "
+        f"{len(test_pairs)} test pairs"
+    )
 
     return train_pairs, test_pairs
 
