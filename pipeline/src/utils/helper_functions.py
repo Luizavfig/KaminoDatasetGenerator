@@ -367,12 +367,7 @@ def build_pairs_from_folders(seed=42,language="python",dataset="GPTCloneBench"):
     return pairs
  
 
-def build_pairs_from_folders_split(
-    seed=42,
-    language="python",
-    dataset="GPTCloneBench",
-    test_size=0.2
-):
+def build_pairs_from_folders_split(seed=42, language="python", dataset="GPTCloneBench", test_size=0.2):
 
     if language not in GPT_LANGUAGE_ADAPTERS or language not in SEMANTIC_LANGUAGE_ADAPTERS:
         raise ValueError(f"Unsupported language: {language}")
@@ -407,17 +402,24 @@ def build_pairs_from_folders_split(
 
     all_files = [f for f in os.listdir(pos_folder) if f.endswith(extension)]
 
-    grouped = defaultdict(list)
+    file_entries = []
 
     for filename in all_files:
+
         path = os.path.join(pos_folder, filename)
         funcs = extract(path)
 
-        for f in funcs:
-            key = identity_fn(f)
-            grouped[key].append(f)
+        if len(funcs) < 2:
+            continue
 
-    keys = list(grouped.keys())
+        group_id = identity_fn(funcs[0])
+
+        file_entries.append({
+            "group": group_id,
+            "funcs": funcs
+        })
+
+    groups = [x["group"] for x in file_entries]
 
     gss = GroupShuffleSplit(
         n_splits=1,
@@ -425,51 +427,67 @@ def build_pairs_from_folders_split(
         random_state=seed
     )
 
-    train_idx, test_idx = next(gss.split(keys, groups=keys))
+    indices = list(range(len(file_entries)))
 
-    train_keys = [keys[i] for i in train_idx]
-    test_keys = [keys[i] for i in test_idx]
+    train_idx, test_idx = next(
+        gss.split(indices, groups=groups)
+    )
 
-    def build_pairs(split_keys):
+    train_files = [file_entries[i]["funcs"] for i in train_idx]
+    test_files = [file_entries[i]["funcs"] for i in test_idx]
+
+    def _build_pairs(files):
 
         pairs = []
 
-        # ---------- POSITIVE PAIRS ----------
-        for key in split_keys:
+        for funcs in files:
 
-            funcs = grouped[key]
+            if len(funcs) >= 2:
 
-            if len(funcs) < 2:
-                continue
+                pairs.append((
+                    remove_sig(funcs[0]),
+                    remove_sig(funcs[1]),
+                    1
+                ))
 
-            for i in range(len(funcs)):
-                for j in range(i + 1, len(funcs)):
+        total_positives = len(pairs)
 
-                    pairs.append((
-                        remove_sig(funcs[i]),
-                        remove_sig(funcs[j]),
-                        1
-                    ))
-
-        total_pos = len(pairs)
-
-        # ---------- NEGATIVE PAIRS ----------
         negatives = []
+
+        total_files = len(files)
+
         attempts = 0
-        max_attempts = total_pos * 20 if total_pos > 0 else 100
 
-        while len(negatives) < total_pos and attempts < max_attempts:
+        while len(negatives) < total_positives and attempts < total_positives * 10:
 
-            key_a = rng.choice(split_keys)
-            key_b = rng.choice(split_keys)
+            i, j = rng.sample(range(total_files), 2)
 
-            # negatives must come from different groups
-            if key_a == key_b:
+            funcs_i = files[i]
+            funcs_j = files[j]
+
+            func_a = rng.choice(funcs_i)
+
+            a_id = identity_fn(func_a)
+
+            if dataset == "SemanticCloneBench":
+
+                func_b_candidates = [
+                    f for f in funcs_j
+                    if _name_similarity(identity_fn(f), a_id) < 0.7
+                ]
+
+            else:
+
+                func_b_candidates = [
+                    f for f in funcs_j
+                    if identity_fn(f) != a_id
+                ]
+
+            if not func_b_candidates:
                 attempts += 1
                 continue
 
-            func_a = rng.choice(grouped[key_a])
-            func_b = rng.choice(grouped[key_b])
+            func_b = rng.choice(func_b_candidates)
 
             negatives.append((
                 remove_sig(func_a),
@@ -480,12 +498,13 @@ def build_pairs_from_folders_split(
             attempts += 1
 
         pairs.extend(negatives)
+
         rng.shuffle(pairs)
 
         return pairs
 
-    train_pairs = build_pairs(train_keys)
-    test_pairs = build_pairs(test_keys)
+    train_pairs = _build_pairs(train_files)
+    test_pairs = _build_pairs(test_files)
 
     cache_data = {
         "train": train_pairs,
