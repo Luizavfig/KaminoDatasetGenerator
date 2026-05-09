@@ -469,6 +469,8 @@ def build_pairs_from_folders_split(seed=42, language="python", dataset="GPTClone
     train_pairs = build_pairs(train_funcs)
     test_pairs = build_pairs(test_funcs)
 
+    print(f"Created split for {dataset} with {len(train_pairs)} train pairs and {len(test_pairs)} test pairs")
+
     return train_pairs, test_pairs
 
 
