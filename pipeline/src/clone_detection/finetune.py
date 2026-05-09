@@ -1,11 +1,12 @@
 import json, warnings, sys, torch
 from pathlib import Path
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset as TorchDataset, DataLoader
+from datasets import Dataset as HFDataset, DatasetDict
 from sklearn.model_selection import train_test_split
 from sentence_transformers import SentenceTransformer, InputExample, losses, evaluation, models
 from src.utils.helper_functions import build_pairs, hf_login, build_pairs_from_folders_split
 from src.config import * 
-from datasets import Dataset, DatasetDict
+
 
 def run_finetuning(model_name, train_dataset="Kamino", model_path=FINETUNE_DIR, epochs=EPOCHS,
     batch_size=BATCH_SIZE, max_seq_length=256, gpu_id=GPU_IDX): 
@@ -44,7 +45,7 @@ def run_finetuning(model_name, train_dataset="Kamino", model_path=FINETUNE_DIR, 
     model.to(device)
 
     # Dataset wrapper
-    class InputExampleDataset(Dataset):
+    class InputExampleDataset(TorchDataset):
         def __init__(self, examples): self.examples = examples
         def __len__(self): return len(self.examples)
         def __getitem__(self, idx): return self.examples[idx]
@@ -107,8 +108,8 @@ def create_dataset(dataset1_path=FINAL_DATASET, train_output_path=CLONE_DATASET_
         json.dump(test_data, f, indent=2)
 
     dataset_dict = DatasetDict({
-        "train": Dataset.from_list(train_data),
-        "test": Dataset.from_list(test_data),
+        "train": HFDataset.from_list(train_data),
+        "test": HFDataset.from_list(test_data),
     })
 
     dataset_dict.save_to_disk("../dataset/kamino_clones_dataset")
