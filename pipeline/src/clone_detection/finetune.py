@@ -27,11 +27,9 @@ def run_finetuning(model_name, train_dataset="Kamino", model_path=FINETUNE_DIR, 
     if "-default" in model_name:
         model_output_dir = os.path.join(model_path, model_folder_name)
     else:
-        dataset_name = train_dataset.replace("/", "_")
         model_output_dir = os.path.join(
-            model_path,
-            dataset_name,
-            model_folder_name
+        model_path,
+        f"{model_folder_name}-{train_dataset}"
         )
     print(f"Loading {model_name} as transformer encoder...")
 

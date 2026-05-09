@@ -14,14 +14,13 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
     if "-default" in full_model_name:
         model_dir = Path(model_path) / model_folder_name
     else:
-        dataset_name = train_dataset_name.replace("/", "_")
-        model_dir = Path(model_path) / dataset_name / model_folder_name
+        model_dir = Path(model_path) / f"{model_folder_name}-{train_dataset_name}"
     model_folder_name = model_dir.name
     print(f"Checking model: {model_folder_name}") 
     # Fine-tuning is executed if mode is still not on local folder
     if not model_dir.exists() or not all((model_dir / f).exists() for f in EXPECTED_MODEL_FILES):
         print(f"Model not found or incomplete at {model_dir}")
-        run_finetuning(model_name=full_model_name,model_path=model_path)
+        run_finetuning(model_name=full_model_name,model_path=model_path,train_dataset=train_dataset_name)
 
    
     print(f"Loading model from: {model_dir}")

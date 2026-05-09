@@ -18,7 +18,8 @@ if __name__ == "__main__":
     full_model_name = args.model_name 
     if (full_model_name is None):
         print("No model name provided. Using default models.")
-        models = ['microsoft/codebert-base-default','Salesforce/codet5-base-default','microsoft/codebert-base', 'Salesforce/codet5-base']
+        #models = ['microsoft/codebert-base-default','Salesforce/codet5-base-default','microsoft/codebert-base', 'Salesforce/codet5-base']
+        models = ['microsoft/codebert-base', 'Salesforce/codet5-base']
     else:
         models = [full_model_name]
     
@@ -34,8 +35,7 @@ if __name__ == "__main__":
     languages = ["python", "java", "csharp"] # supported languages in GPTCloneBench/SemanticCloneBench 
     datasets = ["GPTCloneBench", "SemanticCloneBench"]
     for model in models:    
-        model_folder_name = model.split("/")[-1]
-        model_output_dir = Path(FINETUNE_DIR) / model_folder_name
+        model_output_dir = Path(FINETUNE_DIR)
         for dataset in datasets: # trained on kamino and tested on GPTCloneBench/SemanticCloneBench datasets
             for language in languages: 
                 run_clone_evaluation(str(model_output_dir), model, test_dataset_name=dataset, train_dataset_name="Kamino",language=language, threshold=threshold)
