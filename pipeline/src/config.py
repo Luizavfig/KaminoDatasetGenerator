@@ -84,7 +84,7 @@ REPROMPT_PATH_CLEANED = f"../results/RQ1/{DATASET_NAME}_reprompt_cleaned.json"
 FAILED_REPROMPT_PATH = f"../results/RQ1/{DATASET_NAME}_failed_reprompt.json"
 
 # Filters 
-CODEBLEU_THRESHOLD = 0.4 # 0-1 higher = more similar
+CODEBLEU_THRESHOLD = 0.25 # 0-1 higher = more similar
 FILTERED_PATH_CODEBLEU = f"../results/RQ1/{DATASET_NAME}_filtered_codebleu.json"
 FILTERED_PATH_TESTS = f"../results/RQ1/{DATASET_NAME}_filtered_tests.json"
 

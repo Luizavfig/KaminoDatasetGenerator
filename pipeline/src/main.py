@@ -32,10 +32,10 @@ def main(): # RQ1 evaluation
     cl.run_clustering()
 
     # Step 9: Augmentation
-    rr.rename_refactor_clones()
+    #rr.rename_refactor_clones()
 
     # Calculate top-N efficient configurations
-    # select_top_n_configs()
+    select_top_n_configs()
     
 if __name__ == "__main__":
     main()
