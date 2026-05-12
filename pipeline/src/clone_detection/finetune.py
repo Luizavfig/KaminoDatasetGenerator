@@ -53,7 +53,7 @@ def run_finetuning(model_name, train_dataset="Kamino", model_path=FINETUNE_DIR, 
          # Load dataset and create train/val splits
          
         if(train_dataset == "Kamino"):    
-            with open(CLONE_DATASET_TRAIN, "r", encoding="utf-8") as f:
+            with open(FINAL_DATASET, "r", encoding="utf-8") as f:
                 data = json.load(f)
             pairs = build_pairs(data)
             train_pairs, val_pairs = train_test_split(pairs, test_size=0.2, random_state=42)
