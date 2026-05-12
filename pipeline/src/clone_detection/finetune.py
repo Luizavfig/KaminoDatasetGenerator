@@ -1,4 +1,4 @@
-import json, warnings, sys, torch
+import json, warnings, sys, torch, random
 from pathlib import Path
 from torch.utils.data import Dataset as TorchDataset, DataLoader
 from datasets import Dataset as HFDataset, DatasetDict
@@ -52,8 +52,16 @@ def run_finetuning(model_name, train_dataset="Kamino", model_path=FINETUNE_DIR, 
         print(f"🚀 Fine-tuning model: {model_name}")
          # Load dataset and create train/val splits
          
-        if(train_dataset == "Kamino"):    
-            with open(FINAL_DATASET, "r", encoding="utf-8") as f:
+        if "Kamino" in train_dataset:
+            dataset_map = {
+                "Kamino": FINAL_DATASET,
+                "Kamino-LD": KAMINO_LD_DATASET,
+                "Kamino-MD": KAMINO_MD_DATASET,
+                "Kamino-HD": KAMINO_HD_DATASET,
+            }
+
+            dataset_path = dataset_map[train_dataset]
+            with open(dataset_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             pairs = build_pairs(data)
             train_pairs, val_pairs = train_test_split(pairs, test_size=0.2, random_state=42)
@@ -117,6 +125,74 @@ def create_dataset(dataset1_path=FINAL_DATASET, train_output_path=CLONE_DATASET_
     print(f"Test: {len(test_data)} entries")
 
  
+
+def create_dataset_by_codebleu_range(min_codebleu=0.0, max_codebleu=1.0, dataset_name="Kamino", output_path=None,
+    split_ratio=0.2, seed=42,):
+    """
+    Create a Kamino dataset variant filtered by CodeBLEU range.
+
+    Examples:
+        Kamino-LD : CodeBLEU > 0.4
+        Kamino-MD : 0.25 < CodeBLEU <= 0.4
+        Kamino-HD : CodeBLEU <= 0.25
+    """
+
+    rng = random.Random(seed)
+
+    with open(FINAL_DATASET, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    filtered_entries = []
+
+    for entry in data:
+
+        clones = entry.get("clones", [])
+
+        filtered_clones = []
+
+        for clone in clones:
+
+            score = clone.get("codebleu", None)
+
+            if score is None:
+                continue
+
+            if min_codebleu < score <= max_codebleu:
+                filtered_clones.append(clone)
+
+        # Keep only entries with at least 2 clones
+        if len(filtered_clones) >= 2:
+
+            new_entry = dict(entry)
+            new_entry["clones"] = filtered_clones
+
+            filtered_entries.append(new_entry)
+
+    # deterministic ordering
+    filtered_entries = sorted(filtered_entries, key=lambda x: x["id"])
+
+
+    if output_path is not None:
+        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(filtered_entries, f, indent=2)
+
+    # stats
+    all_scores = []
+
+    for entry in filtered_entries:
+        for clone in entry["clones"]:
+            if "codebleu" in clone:
+                all_scores.append(clone["codebleu"])
+
+    avg_codebleu = (
+        sum(all_scores) / len(all_scores)
+        if all_scores else 0
+    )
+
+    print(f"\n✅ {dataset_name} dataset created")
+    print(f"CodeBLEU range: ({min_codebleu}, {max_codebleu}]")
+    print(f"Entries: {len(filtered_entries)}") 
+    print(f"Avg CodeBLEU: {avg_codebleu:.4f}")
  
-
-

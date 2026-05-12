@@ -16,8 +16,7 @@ SAMPLE_1_PATH = FILTERED_DATASET_PATH
 SAMPLE_2_PATH = "../dataset/sample2.json"
 OUT_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones.json"
 CLEANED_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones_cleaned.json"
-FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json" 
-FINAL_DATASET_REF = f"../results/RQ1/{DATASET_NAME}_clone_dataset_ref.json" 
+FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json"  
 FINAL_DATASET_RQ2 =  f'../results/RQ1/{DATASET_NAME}_clone_dataset.xml'
 
 OTHER_DATASET_PATH ="../dataset/"
@@ -84,7 +83,7 @@ REPROMPT_PATH_CLEANED = f"../results/RQ1/{DATASET_NAME}_reprompt_cleaned.json"
 FAILED_REPROMPT_PATH = f"../results/RQ1/{DATASET_NAME}_failed_reprompt.json"
 
 # Filters 
-CODEBLEU_THRESHOLD = 0.25 # 0-1 higher = more similar
+CODEBLEU_THRESHOLD = 0.4 # 0-1 higher = more similar
 FILTERED_PATH_CODEBLEU = f"../results/RQ1/{DATASET_NAME}_filtered_codebleu.json"
 FILTERED_PATH_TESTS = f"../results/RQ1/{DATASET_NAME}_filtered_tests.json"
 
@@ -108,3 +107,11 @@ BATCH_SIZE = 8
 GPU_IDX = 0 # 0 for single GPU systems. Change it if you have multiple GPUs 
 FINETUNE_DIR = f"../results/RQ3/models"
 CLONE_DETECTION_RESULTS = f"../results/RQ3/clone_detection.csv"
+
+
+# For RQ4
+KAMINO_LD_DATASET = f"../results/datasets/RQ4/{DATASET_NAME}_clone_dataset_ld.json"  
+KAMINO_MD_DATASET = f"../results/datasets/RQ4/{DATASET_NAME}_clone_dataset_md.json"  
+KAMINO_HD_DATASET = f"../results/datasets/RQ4/{DATASET_NAME}_clone_dataset_hd.json"  
+RQ4_CLONE_DETECTION_RESULTS = f"../results/RQ4/clone_detection.csv"
+RQ4_CLUSTER_DIR="../results/RQ4/clustering"

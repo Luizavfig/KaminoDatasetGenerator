@@ -26,7 +26,7 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
     print(f"Loading model from: {model_dir}")
     model = SentenceTransformer(str(model_dir))
     
-    if(test_dataset_name == "Kamino"): # use our own dataset
+    if "Kamino" in test_dataset_name:  # use our own dataset
         with open(dataset_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         pairs = build_pairs(data)  

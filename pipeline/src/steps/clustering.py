@@ -7,7 +7,7 @@ from scipy.spatial.distance import squareform
 from statistics import mean, stdev
 from src.config import *
 
-def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1_PATH, final_dataset=FINAL_DATASET):
+def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1_PATH, final_dataset=FINAL_DATASET, codebleu_threshold=CODEBLEU_THRESHOLD, cluster_dir=CLUSTER_DIR):
     """
     Automatically cluster code clones based on CodeBLEU similarity metrics. It uses a  hierarchical agglomerative clustering approach to determine clusters.
     """
@@ -32,8 +32,8 @@ def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1
         affinity_matrix, clone_ids = _build_affinity_matrix(entry) 
 
         # Cluster clones
-        labels = _agglomerative_cluster(affinity_matrix, CODEBLEU_THRESHOLD)
-        _save_cluster_csv_from_labels( entry, labels, output_csv_path=os.path.join(CLUSTER_DIR, "all_clusters.csv"))
+        labels = _agglomerative_cluster(affinity_matrix, codebleu_threshold)
+        _save_cluster_csv_from_labels( entry, labels, output_csv_path=os.path.join(cluster_dir, f"clusters_cb{codebleu_threshold}.csv"))
 
         if len(set(labels)) == 0:
             labels = [0] * len(clones)
@@ -208,14 +208,15 @@ def _save_cluster_csv_from_labels(entry, labels, output_csv_path):
     print(f"✅ Saved clusters for entry {entry['id']} to {output_csv_path}")
  
 
-def process_clusters_for_entry(entry, clusters_dir = CLUSTER_DIR, representatives_json=FINAL_DATASET):
+def process_clusters_for_entry(entry, clusters_dir = CLUSTER_DIR, representatives_json=FINAL_DATASET, codebleu_threshold=CODEBLEU_THRESHOLD):
     """
     Process and saves files of clusters and representatives for a single entry. 
     """
     entry_id = entry["id"]
     os.makedirs(clusters_dir, exist_ok=True) 
     # Load clusters CSV with proper quoting
-    df = pd.read_csv(f"{clusters_dir}/all_clusters.csv", dtype=str, quotechar='"', engine='python')
+    cluster_file = f"{clusters_dir}/clusters_cb{codebleu_threshold}.csv"
+    df = pd.read_csv(cluster_file, dtype=str, quotechar='"', engine='python')
     
     # Filter only clusters for this entry
     df_entry = df[df["entry_id"] == entry_id]

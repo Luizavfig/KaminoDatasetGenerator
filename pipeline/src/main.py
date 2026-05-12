@@ -30,9 +30,7 @@ def main(): # RQ1 evaluation
 
     # Step 8: Clustering
     cl.run_clustering()
-
-    # Step 9: Augmentation
-    #rr.rename_refactor_clones()
+ 
 
     # Calculate top-N efficient configurations
     select_top_n_configs()
