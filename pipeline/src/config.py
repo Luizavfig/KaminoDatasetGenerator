@@ -17,6 +17,8 @@ SAMPLE_2_PATH = "../dataset/sample2.json"
 OUT_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones.json"
 CLEANED_PATH     = f"../results/RQ1/{DATASET_NAME}_llm_clones_cleaned.json"
 FINAL_DATASET = f"../results/RQ1/{DATASET_NAME}_clone_dataset.json" 
+FINAL_DATASET_REF = f"../results/RQ1/{DATASET_NAME}_clone_dataset_ref.json" 
+FINAL_DATASET_RQ2 =  f'../results/RQ1/{DATASET_NAME}_clone_dataset.xml'
 
 OTHER_DATASET_PATH ="../dataset/"
 #GPTCloneBench settings

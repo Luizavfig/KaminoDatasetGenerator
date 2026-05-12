@@ -1,5 +1,5 @@
 from src.config import *
-from src.steps import (normalization as nz, clone_gen as cg, filtering as fl, reprompt as rp,clustering as cl)
+from src.steps import (normalization as nz, clone_gen as cg, filtering as fl, reprompt as rp, clustering as cl, rename_refactor as rr)
 from src.utils.efficiency import select_top_n_configs
 from src.utils.helper_functions import startup
 def main(): # RQ1 evaluation
@@ -13,7 +13,7 @@ def main(): # RQ1 evaluation
     # Step 2: Clone Generation
     cg.run_generation()
         
-    # Step 3: Filtering based on codebleu
+    # # Step 3: Filtering based on codebleu
     fl.run_codebleu_filtering()
 
     # Step 4: Run tests on filtered clones
@@ -31,8 +31,11 @@ def main(): # RQ1 evaluation
     # Step 8: Clustering
     cl.run_clustering()
 
+    # Step 9: Augmentation
+    rr.rename_refactor_clones()
+
     # Calculate top-N efficient configurations
-    select_top_n_configs()
+    # select_top_n_configs()
     
 if __name__ == "__main__":
     main()

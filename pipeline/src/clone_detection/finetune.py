@@ -90,7 +90,7 @@ def run_finetuning(model_name, train_dataset="Kamino", model_path=FINETUNE_DIR, 
     return str(model_output_dir)
 
 
-def create_dataset(dataset1_path=FINAL_DATASET, train_output_path=CLONE_DATASET_TRAIN, test_output_path=CLONE_DATASET_TEST,
+def create_dataset(dataset1_path=FINAL_DATASET_REF, train_output_path=CLONE_DATASET_TRAIN, test_output_path=CLONE_DATASET_TEST,
     split_ratio=0.2):
     with open(dataset1_path, "r", encoding="utf-8") as f:
         data = json.load(f)
