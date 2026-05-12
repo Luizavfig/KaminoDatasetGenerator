@@ -203,9 +203,17 @@ import random
 
 def build_pairs(data, seed=42, target_ratio=1.0):
     """
-    Build positive and negative code pairs.
-    Negatives are guaranteed to come from different entries.
-    Duplicate pairs are avoided.
+    Build balanced positive and negative code pairs.
+
+    Positives:
+        - clone ↔ clone (same entry)
+        - original ↔ clone (all entries, even single-clone ones)
+
+    Negatives:
+        - clone ↔ clone from different entries only
+        - balanced 1:1 with positives
+
+    Ensures (A,B) == (B,A) uniqueness.
     """
 
     rng = random.Random(seed)
@@ -213,16 +221,20 @@ def build_pairs(data, seed=42, target_ratio=1.0):
     seen_pairs = set()
 
     clones_per_entry = []
+    originals_per_entry = []
  
-    # Positive pairs 
+    # POSITIVES 
     for entry in data:
         clones = entry.get("clones", [])
+        original = entry.get("original_code", None)
+
+        clones_per_entry.append(clones)
+        originals_per_entry.append(original)
+
+        orig_clean = remove_function_signature(original) if original else None
+
+        # clone-clone positives
         n = len(clones)
-
-        if n < 2:
-            clones_per_entry.append([])
-            continue
-
         for i in range(n):
             for j in range(i + 1, n):
 
@@ -235,42 +247,39 @@ def build_pairs(data, seed=42, target_ratio=1.0):
                     seen_pairs.add(key)
                     pairs.append((c1, c2, 1))
 
-        clones_per_entry.append(clones)
+        # original-clone positives (works even if n == 1)
+        if orig_clean:
+            for i in range(n):
+                c = remove_function_signature(clones[i]["code"])
+
+                key = tuple(sorted([orig_clean, c])) + (1,)
+
+                if key not in seen_pairs:
+                    seen_pairs.add(key)
+                    pairs.append((orig_clean, c, 1))
  
-    # Compute negatives needed 
-    total_negatives_needed = _calculate_max_negatives(
-        data,
-        target_ratio=target_ratio
-    )
+    # NEGATIVES  
+    negatives_needed =  _calculate_max_negatives(data, target_ratio=target_ratio)
 
     generated_negatives = 0
     total_entries = len(data)
- 
-    # Negative pairs 
-    while generated_negatives < total_negatives_needed:
 
-        entry_idx = rng.randrange(total_entries)
+    while generated_negatives < negatives_needed:
 
-        clones = clones_per_entry[entry_idx]
+        idx1 = rng.randrange(total_entries)
+        idx2 = rng.randrange(total_entries)
 
-        if not clones:
+        if idx1 == idx2:
             continue
 
-        pos_clone = rng.choice(clones)
- 
-        neg_candidates = [
-            e for i, e in enumerate(clones_per_entry)
-            if i != entry_idx and e
-        ]
+        clones1 = clones_per_entry[idx1]
+        clones2 = clones_per_entry[idx2]
 
-        if not neg_candidates:
+        if not clones1 or not clones2:
             continue
 
-        neg_entry = rng.choice(neg_candidates)
-        neg_clone = rng.choice(neg_entry)
-
-        c1 = remove_function_signature(pos_clone["code"])
-        c2 = remove_function_signature(neg_clone["code"])
+        c1 = remove_function_signature(rng.choice(clones1)["code"])
+        c2 = remove_function_signature(rng.choice(clones2)["code"])
 
         key = tuple(sorted([c1, c2])) + (0,)
 
@@ -278,7 +287,6 @@ def build_pairs(data, seed=42, target_ratio=1.0):
             continue
 
         seen_pairs.add(key)
-
         pairs.append((c1, c2, 0))
         generated_negatives += 1
 
@@ -562,17 +570,26 @@ def build_pairs_from_folders_split(seed=42, language="python", dataset="GPTClone
 
 def _calculate_max_negatives(data, target_ratio=1.0):
     """
-    Compute the total number of negative pairs needed to roughly balance positives. 
+    Compute number of negative pairs needed to balance ALL positives,
+    including:
+    - clone-clone pairs
+    - original_code - clone pairs
     """
+
     total_positives = 0
+
     for entry in data:
         clones = entry.get("clones", [])
         n = len(clones)
-        if n < 2:
-            continue
-        total_positives += n * (n - 1) // 2  # n choose 2
 
-    total_negatives = math.ceil(total_positives * target_ratio) 
+        # original vs each clone
+        total_positives += n
+
+        # clone vs clone pairs
+        if n >= 2:
+            total_positives += n * (n - 1) // 2
+
+    total_negatives = math.ceil(total_positives * target_ratio)
     return total_negatives
 
 def hf_login():
