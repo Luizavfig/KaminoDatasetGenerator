@@ -18,7 +18,7 @@ if __name__ == "__main__":
     full_model_name = args.model_name 
     if (full_model_name is None):
         print("No model name provided. Using default models.")
-        models = ['microsoft/codebert-base-default','Salesforce/codet5-base-default','microsoft/codebert-base', 'Salesforce/codet5-base']
+        models = ['microsoft/codebert-base', 'Salesforce/codet5-base','microsoft/codebert-base-default','Salesforce/codet5-base-default']
     else:
         models = [full_model_name]
     
