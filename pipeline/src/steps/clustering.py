@@ -7,7 +7,7 @@ from scipy.spatial.distance import squareform
 from statistics import mean, stdev
 from src.config import *
 
-def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1_PATH, final_dataset=FINAL_DATASET, codebleu_threshold=CODEBLEU_THRESHOLD, cluster_dir=CLUSTER_DIR):
+def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1_PATH, final_dataset=FINAL_DATASET, codebleu_threshold=CODEBLEU_THRESHOLD, min_codebleu=0.0, cluster_dir=CLUSTER_DIR):
     """
     Automatically cluster code clones based on CodeBLEU similarity metrics. It uses a  hierarchical agglomerative clustering approach to determine clusters.
     """
@@ -26,12 +26,25 @@ def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1
     for entry in clone_data:
         clones = entry.get("clones", [])
         if not clones:
-            print(f"⚠️ Entry {entry['id']} has no clones, skipping")
+            continue
+        if min_codebleu > 0.0:
+            clones_filtered = [
+                c for c in clones
+                if _has_in_range_neighbor(c, clones, min_codebleu, codebleu_threshold)
+            ]
+            entry = {**entry, "clones": clones_filtered}  # don't mutate original
+            clones = clones_filtered 
+        if not entry["clones"]:
+            print(f"⚠️ Entry {entry['id']} has no clones in range, skipping")
             continue
 
-        affinity_matrix, clone_ids = _build_affinity_matrix(entry) 
+        affinity_matrix, clone_ids = _build_affinity_matrix(
+            entry,
+            min_codebleu=min_codebleu,
+            max_codebleu=codebleu_threshold
+        )
 
-        # Cluster clones
+        
         labels = _agglomerative_cluster(affinity_matrix, codebleu_threshold)
         _save_cluster_csv_from_labels( entry, labels, output_csv_path=os.path.join(cluster_dir, f"clusters_cb{codebleu_threshold}.csv"))
 
@@ -144,23 +157,32 @@ def _select_representative_clones(entry, labels):
 
     return representatives
 
-def _build_affinity_matrix(entry):
-    """
-    Build the CodeBLEU-based affinity (similarity) matrix for clones in an entry
-    """
+def _build_affinity_matrix(entry, min_codebleu=0.0, max_codebleu=CODEBLEU_THRESHOLD):
     clones = entry["clones"]
     clone_ids = [clone["clone_id"] for clone in clones]
     n = len(clone_ids)
-
     affinity_matrix = np.zeros((n, n))
+
     for i in range(n):
         for j in range(n):
             if i == j:
                 affinity_matrix[i, j] = 1.0
-            else:
-                affinity_matrix[i, j] = clones[i]["metrics"]["codebleu"].get(clone_ids[j], 0)
+                continue
 
-    return affinity_matrix, clone_ids 
+            sim = (
+                clones[i]
+                .get("metrics", {})
+                .get("codebleu", {})
+                .get(clone_ids[j], 0)
+            )
+
+            
+            if min_codebleu <= sim <= max_codebleu:
+                affinity_matrix[i, j] = sim
+            else:
+                affinity_matrix[i, j] = 0.0
+
+    return affinity_matrix, clone_ids
 
 def _np_converter(obj):
     if isinstance(obj, np.integer):
@@ -263,3 +285,10 @@ def process_clusters_for_entry(entry, clusters_dir = CLUSTER_DIR, representative
                 f.write(code.strip() + "\n\n")
         print(f"Saved representatives for {entry_id} -> {reps_file}")
 
+
+def _has_in_range_neighbor(clone, all_clones, min_cb, max_cb):
+        cid = clone["clone_id"]
+        return any(
+            min_cb <= c.get("metrics", {}).get("codebleu", {}).get(cid, 0) <= max_cb
+            for c in all_clones if c["clone_id"] != cid
+        )

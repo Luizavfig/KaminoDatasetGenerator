@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 
 from src.clone_detection.detect import run_clone_evaluation
-from src.clustering import run_clustering
+from src.steps.clustering import run_clustering
 from src.config import *
 
 
@@ -28,15 +28,18 @@ if __name__ == "__main__":
     # RQ4 configurations 
     diversity_configs = {
         "Kamino-LD": {
-            "threshold": 0.8,
+            "max_threshold": 0.9,
+            "min_threshold": 0.5,
             "final_dataset": KAMINO_LD_DATASET
         },
         "Kamino-MD": {
-            "threshold": 0.4,
+            "max_threshold": 0.5,
+            "min_threshold": 0.3,
             "final_dataset": KAMINO_MD_DATASET
         },
         "Kamino-HD": {
-            "threshold": 0.25,
+            "max_threshold": 0.3,
+            "min_threshold": 0.0,
             "final_dataset": KAMINO_HD_DATASET
         },
     }
@@ -49,7 +52,8 @@ if __name__ == "__main__":
 
         print(f"\n=== RQ4 Dataset: {dataset_name} ===")
 
-        cluster_threshold = config["threshold"]
+        min_threshold = config["min_threshold"]
+        max_threshold = config["max_threshold"]
         final_dataset_path = config["final_dataset"]
 
         
@@ -64,7 +68,8 @@ if __name__ == "__main__":
                 filtered_path_tests=FILTERED_PATH_TESTS,
                 sample_path=SAMPLE_1_PATH,
                 final_dataset=str(final_dataset_path),
-                codebleu_threshold=cluster_threshold
+                codebleu_threshold=max_threshold,
+                min_codebleu=min_threshold
             )
 
         else:
