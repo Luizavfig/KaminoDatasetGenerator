@@ -110,8 +110,8 @@ CLONE_DETECTION_RESULTS = f"../results/RQ3/clone_detection.csv"
 
 
 # For RQ4
-KAMINO_LD_DATASET = f"../results/datasets/RQ4/{DATASET_NAME}_clone_dataset_ld.json"  
-KAMINO_MD_DATASET = f"../results/datasets/RQ4/{DATASET_NAME}_clone_dataset_md.json"  
-KAMINO_HD_DATASET = f"../results/datasets/RQ4/{DATASET_NAME}_clone_dataset_hd.json"  
+KAMINO_LD_DATASET = f"../results/RQ4/datasets/{DATASET_NAME}_clone_dataset_ld.json"  
+KAMINO_MD_DATASET = f"../results/RQ4/datasets/{DATASET_NAME}_clone_dataset_md.json"  
+KAMINO_HD_DATASET = f"../results/RQ4/datasets/{DATASET_NAME}_clone_dataset_hd.json"  
 RQ4_CLONE_DETECTION_RESULTS = f"../results/RQ4/clone_detection.csv"
 RQ4_CLUSTER_DIR="../results/RQ4/clustering"
