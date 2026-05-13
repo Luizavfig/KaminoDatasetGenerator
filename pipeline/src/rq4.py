@@ -9,7 +9,7 @@ from src.config import *
 if __name__ == "__main__":
 
     print("🚀 Executing RQ4 - Diversity ablation study")
-
+    thresholds = [0.5, 0.6, 0.7] # similarity classification thresholds for clone detection
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name", type=str, required=False)
     args = parser.parse_args()
@@ -77,20 +77,20 @@ if __name__ == "__main__":
 
         
         # 2. TRAIN + EVALUATE 
-        for model in models:
+        for threshold in thresholds:
+            print(f"evaluation for threshold {threshold}")
+            for model in models:
+                model_output_dir = Path(FINETUNE_DIR) / dataset_name
+                for dataset in datasets:
+                    for language in languages:
 
-            model_output_dir = Path(FINETUNE_DIR) / dataset_name
-
-            for dataset in datasets:
-                for language in languages:
-
-                    run_clone_evaluation(
-                        str(model_output_dir),
-                        model,
-                        test_dataset_name=dataset,
-                        train_dataset_name=dataset_name,
-                        dataset_path=final_dataset_path,
-                        language=language,
-                        threshold=SIMILARITY_THRESHOLD,
-                        results_csv=RQ4_CLONE_DETECTION_RESULTS
-                    )
+                        run_clone_evaluation(
+                            str(model_output_dir),
+                            model,
+                            test_dataset_name=dataset,
+                            train_dataset_name=dataset_name,
+                            dataset_path=final_dataset_path,
+                            language=language,
+                            threshold=threshold,
+                            results_csv=RQ4_CLONE_DETECTION_RESULTS
+                        )

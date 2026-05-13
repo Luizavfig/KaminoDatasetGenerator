@@ -30,12 +30,14 @@ if __name__ == "__main__":
     else:
         print("Using existing dataset.")
 
-    threshold = SIMILARITY_THRESHOLD # similarity classification threshold for clone detection
+    thresholds = [0.5, 0.6, 0.7] # similarity classification thresholds for clone detection
     languages = ["python", "java", "csharp"] # supported languages in GPTCloneBench/SemanticCloneBench 
     datasets = ["SemanticCloneBench", "GPTCloneBench"]
-    for model in models:    
-        model_output_dir = Path(FINETUNE_DIR)
-        for dataset in datasets: # trained on kamino and tested on GPTCloneBench/SemanticCloneBench datasets
-            for language in languages: 
-                run_clone_evaluation(str(model_output_dir), model, test_dataset_name=dataset, train_dataset_name="Kamino",language=language, threshold=threshold)
+    for threshold in thresholds:
+        print(f"evaluation for threshold {threshold}")
+        for model in models:    
+            model_output_dir = Path(FINETUNE_DIR)
+            for dataset in datasets: # trained on kamino and tested on GPTCloneBench/SemanticCloneBench datasets
+                for language in languages: 
+                    run_clone_evaluation(str(model_output_dir), model, test_dataset_name=dataset, train_dataset_name="Kamino",language=language, threshold=threshold)
          
