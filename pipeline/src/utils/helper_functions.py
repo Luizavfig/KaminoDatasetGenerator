@@ -237,10 +237,8 @@ def build_pairs(data, seed=42, target_ratio=1.0):
         clones_per_entry.append(clones)
  
     # Compute negatives needed 
-    total_negatives_needed = _calculate_max_negatives(
-        data,
-        target_ratio=target_ratio
-    )
+    actual_positives = len(pairs)
+    total_negatives_needed = math.ceil(actual_positives * target_ratio)
 
     generated_negatives = 0
     total_entries = len(data)
@@ -560,21 +558,6 @@ def build_pairs_from_folders_split(seed=42, language="python", dataset="GPTClone
     return train_pairs, test_pairs
 
 
-
-def _calculate_max_negatives(data, target_ratio=1.0):
-    """
-    Compute the total number of negative pairs needed to roughly balance positives. 
-    """
-    total_positives = 0
-    for entry in data:
-        clones = entry.get("clones", [])
-        n = len(clones)
-        if n < 2:
-            continue
-        total_positives += n * (n - 1) // 2  # n choose 2
-
-    total_negatives = math.ceil(total_positives * target_ratio) 
-    return total_negatives
 
 def hf_login():
     # Load .env from the root of your project
