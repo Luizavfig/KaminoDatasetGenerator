@@ -69,7 +69,8 @@ if __name__ == "__main__":
                 sample_path=SAMPLE_1_PATH,
                 final_dataset=str(final_dataset_path),
                 codebleu_threshold=max_threshold,
-                min_codebleu=min_threshold
+                min_codebleu=min_threshold,
+                cluster_dir=RQ4_CLUSTER_DIR
             )
 
         else:

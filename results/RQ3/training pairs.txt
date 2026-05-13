@@ -1,3 +1,4 @@
 Kamino training Built 55078 code pairs (Positives: 27539, Negatives: 27539)
 split for SemanticCloneBench with 1580 train pairs and 420 test pairs
 split for GPTCloneBench with 4614 train pairs and 1026 test pairs
+Built 72084 code pairs (Positives: 36042, Negatives: 36042)

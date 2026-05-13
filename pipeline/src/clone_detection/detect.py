@@ -9,7 +9,7 @@ from src.config import *
 
 EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
 
-def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=None, test_dataset_name="GPTCloneBench",train_dataset_name="Kamino", reults_csv=CLONE_DETECTION_RESULTS, language="python"):
+def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=None, test_dataset_name="GPTCloneBench",train_dataset_name="Kamino", results_csv=CLONE_DETECTION_RESULTS, language="python"):
     model_folder_name = full_model_name.split("/")[-1] 
     if "-default" in full_model_name:
         model_dir = Path(model_path) / model_folder_name
