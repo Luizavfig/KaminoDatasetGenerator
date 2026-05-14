@@ -4,17 +4,9 @@ from src.config import *
 
 def select_top_n_configs(n = TOP_N):
     print("Selecting top-N efficient configurations...")
-    # Try to load cached results
-    if os.path.exists(EFFICIENCY_RESULTS):
-        with open(EFFICIENCY_RESULTS, "r", encoding="utf-8") as f:
-            top_configs = json.load(f)
-        print(f"✅ Loaded {len(top_configs)} cached configurations from {EFFICIENCY_RESULTS}")
-        return top_configs[:n] if n else top_configs
 
-    # If efficiency CSV does not exist, create it
-    if not os.path.exists(EFFICIENCY_PATH):
-        print(f"⚠️ Efficiency file not found at {EFFICIENCY_PATH}. Recomputing...")
-        _calc_efficient_prompts()
+    # If efficiency CSV does not exist, create it 
+    _calc_efficient_prompts()
 
     eff_df = pd.read_csv(EFFICIENCY_PATH)
     top_configs = eff_df.head(n)[["model", "context", "refac", "strategy"]].to_dict(orient="records")

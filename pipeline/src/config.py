@@ -115,3 +115,4 @@ KAMINO_MD_DATASET = f"../results/RQ4/datasets/{DATASET_NAME}_clone_dataset_md.js
 KAMINO_HD_DATASET = f"../results/RQ4/datasets/{DATASET_NAME}_clone_dataset_hd.json"  
 RQ4_CLONE_DETECTION_RESULTS = f"../results/RQ4/clone_detection.csv"
 RQ4_CLUSTER_DIR="../results/RQ4/clustering"
+RQ4_FINETUNE_DIR = f"../results/RQ4/models"
