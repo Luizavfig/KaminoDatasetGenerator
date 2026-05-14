@@ -116,3 +116,4 @@ KAMINO_HD_DATASET = f"../results/RQ4/datasets/{DATASET_NAME}_clone_dataset_hd.js
 RQ4_CLONE_DETECTION_RESULTS = f"../results/RQ4/clone_detection.csv"
 RQ4_CLUSTER_DIR="../results/RQ4/clustering"
 RQ4_FINETUNE_DIR = f"../results/RQ4/models"
+MAX_POSITIVE_PAIRS = 45000 # max number of pairs to use for evaluation (to be consistent with RQ3)

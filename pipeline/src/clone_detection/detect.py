@@ -3,13 +3,13 @@ import pandas as pd
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
-from src.utils.helper_functions import build_pairs, build_pairs_from_folders
+from src.utils.helper_functions import build_pairs, build_pairs_from_folders, build_pairs_rq4
 from src.clone_detection.finetune import run_finetuning
 from src.config import *
 
 EXPECTED_MODEL_FILES = ["config.json", "modules.json", "model.safetensors"]
 
-def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=None, test_dataset_name="GPTCloneBench",train_dataset_name="Kamino", results_csv=CLONE_DETECTION_RESULTS, language="python"):
+def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET_TEST, threshold=None, test_dataset_name="GPTCloneBench",train_dataset_name="Kamino", results_csv=CLONE_DETECTION_RESULTS, language="python", rq4=False):
     model_folder_name = full_model_name.split("/")[-1] 
     if "-default" in full_model_name:
         model_dir = Path(model_path) / model_folder_name
@@ -29,7 +29,10 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
     if "Kamino" in test_dataset_name:  # use our own dataset
         with open(dataset_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        pairs = build_pairs(data)  
+        if rq4:
+            pairs = build_pairs_rq4(data)
+        else:
+            pairs = build_pairs(data)
     else: # use GPCloneBench\SemanticCloneBench dataset
         pairs = build_pairs_from_folders(language=language, dataset=test_dataset_name) 
 

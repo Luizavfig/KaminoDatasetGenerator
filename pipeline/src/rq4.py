@@ -93,5 +93,6 @@ if __name__ == "__main__":
                             dataset_path=final_dataset_path,
                             language=language,
                             threshold=threshold,
-                            results_csv=RQ4_CLONE_DETECTION_RESULTS
+                            results_csv=RQ4_CLONE_DETECTION_RESULTS,
+                            rq4=True # to ensure consistent evaluation with RQ3 dataset
                         )
