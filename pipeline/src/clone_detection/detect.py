@@ -47,7 +47,7 @@ def run_clone_evaluation(model_path, full_model_name, dataset_path=CLONE_DATASET
         FP,
         FN,
         threshold=threshold,
-        csv_path=reults_csv,
+        csv_path=results_csv,
         train_dataset_name=train_dataset_name,
         test_dataset_name=test_dataset_name,
         language=language,
