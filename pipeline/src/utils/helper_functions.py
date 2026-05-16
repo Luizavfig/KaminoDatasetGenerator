@@ -292,6 +292,96 @@ def build_pairs(data, seed=42, target_ratio=1.0):
     return pairs
 
 
+def build_pairs_rq4(data, seed=42, target_ratio=1.0, max_positives=MAX_POSITIVE_PAIRS):
+    """
+    Build positive and negative code pairs.
+
+    - Preserves all entries
+    - Caps total positives globally
+    - Negatives come from different entries
+    - Duplicate pairs are avoided
+    """
+
+    rng = random.Random(seed)
+
+    positives = []
+    negatives = []
+    seen = set()
+
+    processed_entries = []
+
+    # Preprocess
+    for entry in data:
+
+        clones = []
+
+        for clone in entry.get("clones", []):
+
+            code = remove_function_signature(clone["code"]).strip()
+
+            if code:
+                clones.append(code)
+
+        processed_entries.append(clones)
+
+    # Generate positives
+    for clones in processed_entries:
+
+        if len(clones) < 2:
+            continue
+
+        for c1, c2 in combinations(clones, 2):
+
+            key = tuple(sorted((c1, c2))) + (1,)
+
+            if key in seen:
+                continue
+
+            seen.add(key)
+            positives.append((c1, c2, 1))
+
+    # Apply cap
+    if max_positives is not None and len(positives) > max_positives:
+        positives = rng.sample(positives, max_positives)
+
+    # Negative target
+    target_negatives = math.ceil(len(positives) * target_ratio)
+
+    # Generate negatives
+    while len(negatives) < target_negatives:
+
+        idx1, idx2 = rng.sample(range(len(processed_entries)), 2)
+
+        clones1 = processed_entries[idx1]
+        clones2 = processed_entries[idx2]
+
+        if not clones1 or not clones2:
+            continue
+
+        c1 = rng.choice(clones1)
+        c2 = rng.choice(clones2)
+
+        key = tuple(sorted((c1, c2))) + (0,)
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+        negatives.append((c1, c2, 0))
+
+    pairs = positives + negatives
+
+    rng.shuffle(pairs)
+
+    print(
+        f"Built {len(pairs)} pairs "
+        f"(Positives: {len(positives)}, "
+        f"Negatives: {len(negatives)})"
+    )
+
+    return pairs
+
+
 
 def build_pairs_from_folders(seed=42,language="python",dataset="GPTCloneBench"):
     """
