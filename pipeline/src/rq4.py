@@ -28,18 +28,18 @@ if __name__ == "__main__":
     # RQ4 configurations 
     diversity_configs = {
         "Kamino-LD": {
-            "max_threshold": 0.9,
-            "min_threshold": 0.5,
+            "max_threshold": 1.0,
+            "min_threshold": 0.46,   # p75 used as split — high similarity clones
             "final_dataset": KAMINO_LD_DATASET
         },
         "Kamino-MD": {
-            "max_threshold": 0.5,
-            "min_threshold": 0.3,
+            "max_threshold": 0.46,
+            "min_threshold": 0.23,   # p25/p75 band — medium similarity
             "final_dataset": KAMINO_MD_DATASET
         },
         "Kamino-HD": {
-            "max_threshold": 0.3,
-            "min_threshold": 0.0,
+            "max_threshold": 0.23,
+            "min_threshold": 0.0,    # below p25 — most diverse clones
             "final_dataset": KAMINO_HD_DATASET
         },
     }
@@ -84,15 +84,14 @@ if __name__ == "__main__":
                 model_output_dir = Path(RQ4_FINETUNE_DIR) / dataset_name
                 for dataset in datasets:
                     for language in languages:
-
                         run_clone_evaluation(
                             str(model_output_dir),
                             model,
+                            full_model_name=model,
                             test_dataset_name=dataset,
                             train_dataset_name=dataset_name,
                             dataset_path=final_dataset_path,
                             language=language,
                             threshold=threshold,
-                            results_csv=RQ4_CLONE_DETECTION_RESULTS,
-                            rq4=True # to ensure consistent evaluation with RQ3 dataset
+                            results_csv=RQ4_CLONE_DETECTION_RESULTS
                         )
