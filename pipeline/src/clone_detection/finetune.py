@@ -49,7 +49,7 @@ def run_finetuning(model_name, train_dataset="Kamino", model_path=FINETUNE_DIR, 
         def __getitem__(self, idx): return self.examples[idx]
 
     if(not model_name.__contains__("-default")): # Train only if no -default 
-        print(f"🚀 Fine-tuning model: {model_name}")
+        print(f"Fine-tuning model: {model_name}")
          # Load dataset and create train/val splits
          
         if "Kamino" in train_dataset:
@@ -93,7 +93,7 @@ def run_finetuning(model_name, train_dataset="Kamino", model_path=FINETUNE_DIR, 
 
     # Save model
     model.save(str(model_output_dir))
-    print(f"✅ Model saved to: {model_output_dir}")
+    print(f"Model saved to: {model_output_dir}")
 
     return str(model_output_dir)
 
@@ -120,7 +120,7 @@ def create_dataset(dataset1_path=FINAL_DATASET, train_output_path=CLONE_DATASET_
 
     dataset_dict.save_to_disk("../dataset/kamino_clones_dataset")
 
-    print("✅ Split completed")
+    print("Split completed")
     print(f"Train: {len(train_data)} entries")
     print(f"Test: {len(test_data)} entries")
 
@@ -191,7 +191,7 @@ def create_dataset_by_codebleu_range(min_codebleu=0.0, max_codebleu=1.0, dataset
         if all_scores else 0
     )
 
-    print(f"\n✅ {dataset_name} dataset created")
+    print(f"\n {dataset_name} dataset created")
     print(f"CodeBLEU range: ({min_codebleu}, {max_codebleu}]")
     print(f"Entries: {len(filtered_entries)}") 
     print(f"Avg CodeBLEU: {avg_codebleu:.4f}")

@@ -28,7 +28,7 @@ def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1
             print(f"⚠️ Entry {entry['id']} has no clones, skipping")
             continue
 
-        # ✅ Only apply lower bound filter when min_codebleu > 0
+        # Only applying lower bound filter when min_codebleu > 0
         if min_codebleu > 0.0:
             clones = [
                 c for c in clones
@@ -100,7 +100,7 @@ def run_clustering(filtered_path_tests=FILTERED_PATH_TESTS, sample_path=SAMPLE_1
     with open(final_dataset, "w", encoding="utf-8") as f:
         json.dump(merged_data, f, indent=2, default=_np_converter)
 
-    print(f"\n✅ New dataset with representatives saved to {final_dataset}, total entries: {len(merged_data)}")
+    print(f"\n New dataset with representatives saved to {final_dataset}, total entries: {len(merged_data)}")
 
 def _avg_neighbor_sim(clone, all_clones):
     """Average CodeBLEU similarity of this clone to all its neighbors."""
@@ -224,7 +224,7 @@ def _save_cluster_csv_from_labels(entry, labels, output_csv_path):
     else:
         df.to_csv(output_csv_path, index=False)
 
-    print(f"✅ Saved clusters for entry {entry['id']} to {output_csv_path}")
+    print(f"Saved clusters for entry {entry['id']} to {output_csv_path}")
  
 
 def process_clusters_for_entry(entry, clusters_dir = CLUSTER_DIR, representatives_json=FINAL_DATASET, codebleu_threshold=CODEBLEU_THRESHOLD):

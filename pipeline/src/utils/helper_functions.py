@@ -86,7 +86,7 @@ def validate_with_unittest(code: str, tests: list) -> dict:
     p.join(timeout=TIMEOUT_SECONDS)
 
     if p.is_alive():
-        print("⚠️ Test execution exceeded timeout, terminating process.")
+        print(" Test execution exceeded timeout, terminating process.")
         p.terminate()
         p.join()
 
@@ -662,7 +662,7 @@ def hf_login():
         raise ValueError("HF_TOKEN not found in .env")
     
     login(token=token)
-    print("✅ Hugging Face login successful!")
+    print(" Hugging Face login successful!")
 
 def _get_function_signature(code):
     """

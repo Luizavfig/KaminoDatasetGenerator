@@ -62,13 +62,13 @@ def _compute_codebleu_scores(dataset_path=SAMPLE_1_PATH, out_path=OUT_PATH):
                 clone["metrics"]["codebleu"]["originalcode"] = score
                 print(f"Clone {idx + 1}: CodeBLEU={score:.4f}")
             except Exception as e:
-                print(f"  ❌ Error computing CodeBLEU for clone {idx + 1}: {e}")
+                print(f"  Error computing CodeBLEU for clone {idx + 1}: {e}")
 
      
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(clone_data, f, indent=2)
 
-    print(f"\n✅ Done. Updated dataset with new CodeBLEU scores saved to {out_path}")
+    print(f"\n Done. Updated dataset with new CodeBLEU scores saved to {out_path}")
 
 
 def run_codebleu_filtering(raw_path=OUT_PATH, cleaned_path=CLEANED_PATH, filtered_path=FILTERED_PATH_CODEBLEU):
@@ -174,7 +174,7 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU, 
         print(f"\nTesting Entry {i}/{len(clone_data)} | id={entry_id}")
 
         if entry_id not in data_by_id:
-            print(f"⚠️ No matching entry found for {entry_id}, skipping.")
+            print(f" No matching entry found for {entry_id}, skipping.")
             continue
 
         entry = data_by_id[entry_id]
@@ -197,7 +197,7 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU, 
                 print(f"  Clone {k}: PASS={passed}, FAIL={failed}, ERROR={error}, Total={total}")
 
             except Exception as e:
-                print(f"  ❌ Unexpected error testing clone {k}: {e}")
+                print(f"   Unexpected error testing clone {k}: {e}")
                 error_results = {}
                 for test_code in tests_list:
                     match = re.search(r'def (\w+)\(', test_code)
@@ -209,7 +209,7 @@ def run_tests(dataset_path=SAMPLE_1_PATH, filtered_path=FILTERED_PATH_CODEBLEU, 
         with open(filtered_path, "w", encoding="utf-8") as f:
             json.dump(clone_data, f, indent=2)
 
-    print(f"\n✅ Done. Saved dataset with test results to {filtered_path}")
+    print(f"\n Done. Saved dataset with test results to {filtered_path}")
 
 
 
@@ -228,12 +228,12 @@ def _install_missing_packages(filtered_path=FILTERED_PATH_CODEBLEU):
                 install_package(pkg)
             except Exception as e:
                 # Catch all exceptions to prevent script from stopping
-                print(f"⚠️ Could not install package {pkg}, skipping. Reason: {e}")
+                print(f" Could not install package {pkg}, skipping. Reason: {e}")
         except Exception as e:
             # Catch any unexpected import errors
-            print(f"⚠️ Error importing package {pkg}, skipping. Reason: {e}")
+            print(f" Error importing package {pkg}, skipping. Reason: {e}")
 
-    print("✅ Finished checking/installing packages.")
+    print(" Finished checking/installing packages.")
  
 
 def run_test_filtering(filtered_path=FILTERED_PATH_CODEBLEU, reprompt_path=REPROMPT_PATH_CLEANED, filtered_path_tests=FILTERED_PATH_TESTS):
@@ -322,13 +322,13 @@ def compute_codebleu_for_all(filtered_path_tests=FILTERED_PATH_TESTS):
 
                 print(f"  Clone {idx1 + 1} vs Clone {idx2 + 1}: CodeBLEU={val:.4f}")
             except Exception as e:
-                print(f"  ❌ Error computing CodeBLEU for clones {idx1 + 1} vs {idx2 + 1}: {e}")
+                print(f"  Error computing CodeBLEU for clones {idx1 + 1} vs {idx2 + 1}: {e}")
 
         # Save after finishing each entry
         with open(filtered_path_tests, "w", encoding="utf-8") as f:
             json.dump(clone_data, f, indent=2)
 
-    print(f"\n✅ Done. Final dataset with CodeBLEU scores (clone vs clone) saved to {filtered_path_tests}")
+    print(f"\n Done. Final dataset with CodeBLEU scores (clone vs clone) saved to {filtered_path_tests}")
 
 
 def _is_clone_valid(clone):

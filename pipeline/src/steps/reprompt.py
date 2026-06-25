@@ -115,7 +115,7 @@ def run_reprompt(sample_path=SAMPLE_1_PATH, filtered_path_codebleu=FILTERED_PATH
             f.result()
 
     pbar.close()
-    print("✅✅ Reprompting completed.")
+    print(" Reprompting completed.")
 
 
 def _calc_test_percent(test_results: dict) -> float:
@@ -139,7 +139,7 @@ def _log_skipped_clone(entry_id, clone, out_path):
                 with open(out_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
             except json.JSONDecodeError:
-                print(f"⚠️ Corrupted JSON detected in {out_path}, resetting file.")
+                print(f"Corrupted JSON detected in {out_path}, resetting file.")
                 data = []
         else:
             data = []
@@ -244,7 +244,7 @@ def _reprompt_clone(clone, entry, tests_list, models, used_models, original_mode
         return clone, failing_tests, codebleu
 
     except Exception as e:
-        print(f"❌ Error reprompting {clone_id}: {e}")
+        print(f" Error reprompting {clone_id}: {e}")
         clone["reprompt"] = f"{n} error, {reprompt_model}"
         return clone, ["ERROR"], 1.0 
 
@@ -265,7 +265,7 @@ def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_pat
 
         # Retry with this model up to MAX_RETRIES
         for n in range(1, MAX_RETRIES + 1):
-            print(f"🔄 Reprompting clone of entry {entry["id"]}...")
+            print(f" Reprompting clone of entry {entry["id"]}...")
             clone, failing_tests, codebleu = _reprompt_clone(
                 clone=clone,
                 entry=entry,
@@ -291,9 +291,9 @@ def _process_clone(entry_id, clone, entry, tests_list, models, LLM_OPTS, out_pat
 
             # failing tests
             if failing_tests:
-                print(f"❌ Clone still failing {len(failing_tests)} tests (retry {n}/{MAX_RETRIES})")
+                print(f" Clone still failing {len(failing_tests)} tests (retry {n}/{MAX_RETRIES})")
     # All retries and models exhausted
-    print(f"❌ Clone discarded — tests={'fail' if final_failing_tests else 'pass'} CodeBLEU={final_codebleu:.4f}")
+    print(f" Clone discarded — tests={'fail' if final_failing_tests else 'pass'} CodeBLEU={final_codebleu:.4f}")
     _log_skipped_clone(entry_id, clone, failed_reprompt_path)
 
 def _update_results(entry_id, clone, out_path):
@@ -328,4 +328,4 @@ def _update_results(entry_id, clone, out_path):
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(saved_results, f, indent=2)
 
-    print(f"✅ Updated results saved for clone {clone['clone_id']} of entry {entry_id}")
+    print(f" Updated results saved for clone {clone['clone_id']} of entry {entry_id}")

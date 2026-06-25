@@ -8,7 +8,7 @@ from src.config import *
 
 if __name__ == "__main__":
 
-    print("🚀 Executing RQ4 - Diversity ablation study")
+    print("Executing RQ4 - Diversity ablation study")
     thresholds = [0.5, 0.6, 0.7] # similarity classification thresholds for clone detection
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name", type=str, required=False)

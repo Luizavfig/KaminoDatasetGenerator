@@ -14,7 +14,7 @@ def select_top_n_configs(n = TOP_N):
     with open(EFFICIENCY_RESULTS, "w", encoding="utf-8") as f:
         json.dump(top_configs, f, indent=2)
 
-    print(f"✅ Saved top {len(top_configs)} configurations to {EFFICIENCY_RESULTS}")
+    print(f" Saved top {len(top_configs)} configurations to {EFFICIENCY_RESULTS}")
     return top_configs
 
 def _calc_efficient_prompts(top_n=TOP_N):
@@ -55,7 +55,7 @@ def _calc_efficient_prompts(top_n=TOP_N):
     eff_df = eff_df.sort_values(by="efficiency", ascending=False)
 
     eff_df.to_csv(EFFICIENCY_PATH, index=False)
-    print(f"✅ Efficiency file saved to {EFFICIENCY_PATH}")
+    print(f" Efficiency file saved to {EFFICIENCY_PATH}")
     print(eff_df.head(top_n))
 
 

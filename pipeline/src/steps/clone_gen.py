@@ -19,7 +19,7 @@ def test_LLM_connection():
 def run_generation(all_models=ALL_MODELS, contexts=CONTEXTS, strategies=STRATEGIES, out_path=OUT_PATH, sample_path=SAMPLE_1_PATH):
     print("Starting generation process...")
     if(out_path.__contains__("RQ2")):
-        print("⚠️ Config error: RQ1 generation requires RQ1 paths. Please check your config.py settings. ABORTING. ⚠️")
+        print("Config error: RQ1 generation requires RQ1 paths. Please check your config.py settings. ABORTING.")
         sys.exit(1) 
     test_LLM_connection()
     used_combinations = _load_used_combinations(out_path)
@@ -60,7 +60,7 @@ def run_efficient_generation(top_configs, out_path=OUT_PATH, sample_path=SAMPLE_
     """
     print(f"Starting efficient generation with {TOP_N} Top configurations.")
     if(out_path.__contains__("RQ1")):
-        print("⚠️ Config error: RQ2 generation requires RQ2 paths. Please check your config.py settings. ABORTING. ⚠️")
+        print("Config error: RQ2 generation requires RQ2 paths. Please check your config.py settings. ABORTING.")
         sys.exit(1) 
     
     test_LLM_connection() 

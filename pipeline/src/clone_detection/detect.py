@@ -126,4 +126,4 @@ def _save_evaluation_to_csv(full_model_name, precision, recall, f1, mcc, TP, TN,
         df = pd.DataFrame([metrics_row])
 
     df.to_csv(csv_path, index=False)
-    print(f"✅ Saved evaluation results to {csv_path}")
+    print(f"Saved evaluation results to {csv_path}")
