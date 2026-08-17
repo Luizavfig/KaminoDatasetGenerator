@@ -1,0 +1,27 @@
+{
+  "entry": "BigCodeBench_670",
+  "bigcodebench_id": "BigCodeBench/670",
+  "category": "Loops, iteration, nested control flow",
+  "selection_rationale": "itertools.combinations over a range is really a nested (start, end) loop with an inner conditional max-tracker.",
+  "python_behavior": {
+    "tests_ran": 5,
+    "tests_passed": 5,
+    "all_passed": true,
+    "output_excerpt": "test_case_1 (__main__.TestCases.test_case_1) ... ok\ntest_case_2 (__main__.TestCases.test_case_2) ... ok\ntest_case_3 (__main__.TestCases.test_case_3) ... ok\ntest_case_4 (__main__.TestCases.test_case_4) ... ok\ntest_case_5 (__main__.TestCases.test_case_5) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.001s\n\nOK"
+  },
+  "csharp_behavior": {
+    "compiled": true,
+    "tests_ran": 5,
+    "tests_passed": 5,
+    "all_passed": true,
+    "output_excerpt": "[PASS] test_case_1\n[PASS] test_case_2\n[PASS] test_case_3\n[PASS] test_case_4\n[PASS] test_case_5\n\n5/5 tests passed (0 failed)."
+  },
+  "equivalence_status": "EQUIVALENT",
+  "language_specific_adaptations": [
+    "itertools.combinations(range(len(x)+1), 2) rewritten as two explicit nested for-loops (start, end) in the same enumeration order",
+    "Python slicing x[start:end] -> string.Substring(start, end - start)",
+    "dict.get(c, 0) (default-valued lookup) -> Dictionary<char,int>.TryGetValue with a 0 fallback"
+  ],
+  "verified_at": "2026-08-10T14:39:27Z",
+  "verification_method": "Executed the original Python code+tests with `python` (real unittest run) and compiled+executed the C# translation+tests with the legacy csc.exe compiler (.NET Framework 4.8, no NuGet/xUnit available in this environment). Both runs are real subprocess executions captured at verification time, not estimates."
+}

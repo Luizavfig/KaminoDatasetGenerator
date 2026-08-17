@@ -1,0 +1,28 @@
+{
+  "entry": "BigCodeBench_1108",
+  "bigcodebench_id": "BigCodeBench/1108",
+  "category": "Nested control flow",
+  "selection_rationale": "nested for-loops (dict list -> dict keys) with an inner conditional regex check and a most-common aggregation.",
+  "python_behavior": {
+    "tests_ran": 5,
+    "tests_passed": 5,
+    "all_passed": true,
+    "output_excerpt": "test_case_1 (__main__.TestCases.test_case_1) ... ok\ntest_case_2 (__main__.TestCases.test_case_2) ... ok\ntest_case_3 (__main__.TestCases.test_case_3) ... ok\ntest_case_4 (__main__.TestCases.test_case_4) ... ok\ntest_case_5 (__main__.TestCases.test_case_5) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.002s\n\nOK"
+  },
+  "csharp_behavior": {
+    "compiled": true,
+    "tests_ran": 5,
+    "tests_passed": 5,
+    "all_passed": true,
+    "output_excerpt": "[PASS] test_case_1\n[PASS] test_case_2\n[PASS] test_case_3\n[PASS] test_case_4\n[PASS] test_case_5\n\n5/5 tests passed (0 failed)."
+  },
+  "equivalence_status": "EQUIVALENT",
+  "language_specific_adaptations": [
+    "list of dicts -> List<Dictionary<string, object>> (values are dynamically typed in the original; keys are always strings)",
+    "Nested `for l_res in result: for j in l_res:` preserved as nested foreach loops rather than flattened via LINQ, to keep the original explicit nested-control-flow structure",
+    "re.match (anchored at string start only) reproduced via Regex.Match + checking Index == 0 (the pattern's own trailing '$' already anchors the end)",
+    "Counter(...).most_common(1) -> manual first-seen-wins max scan over insertion order, matching CPython's current stable tie-breaking behavior"
+  ],
+  "verified_at": "2026-08-10T14:39:20Z",
+  "verification_method": "Executed the original Python code+tests with `python` (real unittest run) and compiled+executed the C# translation+tests with the legacy csc.exe compiler (.NET Framework 4.8, no NuGet/xUnit available in this environment). Both runs are real subprocess executions captured at verification time, not estimates."
+}

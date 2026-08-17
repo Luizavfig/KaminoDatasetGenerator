@@ -1,2 +1,6 @@
 *.json filter=lfs diff=lfs merge=lfs -text
 results/RQ1/bigcodebench_llm_clones.json filter=lfs diff=lfs merge=lfs -text
+
+dataset/golden_dataset_csharp/**/*.json -filter -diff -merge -text
+
+dataset/golden_dataset_csharp/**/*.json -filter -diff -merge -text

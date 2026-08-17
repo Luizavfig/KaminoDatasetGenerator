@@ -1,0 +1,28 @@
+{
+  "entry": "BigCodeBench_795",
+  "bigcodebench_id": "BigCodeBench/795",
+  "category": "Conditional logic + dynamic typing + side effects",
+  "selection_rationale": "if/if branching, isinstance-based dynamic type filtering, a print side effect, and deque rotation -- the richest entry for illustrating Python-dynamic-typing pitfalls.",
+  "python_behavior": {
+    "tests_ran": 5,
+    "tests_passed": 5,
+    "all_passed": true,
+    "output_excerpt": "The square root of the sum of numeric elements: 3.872983346207417\nThe square root of the sum of numeric elements: 2.2671568097509267\nThe square root of the sum of numeric elements: 70.35623639735144\ntest_case_1 (__main__.TestCases.test_case_1) ... ok\ntest_case_2 (__main__.TestCases.test_case_2) ... ok\ntest_case_3 (__main__.TestCases.test_case_3) ... ok\ntest_case_4 (__main__.TestCases.test_case_4) ... ok\ntest_case_5 (__main__.TestCases.test_case_5) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.002s\n\nOK"
+  },
+  "csharp_behavior": {
+    "compiled": true,
+    "tests_ran": 5,
+    "tests_passed": 5,
+    "all_passed": true,
+    "output_excerpt": "[PASS] test_case_1\nThe square root of the sum of numeric elements: 3.87298334620742\n[PASS] test_case_2\n[PASS] test_case_3\nThe square root of the sum of numeric elements: 2.26715680975093\n[PASS] test_case_4\nThe square root of the sum of numeric elements: 70.3562363973514\n[PASS] test_case_5\n\n5/5 tests passed (0 failed)."
+  },
+  "equivalence_status": "EQUIVALENT",
+  "language_specific_adaptations": [
+    "list (freely mixed types) -> List<object>, since test_case_4 requires int/str/float/bool/None in one list",
+    "collections.deque(...).rotate(3) has no BCL equivalent; reimplemented as a modulo-indexed rebuild (rotated[i] = original[(i-k) mod n]), matching deque.rotate's exact resulting order for any k",
+    "isinstance(item, (int, float)) quirk: Python bool is a SUBCLASS of int, so True/False count as numeric; the C# port explicitly special-cases 'item is bool' to reproduce this, since C#'s bool/int have no such relationship",
+    "Python f-string float formatting vs C#'s double.ToString(): NOT guaranteed byte-identical (different shortest-round-trip algorithms); this print output is not asserted by any original test, so it does not affect observable-behavior equivalence for the actual test suite, but it is a real, verified case of locale bugs -- fixed with InvariantCulture after being caught during verification (see notes)"
+  ],
+  "verified_at": "2026-08-10T14:39:30Z",
+  "verification_method": "Executed the original Python code+tests with `python` (real unittest run) and compiled+executed the C# translation+tests with the legacy csc.exe compiler (.NET Framework 4.8, no NuGet/xUnit available in this environment). Both runs are real subprocess executions captured at verification time, not estimates."
+}

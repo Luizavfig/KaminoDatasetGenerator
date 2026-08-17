@@ -25,6 +25,10 @@ This makes it suitable for:
 The pipeline consists of six main stages: 
 ``Normalization → Generation → Syntactic Filtering → Testing → Repairing → Clustering``
 
+A seventh, standalone extension (Step 7) reuses the same prompt architecture to build a
+small Python → C# **Golden Dataset** for cross-language clone research; see
+[`doc/step7_csharp_translation.md`](./doc/step7_csharp_translation.md).
+
 
 ---
 
@@ -72,6 +76,16 @@ Attempts to fix partially correct clones using LLM-based re-prompting and test f
 Applies clustering to select a diverse, non-redundant subset of valid clones.
 
 ➡️ See details: [Representative Selection](./doc/step6.md)
+
+---
+
+### 🔀 Step 7: Python → C# Golden Dataset (Cross-Language Clone Research)
+Extends the pipeline's prompt architecture (Step 2) to translate a small, manually
+verified subset of BigCodeBench entries from Python to C#, with tests translated and
+semantic equivalence confirmed by actually compiling and running both languages'
+implementations.
+
+➡️ See details: [Python → C# Golden Dataset](./doc/step7_csharp_translation.md)
 
 ---
 

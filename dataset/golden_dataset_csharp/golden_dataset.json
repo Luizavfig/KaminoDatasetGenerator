@@ -1,0 +1,82 @@
+[
+  {
+    "entry": "BigCodeBench_1108",
+    "bigcodebench_id": "BigCodeBench/1108",
+    "python_code": "dataset/golden_dataset_csharp/BigCodeBench_1108/python/task_func.py",
+    "python_tests": "dataset/golden_dataset_csharp/BigCodeBench_1108/python/test_task_func.py",
+    "csharp_code": "dataset/golden_dataset_csharp/BigCodeBench_1108/csharp/TaskFunc.cs",
+    "csharp_tests": "dataset/golden_dataset_csharp/BigCodeBench_1108/csharp/TaskFuncTests.cs",
+    "verification": "dataset/golden_dataset_csharp/BigCodeBench_1108/verification.json",
+    "equivalence_status": "EQUIVALENT"
+  },
+  {
+    "entry": "BigCodeBench_297",
+    "bigcodebench_id": "BigCodeBench/297",
+    "python_code": "dataset/golden_dataset_csharp/BigCodeBench_297/python/task_func.py",
+    "python_tests": "dataset/golden_dataset_csharp/BigCodeBench_297/python/test_task_func.py",
+    "csharp_code": "dataset/golden_dataset_csharp/BigCodeBench_297/csharp/TaskFunc.cs",
+    "csharp_tests": "dataset/golden_dataset_csharp/BigCodeBench_297/csharp/TaskFuncTests.cs",
+    "verification": "dataset/golden_dataset_csharp/BigCodeBench_297/verification.json",
+    "equivalence_status": "EQUIVALENT"
+  },
+  {
+    "entry": "BigCodeBench_4",
+    "bigcodebench_id": "BigCodeBench/4",
+    "python_code": "dataset/golden_dataset_csharp/BigCodeBench_4/python/task_func.py",
+    "python_tests": "dataset/golden_dataset_csharp/BigCodeBench_4/python/test_task_func.py",
+    "csharp_code": "dataset/golden_dataset_csharp/BigCodeBench_4/csharp/TaskFunc.cs",
+    "csharp_tests": "dataset/golden_dataset_csharp/BigCodeBench_4/csharp/TaskFuncTests.cs",
+    "verification": "dataset/golden_dataset_csharp/BigCodeBench_4/verification.json",
+    "equivalence_status": "EQUIVALENT"
+  },
+  {
+    "entry": "BigCodeBench_670",
+    "bigcodebench_id": "BigCodeBench/670",
+    "python_code": "dataset/golden_dataset_csharp/BigCodeBench_670/python/task_func.py",
+    "python_tests": "dataset/golden_dataset_csharp/BigCodeBench_670/python/test_task_func.py",
+    "csharp_code": "dataset/golden_dataset_csharp/BigCodeBench_670/csharp/TaskFunc.cs",
+    "csharp_tests": "dataset/golden_dataset_csharp/BigCodeBench_670/csharp/TaskFuncTests.cs",
+    "verification": "dataset/golden_dataset_csharp/BigCodeBench_670/verification.json",
+    "equivalence_status": "EQUIVALENT"
+  },
+  {
+    "entry": "BigCodeBench_685",
+    "bigcodebench_id": "BigCodeBench/685",
+    "python_code": "dataset/golden_dataset_csharp/BigCodeBench_685/python/task_func.py",
+    "python_tests": "dataset/golden_dataset_csharp/BigCodeBench_685/python/test_task_func.py",
+    "csharp_code": "dataset/golden_dataset_csharp/BigCodeBench_685/csharp/TaskFunc.cs",
+    "csharp_tests": "dataset/golden_dataset_csharp/BigCodeBench_685/csharp/TaskFuncTests.cs",
+    "verification": "dataset/golden_dataset_csharp/BigCodeBench_685/verification.json",
+    "equivalence_status": "EQUIVALENT"
+  },
+  {
+    "entry": "BigCodeBench_747",
+    "bigcodebench_id": "BigCodeBench/747",
+    "python_code": "dataset/golden_dataset_csharp/BigCodeBench_747/python/task_func.py",
+    "python_tests": "dataset/golden_dataset_csharp/BigCodeBench_747/python/test_task_func.py",
+    "csharp_code": "dataset/golden_dataset_csharp/BigCodeBench_747/csharp/TaskFunc.cs",
+    "csharp_tests": "dataset/golden_dataset_csharp/BigCodeBench_747/csharp/TaskFuncTests.cs",
+    "verification": "dataset/golden_dataset_csharp/BigCodeBench_747/verification.json",
+    "equivalence_status": "EQUIVALENT"
+  },
+  {
+    "entry": "BigCodeBench_795",
+    "bigcodebench_id": "BigCodeBench/795",
+    "python_code": "dataset/golden_dataset_csharp/BigCodeBench_795/python/task_func.py",
+    "python_tests": "dataset/golden_dataset_csharp/BigCodeBench_795/python/test_task_func.py",
+    "csharp_code": "dataset/golden_dataset_csharp/BigCodeBench_795/csharp/TaskFunc.cs",
+    "csharp_tests": "dataset/golden_dataset_csharp/BigCodeBench_795/csharp/TaskFuncTests.cs",
+    "verification": "dataset/golden_dataset_csharp/BigCodeBench_795/verification.json",
+    "equivalence_status": "EQUIVALENT"
+  },
+  {
+    "entry": "BigCodeBench_818",
+    "bigcodebench_id": "BigCodeBench/818",
+    "python_code": "dataset/golden_dataset_csharp/BigCodeBench_818/python/task_func.py",
+    "python_tests": "dataset/golden_dataset_csharp/BigCodeBench_818/python/test_task_func.py",
+    "csharp_code": "dataset/golden_dataset_csharp/BigCodeBench_818/csharp/TaskFunc.cs",
+    "csharp_tests": "dataset/golden_dataset_csharp/BigCodeBench_818/csharp/TaskFuncTests.cs",
+    "verification": "dataset/golden_dataset_csharp/BigCodeBench_818/verification.json",
+    "equivalence_status": "EQUIVALENT"
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "entry": "BigCodeBench_4",
+  "bigcodebench_id": "BigCodeBench/4",
+  "category": "Dictionaries / maps",
+  "selection_rationale": "dict-of-lists aggregated via Counter into a plain dict; single parameter.",
+  "python_behavior": {
+    "tests_ran": 8,
+    "tests_passed": 8,
+    "all_passed": true,
+    "output_excerpt": "test_case_1 (__main__.TestCases.test_case_1)\nChecks the basic functionality with single-element lists. ... ok\ntest_case_2 (__main__.TestCases.test_case_2)\nVerifies the function with lists that have distinct integers. ... ok\ntest_case_3 (__main__.TestCases.test_case_3)\nTests the function with lists containing duplicate integers to ensure counts are aggregated correctly. ... ok\ntest_case_4 (__main__.TestCases.test_case_4)\nValidates how the function handles an empty dictionary. ... ok\ntest_case_5 (__main__.TestCases.test_case_5)\nEnsures the function handles dictionaries where lists are empty correctly. ... ok\ntest_case_6 (__main__.TestCases.test_case_6)\nTest input with mixed integer and non-integer types to see if function filters or fails gracefully ... ok\ntest_case_7 (__main__.TestCases.test_case_7)\nTest with large lists to evaluate performance ... ok\ntest_case_8 (__main__.TestCases.test_case_8)\nTest with non-string keys to see how function handles it ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.002s\n\nOK"
+  },
+  "csharp_behavior": {
+    "compiled": true,
+    "tests_ran": 8,
+    "tests_passed": 8,
+    "all_passed": true,
+    "output_excerpt": "[PASS] test_case_1\n[PASS] test_case_2\n[PASS] test_case_3\n[PASS] test_case_4\n[PASS] test_case_5\n[PASS] test_case_6\n[PASS] test_case_7\n[PASS] test_case_8\n\n8/8 tests passed (0 failed)."
+  },
+  "equivalence_status": "EQUIVALENT",
+  "language_specific_adaptations": [
+    "dict -> Dictionary<object, List<object>> (kept dynamically typed to allow the mixed-type error-handling test)",
+    "Counter -> Dictionary<object, int> built with a manual counting loop",
+    "Python's 'unhashable list' TypeError has no direct C# analogue (all C# objects are hashable via reference identity); explicitly re-created by rejecting nested-collection elements",
+    "Python None is a valid, hashable dict key; C# Dictionary forbids null keys (ArgumentNullException) -- the C# port's exception fires one element earlier for the one test that mixes None with a nested list, but an exception is still raised either way"
+  ],
+  "verified_at": "2026-08-10T14:39:25Z",
+  "verification_method": "Executed the original Python code+tests with `python` (real unittest run) and compiled+executed the C# translation+tests with the legacy csc.exe compiler (.NET Framework 4.8, no NuGet/xUnit available in this environment). Both runs are real subprocess executions captured at verification time, not estimates."
+}

@@ -1,0 +1,28 @@
+{
+  "entry": "BigCodeBench_818",
+  "bigcodebench_id": "BigCodeBench/818",
+  "category": "Strings and string manipulation",
+  "selection_rationale": "regex split + regex substitution + case folding over words; a focused string-processing example.",
+  "python_behavior": {
+    "tests_ran": 6,
+    "tests_passed": 6,
+    "all_passed": true,
+    "output_excerpt": "test_empty_string (__main__.TestCases.test_empty_string)\nTest with an empty string ... ok\ntest_standard_input (__main__.TestCases.test_standard_input)\nTest with standard input containing words, punctuation, and whitespaces ... ok\ntest_string_with_no_punctuation (__main__.TestCases.test_string_with_no_punctuation)\nTest with a string that has no punctuation marks ... ok\ntest_string_with_numbers (__main__.TestCases.test_string_with_numbers)\nTest with a string that includes numbers and punctuation ... ok\ntest_string_with_special_characters (__main__.TestCases.test_string_with_special_characters)\nTest with a string that includes special characters ... ok\ntest_string_with_whitespaces (__main__.TestCases.test_string_with_whitespaces)\nTest with a string that includes extra whitespaces between words ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.001s\n\nOK"
+  },
+  "csharp_behavior": {
+    "compiled": true,
+    "tests_ran": 6,
+    "tests_passed": 6,
+    "all_passed": true,
+    "output_excerpt": "[PASS] test_standard_input\n[PASS] test_empty_string\n[PASS] test_string_with_no_punctuation\n[PASS] test_string_with_numbers\n[PASS] test_string_with_special_characters\n[PASS] test_string_with_whitespaces\n\n6/6 tests passed (0 failed)."
+  },
+  "equivalence_status": "EQUIVALENT",
+  "language_specific_adaptations": [
+    "re.split(r'\\s+', text) -> Regex.Split with the same pattern (including producing empty strings for leading/trailing whitespace, verified by test_string_with_whitespaces)",
+    "string.punctuation has no C# constant; inlined literally",
+    "BUG CAUGHT DURING VERIFICATION: Python's f'[{string.punctuation}]' works only because string.punctuation happens to contain a backslash immediately before ']' (an ASCII-ordering coincidence), so it 'self-escapes'. A first C# attempt using `Regex.Escape(punctuation)` compiled and ran without error but silently matched nothing, because .NET's Regex.Escape does not escape ']'. Fixed by escaping every punctuation character individually before building the character class.",
+    "str.lower() -> ToLowerInvariant() (not culture-specific ToLower(), to avoid the Turkish-I locale bug)"
+  ],
+  "verified_at": "2026-08-10T14:39:30Z",
+  "verification_method": "Executed the original Python code+tests with `python` (real unittest run) and compiled+executed the C# translation+tests with the legacy csc.exe compiler (.NET Framework 4.8, no NuGet/xUnit available in this environment). Both runs are real subprocess executions captured at verification time, not estimates."
+}

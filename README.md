@@ -452,6 +452,21 @@ The exact storage requirements depend on generated intermediate files and select
 
 The generated Kamino dataset is already included in the artifact package.
 
+## Python → C# Golden Dataset (Cross-Language Clone Research)
+
+A small, manually verified Golden Dataset of BigCodeBench entries translated
+from Python to C# (implementation + tests for both languages, plus a written
+verification record per entry) is available at:
+
+```text
+dataset/golden_dataset_csharp
+```
+
+See [`doc/step7_csharp_translation.md`](./doc/step7_csharp_translation.md)
+for the full methodology and
+[`docs/python_to_csharp_translation_report.pdf`](./docs/python_to_csharp_translation_report.pdf)
+for the full report.
+
 # Additional Experiments
 
 Beyond reproducing the paper results, reviewers may:
@@ -476,7 +491,11 @@ The full documentation is available [here](./DOC.md).
 KaminoDatasetGenerator
 │
 ├── dataset/
-│   └── kamino_clones_dataset/
+│   ├── kamino_clones_dataset/
+│   └── golden_dataset_csharp/      # Python -> C# Golden Dataset (Step 7)
+│
+├── docs/
+│   └── python_to_csharp_translation_report.pdf
 │
 ├── doc/
 │   ├── step1.md
@@ -484,14 +503,17 @@ KaminoDatasetGenerator
 │   ├── step3.md
 │   ├── step4.md
 │   ├── step5.md
-│   └── step6.md
+│   ├── step6.md
+│   └── step7_csharp_translation.md
 │
 ├── pipeline/
 │   ├── src/
 │   │   ├── main.py
 │   │   ├── rq2.py
 │   │   ├── rq3.py
-│   │   └── rq4.py
+│   │   ├── rq4.py
+│   │   ├── translate_csharp_golden.py
+│   │   └── steps/translate_csharp.py
 │   │
 │   ├── RQ1.ipynb
 │   ├── RQ2.ipynb

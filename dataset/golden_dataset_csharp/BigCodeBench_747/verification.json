@@ -1,0 +1,27 @@
+{
+  "entry": "BigCodeBench_747",
+  "bigcodebench_id": "BigCodeBench/747",
+  "category": "Basic expressions and arithmetic",
+  "selection_rationale": "regex-extracted numbers combined with math.sqrt and sum(); returns a (count, sum) pair.",
+  "python_behavior": {
+    "tests_ran": 5,
+    "tests_passed": 5,
+    "all_passed": true,
+    "output_excerpt": "test_1 (__main__.TestCases.test_1) ... ok\ntest_2 (__main__.TestCases.test_2) ... ok\ntest_3 (__main__.TestCases.test_3) ... ok\ntest_4 (__main__.TestCases.test_4) ... ok\ntest_5 (__main__.TestCases.test_5) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.000s\n\nOK"
+  },
+  "csharp_behavior": {
+    "compiled": true,
+    "tests_ran": 10,
+    "tests_passed": 10,
+    "all_passed": true,
+    "output_excerpt": "[PASS] test_1 (count)\n[PASS] test_1 (sqrt_sum)\n[PASS] test_2 (count)\n[PASS] test_2 (sqrt_sum)\n[PASS] test_3 (count)\n[PASS] test_3 (sqrt_sum)\n[PASS] test_4 (count)\n[PASS] test_4 (sqrt_sum)\n[PASS] test_5 (count)\n[PASS] test_5 (sqrt_sum)\n\n10/10 tests passed (0 failed)."
+  },
+  "equivalence_status": "EQUIVALENT",
+  "language_specific_adaptations": [
+    "re.findall(r'\\b\\d+(?:\\.\\d+)?\\b', s) -> System.Text.RegularExpressions.Regex with the same pattern",
+    "Python tuple return -> KeyValuePair<int,double> (this Golden Dataset entry targets the legacy C# 5 compiler available in this environment, which predates C# 7 tuple literals)",
+    "float(num) parsing forced to InvariantCulture to avoid locale-dependent decimal-separator bugs that Python's locale-independent float() never has"
+  ],
+  "verified_at": "2026-08-10T14:39:29Z",
+  "verification_method": "Executed the original Python code+tests with `python` (real unittest run) and compiled+executed the C# translation+tests with the legacy csc.exe compiler (.NET Framework 4.8, no NuGet/xUnit available in this environment). Both runs are real subprocess executions captured at verification time, not estimates."
+}

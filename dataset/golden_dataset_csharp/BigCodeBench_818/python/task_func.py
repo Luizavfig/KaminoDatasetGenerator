@@ -1,0 +1,11 @@
+import re
+import string
+
+# Constants
+PUNCTUATION = string.punctuation
+
+def task_func(text):
+    words = re.split(r'\s+', text)
+    cleaned_words = [re.sub(f'[{PUNCTUATION}]', '', word).lower() for word in words]
+
+    return cleaned_words
